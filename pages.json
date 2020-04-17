@@ -1,0 +1,157 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"backgroundTextStyle": "dark",
+				"navigationBarTitleText": "Easemob IM"
+			}
+		},
+		{
+			"path": "pages/notification_groupDetail/groupDetail",
+			"style": {
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"backgroundTextStyle": "light",
+				"navigationBarTitleText": "加群组申请"
+			}
+		},
+		{
+			"path": "pages/notification_friendDetail/friendDetail",
+			"style": {
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"backgroundTextStyle": "light",
+				"navigationBarTitleText": "加好友申请"
+			}
+		},
+		{
+			"path": "pages/login_token/login_token",
+			"style": {
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"backgroundTextStyle": "light",
+				"navigationBarTitleText": "Easemob IM"
+			}
+		},
+		{
+			"path": "pages/main/main",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "Easemob IM",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/chatroom/chatroom",
+			"style": {
+				"navigationBarTitleText": "chatting",
+				"backgroundTextStyle": "dark",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {}
+		},
+		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"backgroundTextStyle": "light",
+				"navigationBarTitleText": "Easemob IM"
+			}
+		},
+		{
+			"path": "pages/add_new/add_new",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "Easemob IM"
+			}
+		},
+		{
+			"path": "pages/chat/chat",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "Easemob IM"
+			}
+		},
+		{
+			"path": "pages/notification/notification",
+			"style": {
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black",
+				"backgroundTextStyle": "light",
+				"navigationBarTitleText": "Easemob IM"
+			}
+		},
+		{
+			"path": "pages/setting_general/setting_general",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "通用设置"
+			}
+		},
+		{
+			"path": "pages/groups/groups",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "群组"
+			}
+		},
+		{
+			"path": "pages/inform/inform",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "申请与通知"
+			}
+		},
+		{
+			"path": "pages/setting/setting",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "Easemob IM"
+			}
+		},
+		{
+			"path": "pages/add_groups/add_groups",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "创建群组"
+			}
+		},
+		{
+			"path": "pages/groupChatRoom/groupChatRoom",
+			"style": {
+				"backgroundTextStyle": "dark",
+				"navigationBarTitleText": "chatting",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/groupSetting/groupSetting",
+			"style": {
+				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "群信息"
+			}
+		}
+	],
+	"globalStyle": {
+		"backgroundTextStyle": "dark",
+		"navigationBarBackgroundColor": "#fff",
+		"navigationBarTextStyle": "black"
+	},
+	"subPackages": []
+}
