@@ -1,4 +1,7 @@
-<template><view></view></template><script>
+<template>
+<view></view>
+</template>
+<script>
 let WebIM = require("../../../../../utils/WebIM")["default"];
 let msgType = require("../../../msgtype");
 let disp = require("../../../../../utils/broadcast");

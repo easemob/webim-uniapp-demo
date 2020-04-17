@@ -2,9 +2,18 @@
 <!-- <chat-suit-emoji id="chat-suit-emoji" bind:newEmojiStr="emojiAction"></chat-suit-emoji> -->
 <form class="text-input">
 	<!-- <view class="f-row"> -->
-		<input class="f news" type="text" :value="inputMessage" cursor-spacing="65" confirm-type="send" @confirm="sendMessage" @input="bindMessage" @tap="focus" @focus="focus" @blur="blur" placeholder="输入新消息" placeholder-style="color:#CFCFCF padding-left:5px"></input>
-
-		<!-- <button class="send_btn" bind:tap="sendMessage">发送</button> -->
+		<input class="f news" 
+    type="text" 
+    :value="inputMessage" 
+    cursor-spacing="65" 
+    confirm-type="send" 
+    @confirm="sendMessage" 
+    @input="bindMessage" 
+    @tap="focus" 
+    @focus="focus" 
+    @blur="blur" 
+    placeholder="输入新消息" 
+    placeholder-style="color:#CFCFCF padding-left:5px"/>
 
 <!-- 	</view> -->
 </form>

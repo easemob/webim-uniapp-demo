@@ -30,7 +30,7 @@
 		<view class="search_input" v-if="search_friend">
 			<view>
 				<icon type="search" size="13"></icon>
-				<input placeholder="搜索" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code"></input>
+				<input placeholder="搜索" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />>
 					<icon type="clear" size="13" @tap.stop="clearInput" v-if="show_clear"></icon>
 			</view>
 			<text @tap="cancel">取消</text>
@@ -598,16 +598,21 @@ export default {
       let number = 0;
 
       for (let j = 0; j < someArr.length; ++j) {
-        wx.createSelectorQuery().select('#inToView' + someArr[j].id).boundingClientRect(function (rect) {
-          console.log('rect>>',rect);
-          number = rect.height + number;
+        const query = uni.createSelectorQuery().in(this)
+        query.select(`#inToView${someArr[j].id}`).boundingClientRect(rect => {
+          if (rect) {
+             number = rect.height + number;
           var newArry = [{
             'height': number,
             'key': rect.dataset.id,
             "name": someArr[j].region
-          }]; //that.setData({
-
-          oHeight = oHeight.concat(newArry); //})
+          }];
+          oHeight = oHeight.concat(newArry);
+          }else{
+            this.$nextTick(()=>{
+              this.getBrands(member)
+            })
+          }
         }).exec();
       }
 

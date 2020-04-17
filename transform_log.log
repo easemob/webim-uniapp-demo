@@ -1,0 +1,44 @@
+
+Warning： 找不到package.json文件(不影响转换，无视这条)
+
+miniprogram to uni-app 转换日志
+
+---基本信息---
+时间: 2020-04-17 15:38:01
+语言: Javascript
+转换模式: Hbuilder X
+是否转换wxs文件: false
+
+---小程序基本信息---
+name: 环信即时通讯云
+version: 
+description: 
+appid: wxc4ee73bd631ccad8
+projectname: 
+compileType: miniprogram
+author: 
+
+---目录信息---
+sourceFolder: /Users/lr/Documents/work/webim-weixin-xcx
+targetFolder: /Users/lr/Documents/work/webim-weixin-xcx_uni
+outputFolder: /Users/lr/Documents/work/webim-weixin-xcx_uni
+miniprogramRoot: /Users/lr/Documents/work/webim-weixin-xcx/src
+
+---日志信息---
+Error: template对应的wxml不存在，无法替换，代码已注释 --> <template :is="item.msg.type" :data="item"></template>   file --> comps/chat/msglist/msglist
+Error: template对应的wxml不存在，无法替换，代码已注释 --> <template :is="item.type" :data="item"></template>   file --> comps/chat/msglist/msglist
+
+转换完成: 
+耗时：77086ms
+当前转换模式：【Hbuilder X】，生成HbuilderX项目。
+优点：上手快，项目结构较简单；
+缺点：资源路径会因为表达式而无法全部被修复(需手动修复)
+
+注意：
+1.当看到"image漏网之鱼"，意味着您"可能"需要手动调整对应代码(以实际编译运行为准)，当image标签的src属性是含变量或表达式，工具还无法做到100%转换，需要手动修改为相对/static目录的路径
+
+
+日志说明：
+1. image漏网之鱼 --> 为HbuilderX模式时，需要将资源移动到static，并且修复相应文件路径，有可能src为网络文件，有可能为变量或表达式，可能会导致转换后文件找不到，因此提示一下
+修复提示：编译时，如有报错就将对应位置修复即可(虽然目前uni-app有类似的支持，似乎并不完善)
+2. 命名替换 --> 小程序里对于属性名基本没什么限制，如id能做属性名，data下面的变量和函数名还能重名，但这些在uni-app里是不支持的，因此做了相关替换，并记录日志，也许组件在外部调用时，函数名被改而因此报错时，请查看此文档
