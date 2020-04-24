@@ -19,7 +19,7 @@
 		<text>新建群聊</text>
 	</view>
 	<!-- <view class="add_group">
-		<image src="../../images/cell_groups.png"></image>
+		<image src="../../static/images/cell_groups.png"></image>
 		<text>添加公开群</text>
 	</view> -->
 	<!-- <view class="line"></view> -->

@@ -8,13 +8,13 @@
 	<!-- <view wx:for="{{ member }}" class="numbers" wx:key="word">
 		<view class="nbr_header">{{ item.word }}</view>
 		<view class="info" bindtap="into_info">
-			<image src="../../images/number.png"  data-username="{{ item.name }}"></image>
+			<image src="../../static/images/number.png"  data-username="{{ item.name }}"></image>
 		</view>
 		<view class="nbr_body" data-username="{{ item.name }}" bindtap="into_room">
 			<text data-username="{{ item.name }}">{{ item.name }}</text>
 		</view>
 		<view class="delete" bindtap="delete_friend" data-username="{{ item.name }}">
-			<image src="../../images/delete.png"  data-username="{{ item.name }}"></image>
+			<image src="../../static/images/delete.png"  data-username="{{ item.name }}"></image>
 		</view>
 	</view> -->
 <view>
@@ -40,11 +40,11 @@
 			<view class="otherItem" @tap="add_new">
 				<image src="/static/images/invite_theme@2x.png" data-username="name"></image>
 				<text>添加好友</text>
-				<!-- <image class='line' src="../../images/line.png"></image> -->
+				<!-- <image class='line' src="../../static/images/line.png"></image> -->
 				<!-- 0.5px border -->
 			</view>
 		<!-- 	<view class="chat" bindtap="into_inform">
-				<image src="../../images/chat.png"></image>
+				<image src="../../static/images/chat.png"></image>
 				<text>申请与通知</text>
 				<text  class="em-msgNum">3</text>
 				<text wx:if="{{ messageNum > 0 }}" class="em-msgNum">{{ messageNum }}</text>
@@ -54,7 +54,7 @@
 				<text>群组</text>
 			</view>
 			<!-- <view class="chat_lists">
-				<image src="../../images/cell_groups.png"></image>
+				<image src="../../static/images/cell_groups.png"></image>
 				<text>聊天室列表</text>
 			</view> -->
 		</view>

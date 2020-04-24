@@ -27,7 +27,7 @@
 		<view class="toast_content" wx:if="{{ isHide }}">
 			<view class="toast_content_border"></view>
 			<view class="toast_content_icon">
-				<image class="toast_icon_img" src="../../images/success@2x.png"/>
+				<image class="toast_icon_img" src="../../static/images/success@2x.png"/>
 			</view>
 			<view class="toast_content_text">
 				{{content}}

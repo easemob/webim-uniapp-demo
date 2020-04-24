@@ -17,7 +17,7 @@
 	<view class="search_input" v-if="search_chats">
 		<view>
 			<icon type="search" size="12"></icon>
-			<input placeholder="搜索" placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code"></input>
+			<input placeholder="搜索" placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />
 				<icon type="clear" size="12" @tap.stop="clearInput" v-if="show_clear"></icon>
 
 		</view>
@@ -32,7 +32,7 @@
 					<view class="list_pic">
 						<view class="em-msgNum" v-if="item.unReadCount > 0 || item.unReadCount == '99+'">{{ item.unReadCount }}</view>
 						
-						<image :src="(item.chatType == 'groupchat' || item.chatType == 'chatRoom')? '../../images/groupTheme.png':'../../images/theme@2x.png'"></image>
+						<image :src="(item.chatType == 'groupchat' || item.chatType == 'chatRoom')? '../../static/images/groupTheme.png':'../../static/images/theme@2x.png'"></image>
 					</view>
 					<view class="list_text">
 						<text class="list_user">{{(item.chatType == 'groupchat' || item.chatType == 'chatRoom' || item.groupName)?item.groupName : item.username}}</text>
