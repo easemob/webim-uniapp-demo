@@ -1,28 +1,31 @@
 <template>
-<!-- <chat-suit-emoji id="chat-suit-emoji" bind:newEmojiStr="emojiAction"></chat-suit-emoji> -->
-<form class="text-input">
-	<!-- <view class="f-row"> -->
-		<input class="f news" 
-    type="text" 
-    :value="inputMessage" 
-    cursor-spacing="65" 
-    confirm-type="send" 
-    @confirm="sendMessage" 
-    @input="bindMessage" 
-    @tap="focus" 
-    @focus="focus" 
-    @blur="blur" 
-    placeholder="输入新消息" 
-    placeholder-style="color:#CFCFCF padding-left:5px"/>
+  <!-- <chat-suit-emoji id="chat-suit-emoji" bind:newEmojiStr="emojiAction"></chat-suit-emoji> -->
+  <form class="text-input">
+    <!-- <view class="f-row"> -->
+    <input
+      class="f news"
+      type="text"
+      :value="inputMessage"
+      cursor-spacing="65"
+      confirm-type="send"
+      @confirm="sendMessage"
+      @input="bindMessage"
+      @tap="focus"
+      @focus="focus"
+      @blur="blur"
+      placeholder="输入新消息"
+      placeholder-style="color:#CFCFCF padding-left:5px"
+    />
 
-<!-- 	</view> -->
-</form>
+    <!-- 	</view> -->
+  </form>
 </template>
 
 <script>
 let WebIM = require("../../../../../utils/WebIM")["default"];
 let msgType = require("../../../msgtype");
 let disp = require("../../../../../utils/broadcast");
+let msgStorage = require("../../../msgstorage");
 
 export default {
   data() {
@@ -30,7 +33,6 @@ export default {
       inputMessage: "",
       // render input 的值
       userMessage: "" // input 的实时值
-
     };
   },
 
@@ -111,15 +113,12 @@ export default {
 
     sendMessage() {
       let me = this;
-
-      String.prototype.trim = function () {
-        return this.replace(/(^\s*)|(\s*$)/g, '');
+      String.prototype.trim = function() {
+        return this.replace(/(^\s*)|(\s*$)/g, "");
       };
-
       if (!this.userMessage.trim()) {
         return;
       }
-
       let id = WebIM.conn.getUniqueId();
       let msg = new WebIM.message(msgType.TEXT, id);
       msg.set({
@@ -128,37 +127,31 @@ export default {
         to: this.getSendToParam(),
         roomType: false,
         chatType: this.chatType,
-
         success(id, serverMsgId) {
-          console.log('成功了');
-          disp.fire('em.chat.sendSuccess', id, me.userMessage);
+          console.log("成功了");
+          disp.fire("em.chat.sendSuccess", id, me.userMessage);
         },
-
         fail(id, serverMsgId) {
-          console.log('失败了');
+          console.log("失败了");
         }
-
       });
-
       if (this.chatType == msgType.chatType.CHAT_ROOM) {
         msg.setGroup("groupchat");
       }
-
       WebIM.conn.send(msg.body);
-      this.$emit("newTextMsg", {
-        msg: msg,
-        type: msgType.TEXT
-      }, {
-        bubbles: true,
-        composed: true
-      }); //
-
+      let obj = {
+          msg: msg,
+          type: msgType.TEXT
+        }
+      this.saveSendMsg(obj)
       this.setData({
         userMessage: "",
         inputMessage: ""
       });
+    },
+    saveSendMsg(evt) {
+      msgStorage.saveMsg(evt.msg, evt.type);
     }
-
   }
 };
 </script>

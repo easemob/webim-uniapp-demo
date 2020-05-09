@@ -1,15 +1,15 @@
 <template>
 <view class="room_bar">
-	<chat-suit-emoji id="chat-suit-emoji" @newEmojiStr="emojiAction"></chat-suit-emoji>
-	<chat-suit-main id="chat-suit-main" :username="username" :chatType="chatType" @inputFocused="cancelEmoji"></chat-suit-main>
-	<chat-suit-image id="chat-suit-image" :username="username" :chatType="chatType"></chat-suit-image>
+	<!-- <chatSuitEmoji ref="chatSuitEmoji" @newEmojiStr="emojiAction"></chatSuitEmoji> -->
+	<chatSuitMain ref="chatSuitMain" :username="username" :chatType="chatType" @inputFocused="cancelEmoji"></chatSuitMain>
+	<chatSuitImage ref="chatSuitImage" :username="username" :chatType="chatType"></chatSuitImage>
 	<!-- <chat-suit-location id="chat-suit-location" username="{{ username }}"></chat-suit-location> -->
 	<!-- <chat-suit-video id="chat-suit-video" username="{{ username }}"></chat-suit-video> -->
 	
 	<view :class="'other_func ' + (isIPX? 'other_func_X': '')">
-		<view class="open_emoji" bind:tap="openEmoji">
+		<!-- <view class="open_emoji" bind:tap="openEmoji">
 			<image src="/static/images/Emoji.png"/>
-		</view>
+		</view> -->
 		<!-- <view class="v-record" @tap="toggleRecordModal">
 			<image class="icon-record" :src="recordStatus != RecordStatus.HIDE ? '../../../static/images/iconAudioActive@2x.png' : '../../../static/images/voice.png'" style="width:16px height: 24px"></image>
 		</view> -->
@@ -29,7 +29,7 @@
 <script>
 let RecordStatus = require("./suit/audio/record_status").RecordStatus;
 let msgType = require("../msgtype");
-import chatSuitEmoji from "./suit/emoji/emoji";
+// import chatSuitEmoji from "./suit/emoji/emoji";
 import chatSuitImage from "./suit/image/image";
 import chatSuitLocation from "./suit/location/location";
 import chatSuitMain from "./suit/main/main";
@@ -51,7 +51,7 @@ export default {
   },
 
   components: {
-    chatSuitEmoji,
+    // chatSuitEmoji,
     chatSuitImage,
     chatSuitLocation,
     chatSuitMain
@@ -80,11 +80,10 @@ export default {
     this.setData({
       isIPX: getApp().globalData.isIPX
     });
-    let comps = this.$data.__comps__;
-    comps.main = this.selectComponent("#chat-suit-main");
-    comps.emoji = this.selectComponent("#chat-suit-emoji");
-    comps.image = this.selectComponent("#chat-suit-image"); // comps.location = this.selectComponent("#chat-suit-location");
-    //comps.video = this.selectComponent("#chat-suit-video");
+    // let comps = this.$data.__comps__;
+    // comps.main = this.selectComponent("#chatSuitMain");
+    // comps.emoji = this.selectComponent("#chatSuitEmoji");
+    // comps.image = this.selectComponent("#chatSuitImage"); 
   },
 
   methods: {
@@ -100,26 +99,31 @@ export default {
     // 	this.data.__comps__.video.sendVideo();
     // },
     openCamera() {
-      this.__comps__.image.openCamera().image.openCamera();
+      // this.__comps__.image.openCamera()
+       this.$refs.chatSuitImage.openCamera();
     },
 
     openEmoji() {
-      this.__comps__.emoji.openEmoji();
+      // this.__comps__.emoji.openEmoji();
+       this.$refs.chatSuitEmoji.openEmoji();
     },
 
     cancelEmoji() {
-      this.__comps__.emoji.cancelEmoji();
+      // this.__comps__.emoji.cancelEmoji();
+      // this.$refs.chatSuitEmoji.cancelEmoji();
     },
 
     sendImage() {
-      this.__comps__.image.sendImage();
+      // this.__comps__.image.sendImage();
+      this.$refs.chatSuitImage.sendImage();
     },
 
     sendLocation() {// this.data.__comps__.location.sendLocation();
     },
 
     emojiAction(evt) {
-      this.__comps__.main.emojiAction(evt.detail.msg);
+      // this.__comps__.main.emojiAction(evt.detail.msg);
+       this.$refs.chatSuitMain.emojiAction(evt.detail.msg);
     }
 
   }

@@ -7,7 +7,7 @@
 		  	<view style="clear:bothwidth:0height:0"></view>
 		</view>
 		<text class="desc">{{ RecordDesc[recordStatus] }}</text>
-		<button class="dot" catch:touchstart="handleRecording" catch:touchmove="handleRecordingMove" catch:touchend="handleRecordingCancel">
+		<button class="dot" @touchstart="handleRecording" @touchmove="handleRecordingMove" @touchend="handleRecordingCancel">
 			<image class="icon-mic" src="/static/images/send.png"></image>
 		</button>
 	</view>

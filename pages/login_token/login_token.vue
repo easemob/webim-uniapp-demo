@@ -65,7 +65,7 @@ export default {
     const me = this;
     let app = getApp().globalData;
 		// new app.ToastPannel.ToastPannel();
-    disp.on("em.xmpp.error.tokenErr", function () {
+    disp.on("em.error.tokenErr", function () {
       me.toastFilled('token错误、token过期或者未授权');
     });
   },

@@ -36,7 +36,7 @@
 					</view>
 					<view class="list_text">
 						<text class="list_user">{{(item.chatType == 'groupchat' || item.chatType == 'chatRoom' || item.groupName)?item.groupName : item.username}}</text>
-						<text class="list_word" v-if="item.msg.data[0].data">{{item.msg.data[0].data}}</text>
+						<text class="list_word" v-if="item.msg.data">{{item.msg.data}}</text>
 						<text class="list_word" v-if="item.msg.type == 'img'">[图片]</text>
 						<text class="list_word" v-if="item.msg.type == 'audio'">[语音]</text>
 					</view>
@@ -118,14 +118,14 @@ export default {
   onLoad() {
     let me = this; //监听加好友申请
 
-    disp.on("em.xmpp.subscribe", function () {
+    disp.on("em.subscribe", function () {
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     }); //监听解散群
 
-    disp.on("em.xmpp.invite.deleteGroup", function () {
+    disp.on("em.invite.deleteGroup", function () {
       me.listGroups();
       me.getRoster();
       me.setData({
@@ -134,20 +134,20 @@ export default {
       });
     }); //监听未读消息数
 
-    disp.on("em.xmpp.unreadspot", function (message) {
+    disp.on("em.unreadspot", function (message) {
       me.setData({
         arr: me.getChatList(),
         unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
       });
     }); //监听未读加群“通知”
 
-    disp.on("em.xmpp.invite.joingroup", function () {
+    disp.on("em.invite.joingroup", function () {
       me.setData({
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     });
-    disp.on("em.xmpp.contacts.remove", function () {
+    disp.on("em.contacts.remove", function () {
       me.getRoster(); // me.setData({
       // 	arr: me.getChatList(),
       // 	unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,

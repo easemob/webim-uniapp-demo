@@ -43,7 +43,7 @@ export default {
   onLoad(options) {
     var me = this; // 不需要 object 地址更新，就能刷
 
-    disp.on("em.xmpp.invite.joingroup", function () {
+    disp.on("em.invite.joingroup", function () {
       me.setData({
         groupList: getApp().globalData.saveGroupInvitedList
       });

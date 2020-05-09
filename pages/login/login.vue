@@ -70,7 +70,7 @@ export default {
     const app = getApp().globalData;
     // new app.ToastPannel.ToastPannel();
     
-    disp.on("em.xmpp.error.passwordErr", function () {
+    disp.on("em.error.passwordErr", function () {
       me.toastFilled('用户名或密码错误');
     });
   },

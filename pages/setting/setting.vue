@@ -77,20 +77,20 @@ export default {
       yourname: wx.getStorageSync("myUsername")
     }); //监听加好友申请
 
-    disp.on("em.xmpp.subscribe", function () {
+    disp.on("em.subscribe", function () {
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     }); //监听未读“聊天”
 
-    disp.on("em.xmpp.unreadspot", function () {
+    disp.on("em.unreadspot", function () {
       me.setData({
         unReadSpotNum: getApp().globalData.unReadMessageNum
       });
     }); //监听未读“通知”数
 
-    disp.on("em.xmpp.invite.joingroup", function (count) {
+    disp.on("em.invite.joingroup", function (count) {
       me.setData({
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length

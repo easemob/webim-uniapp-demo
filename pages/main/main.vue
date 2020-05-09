@@ -188,13 +188,13 @@ export default {
     //监听加好友申请
 		// new app.ToastPannel.ToastPannel();
 
-    disp.on("em.xmpp.subscribe", function () {
+    disp.on("em.subscribe", function () {
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     });
-    disp.on("em.xmpp.contacts.remove", function (message) {
+    disp.on("em.contacts.remove", function (message) {
       var pageStack = getCurrentPages();
 
       if (pageStack[pageStack.length - 1].route === me.route) {
@@ -202,19 +202,19 @@ export default {
       }
     }); //监听未读“聊天”
 
-    disp.on("em.xmpp.unreadspot", function () {
+    disp.on("em.unreadspot", function () {
       me.setData({
         unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
       });
     }); //监听未读加群“通知”数
 
-    disp.on("em.xmpp.invite.joingroup", function () {
+    disp.on("em.invite.joingroup", function () {
       me.setData({
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     });
-    disp.on("em.xmpp.subscribed", function () {
+    disp.on("em.subscribed", function () {
       var pageStack = getCurrentPages();
 
       if (pageStack[pageStack.length - 1].route === me.route) {

@@ -27,7 +27,7 @@ export default {
   onLoad(options) {
     var me = this; // 不需要 object 地址更新，就能刷
 
-    disp.on("em.xmpp.subscribe", function () {
+    disp.on("em.subscribe", function () {
       me.setData({
         friendList: getApp().globalData.saveFriendList
       });

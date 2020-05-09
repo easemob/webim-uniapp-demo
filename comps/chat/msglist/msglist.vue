@@ -5,7 +5,7 @@
 		<view scroll-y="true" :class="view + ' wrap ' + (isIPX?'scroll_view_X': '')" @tap="onTap" @scroll="scrollmore"
 		 @scrolltoupper="refresh" upper-threshold="-50" :scroll-into-view="toView">
 			<view class="message" v-for="(item, index) in chatMsg" :key="index" :id="item.mid">
-				<view class="main">
+				<view class="main" :class="item.style">
 					<view class="user">
 						<!-- yourname：就是消息的 from -->
 						<text class="user-text">{{ item.yourname + ' ' + item.time}}</text>
@@ -16,28 +16,14 @@
 
 						<image v-if="item.style == 'self'" src="/static/images/poprightarrow@2x.png" class="msg_poprightarrow"></image>
 						<image v-if="item.style == ''" src="/static/images/popleftarrow@2x.png" class="msg_popleftarrow"></image>
-						<view v-if="item.msg.type == 'img' || item.msg.type == 'video'">
+						<view>
 							<!-- 下行template对应的wxml不存在，无法替换，代码已注释 -->
 							<!-- <template :is="item.msg.type" :data="item"></template>-->
-              <text v-if="item.msg.type==='txt'" class="msg-text" style="float:left">{{ item.data }}</text>
+              <text v-if="item.msg.type==='txt'" class="msg-text" style="float:left">{{ item.msg.data }}</text>
               <image v-if="item.msg.type==='emoji'" class="avatar" :src="'../../../static/images/faces/' + item.data" style="width:25px height:25px margin:0 0 2px 0 float:left"></image>
               <image v-if="item.msg.type==='img'" class="avatar" :src="item.msg.data" style="width:90px height:120px margin:2px auto" mode="aspectFit" @tap="previewImage" :data-url="item.msg.data"></image>
               <video v-if="item.msg.type==='video'" :src="item.msg.data" controls autoplay></video>
               <audio v-if="item.msg.type==='audio'" :src="item.msg.url" controls autoplay></audio>
-
-						</view>
-						<audio-msg v-if="item.msg.type == 'audio'" :msg="item"></audio-msg>
-						<view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
-							<view class="template" v-for="(item, index2) in item.msg.data" :key="index2">
-								<!-- 下行template对应的wxml不存在，无法替换，代码已注释 -->
-								<!-- <template :is="item.type" :data="item"></template>-->
-                 <text v-if="item.msg.type==='txt'" class="msg-text" style="float:left">{{ item.data }}</text>
-                <image v-if="item.msg.type==='emoji'" class="avatar" :src="'../../../static/images/faces/' + item.data" style="width:25px height:25px margin:0 0 2px 0 float:left"></image>
-                <image v-if="item.msg.type==='img'" class="avatar" :src="item.msg.data" style="width:90px height:120px margin:2px auto" mode="aspectFit" @tap="previewImage" :data-url="item.msg.data"></image>
-                <video v-if="item.msg.type==='video'" :src="item.msg.data" controls autoplay></video>
-                <audio v-if="item.msg.type==='audio'" :src="item.msg.url" controls autoplay></audio>
-
-							</view>
 						</view>
 					</view>
 				</view>
@@ -46,23 +32,6 @@
 		<view style="height: 1px"></view>
 	</view>
 </template>
-<!-- 
-<template name="txt">
-	<text class="msg-text" style="float:left">{{ item.data }}</text>
-</template>
-<template name="emoji">
-	<image class="avatar" :src="'../../../static/images/faces/' + item.data" style="width:25px height:25px margin:0 0 2px 0 float:left"></image>
-</template>
-<template name="img">
-	<image class="avatar" :src="item.msg.data" style="width:90px height:120px margin:2px auto" mode="aspectFit" @tap="previewImage" :data-url="item.msg.data"></image>
-</template>
-<template name="video">
-	<video :src="item.msg.data" controls autoplay></video>
-</template>
-<template name="audio">
-	<audio :src="item.msg.url" controls autoplay></audio>
-</template>
--->
 
 
 <script>
@@ -127,10 +96,11 @@ export default {
     let myUsername = wx.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
     let chatMsg = wx.getStorageSync(sessionKey) || [];
+    console.log('chatMsg>>',chatMsg);
+    
     this.renderMsg(null, null, chatMsg, sessionKey);
     wx.setStorageSync(sessionKey, null);
-
-    disp.on('em.xmpp.error.sendMsgErr', function (err) {
+    disp.on('em.error.sendMsgErr', function (err) {
       curMsgMid = err.data.mid;
       isFail = true;
       return;

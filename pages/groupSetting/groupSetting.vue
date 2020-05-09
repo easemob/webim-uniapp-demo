@@ -70,7 +70,7 @@ export default {
       groupName: JSON.parse(options.groupInfo).groupName,
       currentName: JSON.parse(options.groupInfo).myName
     });
-    disp.on("em.xmpp.group.leaveGroup", function () {
+    disp.on("em.group.leaveGroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
 
       if (pageStack[pageStack.length - 1].route === me.route) {
@@ -190,7 +190,7 @@ export default {
               }), 2000);
             }
           });
-          disp.fire("em.xmpp.invite.deleteGroup"); //退群
+          disp.fire("em.invite.deleteGroup"); //退群
         },
         error: function (err) {
           wx.showToast({

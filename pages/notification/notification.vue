@@ -60,20 +60,20 @@ export default {
   onLoad(option) {
     let me = this; //监听加好友申请
 
-    disp.on("em.xmpp.subscribe", function () {
+    disp.on("em.subscribe", function () {
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     }); //监听未读消息数
 
-    disp.on("em.xmpp.unreadspot", function () {
+    disp.on("em.unreadspot", function () {
       me.setData({
         unReadSpotNum: getApp().globalData.unReadMessageNum
       });
     }); //监听加群通知数
 
-    disp.on("em.xmpp.invite.joingroup", function () {
+    disp.on("em.invite.joingroup", function () {
       me.setData({
         groupInviteNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length

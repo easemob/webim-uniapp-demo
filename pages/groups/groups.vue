@@ -75,14 +75,14 @@ export default {
   props: {},
   onLoad: function (option) {
     let me = this;
-    disp.on("em.xmpp.invite.joingroup", function () {
+    disp.on("em.invite.joingroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
 
       if (pageStack[pageStack.length - 1].route === me.route) {
         me.listGroups();
       }
     });
-    disp.on("em.xmpp.invite.deleteGroup", function () {
+    disp.on("em.invite.deleteGroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
 
       if (pageStack[pageStack.length - 1].route === me.route) {

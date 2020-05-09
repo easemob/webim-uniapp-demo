@@ -1,5 +1,5 @@
 // import websdk from "../sdk/connection";
-import websdk from "../newSDK/webimSDK3.0.10";
+import websdk from "../newSDK/webimSDK3.1.1";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
@@ -210,11 +210,7 @@ WebIM.conn = new WebIM.connection({
   heartBeatWait: WebIM.config.heartBeatWait,
   autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
   autoReconnectInterval: WebIM.config.autoReconnectInterval
-}); // async response
-// WebIM.conn.listen({
-//   onOpened: () => dispatch({type: Types.ON_OPEND})
-// })
-// export default WebIM;
+});
 
 module.exports = {
   "default": WebIM

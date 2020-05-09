@@ -51,7 +51,7 @@ function calcUnReadSpot(message) {
     return result + chatMsgs.length;
   }, 0);
   getApp().globalData.unReadMessageNum = count;
-  disp.fire("em.xmpp.unreadspot", message);
+  disp.fire("em.unreadspot", message);
 }
 
 export default {
@@ -213,13 +213,13 @@ export default {
 
       onInviteMessage(message) {
         me.globalData.saveGroupInvitedList.push(message);
-        disp.fire("em.xmpp.invite.joingroup", message); // wx.showModal({
+        disp.fire("em.invite.joingroup", message); // wx.showModal({
         // 	title: message.from + " 已邀你入群 " + message.roomid,
         // 	success(){
-        // 		disp.fire("em.xmpp.invite.joingroup", message);
+        // 		disp.fire("em.invite.joingroup", message);
         // 	},
         // 	error(){
-        // 		disp.fire("em.xmpp.invite.joingroup", message);
+        // 		disp.fire("em.invite.joingroup", message);
         // 	}
         // });
       },
@@ -231,23 +231,21 @@ export default {
         //console.log("onPresence", message);
         switch (message.type) {
           case "unsubscribe":
-            // pages[0].moveFriend(message);
             break;
           // 好友邀请列表
-
           case "subscribe":
             if (message.status === "[resp:true]") {} else {
               // pages[0].handleFriendMsg(message);
               for (let i = 0; i < me.globalData.saveFriendList.length; i++) {
                 if (me.globalData.saveFriendList[i].from === message.from) {
                   me.globalData.saveFriendList[i] = message;
-                  disp.fire("em.xmpp.subscribe");
+                  disp.fire("em.subscribe");
                   return;
                 }
               }
 
               me.globalData.saveFriendList.push(message);
-              disp.fire("em.xmpp.subscribe");
+              disp.fire("em.subscribe");
             }
 
             break;
@@ -257,7 +255,7 @@ export default {
               title: "添加成功",
               duration: 1000
             });
-            disp.fire("em.xmpp.subscribed");
+            disp.fire("em.subscribed");
             break;
 
           case "unsubscribed":
@@ -273,49 +271,23 @@ export default {
               duration: 1000
             });
             break;
-          // 好友列表
-          // case "subscribed":
-          // 	let newFriendList = [];
-          // 	for(let i = 0; i < me.globalData.saveFriendList.length; i++){
-          // 		if(me.globalData.saveFriendList[i].from != message.from){
-          // 			newFriendList.push(me.globalData.saveFriendList[i]);
-          // 		}
-          // 	}
-          // 	me.globalData.saveFriendList = newFriendList;
-          // 	break;
-          // 删除好友
 
           case "unavailable":
-            disp.fire("em.xmpp.contacts.remove");
-            disp.fire("em.xmpp.group.leaveGroup", message);
+            disp.fire("em.contacts.remove");
+            disp.fire("em.group.leaveGroup", message);
             break;
 
           case 'deleteGroupChat':
-            disp.fire("em.xmpp.invite.deleteGroup", message);
+            disp.fire("em.invite.deleteGroup", message);
             break;
 
           case "leaveGroup":
-            disp.fire("em.xmpp.group.leaveGroup", message);
+            disp.fire("em.group.leaveGroup", message);
             break;
 
           case "removedFromGroup":
-            disp.fire("em.xmpp.group.leaveGroup", message);
+            disp.fire("em.group.leaveGroup", message);
             break;
-          // case "joinChatRoomSuccess":
-          // 	wx.showToast({
-          // 		title: "JoinChatRoomSuccess",
-          // 	});
-          // 	break;
-          // case "memberJoinChatRoomSuccess":
-          // 	wx.showToast({
-          // 		title: "memberJoinChatRoomSuccess",
-          // 	});
-          // 	break;
-          // case "memberLeaveChatRoomSuccess":
-          // 	wx.showToast({
-          // 		title: "leaveChatRoomSuccess",
-          // 	});
-          // 	break;
 
           default:
             break;
@@ -456,7 +428,7 @@ export default {
 
         if (error.type == WebIM.statusCode.WEBIM_CONNCTION_OPEN_ERROR) {
           wx.hideLoading();
-          disp.fire("em.xmpp.error.passwordErr"); // wx.showModal({
+          disp.fire("em.error.passwordErr"); // wx.showModal({
           // 	title: "用户名或密码错误",
           // 	confirmText: "OK",
           // 	showCancel: false
@@ -465,7 +437,7 @@ export default {
 
         if (error.type == WebIM.statusCode.WEBIM_CONNCTION_AUTH_ERROR) {
           wx.hideLoading();
-          disp.fire("em.xmpp.error.tokenErr");
+          disp.fire("em.error.tokenErr");
         }
 
         if (error.type == 'socket_error') {
@@ -476,7 +448,7 @@ export default {
             icon: 'none',
             duration: 2000
           });
-          disp.fire("em.xmpp.error.sendMsgErr", error);
+          disp.fire("em.error.sendMsgErr", error);
         }
       }
 

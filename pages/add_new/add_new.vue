@@ -114,8 +114,6 @@ export default {
     add_friend: function () {
       let me = this;
       let myName = wx.getStorageSync("myUsername");
-      console.log(me.friend_name);
-
       if (me.friend_name == "" || me.friend_name.toLowerCase() == myName.toLowerCase()) {
         me.toastFilled('添加失败');
         return;
@@ -124,7 +122,7 @@ export default {
       WebIM.conn.subscribe({
         to: me.friend_name,
         message: myName + '请求添加好友'
-      }); // 判断当前是否存在该好友
+      });
 
       let rosters = {
         success: function (roster) {
@@ -145,7 +143,7 @@ export default {
 
           me.setData({
             isdisable: true
-          }); // console.log(member)
+          });
         }
       };
       WebIM.conn.getRoster(rosters);

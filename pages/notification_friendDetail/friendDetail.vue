@@ -44,7 +44,7 @@ export default {
   onLoad(options) {
     var me = this; // 不需要 object 地址更新，就能刷
 
-    disp.on("em.xmpp.subscribe", function () {
+    disp.on("em.subscribe", function () {
       me.setData({
         friendList: getApp().globalData.saveFriendList
       });
@@ -110,12 +110,7 @@ export default {
       WebIM.conn.subscribed({
         to: event.currentTarget.dataset.from,
         message: "[resp:true]"
-      }); // 需要反向添加对方好友（无回调）
-      // WebIM.conn.subscribe({
-      // 	to: event.currentTarget.dataset.from,
-      // 	message: "[resp:true]",
-      // });
-
+      }); 
       this.friendList.forEach(item => {
         if (item.from == event.currentTarget.dataset.from) {
           item.type = 'subscribed';

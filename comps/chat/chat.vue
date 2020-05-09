@@ -1,12 +1,28 @@
 <template>
-<view>
-<view class="main">
-	<chat-suit-audio id="chat-suit-audio" :username="username" :chatType="chatType" @newAudioMsg="saveSendMsg"></chat-suit-audio>
+  <view>
+    <view class="main">
+      <chatSuitAudio
+        ref="chatSuitAudio"
+        :username="username"
+        :chatType="chatType"
+        @newAudioMsg="saveSendMsg"
+      ></chatSuitAudio>
 
-	<chat-msglist id="chat-msglist" :username="username" @msglistTap="normalScroll"></chat-msglist>
-</view>
-	<chat-inputbar id="chat-inputbar" :username="username" :chatType="chatType" @newTextMsg="saveSendMsg" @newImageMsg="saveSendMsg" @newLocationMsg="saveSendMsg" @newVideoMsg="saveSendMsg" @tapSendAudio="toggleRecordModal" @inputFocused="shortScroll" @inputBlured="normalScroll"></chat-inputbar>
-</view>
+      <chatMsglist ref="chatMsglist" :username="username" @msglistTap="normalScroll"></chatMsglist>
+    </view>
+    <chatInputbar
+      ref="chatInputbar"
+      :username="username"
+      :chatType="chatType"
+      @newTextMsg="saveSendMsg"
+      @newImageMsg="saveSendMsg"
+      @newLocationMsg="saveSendMsg"
+      @newVideoMsg="saveSendMsg"
+      @tapSendAudio="toggleRecordModal"
+      @inputFocused="shortScroll"
+      @inputBlured="normalScroll"
+    ></chatInputbar>
+  </view>
 </template>
 
 <script>
@@ -49,9 +65,9 @@ export default {
   beforeMount() {},
 
   mounted() {
-    this.$data.__comps__.inputbar = this.selectComponent("#chat-inputbar");
-    this.$data.__comps__.msglist = this.selectComponent("#chat-msglist");
-    this.$data.__comps__.audio = this.selectComponent("#chat-suit-audio");
+    // this.$data.__comps__.inputbar = this.selectComponent("#chat-inputbar");
+    // this.$data.__comps__.msglist = this.selectComponent("#chat-msglist");
+    // this.$data.__comps__.audio = this.selectComponent("#chat-suit-audio");
   },
 
   moved() {},
@@ -60,29 +76,35 @@ export default {
 
   methods: {
     toggleRecordModal() {
-      this.$data.__comps__.audio.toggleRecordModal();
+      // this.$data.__comps__.audio.toggleRecordModal();
+      this.$refs.chatSuitAudio.toggleRecordModal();
     },
 
     normalScroll() {
-      this.$data.__comps__.msglist.normalScroll();
+      // this.$data.__comps__.msglist.normalScroll();
 
-      this.$data.__comps__.inputbar.cancelEmoji();
+      // this.$data.__comps__.inputbar.cancelEmoji();
+
+      this.$refs.chatMsglist.normalScroll();
+      this.$refs.chatInputbar.cancelEmoji();
     },
 
     shortScroll() {
-      this.$data.__comps__.msglist.shortScroll();
+      // this.$data.__comps__.msglist.shortScroll();
+
+      this.$refs.chatMsglist.shortScroll();
     },
 
     saveSendMsg(evt) {
       msgStorage.saveMsg(evt.detail.msg, evt.detail.type);
 
-      this.$data.__comps__.inputbar.cancelEmoji();
+      // this.$data.__comps__.inputbar.cancelEmoji();
+      this.$refs.chatInputbar.cancelEmoji();
     },
 
     getMore() {
-      this.selectComponent('#chat-msglist').getHistoryMsg();
+      this.selectComponent("#chat-msglist").getHistoryMsg();
     }
-
   }
 };
 </script>
