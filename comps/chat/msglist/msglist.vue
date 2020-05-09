@@ -244,7 +244,7 @@ export default {
       });
       wx.setStorageSync(sessionKey, chatMsg);
       Index = historyChatMsgs.slice(-10).length;
-      wx.pageScrollTo({
+      uni.pageScrollTo({
         scrollTop: 9999
       });
 

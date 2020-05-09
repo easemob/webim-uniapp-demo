@@ -7,14 +7,13 @@
 }*/
 .scroll_view,
 .scroll_view_change {
-	/*width: 100%;
+	width: 100%;
 	position: absolute;
 	left: 0;
-	top: 0;
 	right: 0;
-	bottom: 150rpx;*/
-	margin-bottom: 174rpx;
-	background-color: #FAFAFA;
+	bottom: 170rpx;
+	/* margin-bottom: 174rpx; */
+	/* background-color: #FAFAFA; */
 }
 
 .scroll_view_X,
