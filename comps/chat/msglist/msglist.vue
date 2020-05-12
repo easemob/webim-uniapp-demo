@@ -1,6 +1,5 @@
 
 <template>
-	<view>
 		<!-- view 换成 scroll-view效果更好 用view是为了要stopPullDownRefresh -->
 		<view scroll-y="true" :class="view + ' wrap ' + (isIPX?'scroll_view_X': '')" @tap="onTap" @scroll="scrollmore"
 		 @scrolltoupper="refresh" upper-threshold="-50" :scroll-into-view="toView">
@@ -29,8 +28,6 @@
 				</view>
 			</view>
 		</view>
-		<view style="height: 1px"></view>
-	</view>
 </template>
 
 

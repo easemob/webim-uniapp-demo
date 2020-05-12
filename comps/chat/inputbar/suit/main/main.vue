@@ -5,9 +5,9 @@
     <input
       class="f news"
       type="text"
-      :value="inputMessage"
       cursor-spacing="65"
       confirm-type="send"
+      v-model="changeValue"
       @confirm="sendMessage"
       @input="bindMessage"
       @tap="focus"
@@ -32,7 +32,8 @@ export default {
     return {
       inputMessage: "",
       // render input 的值
-      userMessage: "" // input 的实时值
+      userMessage: "", // input 的实时值
+      changeValue: ""
     };
   },
 
@@ -65,7 +66,6 @@ export default {
         bubbles: true
       });
     },
-
     blur() {
       this.$emit("inputBlured", null, {
         bubbles: true
@@ -129,6 +129,7 @@ export default {
         chatType: this.chatType,
         success(id, serverMsgId) {
           console.log("成功了");
+          me.changeValue=""
           disp.fire("em.chat.sendSuccess", id, me.userMessage);
         },
         fail(id, serverMsgId) {
@@ -140,14 +141,10 @@ export default {
       }
       WebIM.conn.send(msg.body);
       let obj = {
-          msg: msg,
-          type: msgType.TEXT
-        }
-      this.saveSendMsg(obj)
-      this.setData({
-        userMessage: "",
-        inputMessage: ""
-      });
+        msg: msg,
+        type: msgType.TEXT
+      };
+      this.saveSendMsg(obj);
     },
     saveSendMsg(evt) {
       msgStorage.saveMsg(evt.msg, evt.type);
