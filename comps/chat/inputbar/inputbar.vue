@@ -13,12 +13,12 @@
 		<!-- <view class="v-record" @tap="toggleRecordModal">
 			<image class="icon-record" :src="recordStatus != RecordStatus.HIDE ? '../../../static/images/iconAudioActive@2x.png' : '../../../static/images/voice.png'" style="width:16px height: 24px"></image>
 		</view> -->
-		<view class="open_camera" @tap="openCamera">
+		<!-- <view class="open_camera" @tap="openCamera">
 			<image src="/static/images/camora.png" style="width:24px height: 18px"></image>
 		</view>
 		<view class="send_image" @tap="sendImage">
 			<image src="/static/images/pic.png" style="height:20px width: 20px"></image>
-		</view>
+		</view> -->
 		<!-- <view class="send_image" bind:tap="sendLocation">
 			<image src="../../../static/images/iconLocation@2x.png" style="height:18px;"/>
 		</view> -->
