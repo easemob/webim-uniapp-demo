@@ -8,7 +8,7 @@
         @newAudioMsg="saveSendMsg"
       ></chatSuitAudio>
 
-      <chatMsglist ref="chatMsglist" :username="username" @msglistTap="normalScroll"></chatMsglist>
+      <chatMsglist ref="chatMsglist" :username="username" @msglistTap="normalScroll" id="chat-msglist"></chatMsglist>
     </view>
     <chatInputbar
       ref="chatInputbar"
@@ -103,7 +103,7 @@ export default {
     },
 
     getMore() {
-      this.selectComponent("#chat-msglist").getHistoryMsg();
+      this.selectComponent("#chat-msglist").$vm.getHistoryMsg()
     }
   }
 };

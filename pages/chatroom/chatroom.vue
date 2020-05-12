@@ -37,8 +37,8 @@ export default {
 
   onPullDownRefresh: function () {
     wx.showNavigationBarLoading();
-    this.selectComponent('#chat').getMore(); // 停止下拉动作
-
+    this.selectComponent('#chat').$vm.getMore()
+    // 停止下拉动作
     wx.hideNavigationBarLoading();
     wx.stopPullDownRefresh();
   },
