@@ -180,7 +180,7 @@ export default {
           owner: this.owner
         },
         success: function (respData) {
-          wx.showToast({
+          uni.showToast({
             title: "添加成功",
             duration: 2000,
             success: function (res) {
@@ -191,7 +191,7 @@ export default {
           });
         },
         error: function (err) {
-          wx.showToast({
+          uni.showToast({
             title: err.data.error_description
           });
         }

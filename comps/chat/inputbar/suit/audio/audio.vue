@@ -4,7 +4,7 @@
 
 		<view class="sound-waves">
 		  	<view v-for="(item, index) in radomheight" :key="index" :style="'height:' + item + 'rpx;margin-top:-' + (item/2) + 'rpx'"></view>
-		  	<view style="clear:bothwidth:0height:0"></view>
+		  	<view style="clear:both;width:0;height:0"></view>
 		</view>
 		<text class="desc">{{ RecordDesc[recordStatus] }}</text>
 		<button class="dot" @touchstart="handleRecording" @touchmove="handleRecordingMove" @touchend="handleRecordingCancel">
@@ -21,6 +21,7 @@ let RECORD_CONST = require("./record_status");
 let RecordStatus = RECORD_CONST.RecordStatus;
 let RecordDesc = RECORD_CONST.RecordDesc;
 let disp = require("../../../../../utils/broadcast");
+let msgStorage = require("../../../msgstorage");
 let RunAnimation = false;
 const InitHeight = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
 
@@ -121,12 +122,12 @@ export default {
                   let recordAuth = res.authSetting['scope.record'];
 
                   if (recordAuth == true) {
-                    wx.showToast({
+                    uni.showToast({
                       title: "授权成功",
                       icon: "success"
                     });
                   } else {
-                    wx.showToast({
+                    uni.showToast({
                       title: "请授权录音",
                       icon: "none"
                     });
@@ -146,7 +147,7 @@ export default {
                 scope: 'scope.record',
                 success: () => {
                   //授权成功
-                  wx.showToast({
+                  uni.showToast({
                     title: "授权成功",
                     icon: "success"
                   });
@@ -155,7 +156,7 @@ export default {
             }
           },
           fail: function () {
-            wx.showToast({
+            uni.showToast({
               title: "鉴权失败，请重试",
               icon: "none"
             });
@@ -210,7 +211,7 @@ export default {
         }
 
         if (res.duration < 1000) {
-          wx.showToast({
+          uni.showToast({
             title: "录音时间太短",
             icon: "none"
           });
@@ -277,16 +278,17 @@ export default {
           msg.body.length = Math.ceil(dur / 1000); //console.log('发送的语音消息', msg.body)
 
           WebIM.conn.send(msg.body);
-          me.$emit("newAudioMsg", {
-            msg: msg,
-            type: msgType.AUDIO
-          }, {
-            bubbles: true,
-            composed: true
-          });
+                let obj = {
+                  msg: msg,
+                  type: msgType.IMAGE
+                }
+                me.saveSendMsg(obj);
         }
 
       });
+    },
+    saveSendMsg(evt) {
+      msgStorage.saveMsg(evt.msg, evt.type);
     },
 
     myradom() {

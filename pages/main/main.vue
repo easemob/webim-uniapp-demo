@@ -186,7 +186,6 @@ export default {
     const me = this;
     const app = getApp().globalData; 
     //监听加好友申请
-		// new app.ToastPannel.ToastPannel();
 
     disp.on("em.subscribe", function () {
       me.setData({
@@ -349,24 +348,15 @@ export default {
           if (res.confirm == true) {
             WebIM.conn.removeRoster({
               to: delName,
-              success: function () {
-                WebIM.conn.unsubscribed({
-                  to: delName
-                }); // wx.showToast({
-                // 	title: "删除成功",
-                // });
-
-                me.toastSuccess('删除成功'); // 删除好友后 同时清空会话
-
-                wx.setStorageSync(delName + myName, "");
-                wx.setStorageSync("rendered_" + delName + myName, "");
-                me.getRoster();
-                disp.fire('em.main.deleteFriend');
-              },
-              error: function (error) {
-                me.toastSuccess('删除失败');
-              }
             });
+            uni.showToast({
+                	title: "删除成功",
+                });
+					// 删除好友后 同时清空会话
+					wx.setStorageSync(delName + myName, "");
+					wx.setStorageSync("rendered_" + delName + myName, "");
+					me.getRoster();
+					disp.fire('em.main.deleteFriend')
           }
         }
 

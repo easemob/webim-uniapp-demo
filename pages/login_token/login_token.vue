@@ -64,9 +64,8 @@ export default {
   onLoad: function () {
     const me = this;
     let app = getApp().globalData;
-		// new app.ToastPannel.ToastPannel();
     disp.on("em.error.tokenErr", function () {
-      me.toastFilled('token错误、token过期或者未授权');
+      uni.showToast({title: "token错误、token过期或者未授权",icon:'none'});
     });
   },
   methods: {
@@ -102,10 +101,10 @@ export default {
     },
     login: function () {
       if (!__test_account__ && this.name == "") {
-        this.toastFilled('请输入用户名！');
+        uni.showToast({title: "请输入用户名！",icon:'none'});
         return;
       } else if (!__test_account__ && this.psd == "") {
-        this.toastFilled('请输入token！');
+        uni.showToast({title: "请输入token！",icon:'none'});
         return;
       }
 

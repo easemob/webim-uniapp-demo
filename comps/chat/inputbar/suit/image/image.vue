@@ -5,7 +5,7 @@
 let WebIM = require("../../../../../utils/WebIM")["default"];
 let msgType = require("../../../msgtype");
 let disp = require("../../../../../utils/broadcast");
-
+let msgStorage = require("../../../msgstorage");
 export default {
   data() {
     return {};
@@ -93,7 +93,8 @@ export default {
                 var data = res.data;
                 var dataObj = JSON.parse(data);
                 var id = WebIM.conn.getUniqueId(); // 生成本地消息 id
-
+                console.log('dataObj>>',dataObj);
+                
                 var msg = new WebIM.message(msgType.IMAGE, id);
                 var file = {
                   type: msgType.IMAGE,
@@ -122,20 +123,19 @@ export default {
                 }
 
                 WebIM.conn.send(msg.body);
-                me.$emit("newImageMsg", {
+                let obj = {
                   msg: msg,
                   type: msgType.IMAGE
-                }, {
-                  bubbles: true,
-                  composed: true
-                });
+                }
+                me.saveSendMsg(obj);
               }
-
             });
           }
         }
-
       });
+    },
+    saveSendMsg(evt) {
+      msgStorage.saveMsg(evt.msg, evt.type);
     }
 
   }

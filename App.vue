@@ -3,7 +3,6 @@
 let WebIM = require("./utils/WebIM")["default"];
 let msgStorage = require("./comps/chat/msgstorage");
 let msgType = require("./comps/chat/msgtype");
-let ToastPannel = require("./comps/toast/toast");
 let disp = require("./utils/broadcast");
 let logout = false;
 function ack(receiveMsg) {
@@ -19,7 +18,7 @@ function ack(receiveMsg) {
 }
 function onMessageError(err) {
   if (err.type === "error") {
-    wx.showToast({
+    uni.showToast({
       title: err.errorText
     });
     return false;
@@ -56,7 +55,6 @@ function calcUnReadSpot(message) {
 
 export default {
   globalData: {
-    ToastPannel,
     unReadMessageNum: 0,
     userInfo: null,
     saveFriendList: [],
@@ -185,21 +183,21 @@ export default {
       },
 
       onReconnect() {
-        wx.showToast({
+        uni.showToast({
           title: "重连中...",
           duration: 2000
         });
       },
 
       onSocketConnected() {
-        wx.showToast({
+        uni.showToast({
           title: "socket连接成功",
           duration: 2000
         });
       },
 
       onClosed() {
-        wx.showToast({
+        uni.showToast({
           title: "网络已断开",
           icon: 'none',
           duration: 2000
@@ -251,7 +249,7 @@ export default {
             break;
 
           case "subscribed":
-            wx.showToast({
+            uni.showToast({
               title: "添加成功",
               duration: 1000
             });
@@ -259,14 +257,14 @@ export default {
             break;
 
           case "unsubscribed":
-            // wx.showToast({
+            // uni.showToast({
             // 	title: "已拒绝",
             // 	duration: 1000
             // });
             break;
 
           case "memberJoinPublicGroupSuccess":
-            wx.showToast({
+            uni.showToast({
               title: "已进群",
               duration: 1000
             });
@@ -404,7 +402,7 @@ export default {
           // if(WebIM.conn.autoReconnectNumTotal < WebIM.conn.autoReconnectNumMax){
           // 	return;
           // }
-          wx.showToast({
+          uni.showToast({
             title: "server-side close the websocket connection",
             duration: 1000
           });
@@ -417,7 +415,7 @@ export default {
 
 
         if (error.type == WebIM.statusCode.WEBIM_CONNCTION_SERVER_ERROR) {
-          wx.showToast({
+          uni.showToast({
             title: "offline by multi login",
             duration: 1000
           });
@@ -443,7 +441,7 @@ export default {
         if (error.type == 'socket_error') {
           ///sendMsgError
           console.log('socket_errorsocket_error', error);
-          wx.showToast({
+          uni.showToast({
             title: "网络已断开",
             icon: 'none',
             duration: 2000

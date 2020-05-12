@@ -4,7 +4,7 @@
 <script>
 let WebIM = require("../../../../../utils/WebIM")["default"];
 let msgType = require("../../../msgtype");
-
+let msgStorage = require("../../../msgstorage");
 export default {
   data() {
     return {};
@@ -36,7 +36,7 @@ export default {
         scope: "scope.userLocation",
 
         fail() {
-          wx.showToast({
+          uni.showToast({
             title: "已拒绝",
             icon: "none"
           });
@@ -75,19 +75,20 @@ export default {
               }
 
               WebIM.conn.send(msg.body);
-              me.$emit("newLocationMsg", {
-                msg: msg,
-                type: msgType.LOCATION
-              }, {
-                bubbles: true,
-                composed: true
-              });
+                let obj = {
+                  msg: msg,
+                  type: msgType.IMAGE
+                }
+              me.saveSendMsg(obj);
             }
 
           });
         }
 
       });
+    },
+    saveSendMsg(evt) {
+      msgStorage.saveMsg(evt.msg, evt.type);
     }
 
   }

@@ -14,7 +14,7 @@
       @focus="focus"
       @blur="blur"
       placeholder="输入新消息"
-      placeholder-style="color:#CFCFCF padding-left:5px"
+      placeholder-style="color:#CFCFCF ;padding-left:5px"
     />
 
     <!-- 	</view> -->

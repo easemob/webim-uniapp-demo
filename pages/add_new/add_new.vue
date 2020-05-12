@@ -74,7 +74,6 @@ export default {
   props: {},
   onLoad: function () {
     let app = getApp().globalData;
-		// new app.ToastPannel.ToastPannel();
   },
   methods: {
     openSearch: function () {
@@ -115,7 +114,7 @@ export default {
       let me = this;
       let myName = wx.getStorageSync("myUsername");
       if (me.friend_name == "" || me.friend_name.toLowerCase() == myName.toLowerCase()) {
-        me.toastFilled('添加失败');
+        uni.showToast({title: "删除成功"});
         return;
       }
 
@@ -136,9 +135,13 @@ export default {
           }
 
           if (me.isExistFriend(me.friend_name, member)) {
-            me.toastFilled('已经是你的好友');
+            uni.showToast({
+                	title: "已经是你的好友",
+                });
           } else {
-            me.toastSuccess('已经发出好友申请');
+             uni.showToast({
+                	title: "已经发出好友申请",
+                });
           }
 
           me.setData({

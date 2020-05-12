@@ -112,7 +112,7 @@ export default {
     };
 
     this.onWait = () => {
-      wx.showToast({
+      uni.showToast({
         title: "下载中...",
         duration: 1000
       });
@@ -144,7 +144,7 @@ export default {
 
         fail(e) {
           console.log("downloadFile failed", e);
-          wx.showToast({
+          uni.showToast({
             title: "下载失败",
             duration: 1000
           });

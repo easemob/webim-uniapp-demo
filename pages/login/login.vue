@@ -68,10 +68,9 @@ export default {
   onLoad: function () {
     const me = this;
     const app = getApp().globalData;
-    // new app.ToastPannel.ToastPannel();
     
     disp.on("em.error.passwordErr", function () {
-      me.toastFilled('用户名或密码错误');
+      uni.showToast({title: "用户名或密码错误",icon:'none'});
     });
   },
   methods: {
@@ -109,10 +108,10 @@ export default {
       runAnimation = !runAnimation;
 
       if (!__test_account__ && this.name == "") {
-        this.toastFilled('请输入用户名！');
+        uni.showToast({title: "请输入用户名！",icon:'none'});
         return;
       } else if (!__test_account__ && this.psd == "") {
-        this.toastFilled('请输入密码！');
+        uni.showToast({title: "请输入密码！",icon:'none'});
         return;
       }
 

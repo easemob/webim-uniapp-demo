@@ -72,7 +72,7 @@ export default {
       WebIM.conn.subscribe({
         to: event.currentTarget.dataset.from,
         message: "[resp:true]"
-      }); // wx.showToast({
+      }); // uni.showToast({
       // 	title: "OK",
       // 	duration: 1000
       // });
@@ -89,7 +89,7 @@ export default {
         to: event.currentTarget.dataset.from,
         message: "rejectAddFriend"
       });
-      wx.showToast({
+      uni.showToast({
         title: "已拒绝",
         duration: 1000
       });

@@ -144,12 +144,12 @@ export default {
         roomId: this.roomId,
         success: function () {
           if (me.isExistGroup(me.addFriendName, me.groupMember)) {
-            wx.showToast({
+            uni.showToast({
               title: "已在群中",
               duration: 2000
             });
           } else {
-            wx.showToast({
+            uni.showToast({
               title: "邀请已发出",
               duration: 2000
             });
@@ -158,7 +158,7 @@ export default {
           me.getGroupMember();
         },
         error: function (err) {
-          wx.showToast({
+          uni.showToast({
             title: err.data.error_description
           });
         }
@@ -180,7 +180,7 @@ export default {
         to: this.currentName,
         roomId: this.roomId,
         success: function () {
-          wx.showToast({
+          uni.showToast({
             title: "已退",
             duration: 2000,
             success: function (res) {
@@ -193,7 +193,7 @@ export default {
           disp.fire("em.invite.deleteGroup"); //退群
         },
         error: function (err) {
-          wx.showToast({
+          uni.showToast({
             title: err.data.error_description
           });
         }
@@ -205,7 +205,7 @@ export default {
       WebIM.conn.dissolveGroup({
         groupId: this.roomId,
         success: function () {
-          wx.showToast({
+          uni.showToast({
             title: "已解散",
             duration: 2000,
             success: function (res) {
@@ -217,7 +217,7 @@ export default {
           });
         },
         error: function (err) {
-          wx.showToast({
+          uni.showToast({
             title: err.data.error_description
           });
         }

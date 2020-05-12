@@ -58,7 +58,6 @@ export default {
   props: {},
   onLoad: function () {
     let app = getApp().globalData;
-		// new app.ToastPannel.ToastPannel();
   },
   methods: {
     bindUsername: function (e) {
@@ -95,9 +94,9 @@ export default {
       const that = this;
 
       if (that.username == "") {
-        return this.toastFilled('请输入用户名！');
+        return uni.showToast({title: "请输入用户名！",icon:'none'});
       } else if (that.password == "") {
-        return this.toastFilled('请输入密码！');
+        return uni.showToast({title: "请输入密码！",icon:'none'});
       } else {
         var options = {
           apiUrl: WebIM.config.apiURL,
@@ -107,7 +106,7 @@ export default {
           appKey: WebIM.config.appkey,
           success: function (res) {
             console.log('res', res);
-            that.toastSuccess('注册成功');
+            uni.showToast({title: "注册成功"});
             var data = {
               apiUrl: WebIM.config.apiURL,
               user: that.username.toLowerCase(),
@@ -125,10 +124,10 @@ export default {
 
             if (res.statusCode !== "200") {
               if (res.statusCode == '400' && res.data.error == 'illegal_argument') {
-                return that.toastFilled('用户名非法!');
+                return uni.showToast({title: "用户名非法",icon:'none'});
               }
 
-              that.toastFilled('用户名已被占用!');
+              uni.showToast({title: "用户名已被占用",icon:'none'});
             }
           }
         };
