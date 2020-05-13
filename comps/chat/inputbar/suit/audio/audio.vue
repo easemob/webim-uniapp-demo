@@ -280,7 +280,7 @@ export default {
           WebIM.conn.send(msg.body);
                 let obj = {
                   msg: msg,
-                  type: msgType.IMAGE
+                  type: msgType.AUDIO
                 }
                 me.saveSendMsg(obj);
         }

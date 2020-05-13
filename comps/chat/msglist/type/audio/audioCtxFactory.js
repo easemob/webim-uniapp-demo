@@ -36,7 +36,7 @@ module.exports = {
     let returnCtx = allCtx[mid];
 
     if (!returnCtx) {
-      returnCtx = wx.createInnerAudioContext();
+      returnCtx = uni.createInnerAudioContext();
       allCtx[mid] = returnCtx;
       proxier(returnCtx);
     }
@@ -45,7 +45,7 @@ module.exports = {
   },
 
   getAllCtx() {
-    wx.setStorageSync("allCtx", JSON.stringify(Object.keys(allCtx)));
+    uni.setStorageSync("allCtx", JSON.stringify(Object.keys(allCtx)));
     return allCtx;
   },
 

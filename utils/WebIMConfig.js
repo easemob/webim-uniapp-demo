@@ -13,7 +13,7 @@ let config = {
   /*
    * XMPP server
    */
-  xmppURL: "wss://im-api-new-hsb.easemob.com/websocket",
+  xmppURL: "wss://im-api-wechat.easemob.com/websocket",
   // xmppURL: '172.17.3.122:5280',
 
   /*
@@ -21,7 +21,7 @@ let config = {
    */
   // apiURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//a1.easemob.com',
   // ios must be https!!! by lwz
-  apiURL: "https://a1-hsb.easemob.com",
+  apiURL: "https://a1.easemob.com",
   // apiURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//172.17.3.155:8080',
 
   /*

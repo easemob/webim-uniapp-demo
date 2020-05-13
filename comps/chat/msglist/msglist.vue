@@ -22,7 +22,7 @@
               <image v-if="item.msg.type==='emoji'" class="avatar" :src="'../../../static/images/faces/' + item.data" style="width:25px;height:25px;margin:0 0 2px 0;float:left"></image>
               <image v-if="item.msg.type==='img'" class="avatar" :src="item.msg.data" style="width:90px;height:120px;margin:2px auto" mode="aspectFit" @tap="previewImage" :data-url="item.msg.data"></image>
               <video v-if="item.msg.type==='video'" :src="item.msg.data" controls autoplay></video>
-              <audio v-if="item.msg.type==='audio'" :src="item.msg.url" controls autoplay></audio>
+              <audioMsg v-if="item.msg.type == 'audio'" :msg="item"></audioMsg>
 						</view>
 					</view>
 				</view>

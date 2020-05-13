@@ -19,7 +19,7 @@
 	</view> -->
 <view>
 	<!-- 左侧列表内容部分 -->
-	<scroll-view :class="'content ' + (gotop? (isIPX? 'goTopX': 'goTop'): 'goback')" enable-back-to-top :scroll-into-view="toView" scroll-y="true" scroll-with-animation="true" @scroll="onPageScroll" :style="'padding-bottom: ' + (isIPX?'270rpx':'226rpx')"> 
+	<scroll-view :class="'content ' + (gotop? (isIPX? 'goTopX': 'goTop'): 'goback')" enable-back-to-top :scroll-into-view="toView" scroll-y="true" scroll-with-animation="true" :style="'padding-bottom: ' + (isIPX?'270rpx':'226rpx')"> 
 		<!-- search -->
 		<view class="search" v-if="search_btn">
 			<view @tap="openSearch">
@@ -73,10 +73,6 @@
 	        </view> 
 	    </view> 
 	  </scroll-view> 
-	  <!-- 顶部固定分类 -->
-	  <view :class="'list-fixed ' + (fixedTitle=='' ? 'hide':'') + ' ' + (gotop? 'fixedTitleTop': '')" v-if="showFixedTitile" :style="'transform:translate3d(0,' + fixedTop + 'px,0);'">
-		    <view class="fixed-title">{{fixedTitle}}</view>
-	  </view>
 	  <!-- 右侧字母导航 -->
 	  <view class="orientation_region"> 
 	   <!--  <view class="orientation">#</view> --> 
@@ -164,7 +160,6 @@ export default {
       isActive: null,
       listMain: [],
       listTitles: [],
-      fixedTitle: null,
       toView: 'inToView0',
       oHeight: [],
       scroolHeight: 0,
@@ -476,33 +471,7 @@ export default {
         }
       }
     },
-    // 页面滑动时触发
-    onPageScroll: function (e) {
-      if (e.detail) {
-        // this.setData({
-        //   scroolHeight: e.detail.scrollTop
-        // });
-        if (e.detail.scrollTop > 149) {
-          this.setData({
-            showFixedTitile: true
-          });
-        } else {
-          this.setData({
-            showFixedTitile: false
-          });
-        }
 
-        for (let i in oHeight) {
-          if (e.detail.scrollTop - 149 < oHeight[i].height) {
-            this.setData({
-              isActive: oHeight[i].key,
-              fixedTitle: oHeight[i].name
-            });
-            return false;
-          }
-        }
-      }
-    },
     // 处理数据格式，及获取分组高度
     getBrands: function (member) {
       const that = this;
@@ -582,7 +551,6 @@ export default {
 
       that.setData({
         isActive: someArr.length > 0 ? someArr[0].id : '',
-        fixedTitle: someArr.length > 0 ? someArr[0].region : ''
       }); //计算分组高度,wx.createSelectotQuery()获取节点信息
 
       let number = 0;

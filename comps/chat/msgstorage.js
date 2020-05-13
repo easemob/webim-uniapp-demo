@@ -132,27 +132,7 @@ msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
 
   if (type == msgType.AUDIO) {
     renderableMsg.msg.token = sendableMsg.accessToken; //如果是音频则请求服务器转码
-    // wx.downloadFile({
-    // 	url: sendableMsg.body.body.url,
-    // 	header: {
-    // 		"X-Requested-With": "XMLHttpRequest",
-    // 		Accept: "audio/mp3",
-    // 		Authorization: "Bearer " + sendableMsg.accessToken
-    // 	},
-    // 	success(res){
-    // 		// wx.playVoice({
-    // 		// 	filePath: res.tempFilePath
-    // 		// });
-    // 		renderableMsg.msg.url = res.tempFilePath;
-    // 		save();
-    // 	},
-    // 	fail(e){
-    // 		console.log("downloadFile failed", e);
-    // 	}
-    // });
-  } // else{
-  // 	save();
-  // }
+  } 
 
 
   save();

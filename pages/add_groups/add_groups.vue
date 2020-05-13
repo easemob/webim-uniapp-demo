@@ -192,7 +192,8 @@ export default {
         },
         error: function (err) {
           uni.showToast({
-            title: err.data.error_description
+            title: err.data.error_description,
+            icon:'none'
           });
         }
       };

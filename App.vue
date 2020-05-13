@@ -44,7 +44,7 @@ function calcUnReadSpot(message) {
     if (curMember.groupid) {
       chatMsgs = wx.getStorageSync(curMember.roomId + myName.toLowerCase()) || [];
     } else {
-      chatMsgs = wx.getStorageSync(curMember.name.toLowerCase() + myName.toLowerCase()) || [];
+      chatMsgs = wx.getStorageSync(curMember.name&& (curMember.name.toLowerCase() + myName.toLowerCase())) || [];
     }
 
     return result + chatMsgs.length;

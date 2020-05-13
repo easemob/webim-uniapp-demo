@@ -94,41 +94,40 @@ export default {
         pageNum: pageNum,
         pageSize: pageSize,
         groupId: this.roomId,
-        success: function (resp) {
-          if (resp && resp.data && resp.data.data) {
-            me.setData({
-              groupMember: resp.data.data
-            });
-          } // console.log(me.data.groupMember);
-
-        },
-        error: function (err) {}
+       success: function(resp){
+				if(resp && resp.data){
+					me.setData({
+						groupMember: resp.data
+					});
+				}
+			},
+			error: function(err){}
       };
       WebIM.conn.listGroupMember(options);
     },
-    getGroupInfo: function () {
-      var me = this; // 获取群信息
+   getGroupInfo: function(){
+		var me = this;
+		// 获取群信息
+		var options = {
+			groupId: this.roomId,
+			success: function(resp){
+				if(resp && resp.data){
+					me.setData({
+						curOwner: resp.data[0].owner,
+						groupDec: resp.data[0].description
+					});
 
-      var options = {
-        groupId: this.roomId,
-        success: function (resp) {
-          if (resp && resp.data && resp.data.data) {
-            me.setData({
-              curOwner: resp.data.data[0].owner,
-              groupDec: resp.data.data[0].description
-            });
-
-            if (me.currentName == resp.data.data[0].owner) {
-              me.setData({
-                isOwner: true
-              });
-            }
-          }
-        },
-        error: function () {}
-      };
-      WebIM.conn.getGroupInfo(options);
-    },
+					if(me.currentName == resp.data[0].owner){
+						me.setData({
+							isOwner: true
+						});
+					}
+				}
+			},
+			error: function(){}
+		};
+		WebIM.conn.getGroupInfo(options);
+	},
     addFriendNameFun: function (e) {
       var firendArr = [];
       firendArr.push(e.detail.value);
@@ -140,8 +139,8 @@ export default {
     addGroupMembers: function () {
       var me = this;
       var option = {
-        list: this.addFriendName,
-        roomId: this.roomId,
+        users: this.addFriendName,
+			  groupId: this.roomId,
         success: function () {
           if (me.isExistGroup(me.addFriendName, me.groupMember)) {
             uni.showToast({
@@ -154,16 +153,16 @@ export default {
               duration: 2000
             });
           }
-
           me.getGroupMember();
         },
         error: function (err) {
           uni.showToast({
-            title: err.data.error_description
+            title: err.data.error_description,
+            icon:'none'
           });
         }
       };
-      WebIM.conn.addGroupMembers(option);
+      WebIM.conn.inviteToGroup(option);
     },
     isExistGroup: function (name, list) {
       for (let index = 0; index < list.length; index++) {
@@ -176,12 +175,11 @@ export default {
     },
     leaveGroup: function () {
       var me = this;
-      WebIM.conn.leaveGroupBySelf({
-        to: this.currentName,
-        roomId: this.roomId,
+      WebIM.conn.quitGroup({
+        groupId: this.roomId,
         success: function () {
           uni.showToast({
-            title: "已退",
+            title: "已退群",
             duration: 2000,
             success: function (res) {
               // redirectTo = 此操作不可返回
@@ -194,7 +192,8 @@ export default {
         },
         error: function (err) {
           uni.showToast({
-            title: err.data.error_description
+            title: err.data.error_description,
+            icon:'none'
           });
         }
       });
@@ -218,7 +217,8 @@ export default {
         },
         error: function (err) {
           uni.showToast({
-            title: err.data.error_description
+            title: err.data.error_description,
+            icon:'none'
           });
         }
       });

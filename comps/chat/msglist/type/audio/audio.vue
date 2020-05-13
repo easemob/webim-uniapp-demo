@@ -4,12 +4,6 @@
 	<view class="controls play-btn" @tap="audioPlay">
 		<image :src="style == 'self'? '../../../../../static/images/voicemsgmy.png' : '../../../../../static/images/voicemsg.png'"></image>
 	</view>
-	<!-- <view
-		class="controls pause-btn"
-		wx:if="{{ curStatus == playStatus.PLAYING }}"
-		bind:tap="audioPause">
-		<image bind:tap="audioPause" src="../../../../../static/images/audioPause.png"></image>
-	</view> -->
 </view>
 </template>
 
@@ -46,8 +40,8 @@ export default {
 
   beforeMount() {
     this.setData({
-      time: this.properties.msg.msg.length + "''",
-      style: this.properties.msg.style
+      time: this.msg.msg.length + "''",
+      style: this.msg.style
     });
   },
 
