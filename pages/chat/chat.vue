@@ -174,8 +174,8 @@ export default {
   methods: {
     listGroups() {
       var me = this;
-      return WebIM.conn.listGroups({
-        limit: 100,
+      return WebIM.conn.getGroup({
+        limit: 50,
         success: function (res) {
           wx.setStorage({
             key: "listGroup",

@@ -200,8 +200,8 @@ var isfirstTime = true;var swipeDelete = function swipeDelete() {__webpack_requi
   methods: {
     listGroups: function listGroups() {
       var me = this;
-      return WebIM.conn.listGroups({
-        limit: 100,
+      return WebIM.conn.getGroup({
+        limit: 50,
         success: function success(res) {
           wx.setStorage({
             key: "listGroup",
