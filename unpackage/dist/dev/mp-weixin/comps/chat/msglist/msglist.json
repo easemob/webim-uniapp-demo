@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "audio-msg": "/comps/chat/msglist/type/audio/audio"
+  }
+}

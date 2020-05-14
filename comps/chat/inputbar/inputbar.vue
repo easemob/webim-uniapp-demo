@@ -11,7 +11,7 @@
 			<image src="/static/images/Emoji.png"/>
 		</view> -->
 		<view class="v-record" @tap="toggleRecordModal">
-			<image class="icon-record" :src="recordStatus != RecordStatus.HIDE ? '../../../static/images/iconAudioActive@2x.png' : '../../../static/images/voice.png'" style="width:16px height: 24px"></image>
+			<image class="icon-record" :src="recordStatus != RecordStatus.HIDE ? '../../../static/images/iconAudioActive@2x.png' : '../../../static/images/voice.png'" style="width:16px; height: 18px"></image>
 		</view>
 		<view class="open_camera" @tap="openCamera">
 			<image src="/static/images/camora.png" style="width:24px; height: 18px"></image>

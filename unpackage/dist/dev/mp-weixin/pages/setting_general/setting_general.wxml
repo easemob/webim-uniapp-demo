@@ -1,0 +1,1 @@
+<view><view class="setting_list"><view class="setting_listContent"><text>当前版本</text><text>1.2.0</text></view></view><view class="setting_list"><view class="setting_listContent"><text>开启deBug</text><switch checked="{{switchStatus?true:false}}" color="#0873DE" data-event-opts="{{[['change',[['openDebug',['$event']]]]]}}" bindchange="__e"></switch></view></view></view>

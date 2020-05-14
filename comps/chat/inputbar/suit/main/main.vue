@@ -130,6 +130,7 @@ export default {
         success(id, serverMsgId) {
           console.log("成功了");
           me.changeValue=""
+          me.userMessage=""
           disp.fire("em.chat.sendSuccess", id, me.userMessage);
         },
         fail(id, serverMsgId) {

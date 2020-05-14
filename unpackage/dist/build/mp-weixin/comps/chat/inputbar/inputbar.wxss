@@ -1,0 +1,4 @@
+.room_bar{width:100%;height:auto;border-top:1px solid #cfcfcf;position:fixed;bottom:0;right:0;z-index:1;background-color:#fff;-webkit-transform:translateZ(1000px);transform:translateZ(1000px)}.other_func{width:100%;height:60rpx;display:-webkit-box;display:-webkit-flex;display:flex}.other_func_X{height:128rpx}.other_func image{width:42rpx;height:40rpx}.open_emoji,
+.send_image,
+.open_camera,
+.v-record{width:48rpx;height:48rpx;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin-left:48rpx}.v-record .icon-record{width:18rpx;height:40rpx}.v-record{margin-left:48rpx}.open_camera, .send_image{margin-left:64rpx}
