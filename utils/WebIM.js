@@ -1,5 +1,5 @@
 // import websdk from "../sdk/connection";
-import websdk from "../newSDK/webimSDK3.1.1";
+import websdk from "../newSDK/webimSDK3.1.2";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
