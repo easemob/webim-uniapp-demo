@@ -35,16 +35,20 @@ function calcUnReadSpot(message) {
   let myName = wx.getStorageSync("myUsername");
   let members = wx.getStorageSync("member") || []; //好友
 
-  var listGroups = wx.getStorageSync('listGroup') || []; //群组
+  var listGroups = wx.getStorageSync("listGroup") || []; //群组
 
   let allMembers = members.concat(listGroups);
-  let count = allMembers.reduce(function (result, curMember, idx) {
+  let count = allMembers.reduce(function(result, curMember, idx) {
     let chatMsgs;
 
     if (curMember.groupid) {
-      chatMsgs = wx.getStorageSync(curMember.roomId + myName.toLowerCase()) || [];
+      chatMsgs =
+        wx.getStorageSync(curMember.roomId + myName.toLowerCase()) || [];
     } else {
-      chatMsgs = wx.getStorageSync(curMember.name&& (curMember.name.toLowerCase() + myName.toLowerCase())) || [];
+      chatMsgs =
+        wx.getStorageSync(
+          curMember.name && curMember.name.toLowerCase() + myName.toLowerCase()
+        ) || [];
     }
 
     return result + chatMsgs.length;
@@ -59,15 +63,14 @@ export default {
     userInfo: null,
     saveFriendList: [],
     saveGroupInvitedList: [],
-    isIPX: false //是否为iphone X
-    ,
+    isIPX: false, //是否为iphone X
     conn: {
       closed: false,
       curOpenOpt: {},
 
       open(opt) {
         wx.showLoading({
-          title: '正在初始化客户端...',
+          title: "正在初始化客户端...",
           mask: true
         });
         this.curOpenOpt = opt;
@@ -82,7 +85,6 @@ export default {
           this.closed = false;
         }
       }
-
     },
     // onShow(){
     // 	WebIM.conn.reconnect();
@@ -98,7 +100,7 @@ export default {
     // 		url: "../login/login?myName=" + myName
     // 	});
     // },
-    onLoginSuccess: function (myName) {
+    onLoginSuccess: function(myName) {
       wx.hideLoading();
       wx.redirectTo({
         url: "../chat/chat?myName=" + myName
@@ -119,20 +121,18 @@ export default {
                 me.userInfo = res.userInfo;
                 typeof cb == "function" && cb(me.userInfo);
               }
-
             });
           }
-
         });
       }
     },
 
-    checkIsIPhoneX: function () {
+    checkIsIPhoneX: function() {
       const me = this;
       wx.getSystemInfo({
-        success: function (res) {
+        success: function(res) {
           // 根据 model 进行判断
-          if (res.model.search('iPhone X') != -1) {
+          if (res.model.search("iPhone X") != -1) {
             me.isIPX = true;
           }
         }
@@ -154,31 +154,36 @@ export default {
     var me = this;
     var logs = wx.getStorageSync("logs") || [];
     logs.unshift(Date.now());
-    wx.setStorageSync("logs", logs); // 
+    wx.setStorageSync("logs", logs); //
 
-    disp.on("em.main.ready", function () {
+    disp.on("em.main.ready", function() {
       calcUnReadSpot();
     });
-    disp.on("em.chatroom.leave", function () {
+    disp.on("em.chatroom.leave", function() {
       calcUnReadSpot();
     });
-    disp.on("em.chat.session.remove", function () {
+    disp.on("em.chat.session.remove", function() {
       calcUnReadSpot();
     });
-    disp.on('em.chat.audio.fileLoaded', function () {
+    disp.on("em.chat.audio.fileLoaded", function() {
       calcUnReadSpot();
     });
-    disp.on('em.main.deleteFriend', function () {
+    disp.on("em.main.deleteFriend", function() {
       calcUnReadSpot();
     });
-    disp.on('em.chat.audio.fileLoaded', function () {
+    disp.on("em.chat.audio.fileLoaded", function() {
       calcUnReadSpot();
-    }); // 
+    }); //
 
     WebIM.conn.listen({
       onOpened(message) {
-        if (getCurrentRoute() == "pages/login/login" || getCurrentRoute() == "pages/login_token/login_token") {
-          me.globalData.onLoginSuccess(wx.getStorageSync("myUsername").toLowerCase());
+        if (
+          getCurrentRoute() == "pages/login/login" ||
+          getCurrentRoute() == "pages/login_token/login_token"
+        ) {
+          me.globalData.onLoginSuccess(
+            wx.getStorageSync("myUsername").toLowerCase()
+          );
         }
       },
 
@@ -199,7 +204,7 @@ export default {
       onClosed() {
         uni.showToast({
           title: "网络已断开",
-          icon: 'none',
+          icon: "none",
           duration: 2000
         });
         wx.redirectTo({
@@ -222,7 +227,8 @@ export default {
         // });
       },
 
-      onReadMessage(message) {//console.log('已读', message)
+      onReadMessage(message) {
+        //console.log('已读', message)
       },
 
       onPresence(message) {
@@ -232,7 +238,8 @@ export default {
             break;
           // 好友邀请列表
           case "subscribe":
-            if (message.status === "[resp:true]") {} else {
+            if (message.status === "[resp:true]") {
+            } else {
               // pages[0].handleFriendMsg(message);
               for (let i = 0; i < me.globalData.saveFriendList.length; i++) {
                 if (me.globalData.saveFriendList[i].from === message.from) {
@@ -269,13 +276,37 @@ export default {
               duration: 1000
             });
             break;
-
+          case "invite":
+            let info = message.from + "邀请你加入群组";
+            wx.showModal({
+              title: "提示",
+              content: info,
+              success(res) {
+                if (res.confirm) {
+                  console.log("用户点击确定");
+                  WebIM.conn.agreeInviteIntoGroup({
+                    invitee: WebIM.conn.context.userId,
+                    groupId: message.gid,
+                    success: () => {
+                      console.log("加入成功");
+                    }
+                  });
+                } else if (res.cancel) {
+                  console.log("用户点击取消");
+                  WebIM.conn.rejectInviteIntoGroup({
+                    invitee: WebIM.conn.context.userId,
+                    groupId: message.gid
+                  });
+                }
+              }
+            });
+            break;
           case "unavailable":
             disp.fire("em.contacts.remove");
             disp.fire("em.group.leaveGroup", message);
             break;
 
-          case 'deleteGroupChat':
+          case "deleteGroupChat":
             disp.fire("em.invite.deleteGroup", message);
             break;
 
@@ -292,7 +323,8 @@ export default {
         }
       },
 
-      onRoster(message) {// let pages = getCurrentPages();
+      onRoster(message) {
+        // let pages = getCurrentPages();
         // if(pages[0]){
         // 	pages[0].onShow();
         // }
@@ -381,7 +413,7 @@ export default {
       },
 
       onFileMessage(message) {
-        console.log('onFileMessage', message);
+        console.log("onFileMessage", message);
 
         if (message) {
           if (onMessageError(message)) {
@@ -413,7 +445,6 @@ export default {
           return;
         } // 8: offline by multi login
 
-
         if (error.type == WebIM.statusCode.WEBIM_CONNCTION_SERVER_ERROR) {
           uni.showToast({
             title: "offline by multi login",
@@ -438,18 +469,17 @@ export default {
           disp.fire("em.error.tokenErr");
         }
 
-        if (error.type == 'socket_error') {
+        if (error.type == "socket_error") {
           ///sendMsgError
-          console.log('socket_errorsocket_error', error);
+          console.log("socket_errorsocket_error", error);
           uni.showToast({
             title: "网络已断开",
-            icon: 'none',
+            icon: "none",
             duration: 2000
           });
           disp.fire("em.error.sendMsgErr", error);
         }
       }
-
     });
     this.globalData.checkIsIPhoneX();
   },

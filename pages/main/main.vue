@@ -30,7 +30,7 @@
 		<view class="search_input" v-if="search_friend">
 			<view>
 				<icon type="search" size="13"></icon>
-				<input placeholder="搜索" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />>
+				<input placeholder="搜索" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />
 					<icon type="clear" size="13" @tap.stop="clearInput" v-if="show_clear"></icon>
 			</view>
 			<text @tap="cancel">取消</text>

@@ -105,8 +105,8 @@ export default {
     },
 
     agree(event) {
-      var me = this; // 同意（无回调）
-
+      var me = this; 
+      // 同意（无回调）
       WebIM.conn.subscribed({
         to: event.currentTarget.dataset.from,
         message: "[resp:true]"
