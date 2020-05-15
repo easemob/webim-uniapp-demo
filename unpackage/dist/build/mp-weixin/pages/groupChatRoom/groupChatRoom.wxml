@@ -1,1 +1,0 @@
-<chat vue-id="d1c61b4c-1" id="groupchat" username="{{username}}" groupId="{{groupId}}" chatType="chatRoom" bind:__l="__l"></chat>

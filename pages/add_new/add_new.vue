@@ -114,7 +114,7 @@ export default {
       let me = this;
       let myName = wx.getStorageSync("myUsername");
       if (me.friend_name == "" || me.friend_name.toLowerCase() == myName.toLowerCase()) {
-        uni.showToast({title: "删除成功"});
+        uni.showToast({title: "添加失败"});
         return;
       }
 

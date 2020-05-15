@@ -73,7 +73,7 @@ export default {
     disp.on("em.group.leaveGroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
 
-      if (pageStack[pageStack.length - 1].route === me.route) {
+      if (pageStack[pageStack.length - 1].route === me.__route__) {
         me.getGroupMember();
         this.getGroupInfo();
       }

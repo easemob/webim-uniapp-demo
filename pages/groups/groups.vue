@@ -65,14 +65,14 @@ export default {
     disp.on("em.invite.joingroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
 
-      if (pageStack[pageStack.length - 1].route === me.route) {
+      if (pageStack[pageStack.length - 1].route === me.__route__) {
         me.listGroups();
       }
     });
     disp.on("em.invite.deleteGroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
 
-      if (pageStack[pageStack.length - 1].route === me.route) {
+      if (pageStack[pageStack.length - 1].route === me.__route__) {
         me.listGroups();
       }
     });

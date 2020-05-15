@@ -191,7 +191,7 @@ export default {
     disp.on("em.contacts.remove", function (message) {
       var pageStack = getCurrentPages();
 
-      if (pageStack[pageStack.length - 1].route === me.route) {
+      if (pageStack[pageStack.length - 1].route === me.__route__) {
         me.getRoster();
       }
     }); //监听未读“聊天”
@@ -210,8 +210,7 @@ export default {
     });
     disp.on("em.subscribed", function () {
       var pageStack = getCurrentPages();
-
-      if (pageStack[pageStack.length - 1].route === me.route) {
+      if (pageStack[pageStack.length - 1].route === me.__route__) {
         me.getRoster();
       }
     });

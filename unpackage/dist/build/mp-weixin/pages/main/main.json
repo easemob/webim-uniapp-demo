@@ -1,9 +1,0 @@
-{
-  "navigationBarBackgroundColor": "#fafafa",
-  "navigationBarTextStyle": "black",
-  "navigationBarTitleText": "Easemob IM",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "swipe-delete": "/comps/swipedelete/swipedelete"
-  }
-}

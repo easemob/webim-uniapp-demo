@@ -1,1 +1,0 @@
-<chat vue-id="bc646440-1" id="chat" username="{{username}}" chatType="singleChat" bind:__l="__l"></chat>
