@@ -1,5 +1,5 @@
 {
-    "name" : "环信即时通讯云（uni）",
+    "name" : "环信IM",
     "appid" : "",
     "description" : "",
     "versionName" : "1.0.0",
@@ -61,12 +61,23 @@
         }
     },
     "mp-alipay" : {
+        "appid" : "2088612458091996",
         "usingComponents" : true
     },
     "mp-baidu" : {
         "usingComponents" : true
     },
     "mp-toutiao" : {
-        "usingComponents" : true
+        "appid" : "tt4eb0380dd18a9470",
+        "usingComponents" : true,
+        "setting" : {
+            "urlCheck" : false
+        }
+    },
+    "mp-qq" : {
+        "appid" : "1110502987",
+        "setting" : {
+            "urlCheck" : false
+        }
     }
 }
