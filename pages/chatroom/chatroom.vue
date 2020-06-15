@@ -26,7 +26,7 @@ export default {
     this.setData({
       username: username
     });
-    wx.setNavigationBarTitle({
+    uni.setNavigationBarTitle({
       title: username.your
     });
   },
@@ -36,11 +36,11 @@ export default {
   },
 
   onPullDownRefresh: function () {
-    wx.showNavigationBarLoading();
+    uni.showNavigationBarLoading();
     this.selectComponent('#chat').$vm.getMore()
     // 停止下拉动作
-    wx.hideNavigationBarLoading();
-    wx.stopPullDownRefresh();
+    uni.hideNavigationBarLoading();
+    uni.stopPullDownRefresh();
   },
   methods: {}
 };

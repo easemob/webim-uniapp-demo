@@ -34,7 +34,7 @@ export default {
       RecordDesc,
       // 模板中有引用
       radomheight: InitHeight,
-      recorderManager: wx.getRecorderManager(),
+      recorderManager: uni.getRecorderManager(),
       recordClicked: false,
       isLongPress: false
     };
@@ -111,13 +111,13 @@ export default {
       }, 350);
 
       function executeRecord() {
-        wx.getSetting({
+        uni.getSetting({
           success: res => {
             let recordAuth = res.authSetting['scope.record'];
 
             if (recordAuth == false) {
               //已申请过授权，但是用户拒绝
-              wx.openSetting({
+              uni.openSetting({
                 success: function (res) {
                   let recordAuth = res.authSetting['scope.record'];
 
@@ -143,7 +143,7 @@ export default {
               startRecord();
             } else {
               // 第一次进来，未发起授权
-              wx.authorize({
+              uni.authorize({
                 scope: 'scope.record',
                 success: () => {
                   //授权成功
@@ -171,7 +171,7 @@ export default {
         });
         RunAnimation = true;
         me.myradom();
-        let recorderManager = me.recorderManager || wx.getRecorderManager();
+        let recorderManager = me.recorderManager || uni.getRecorderManager();
         recorderManager.onStart(() => {// console.log("开始录音...");
         });
         recorderManager.start({
@@ -236,7 +236,7 @@ export default {
       var str = WebIM.config.appkey.split("#");
       var me = this;
       var token = WebIM.conn.context.accessToken;
-      wx.uploadFile({
+      uni.uploadFile({
         url: "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
         filePath: tempFilePath,
         name: "file",

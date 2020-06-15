@@ -79,8 +79,8 @@ export default {
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     });
-    wx.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
-    wx.setStorageSync("groupNotiData", getApp().globalData.saveGroupInvitedList);
+    uni.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
+    uni.setStorageSync("groupNotiData", getApp().globalData.saveGroupInvitedList);
   },
 
   onShow() {
@@ -100,27 +100,27 @@ export default {
 
   methods: {
     into_friendNot: function () {
-      wx.navigateTo({
-        url: "../notification_friendDetail/friendDetail?myName=" + wx.getStorageSync("myUsername")
+      uni.navigateTo({
+        url: "../notification_friendDetail/friendDetail?myName=" + uni.getStorageSync("myUsername")
       });
     },
     into_groupNot: function () {
-      wx.navigateTo({
-        url: "../notification_groupDetail/groupDetail?myName=" + wx.getStorageSync("myUsername")
+      uni.navigateTo({
+        url: "../notification_groupDetail/groupDetail?myName=" + uni.getStorageSync("myUsername")
       });
     },
     tab_contact: function () {
-      wx.redirectTo({
-        url: "../main/main?myName=" + wx.getStorageSync("myUsername")
+      uni.redirectTo({
+        url: "../main/main?myName=" + uni.getStorageSync("myUsername")
       });
     },
     tab_chat: function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../chat/chat"
       });
     },
     tab_setting: function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../setting/setting"
       });
     }

@@ -214,6 +214,13 @@ export default {
         me.getRoster();
       }
     });
+    // 监听被解除好友
+		disp.on("em.unsubscribed", function(){
+      var pageStack = getCurrentPages();
+			if(pageStack[pageStack.length - 1].route === me.__route__){
+				me.getRoster();
+			}
+		});
     this.setData({
       myName: option.myName
     });
@@ -249,7 +256,7 @@ export default {
             }
           }
 
-          wx.setStorage({
+          uni.setStorage({
             key: "member",
             data: member
           });
@@ -305,7 +312,7 @@ export default {
       }
     },
     handleFriendMsg: function (message) {
-      wx.showModal({
+      uni.showModal({
         title: "添加好友请求",
         content: message.from + "请求加为好友",
         success: function (res) {
@@ -331,9 +338,9 @@ export default {
     delete_friend: function (event) {
       const me = this;
       var delName = event.currentTarget.dataset.username;
-      var myName = wx.getStorageSync("myUsername"); // 获取当前用户名
+      var myName = uni.getStorageSync("myUsername"); // 获取当前用户名
 
-      wx.showModal({
+      uni.showModal({
         title: "确认删除好友" + delName,
         cancelText: "取消",
         confirmText: "删除",
@@ -347,8 +354,8 @@ export default {
                 	title: "删除成功",
                 });
 					// 删除好友后 同时清空会话
-					wx.setStorageSync(delName + myName, "");
-					wx.setStorageSync("rendered_" + delName + myName, "");
+					uni.setStorageSync(delName + myName, "");
+					uni.setStorageSync("rendered_" + delName + myName, "");
 					me.getRoster();
 					disp.fire('em.main.deleteFriend')
           }
@@ -404,12 +411,12 @@ export default {
       this.getBrands(serchList);
     },
     add_new: function () {
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../add_new/add_new"
       });
     },
     tab_chat: function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../chat/chat"
       });
     },
@@ -421,23 +428,23 @@ export default {
       });
     },
     tab_setting: function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../setting/setting"
       });
     },
     tab_notification: function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../notification/notification"
       });
     },
     into_inform: function () {
-      wx.navigateTo({
-        url: "../inform/inform?myName=" + this.myName //wx.getStorageSync("myUsername")
+      uni.navigateTo({
+        url: "../inform/inform?myName=" + this.myName //uni.getStorageSync("myUsername")
 
       });
     },
     into_groups: function () {
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../groups/groups?myName=" + this.myName
       });
     },
@@ -446,12 +453,12 @@ export default {
         myName: this.myName,
         your: event.target.dataset.username
       };
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../chatroom/chatroom?username=" + JSON.stringify(nameList)
       });
     },
     into_info: function (event) {
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../friend_info/friend_info?yourname=" + event.target.dataset.username
       });
     },
@@ -550,7 +557,7 @@ export default {
 
       that.setData({
         isActive: someArr.length > 0 ? someArr[0].id : '',
-      }); //计算分组高度,wx.createSelectotQuery()获取节点信息
+      }); //计算分组高度,uni.createSelectotQuery()获取节点信息
 
       let number = 0;
 

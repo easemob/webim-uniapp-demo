@@ -80,9 +80,9 @@ globalData:
         |-setting_general 通用设置页
 |-utils 工具类和sdk的一些配置
 |-newSDK 环信sdk
-|-app.js 小程序根实例，存放一些全局变量，注册监听事件
+|-app.vue 小程序根实例，存放一些全局变量，注册监听事件
 |-app.json 注册页面以及全局的一些配置
-|-app.wxss 一些全局样式
+|-app.css 一些全局样式
 |-project.config.json工程的一些配置，和开发者工具 “详情” 中的设置一样
 ```
 

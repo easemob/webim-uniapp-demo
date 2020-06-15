@@ -32,29 +32,42 @@ function getCurrentRoute() {
   return currentPage.route;
 }
 function calcUnReadSpot(message) {
-  let myName = wx.getStorageSync("myUsername");
-  let members = wx.getStorageSync("member") || []; //好友
+  let myName = uni.getStorageSync("myUsername");
+  let members = uni.getStorageSync("member") || []; //好友
 
-  var listGroups = wx.getStorageSync("listGroup") || []; //群组
-
+  var listGroups = uni.getStorageSync("listGroup") || []; //群组
   let allMembers = members.concat(listGroups);
   let count = allMembers.reduce(function(result, curMember, idx) {
     let chatMsgs;
-
     if (curMember.groupid) {
       chatMsgs =
-        wx.getStorageSync(curMember.roomId + myName.toLowerCase()) || [];
+        uni.getStorageSync(curMember.groupid + myName.toLowerCase()) || [];
     } else {
       chatMsgs =
-        wx.getStorageSync(
+        uni.getStorageSync(
           curMember.name && curMember.name.toLowerCase() + myName.toLowerCase()
         ) || [];
     }
-
     return result + chatMsgs.length;
   }, 0);
   getApp().globalData.unReadMessageNum = count;
   disp.fire("em.unreadspot", message);
+}
+
+function saveGroups() {
+  var me = this;
+  return WebIM.conn.getGroup({
+    limit: 50,
+    success: function(res) {
+      uni.setStorage({
+        key: "listGroup",
+        data: res.data
+      });
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
 }
 
 export default {
@@ -69,7 +82,7 @@ export default {
       curOpenOpt: {},
 
       open(opt) {
-        wx.showLoading({
+        uni.showLoading({
           title: "正在初始化客户端...",
           mask: true
         });
@@ -96,13 +109,13 @@ export default {
     // onUnload(){
     // 	WebIM.conn.close();
     // 	WebIM.conn.stopHeartBeat();
-    // 	wx.redirectTo({
+    // 	uni.redirectTo({
     // 		url: "../login/login?myName=" + myName
     // 	});
     // },
     onLoginSuccess: function(myName) {
-      wx.hideLoading();
-      wx.redirectTo({
+      uni.hideLoading();
+      uni.redirectTo({
         url: "../chat/chat?myName=" + myName
       });
     },
@@ -114,9 +127,9 @@ export default {
         typeof cb == "function" && cb(this.userInfo);
       } else {
         // 调用登录接口
-        wx.login({
+        uni.login({
           success() {
-            wx.getUserInfo({
+            uni.getUserInfo({
               success(res) {
                 me.userInfo = res.userInfo;
                 typeof cb == "function" && cb(me.userInfo);
@@ -129,7 +142,7 @@ export default {
 
     checkIsIPhoneX: function() {
       const me = this;
-      wx.getSystemInfo({
+      uni.getSystemInfo({
         success: function(res) {
           // 根据 model 进行判断
           if (res.model.search("iPhone X") != -1) {
@@ -148,13 +161,13 @@ export default {
   // },
   onLaunch() {
     // 调用 API 从本地缓存中获取数据
-    wx.setInnerAudioOption({
-      obeyMuteSwitch: false
-    });
+    // uni.setInnerAudioOption({
+    //   obeyMuteSwitch: false
+    // });
     var me = this;
-    var logs = wx.getStorageSync("logs") || [];
+    var logs = uni.getStorageSync("logs") || [];
     logs.unshift(Date.now());
-    wx.setStorageSync("logs", logs); //
+    uni.setStorageSync("logs", logs); //
 
     disp.on("em.main.ready", function() {
       calcUnReadSpot();
@@ -182,7 +195,7 @@ export default {
           getCurrentRoute() == "pages/login_token/login_token"
         ) {
           me.globalData.onLoginSuccess(
-            wx.getStorageSync("myUsername").toLowerCase()
+            uni.getStorageSync("myUsername").toLowerCase()
           );
         }
       },
@@ -207,7 +220,7 @@ export default {
           icon: "none",
           duration: 2000
         });
-        wx.redirectTo({
+        uni.redirectTo({
           url: "../login/login"
         });
         me.globalData.conn.closed = true;
@@ -216,7 +229,7 @@ export default {
 
       onInviteMessage(message) {
         me.globalData.saveGroupInvitedList.push(message);
-        disp.fire("em.invite.joingroup", message); // wx.showModal({
+        disp.fire("em.invite.joingroup", message); // uni.showModal({
         // 	title: message.from + " 已邀你入群 " + message.roomid,
         // 	success(){
         // 		disp.fire("em.invite.joingroup", message);
@@ -268,9 +281,17 @@ export default {
             // 	title: "已拒绝",
             // 	duration: 1000
             // });
+            disp.fire("em.unsubscribed");
             break;
-
+          case "direct_joined":
+            saveGroups();
+            uni.showToast({
+              title: "已进群",
+              duration: 1000
+            });
+            break;
           case "memberJoinPublicGroupSuccess":
+            saveGroups();
             uni.showToast({
               title: "已进群",
               duration: 1000
@@ -278,7 +299,7 @@ export default {
             break;
           case "invite":
             let info = message.from + "邀请你加入群组";
-            wx.showModal({
+            uni.showModal({
               title: "提示",
               content: info,
               success(res) {
@@ -288,6 +309,7 @@ export default {
                     invitee: WebIM.conn.context.userId,
                     groupId: message.gid,
                     success: () => {
+                      saveGroups()
                       console.log("加入成功");
                     }
                   });
@@ -438,7 +460,7 @@ export default {
             title: "server-side close the websocket connection",
             duration: 1000
           });
-          wx.redirectTo({
+          uni.redirectTo({
             url: "../login/login"
           });
           logout = true;
@@ -450,14 +472,14 @@ export default {
             title: "offline by multi login",
             duration: 1000
           });
-          wx.redirectTo({
+          uni.redirectTo({
             url: "../login/login"
           });
         }
 
         if (error.type == WebIM.statusCode.WEBIM_CONNCTION_OPEN_ERROR) {
-          wx.hideLoading();
-          disp.fire("em.error.passwordErr"); // wx.showModal({
+          uni.hideLoading();
+          disp.fire("em.error.passwordErr"); // uni.showModal({
           // 	title: "用户名或密码错误",
           // 	confirmText: "OK",
           // 	showCancel: false
@@ -465,7 +487,7 @@ export default {
         }
 
         if (error.type == WebIM.statusCode.WEBIM_CONNCTION_AUTH_ERROR) {
-          wx.hideLoading();
+          uni.hideLoading();
           disp.fire("em.error.tokenErr");
         }
 

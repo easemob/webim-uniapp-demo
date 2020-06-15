@@ -47,10 +47,10 @@ export default {
       me.setData({
         groupList: getApp().globalData.saveGroupInvitedList
       });
-      wx.setStorageSync("groupNotiData", getApp().globalData.saveGroupInvitedList);
+      uni.setStorageSync("groupNotiData", getApp().globalData.saveGroupInvitedList);
     });
     this.setData({
-      groupList: wx.getStorageSync("groupNotiData") //getApp().globalData.saveGroupInvitedList 
+      groupList: uni.getStorageSync("groupNotiData") //getApp().globalData.saveGroupInvitedList 
       // [{
       // 	from: "zdtest2",
       // 	reason: "",
@@ -78,7 +78,7 @@ export default {
       var me = this;
       return WebIM.conn.getGroup({
         success: function (rooms) {
-          wx.setStorage({
+          uni.setStorage({
             key: "listGroup",
             data: rooms
           });

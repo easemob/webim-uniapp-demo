@@ -51,7 +51,7 @@ export default {
       getApp().globalData.saveFriendList.splice(idx, 1);
 
       if (!this.friendList.length) {
-        wx.navigateBack({
+        uni.navigateBack({
           url: "../main/main?myName=" + this.myName
         });
       } else {

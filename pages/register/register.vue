@@ -5,10 +5,10 @@
 		<text>注册</text>
 	</view>
 	<view :class="'register_user ' + nameFocus">
-		<input type="text" placeholder="用户ID（字母或数字)" placeholder-style="color:rgb(173,185,193)" @input="bindUsername" @focus="onFocusName" @blur="onBlurName"></input>
+		<input type="text" placeholder="用户ID（字母或数字)" placeholder-style="color:rgb(173,185,193)" @input="bindUsername" @focus="onFocusName" @blur="onBlurName">
 	</view>
 	<view :class="'register_pwd ' + psdFocus">
-		<input type="text" password placeholder="用户密码" hover-class="input-hover" placeholder-style="color:rgb(173,185,193)" @input="bindPassword" @focus="onFocusPsd" @blur="onBlurPsd"></input>
+		<input type="text" password placeholder="用户密码" hover-class="input-hover" placeholder-style="color:rgb(173,185,193)" @input="bindPassword" @focus="onFocusPsd" @blur="onBlurPsd">
 	</view>
 	<view class="register_btn">
 		<button hover-class="btn_hover" @tap="register">注册</button>
@@ -114,7 +114,7 @@ export default {
               grant_type: "password",
               appKey: WebIM.config.appkey
             };
-            wx.setStorage({
+            uni.setStorage({
               key: "myUsername",
               data: that.username
             });

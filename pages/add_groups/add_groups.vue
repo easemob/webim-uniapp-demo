@@ -4,7 +4,7 @@
 	<!-- 群组名称 -->
 	<view class="create_input">
 		<view>
-			<input @input="getGroupName" placeholder="群名称" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus></input>
+			<input @input="getGroupName" placeholder="群名称" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus>
 		</view>
 	</view>
 	<!-- 群简介 -->
@@ -150,7 +150,7 @@ export default {
       let allGroups = getApp().globalData.groupList;
 
       if (!this.groupName.trim()) {
-        wx.showModal({
+        uni.showModal({
           title: "请输入群名",
           confirmText: "OK",
           showCancel: false
@@ -161,7 +161,7 @@ export default {
       if (allGroups.reduce(function (result, v, k) {
         return result || v.name == me.groupName;
       }, false)) {
-        wx.showModal({
+        uni.showModal({
           title: "群名被占用",
           confirmText: "OK",
           showCancel: false
@@ -184,7 +184,7 @@ export default {
             title: "添加成功",
             duration: 2000,
             success: function (res) {
-              setTimeout(() => wx.navigateTo({
+              setTimeout(() => uni.navigateTo({
                 url: "../groups/groups?myName=" + me.owner
               }), 2000);
             }

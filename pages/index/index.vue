@@ -34,7 +34,7 @@ export default {
   onLoad: function () {
     var me = this;
     this.timeOut = setTimeout(function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../login/login"
       });
     }, 3000); // 调用应用实例的方法获取全局数据
@@ -50,7 +50,7 @@ export default {
     // 事件处理函数
     bindViewTap: function () {
       clearTimeout(this.timeOut);
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../login/login"
       });
     }

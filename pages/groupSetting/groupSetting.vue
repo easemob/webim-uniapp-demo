@@ -18,7 +18,7 @@
     <view class="invite-member">
         <text class="pd-10 invite-title">邀请群成员</text>
         <view class="invite-wrap">
-            <input placeholder="用户名" @input="addFriendNameFun" placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;" auto-focus></input>
+            <input placeholder="用户名" @input="addFriendNameFun" placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;" auto-focus>
             <button type="primary" @tap="addGroupMembers">邀请</button>
         </view>
     </view>
@@ -183,7 +183,7 @@ export default {
             duration: 2000,
             success: function (res) {
               // redirectTo = 此操作不可返回
-              setTimeout(() => wx.navigateBack({
+              setTimeout(() => uni.navigateBack({
                 url: "../groups/groups?myName=" + me.currentName
               }), 2000);
             }
@@ -209,7 +209,7 @@ export default {
             duration: 2000,
             success: function (res) {
               // redirectTo = 此操作不可返回
-              setTimeout(() => wx.navigateBack({
+              setTimeout(() => uni.navigateBack({
                 url: "../groups/groups?myName=" + me.currentName
               }), 2000);
             }

@@ -65,8 +65,8 @@ export default {
       this.setData({
         curStatus: playStatus.PLAYING
       });
-      wx.inter && clearInterval(wx.inter);
-      wx.inter = setInterval(() => {
+      uni.inter && clearInterval(uni.inter);
+      uni.inter = setInterval(() => {
         let opcity = this.opcity;
         this.setData({
           opcity: opcity == 1 ? 0.4 : 1
@@ -95,7 +95,7 @@ export default {
         opcity: 1 //time: "0'",
 
       });
-      clearInterval(wx.inter);
+      clearInterval(uni.inter);
     }; // 多次播放会丢失这个回调
 
 
@@ -117,10 +117,10 @@ export default {
 
   methods: {
     audioPlay() {
-      wx.inter && clearInterval(wx.inter);
+      uni.inter && clearInterval(uni.inter);
       let audioCtx = this.$data.__comps__.audioCtx;
       var curl = '';
-      wx.downloadFile({
+      uni.downloadFile({
         url: this.msg.msg.data,
         header: {
           "X-Requested-With": "XMLHttpRequest",

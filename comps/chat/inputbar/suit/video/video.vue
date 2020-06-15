@@ -43,7 +43,7 @@ export default {
     sendVideo() {
       var me = this;
       var token = WebIM.conn.context.accessToken;
-      wx.chooseVideo({
+      uni.chooseVideo({
         sourceType: ["album", "camera"],
         maxDuration: 60,
         camera: "back",
@@ -51,7 +51,7 @@ export default {
         success(res) {
           var tempFilePaths = res.tempFilePath;
           var str = WebIM.config.appkey.split("#");
-          wx.uploadFile({
+          uni.uploadFile({
             url: "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
             filePath: tempFilePaths,
             name: "file",

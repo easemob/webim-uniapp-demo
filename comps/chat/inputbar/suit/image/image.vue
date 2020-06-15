@@ -25,7 +25,7 @@ export default {
   methods: {
     openCamera() {
       var me = this;
-      wx.chooseImage({
+      uni.chooseImage({
         count: 1,
         sizeType: ["original", "compressed"],
         sourceType: ["camera"],
@@ -39,7 +39,7 @@ export default {
 
     sendImage() {
       var me = this;
-      wx.chooseImage({
+      uni.chooseImage({
         count: 1,
         sizeType: ["original", "compressed"],
         sourceType: ["album"],
@@ -63,7 +63,7 @@ export default {
       var me = this;
       var tempFilePaths = res.tempFilePaths;
       var token = WebIM.conn.context.accessToken;
-      wx.getImageInfo({
+      uni.getImageInfo({
         src: res.tempFilePaths[0],
 
         success(res) {
@@ -80,7 +80,7 @@ export default {
           var filetype = ~index && res.path.slice(index + 1) || "";
 
           if (filetype.toLowerCase() in allowType) {
-            wx.uploadFile({
+            uni.uploadFile({
               url: "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
               filePath: tempFilePaths[0],
               name: "file",

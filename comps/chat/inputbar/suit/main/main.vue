@@ -13,9 +13,10 @@
       @tap="focus"
       @focus="focus"
       @blur="blur"
+      :confirm-hold="isIPX?true:false"
       placeholder="输入新消息"
       placeholder-style="color:#CFCFCF ;padding-left:5px"
-    />
+    >
 
     <!-- 	</view> -->
   </form>
@@ -33,7 +34,8 @@ export default {
       inputMessage: "",
       // render input 的值
       userMessage: "", // input 的实时值
-      changeValue: ""
+      changeValue: "",
+      isIPX:false
     };
   },
 
@@ -50,7 +52,11 @@ export default {
   },
 
   // lifetimes
-  created() {},
+  created() {
+     this.setData({
+      isIPX: getApp().globalData.isIPX
+    });
+  },
 
   beforeMount() {},
 

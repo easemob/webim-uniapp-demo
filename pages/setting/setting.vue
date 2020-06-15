@@ -74,7 +74,7 @@ export default {
   onLoad: function (option) {
     let me = this;
     this.setData({
-      yourname: wx.getStorageSync("myUsername")
+      yourname: uni.getStorageSync("myUsername")
     }); //监听加好友申请
 
     disp.on("em.subscribe", function () {
@@ -115,33 +115,33 @@ export default {
 
   methods: {
     tab_contact: function () {
-      wx.redirectTo({
-        url: "../main/main?myName=" + wx.getStorageSync("myUsername")
+      uni.redirectTo({
+        url: "../main/main?myName=" + uni.getStorageSync("myUsername")
       });
     },
     tab_chat: function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../chat/chat"
       });
     },
     tab_notification: function () {
-      wx.redirectTo({
+      uni.redirectTo({
         url: "../notification/notification"
       });
     },
     goGeneralSetting: function () {
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../setting_general/setting_general"
       });
     },
     logout: function () {
-      wx.showModal({
+      uni.showModal({
         title: "是否退出登录",
         success: function (res) {
           if (res.confirm) {
-            WebIM.conn.close(); // wx.closeSocket()
+            WebIM.conn.close(); // uni.closeSocket()
 
-            wx.redirectTo({
+            uni.redirectTo({
               url: "../login/login"
             });
           }

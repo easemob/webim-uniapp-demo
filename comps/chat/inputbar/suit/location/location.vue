@@ -32,7 +32,7 @@ export default {
 
     sendLocation() {
       var me = this;
-      wx.authorize({
+      uni.authorize({
         scope: "scope.userLocation",
 
         fail() {
@@ -43,7 +43,7 @@ export default {
         },
 
         success() {
-          wx.chooseLocation({
+          uni.chooseLocation({
             fail() {
               console.log(arguments);
             },

@@ -9,7 +9,7 @@
 <view class="search_input" v-if="search_friend">
 	<view>
 		<icon type="search" size="13"></icon>
-		<input placeholder="搜索" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus></input>
+		<input placeholder="搜索" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus>
 	</view>
 	<text @tap="cancel">取消</text>
 </view>
@@ -127,7 +127,7 @@ export default {
         your: event.currentTarget.dataset.username,
         groupId: event.currentTarget.dataset.roomid
       };
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../groupChatRoom/groupChatRoom?username=" + JSON.stringify(nameList)
       });
     },
@@ -136,7 +136,7 @@ export default {
       var nameList = {
         myName: me.myName
       };
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../add_groups/add_groups?owner=" + JSON.stringify(nameList)
       });
     },
@@ -146,7 +146,7 @@ export default {
         groupName: event.currentTarget.dataset.username,
         roomId: event.currentTarget.dataset.roomid
       };
-      wx.navigateTo({
+      uni.navigateTo({
         url: "../groupSetting/groupSetting?groupInfo=" + JSON.stringify(nameList)
       });
     }

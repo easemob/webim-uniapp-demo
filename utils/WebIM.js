@@ -1,10 +1,10 @@
 // import websdk from "../sdk/connection";
-import websdk from "../newSDK/webimSDK3.1.2";
+import websdk from "../newSDK/webimSDK3.1.3";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
 var window = {};
-let WebIM = window.WebIM = wx.WebIM = websdk;
+let WebIM = window.WebIM = uni.WebIM = websdk;
 window.WebIM.config = config; //var DOMParser = window.DOMParser = xmldom.DOMParser;
 //let document = window.document = new DOMParser().parseFromString("<?xml version='1.0'?>\n", "text/xml");
 
@@ -198,7 +198,7 @@ WebIM.time = function () {
 //     "[del]": "del.png"
 //   }
 // }; 
-// wx.connectSocket({url: WebIM.config.xmppURL, method: "GET"})
+// uni.connectSocket({url: WebIM.config.xmppURL, method: "GET"})
 
 WebIM.conn = new WebIM.connection({
   appKey: "easemob-demo#chatdemoui",

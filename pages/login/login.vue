@@ -5,10 +5,10 @@
 		<text>登录</text>
 	</view>
 	<view :class="'login_user ' + nameFocus">
-		<input type="text" placeholder="用户ID" placeholder-style="color:rgb(173,185,193)" @input="bindUsername" @focus="onFocusName" @blur="onBlurName"></input>
+		<input type="text" placeholder="用户ID" placeholder-style="color:rgb(173,185,193)" @input="bindUsername" @focus="onFocusName" @blur="onBlurName">
 	</view>
 	<view :class="'login_pwd ' + psdFocus">
-		<input type="text" password placeholder="用户密码" placeholder-style="color:rgb(173,185,193)" @input="bindPassword" @focus="onFocusPsd" @blur="onBlurPsd"></input>
+		<input type="text" password placeholder="用户密码" placeholder-style="color:rgb(173,185,193)" @input="bindPassword" @focus="onFocusPsd" @blur="onBlurPsd">
 	</view>
 	<view class="login_btn">
 		<button hover-class="btn_hover" @tap="login">登录</button>
@@ -115,7 +115,7 @@ export default {
         return;
       }
 
-      wx.setStorage({
+      uni.setStorage({
         key: "myUsername",
         data: __test_account__ || this.name.toLowerCase()
       });

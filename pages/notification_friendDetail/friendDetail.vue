@@ -48,12 +48,12 @@ export default {
       me.setData({
         friendList: getApp().globalData.saveFriendList
       });
-      wx.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
+      uni.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
     });
     this.setData({
-      myName: wx.getStorageSync("myUsername"),
+      myName: uni.getStorageSync("myUsername"),
       // 哈？global？好吧
-      friendList: wx.getStorageSync("friendNotiData") //getApp().globalData.saveFriendList 
+      friendList: uni.getStorageSync("friendNotiData") //getApp().globalData.saveFriendList 
       // [{
       // 	chatroom: false,
       // 	code: "",
@@ -93,7 +93,7 @@ export default {
       });
       this.friendList.splice(idx, 1);
       getApp().globalData.saveFriendList.splice(idx, 1); // if(!this.data.friendList.length){
-      // 	wx.navigateBack({
+      // 	uni.navigateBack({
       // 		url: "../main/main?myName=" + this.data.myName
       // 	});
       // }
@@ -115,7 +115,7 @@ export default {
         if (item.from == event.currentTarget.dataset.from) {
           item.type = 'subscribed';
           item.typeText = '已同意';
-          wx.setStorageSync("friendNotiData", this.friendList); //getApp().globalData.saveFriendList = this.data.friendList;
+          uni.setStorageSync("friendNotiData", this.friendList); //getApp().globalData.saveFriendList = this.data.friendList;
 
           this.setData({
             friendList: this.friendList
@@ -138,7 +138,7 @@ export default {
             }
           }
 
-          wx.setStorage({
+          uni.setStorage({
             key: "member",
             data: member
           });
@@ -163,7 +163,7 @@ export default {
         if (item.from == event.currentTarget.dataset.from) {
           item.type = 'unsubscribed';
           item.typeText = '已拒绝';
-          wx.setStorageSync("friendNotiData", this.friendList); //getApp().globalData.saveFriendList = this.data.friendList;
+          uni.setStorageSync("friendNotiData", this.friendList); //getApp().globalData.saveFriendList = this.data.friendList;
 
           this.setData({
             friendList: this.friendList

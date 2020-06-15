@@ -68,7 +68,7 @@ export default {
   components: {},
   props: {},
   onLoad: function () {
-    let myUsername = wx.getStorageSync("myUsername");
+    let myUsername = uni.getStorageSync("myUsername");
     let me = this;
     this.setData({
       username: myUsername

@@ -16,8 +16,6 @@
 						<image v-if="item.style == 'self'" src="/static/images/poprightarrow@2x.png" class="msg_poprightarrow"></image>
 						<image v-if="item.style == ''" src="/static/images/popleftarrow@2x.png" class="msg_popleftarrow"></image>
 						<view>
-							<!-- 下行template对应的wxml不存在，无法替换，代码已注释 -->
-							<!-- <template :is="item.msg.type" :data="item"></template>-->
               <text v-if="item.msg.type==='txt'" class="msg-text" style="float:left">{{ item.msg.data }}</text>
               <image v-if="item.msg.type==='emoji'" class="avatar" :src="'../../../static/images/faces/' + item.data" style="width:25px;height:25px;margin:0 0 2px 0;float:left"></image>
               <image v-if="item.msg.type==='img'" class="avatar" :src="item.msg.data" style="width:90px;height:120px;margin:2px auto" mode="aspectFit" @tap="previewImage" :data-url="item.msg.data"></image>
@@ -90,13 +88,13 @@ export default {
     }
 
     let username = this.username;
-    let myUsername = wx.getStorageSync("myUsername");
+    let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
-    let chatMsg = wx.getStorageSync(sessionKey) || [];
+    let chatMsg = uni.getStorageSync(sessionKey) || [];
     console.log('chatMsg>>',chatMsg);
     
     this.renderMsg(null, null, chatMsg, sessionKey);
-    wx.setStorageSync(sessionKey, null);
+    uni.setStorageSync(sessionKey, null);
     disp.on('em.error.sendMsgErr', function (err) {
       curMsgMid = err.data.mid;
       isFail = true;
@@ -118,7 +116,7 @@ export default {
         me.curChatMsg[0].isShow = false;
       }
 
-      wx.setStorageSync("rendered_" + sessionKey, msgList);
+      uni.setStorageSync("rendered_" + sessionKey, msgList);
     });
     msgStorage.on("newChatMsg", function (renderableMsg, type, curChatMsg, sesskey) {
       me.curChatMsg = curChatMsg;
@@ -160,7 +158,7 @@ export default {
 
     previewImage(event) {
       var url = event.target.dataset.url;
-      wx.previewImage({
+      uni.previewImage({
         urls: [url] // 需要预览的图片 http 链接列表
 
       });
@@ -169,9 +167,9 @@ export default {
     getHistoryMsg() {
       let me = this;
       let username = this.username;
-      let myUsername = wx.getStorageSync("myUsername");
+      let myUsername = uni.getStorageSync("myUsername");
       let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
-      let historyChatMsgs = wx.getStorageSync("rendered_" + sessionKey) || [];
+      let historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || [];
 
       if (Index < historyChatMsgs.length) {
         let timesMsgList = historyChatMsgs.slice(-Index - 10, -Index);
@@ -185,7 +183,7 @@ export default {
           page++;
         }
 
-        wx.stopPullDownRefresh();
+        uni.stopPullDownRefresh();
       }
     },
 
@@ -203,7 +201,7 @@ export default {
         });
       }
 
-      var historyChatMsgs = wx.getStorageSync("rendered_" + sessionKey) || []; // if (curChatMsg.length) {
+      var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || []; // if (curChatMsg.length) {
       // 	console.log(curMsgMid.substring(curMsgMid.length - 10) , curChatMsg[0].mid.substring(curChatMsg[0].mid.length - 10))
       // }
       // if(curChatMsg.length && curMsgMid.substring(curMsgMid.length - 10) == curChatMsg[curChatMsg.length - 1].mid.substring(curChatMsg[0].mid.length - 10)){
@@ -230,8 +228,8 @@ export default {
         });
       }
 
-      wx.setStorageSync("rendered_" + sessionKey, historyChatMsgs);
-      let chatMsg = wx.getStorageSync(sessionKey) || [];
+      uni.setStorageSync("rendered_" + sessionKey, historyChatMsgs);
+      let chatMsg = uni.getStorageSync(sessionKey) || [];
       chatMsg.map(function (item, index) {
         curChatMsg.map(function (item2, index2) {
           if (item2.mid == item.mid) {
@@ -239,7 +237,7 @@ export default {
           }
         });
       });
-      wx.setStorageSync(sessionKey, chatMsg);
+      uni.setStorageSync(sessionKey, chatMsg);
       Index = historyChatMsgs.slice(-10).length;
       uni.pageScrollTo({
         scrollTop: 9999
@@ -268,7 +266,7 @@ export default {
         me.curChatMsg[0].isShow = false;
       }
 
-      wx.setStorageSync("rendered_" + sessionKey, msgList);
+      uni.setStorageSync("rendered_" + sessionKey, msgList);
       isFail = false;
     }
 

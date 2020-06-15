@@ -40,7 +40,7 @@
 <view class="search_input" v-if="search_chats">
 	<view>
 		<icon type="search" size="13"></icon>
-		<input placeholder="请输入好友用户名" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus confirm-type="Search" type="text" @confirm="onSearch" @input="onInput" :value="input_code"></input>
+		<input placeholder="请输入好友用户名" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus confirm-type="Search" type="text" @confirm="onSearch" @input="onInput" :value="input_code">
 			<icon type="clear" size="13" @tap.stop="clearInput" v-if="show_clear"></icon>
 	</view>
 	<text @tap="cancel">取消</text>
@@ -112,7 +112,7 @@ export default {
     },
     add_friend: function () {
       let me = this;
-      let myName = wx.getStorageSync("myUsername");
+      let myName = uni.getStorageSync("myUsername");
       if (me.friend_name == "" || me.friend_name.toLowerCase() == myName.toLowerCase()) {
         uni.showToast({title: "添加失败"});
         return;
