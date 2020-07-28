@@ -240,7 +240,8 @@ export default {
       uni.setStorageSync(sessionKey, chatMsg);
       Index = historyChatMsgs.slice(-10).length;
       uni.pageScrollTo({
-        scrollTop: 9999
+        scrollTop: 5000,
+        duration: 300,
       });
 
       if (isFail) {

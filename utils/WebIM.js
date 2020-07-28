@@ -1,5 +1,5 @@
-// import websdk from "../sdk/connection";
 import websdk from "../newSDK/webimSDK3.1.3";
+// import websdk from "../sdk/src/wxEntry"
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};

@@ -68,14 +68,14 @@
         "usingComponents" : true
     },
     "mp-toutiao" : {
-        "appid" : "tt4eb0380dd18a9470",
+        "appid" : "tt2e6058ddb15a1d91",
         "usingComponents" : true,
         "setting" : {
             "urlCheck" : false
         }
     },
     "mp-qq" : {
-        "appid" : "1110502987",
+        "appid" : "1110634990",
         "setting" : {
             "urlCheck" : false
         }

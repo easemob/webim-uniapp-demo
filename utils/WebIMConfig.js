@@ -14,6 +14,7 @@ let config = {
    * XMPP server
    */
   xmppURL: "wss://im-api-wechat.easemob.com/websocket",
+  // xmppURL: 'wss://im-api-new-hsb.easemob.com/websocket', //小程序沙箱环境
   // xmppURL: '172.17.3.122:5280',
 
   /*
