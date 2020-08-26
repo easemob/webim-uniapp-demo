@@ -1,4 +1,4 @@
-import websdk from "../newSDK/webimSDK3.1.3";
+import websdk from "../newSDK/wxsdk3.2.2";
 // import websdk from "../sdk/src/wxEntry"
 import config from "./WebIMConfig";
 console.group = console.group || {};
