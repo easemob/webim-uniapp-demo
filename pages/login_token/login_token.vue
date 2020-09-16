@@ -17,7 +17,7 @@
 		<navigator url="../register/register" open-type="redirect" hover-class="navigator-hover">新用户注册</navigator>
 		<navigator url="../login/login" open-type="redirect" hover-class="navigator-hover">使用密码登录</navigator>
 	</view>
-	<block data-type="template" data-is="toast" data-attr="..._toast_">
+	<!-- <block data-type="template" data-is="toast" data-attr="..._toast_">
 	<view class="toast_content_box">
 		<view class="toast_content" v-if="isHidefil">
 			<view class="toast_content_border"></view>
@@ -37,7 +37,7 @@
 			</view>
 		</view>
 	</view>
-</block>
+</block> -->
 </view>
 </view>
 </template>
@@ -70,34 +70,22 @@ export default {
   },
   methods: {
     bindUsername: function (e) {
-      this.setData({
-        name: e.detail.value
-      });
+      this.name = e.detail.value
     },
     bindPassword: function (e) {
-      this.setData({
-        psd: e.detail.value
-      });
+      this.psd = e.detail.value
     },
     onFocusPsd: function () {
-      this.setData({
-        psdFocus: 'psdFocus'
-      });
+      this.psdFocus = 'psdFocus'
     },
     onBlurPsd: function () {
-      this.setData({
-        psdFocus: ''
-      });
+      this.psdFocus = ''
     },
     onFocusName: function () {
-      this.setData({
-        nameFocus: 'nameFocus'
-      });
+      this.nameFocus = 'nameFocus'
     },
     onBlurName: function () {
-      this.setData({
-        nameFocus: ''
-      });
+      this.nameFocus = ''
     },
     login: function () {
       if (!__test_account__ && this.name == "") {

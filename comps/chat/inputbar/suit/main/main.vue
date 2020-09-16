@@ -53,9 +53,7 @@ export default {
 
   // lifetimes
   created() {
-     this.setData({
-      isIPX: getApp().globalData.isIPX
-    });
+    this.isIPX = getApp().globalData.isIPX
   },
 
   beforeMount() {},
@@ -88,9 +86,7 @@ export default {
 
     // bindinput 不能打冒号！
     bindMessage(e) {
-      this.setData({
-        userMessage: e.detail.value
-      });
+      this.userMessage = e.detail.value
     },
 
     emojiAction(emoji) {
@@ -111,10 +107,8 @@ export default {
         }
       }
 
-      this.setData({
-        userMessage: str,
-        inputMessage: str
-      });
+      this.userMessage = str
+      this.inputMessage = str
     },
 
     sendMessage() {

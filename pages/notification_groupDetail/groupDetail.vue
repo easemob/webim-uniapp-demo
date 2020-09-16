@@ -44,28 +44,10 @@ export default {
     var me = this; // 不需要 object 地址更新，就能刷
 
     disp.on("em.invite.joingroup", function () {
-      me.setData({
-        groupList: getApp().globalData.saveGroupInvitedList
-      });
+      me.groupList = getApp().globalData.saveGroupInvitedList
       uni.setStorageSync("groupNotiData", getApp().globalData.saveGroupInvitedList);
     });
-    this.setData({
-      groupList: uni.getStorageSync("groupNotiData") //getApp().globalData.saveGroupInvitedList 
-      // [{
-      // 	from: "zdtest2",
-      // 	reason: "",
-      // 	roomid: "75443436847105",
-      // 	type: "invite"
-      // },
-      // {
-      // 	from: "zdtest3",
-      // 	reason: "",
-      // 	roomid: "75443436847105",
-      // 	type: "invite"
-      // }
-      // ]
-
-    });
+    this.groupList = uni.getStorageSync("groupNotiData")
   },
 
   onShow() {

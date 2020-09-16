@@ -70,18 +70,12 @@ export default {
   onLoad: function () {
     let myUsername = uni.getStorageSync("myUsername");
     let me = this;
-    this.setData({
-      username: myUsername
-    });
-    this.setData({
-      switchStatus: WebIM.config.isDebug
-    });
+    this.username = myUsername
+    this.switchStatus = WebIM.config.isDebug
   },
 
   onShow() {
-    this.setData({
-      switchStatus: WebIM.config.isDebug
-    });
+    this.switchStatus = WebIM.config.isDebug
   },
 
   methods: {

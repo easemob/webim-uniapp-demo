@@ -41,9 +41,7 @@ export default {
 
     getApp().globalData.getUserInfo(function (userInfo) {
       // 更新数据
-      me.setData({
-        userInfo: userInfo
-      });
+      me.userInfo = userInfo
     });
   },
   methods: {

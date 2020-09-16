@@ -1,5 +1,5 @@
 <template>
-<chat id="groupchat" :username="username" :groupId="groupId" chatType="chatRoom"></chat>
+<chat id="groupchat" :username="username" chatType="chatRoom"></chat>
 </template>
 
 <script>
@@ -23,9 +23,7 @@ export default {
   // options = 系统传入的 url 参数
   onLoad(options) {
     let username = JSON.parse(options.username);
-    this.setData({
-      username: username
-    });
+    this.username = username
     uni.setNavigationBarTitle({
       title: username.your
     });

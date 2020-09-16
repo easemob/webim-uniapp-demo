@@ -76,9 +76,7 @@ export default {
         me.listGroups();
       }
     });
-    this.setData({
-      myName: option.myName
-    });
+    this.myName = option.myName
   },
   onShow: function () {
     this.listGroups();
@@ -90,10 +88,7 @@ export default {
       WebIM.conn.getGroup({
         limit: 100,
         success: function (res) {
-          me.setData({
-            groupList: res.data
-          }); // 好像也没有别的官方通道共享数据啊
-
+          me.groupList = res.data
           getApp().globalData.groupList = res.data || [];
         },
         error: function () {}
@@ -101,25 +96,19 @@ export default {
     },
 
     openSearch: function () {
-      this.setData({
-        search_btn: false,
-        search_friend: true,
-        show_mask: true
-      });
+      this.search_btn = false
+			this.search_friend = true
+			this.show_mask = true
     },
     cancel: function () {
-      this.setData({
-        search_btn: true,
-        search_friend: false,
-        show_mask: false
-      });
+      this.search_btn = true
+			this.search_friend = false
+			this.show_mask = false
     },
     close_mask: function () {
-      this.setData({
-        search_btn: true,
-        search_friend: false,
-        show_mask: false
-      });
+      this.search_btn = true
+			this.search_friend = false
+			this.show_mask = false
     },
     into_room: function (event) {
       var nameList = {

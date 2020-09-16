@@ -39,10 +39,8 @@ export default {
   created() {},
 
   beforeMount() {
-    this.setData({
-      time: this.msg.msg.length + "''",
-      style: this.msg.style
-    });
+    this.time = this.msg.msg.length + "''"
+    this.style = this.msg.style
   },
 
   moved() {},
@@ -62,15 +60,11 @@ export default {
 
     this.onPlaying = () => {
       //console.log("onPlaying", JSON.stringify(this.data));
-      this.setData({
-        curStatus: playStatus.PLAYING
-      });
+      this.curStatus = playStatus.PLAYING
       uni.inter && clearInterval(uni.inter);
       uni.inter = setInterval(() => {
         let opcity = this.opcity;
-        this.setData({
-          opcity: opcity == 1 ? 0.4 : 1
-        });
+        this.opcity = opcity == 1 ? 0.4 : 1
       }, 500);
     };
 
@@ -81,28 +75,20 @@ export default {
         return;
       }
 
-      this.setData({
-        curStatus: playStatus.PAUSE,
-        opcity: 1 //time: "0'",
-
-      });
+      this.curStatus = playStatus.PAUSE
+      this.opcity = 1
     };
 
     this.onDone = () => {
       // console.log("onDone", JSON.stringify(this.data));
-      this.setData({
-        curStatus: playStatus.STOP,
-        opcity: 1 //time: "0'",
-
-      });
+      this.curStatus = playStatus.STOP
+      this.opcity = 1
       clearInterval(uni.inter);
     }; // 多次播放会丢失这个回调
 
 
     this.onTimeUpdate = () => {
-      this.setData({
-        time: (audioCtx.currentTime >> 0) + "'"
-      });
+      this.time = (audioCtx.currentTime >> 0) + "'"
     };
 
     this.onWait = () => {

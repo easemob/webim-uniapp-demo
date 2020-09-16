@@ -16,7 +16,7 @@
 	<view class="register_back">
 		<navigator url="../login/login" open-type="redirect" hover-class="navigator-hover">返回登录</navigator>
 	</view>
-	<block data-type="template" data-is="toast" data-attr="..._toast_">
+	<!-- <block data-type="template" data-is="toast" data-attr="..._toast_">
 	<view class="toast_content_box">
 		<view class="toast_content" v-if="isHidefil">
 			<view class="toast_content_border"></view>
@@ -36,7 +36,7 @@
 			</view>
 		</view>
 	</view>
-</block>
+</block> -->
 </view>
 </view>
 </template>
@@ -61,34 +61,22 @@ export default {
   },
   methods: {
     bindUsername: function (e) {
-      this.setData({
-        username: e.detail.value
-      });
+      this.username = e.detail.value
     },
     bindPassword: function (e) {
-      this.setData({
-        password: e.detail.value
-      });
+      this.password = e.detail.value
     },
     onFocusPsd: function () {
-      this.setData({
-        psdFocus: 'psdFocus'
-      });
+      this.psdFocus = 'psdFocus'
     },
     onBlurPsd: function () {
-      this.setData({
-        psdFocus: ''
-      });
+      this.psdFocus = ''
     },
     onFocusName: function () {
-      this.setData({
-        nameFocus: 'nameFocus'
-      });
+      this.nameFocus = 'nameFocus'
     },
     onBlurName: function () {
-      this.setData({
-        nameFocus: ''
-      });
+      this.nameFocus = ''
     },
     register: function () {
       const that = this;

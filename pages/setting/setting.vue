@@ -73,43 +73,33 @@ export default {
   props: {},
   onLoad: function (option) {
     let me = this;
-    this.setData({
-      yourname: uni.getStorageSync("myUsername")
-    }); //监听加好友申请
+    this.yourname = uni.getStorageSync("myUsername")
+    
+    //监听加好友申请
 
     disp.on("em.subscribe", function () {
-      me.setData({
-        messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-      });
+      me.messageNum = getApp().globalData.saveFriendList.length
+      me.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
     }); //监听未读“聊天”
 
     disp.on("em.unreadspot", function () {
-      me.setData({
-        unReadSpotNum: getApp().globalData.unReadMessageNum
-      });
+      me.unReadSpotNum = getApp().globalData.unReadMessageNum
     }); //监听未读“通知”数
 
     disp.on("em.invite.joingroup", function (count) {
-      me.setData({
-        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-      });
+      me.unReadNoticeNum = getApp().globalData.saveGroupInvitedList.length
+      me.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
     });
   },
 
   onShow() {
-    this.setData({
-      messageNum: getApp().globalData.saveFriendList.length,
-      unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
-      unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-    });
+    this.messageNum = getApp().globalData.saveFriendList.length
+    this.unReadSpotNum = getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+    this.unReadNoticeNum = getApp().globalData.saveGroupInvitedList.length
+    this.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
 
     if (getApp().globalData.isIPX) {
-      this.setData({
-        isIPX: true
-      });
+      this.isIPX = true
     }
   },
 

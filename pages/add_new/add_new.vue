@@ -1,6 +1,6 @@
 <template>
 <view>
-<block data-type="template" data-is="toast" data-attr="..._toast_">
+<!-- <block data-type="template" data-is="toast" data-attr="..._toast_">
 	<view class="toast_content_box">
 		<view class="toast_content" v-if="isHidefil">
 			<view class="toast_content_border"></view>
@@ -20,7 +20,7 @@
 			</view>
 		</view>
 	</view>
-</block>
+</block> -->
 <!-- <view class="search_input">
 	<view>
 		<input placeholder="好友名称" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus bindinput="bindFriendName"></input>
@@ -77,38 +77,28 @@ export default {
   },
   methods: {
     openSearch: function () {
-      this.setData({
-        search_btn: false,
-        search_chats: true
-      });
+      this.search_btn = false
+      this.search_chats = true
     },
     onInput: function (e) {
       let inputValue = e.detail.value;
 
       if (inputValue) {
-        this.setData({
-          show_clear: true,
-          friend_name: inputValue,
-          isdisable: false
-        });
+        this.show_clear = true
+        this.friend_name = inputValue
+        this.isdisable = false
       } else {
-        this.setData({
-          show_clear: false
-        });
+        this.show_clear = false
       }
     },
     clearInput: function () {
-      this.setData({
-        input_code: '',
-        show_clear: false
-      });
+      this.input_code = ''
+      this.show_clear = false
     },
     cancel: function () {
-      this.setData({
-        search_btn: true,
-        search_chats: false,
-        show_clear: false
-      });
+      this.search_btn = true
+      this.search_chats = false
+      this.show_clear = false
     },
     add_friend: function () {
       let me = this;
@@ -144,9 +134,7 @@ export default {
                 });
           }
 
-          me.setData({
-            isdisable: true
-          });
+          me.isdisable = true
         }
       };
       WebIM.conn.getRoster(rosters);

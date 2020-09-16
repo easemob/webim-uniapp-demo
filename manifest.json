@@ -8,7 +8,7 @@
     "app-plus" : {
         "usingComponents" : true,
         "nvueCompiler" : "uni-app",
-        "compilerVersion" : 3,
+        "compilerVersion" : 2,
         "splashscreen" : {
             "alwaysShowBeforeRender" : true,
             "waiting" : true,
@@ -79,5 +79,11 @@
         "setting" : {
             "urlCheck" : false
         }
+    },
+    "quickapp-webview" : {
+        "package" : "com.example.IMdemo",
+        "minPlatformVersion" : 1061,
+        "versionName" : "1.0",
+        "versionCode" : 10
     }
 }

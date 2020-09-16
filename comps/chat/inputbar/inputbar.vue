@@ -77,9 +77,7 @@ export default {
   destroyed() {},
 
   mounted() {
-    this.setData({
-      isIPX: getApp().globalData.isIPX
-    });
+    this.isIPX = getApp().globalData.isIPX
     // let comps = this.$data.__comps__;
     // comps.main = this.selectComponent("#chatSuitMain");
     // comps.emoji = this.selectComponent("#chatSuitEmoji");
