@@ -115,7 +115,7 @@ export default {
   },
   props: {},
 
-  mounted () {
+  onLoad () {
     let me = this; //监听加好友申请
 
     disp.on("em.subscribe", function () {

@@ -182,7 +182,19 @@ export default {
     renderMsg(renderableMsg, type, curChatMsg, sessionKey, isnew) {
       let me = this;
 
-      var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || []; // if (curChatMsg.length) {
+      var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || [];
+
+
+       if (curChatMsg.length > 1) {
+        this.chatMsg.map(function (elem, index) {
+          curChatMsg.map(function (item, i) {
+            if (elem.mid == item.mid) {
+              //me.data.chatMsg.splice(index, 1)
+              curChatMsg.splice(i, 1);
+            }
+          });
+        });
+      }
 
       historyChatMsgs = historyChatMsgs.concat(curChatMsg); //console.log('当前历史',renderableMsg)
       //console.log('历史消息', historyChatMsgs)
