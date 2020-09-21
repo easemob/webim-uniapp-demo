@@ -1,8 +1,9 @@
 
 <template>
 		<!-- view 换成 scroll-view效果更好 用view是为了要stopPullDownRefresh -->
-		<view scroll-y="true" :class="view + ' wrap ' + (isIPX?'scroll_view_X': '')" @tap="onTap" @scroll="scrollmore"
-		 @scrolltoupper="refresh" upper-threshold="-50" :scroll-into-view="toView">
+		<view scroll-y="true" :class="view + ' wrap ' + (isIPX?'scroll_view_X': '')" @tap="onTap" 
+  
+     upper-threshold="-50" :scroll-into-view="toView">
 			<view class="message" v-for="(item, index) in chatMsg" :key="index" :id="item.mid">
 				<view class="main" :class="item.style">
 					<view class="user">
@@ -78,18 +79,18 @@ export default {
     this.__visibility__ = false;
   },
 
-  created(event) {
+  mounted(event) {
     let me = this;
 
     if (getApp().globalData.isIPX) {
-      this.isIPX = true
+      this.setData({
+        isIPX: true
+      });
     }
 
     let username = this.username;
-    console.log('username>>',username)
     let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
-    console.log('111>>',sessionKey);
     let chatMsg = uni.getStorageSync(sessionKey) || [];
     console.log('chatMsg>>',chatMsg);
     
@@ -105,7 +106,9 @@ export default {
         if (item.mid.substring(item.mid.length - 10) == curMsgMid.substring(curMsgMid.length - 10)) {
           item.msg.data[0].isFail = true;
           item.isFail = true;
-          me.chatMsg = msgList
+          me.setData({
+            chatMsg: msgList
+          });
         }
       });
 
@@ -137,11 +140,15 @@ export default {
 
   methods: {
     normalScroll() {
-      this.view = LIST_STATUS.NORMAL
+      this.setData({
+        view: LIST_STATUS.NORMAL
+      });
     },
 
     shortScroll() {
-      this.view = LIST_STATUS.SHORT
+      this.setData({
+        view: LIST_STATUS.SHORT
+      });
     },
 
     onTap() {
@@ -167,8 +174,10 @@ export default {
 
       if (Index < historyChatMsgs.length) {
         let timesMsgList = historyChatMsgs.slice(-Index - 10, -Index);
-        this.chatMsg = timesMsgList.concat(me.chatMsg)
-        this.toView = timesMsgList[timesMsgList.length - 1].mid
+        this.setData({
+          chatMsg: timesMsgList.concat(me.chatMsg),
+          toView: timesMsgList[timesMsgList.length - 1].mid
+        });
         Index += timesMsgList.length;
 
         if (timesMsgList.length == 10) {
@@ -182,19 +191,13 @@ export default {
     renderMsg(renderableMsg, type, curChatMsg, sessionKey, isnew) {
       let me = this;
 
-      var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || [];
-
-
-       if (curChatMsg.length > 1) {
-        this.chatMsg.map(function (elem, index) {
-          curChatMsg.map(function (item, i) {
-            if (elem.mid == item.mid) {
-              //me.data.chatMsg.splice(index, 1)
-              curChatMsg.splice(i, 1);
-            }
-          });
-        });
-      }
+      var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || []; // if (curChatMsg.length) {
+      // 	console.log(curMsgMid.substring(curMsgMid.length - 10) , curChatMsg[0].mid.substring(curChatMsg[0].mid.length - 10))
+      // }
+      // if(curChatMsg.length && curMsgMid.substring(curMsgMid.length - 10) == curChatMsg[curChatMsg.length - 1].mid.substring(curChatMsg[0].mid.length - 10)){
+      // 	//curChatMsg[curChatMsg.length - 1].msg.data[0].isSuc = true
+      // 	curChatMsg[curChatMsg.length - 1].isSuc = true
+      // }
 
       historyChatMsgs = historyChatMsgs.concat(curChatMsg); //console.log('当前历史',renderableMsg)
       //console.log('历史消息', historyChatMsgs)
@@ -202,12 +205,18 @@ export default {
       if (!historyChatMsgs.length) return;
 
       if (isnew == 'newMsg') {
-					this.chatMsg = this.chatMsg.concat(curChatMsg)
-					this.toView = historyChatMsgs[historyChatMsgs.length - 1].mid
-				}else{
-					this.chatMsg = historyChatMsgs.slice(-10)
-					this.toView = historyChatMsgs[historyChatMsgs.length - 1].mid
-				}
+        this.setData({
+          chatMsg: this.chatMsg.concat(curChatMsg),
+          // 跳到最后一条
+          toView: historyChatMsgs[historyChatMsgs.length - 1].mid
+        });
+      } else {
+        this.setData({
+          chatMsg: historyChatMsgs.slice(-10),
+          // 跳到最后一条
+          toView: historyChatMsgs[historyChatMsgs.length - 1].mid
+        });
+      }
 
       uni.setStorageSync("rendered_" + sessionKey, historyChatMsgs);
       let chatMsg = uni.getStorageSync(sessionKey) || [];
@@ -237,7 +246,9 @@ export default {
         if (item.mid.substring(item.mid.length - 10) == curMsgMid.substring(curMsgMid.length - 10)) {
           item.msg.data[0].isFail = true;
           item.isFail = true;
-          me.chatMsg = msgList
+          me.setData({
+            chatMsg: msgList
+          });
         }
       });
 

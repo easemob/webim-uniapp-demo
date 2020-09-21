@@ -77,28 +77,38 @@ export default {
   },
   methods: {
     openSearch: function () {
-      this.search_btn = false
-      this.search_chats = true
+      this.setData({
+        search_btn: false,
+        search_chats: true
+      });
     },
     onInput: function (e) {
       let inputValue = e.detail.value;
 
       if (inputValue) {
-        this.show_clear = true
-        this.friend_name = inputValue
-        this.isdisable = false
+        this.setData({
+          show_clear: true,
+          friend_name: inputValue,
+          isdisable: false
+        });
       } else {
-        this.show_clear = false
+        this.setData({
+          show_clear: false
+        });
       }
     },
     clearInput: function () {
-      this.input_code = ''
-      this.show_clear = false
+      this.setData({
+        input_code: '',
+        show_clear: false
+      });
     },
     cancel: function () {
-      this.search_btn = true
-      this.search_chats = false
-      this.show_clear = false
+      this.setData({
+        search_btn: true,
+        search_chats: false,
+        show_clear: false
+      });
     },
     add_friend: function () {
       let me = this;
@@ -134,7 +144,9 @@ export default {
                 });
           }
 
-          me.isdisable = true
+          me.setData({
+            isdisable: true
+          });
         }
       };
       WebIM.conn.getRoster(rosters);

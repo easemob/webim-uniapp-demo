@@ -85,7 +85,9 @@ export default {
   components: {},
   props: {},
   onLoad: function (options) {
-    this.owner = JSON.parse(options.owner).myName
+    this.setData({
+      owner: JSON.parse(options.owner).myName
+    });
   },
   onShow: function () {
     var me = this; // 获取当前用户的好友信息
@@ -100,31 +102,47 @@ export default {
           }
         }
 
-        me.friendList = member
+        me.setData({
+          friendList: member
+        });
       }
     });
   },
   methods: {
     getGroupName: function (e) {
-      this.groupName = e.detail.value
+      this.setData({
+        groupName: e.detail.value
+      });
     },
     getGroupDec: function (e) {
-      this.groupDec = e.detail.value
+      this.setData({
+        groupDec: e.detail.value
+      });
     },
     allowJoinFun: function (e) {
-      this.allowJoin = Boolean(e.detail.value) || false
+      this.setData({
+        allowJoin: Boolean(e.detail.value) || false
+      });
     },
     allowApproveFun: function (e) {
-      this.allowApprove = Boolean(e.detail.value) || false
+      this.setData({
+        allowApprove: Boolean(e.detail.value) || false
+      });
     },
     noAllowJoinFun: function (e) {
-      this.noAllowJoin = Boolean(e.detail.value) || false
+      this.setData({
+        noAllowJoin: Boolean(e.detail.value) || false
+      });
     },
     allowInviteFun: function (e) {
-      this.allowInvite = Boolean(e.detail.value) || false
+      this.setData({
+        allowInvite: Boolean(e.detail.value) || false
+      });
     },
     inviteFriendFun: function (e) {
-      this.inviteFriend = e.detail.value
+      this.setData({
+        inviteFriend: e.detail.value
+      });
     },
     // 创建群组
     createGroup: function () {

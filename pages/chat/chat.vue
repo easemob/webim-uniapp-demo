@@ -115,45 +115,60 @@ export default {
   },
   props: {},
 
-  onLoad () {
+  mounted () {
     let me = this; //监听加好友申请
 
     disp.on("em.subscribe", function () {
-      me.messageNum = getApp().globalData.saveFriendList.length
-      me.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      me.setData({
+        messageNum: getApp().globalData.saveFriendList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      });
     }); //监听解散群
 
     disp.on("em.invite.deleteGroup", function () {
       me.listGroups();
       me.getRoster();
-      me.arr = me.getChatList()
-      me.messageNum = getApp().globalData.saveFriendList.length
+      me.setData({
+        arr: me.getChatList(),
+        messageNum: getApp().globalData.saveFriendList.length
+      });
     }); //监听未读消息数
 
     disp.on("em.unreadspot", function (message) {
-      me.arr = me.getChatList()
-      me.unReadSpotNum = getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+      me.setData({
+        arr: me.getChatList(),
+        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+      });
     }); //监听未读加群“通知”
 
     disp.on("em.invite.joingroup", function () {
-      me.unReadNoticeNum = getApp().globalData.saveGroupInvitedList.length
-      meunReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      me.setData({
+        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      });
     });
     disp.on("em.contacts.remove", function () {
-      me.getRoster();
+      me.getRoster(); // me.setData({
+      // 	arr: me.getChatList(),
+      // 	unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+      // });
     });
     this.getRoster();
   },
 
   onShow: function () {
-    this.arr = this.getChatList();
-		this.unReadSpotNum = getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum;
-		this.messageNum = getApp().globalData.saveFriendList.length;
-		this.unReadNoticeNum = getApp().globalData.saveGroupInvitedList.length;
-		this.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length;
+    this.setData({
+      arr: this.getChatList(),
+      unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+      messageNum: getApp().globalData.saveFriendList.length,
+      unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
+      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+    });
 
     if (getApp().globalData.isIPX) {
-      this.isIPX = true
+      this.setData({
+        isIPX: true
+      });
     }
   },
   methods: {
@@ -190,14 +205,18 @@ export default {
             key: "member",
             data: member
           });
-          me.member = member
+          me.setData({
+            member: member
+          });
           me.listGroups(); //if(!systemReady){
 
           disp.fire("em.main.ready"); //systemReady = true;
           //}
 
-          me.arr = me.getChatList()
-          me.unReadSpotNum = getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+          me.setData({
+            arr: me.getChatList(),
+            unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+          });
         },
 
         error(err) {
@@ -264,12 +283,11 @@ export default {
     },
 
     openSearch: function () {
-      this.search_btn = false;
-				this.search_chats = true;
-				this.gotop = true;
-				setTimeout(()=> { //加适当延迟,避免focus时软键盘闪退
-					this.focus = true;
-				}, 300);
+      this.setData({
+        search_btn: false,
+        search_chats: true,
+        gotop: true
+      });
     },
     onSearch: function (val) {
       let searchValue = val.detail.value;
@@ -280,27 +298,36 @@ export default {
           serchList.push(item);
         }
       });
-      this.arr = serchList
+      this.setData({
+        arr: serchList
+      });
     },
     cancel: function () {
-      this.search_btn = true;
-			this.search_chats = false;
-			this.gotop = false;
-			this.focus = false;
-			this.arr = this.getChatList();
-			this.unReadSpotNum = getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum;
+      this.setData({
+        search_btn: true,
+        search_chats: false,
+        arr: this.getChatList(),
+        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+        gotop: false
+      });
     },
     clearInput: function () {
-      this.input_code = '';
-			this.show_clear = false;
+      this.setData({
+        input_code: '',
+        show_clear: false
+      });
     },
     onInput: function (e) {
       let inputValue = e.detail.value;
 
       if (inputValue) {
-        this.show_clear = true;
+        this.setData({
+          show_clear: true
+        });
       } else {
-        this.show_clear = false;
+        this.setData({
+          show_clear: false
+        });
       }
     },
     tab_contacts: function () {
@@ -309,9 +336,11 @@ export default {
       });
     },
     close_mask: function () {
-      this.search_btn = true
-      this.search_chats = false
-      this.show_mask = false
+      this.setData({
+        search_btn: true,
+        search_chats: false,
+        show_mask: false
+      });
     },
     tab_setting: function () {
       uni.redirectTo({

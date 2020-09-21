@@ -1,5 +1,5 @@
 <template>
-<chat id="groupchat" :username="username" chatType="chatRoom"></chat>
+<chat id="groupchat" ref="chat" :username="username" :groupId="groupId" chatType="chatRoom"></chat>
 </template>
 
 <script>
@@ -18,12 +18,20 @@ export default {
   components: {
     chat
   },
-  props: {},
+
+   props: {
+    groupId:{
+      type:String,
+      default:''
+    }
+  },
 
   // options = 系统传入的 url 参数
   onLoad(options) {
     let username = JSON.parse(options.username);
-    this.username = username
+    this.setData({
+      username: username
+    });
     uni.setNavigationBarTitle({
       title: username.your
     });
@@ -35,8 +43,9 @@ export default {
 
   onPullDownRefresh: function () {
     uni.showNavigationBarLoading();
-    this.selectComponent('#groupchat').$vm.getMore(); 
+    // this.selectComponent('#groupchat').$vm.getMore(); 
     // 停止下拉动作
+    this.$refs.chat.getMore();
     uni.hideNavigationBarLoading();
     uni.stopPullDownRefresh();
   },

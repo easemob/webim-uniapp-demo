@@ -55,11 +55,15 @@ export default {
   props: {},
   methods: {
     openEmoji() {
-      this.show = EMOJI_STATUS.OPENED
+      this.setData({
+        show: EMOJI_STATUS.OPENED
+      });
     },
 
     cancelEmoji() {
-      this.show = EMOJI_STATUS.CLOSED
+      this.setData({
+        show: EMOJI_STATUS.CLOSED
+      });
     },
 
     // 输出 emoji

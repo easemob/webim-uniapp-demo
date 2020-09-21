@@ -61,22 +61,34 @@ export default {
   },
   methods: {
     bindUsername: function (e) {
-      this.username = e.detail.value
+      this.setData({
+        username: e.detail.value
+      });
     },
     bindPassword: function (e) {
-      this.password = e.detail.value
+      this.setData({
+        password: e.detail.value
+      });
     },
     onFocusPsd: function () {
-      this.psdFocus = 'psdFocus'
+      this.setData({
+        psdFocus: 'psdFocus'
+      });
     },
     onBlurPsd: function () {
-      this.psdFocus = ''
+      this.setData({
+        psdFocus: ''
+      });
     },
     onFocusName: function () {
-      this.nameFocus = 'nameFocus'
+      this.setData({
+        nameFocus: 'nameFocus'
+      });
     },
     onBlurName: function () {
-      this.nameFocus = ''
+      this.setData({
+        nameFocus: ''
+      });
     },
     register: function () {
       const that = this;

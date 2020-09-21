@@ -70,22 +70,34 @@ export default {
   },
   methods: {
     bindUsername: function (e) {
-      this.name = e.detail.value
+      this.setData({
+        name: e.detail.value
+      });
     },
     bindPassword: function (e) {
-      this.psd = e.detail.value
+      this.setData({
+        psd: e.detail.value
+      });
     },
     onFocusPsd: function () {
-      this.psdFocus = 'psdFocus'
+      this.setData({
+        psdFocus: 'psdFocus'
+      });
     },
     onBlurPsd: function () {
-      this.psdFocus = ''
+      this.setData({
+        psdFocus: ''
+      });
     },
     onFocusName: function () {
-      this.nameFocus = 'nameFocus'
+      this.setData({
+        nameFocus: 'nameFocus'
+      });
     },
     onBlurName: function () {
-      this.nameFocus = ''
+      this.setData({
+        nameFocus: ''
+      });
     },
     login: function () {
       if (!__test_account__ && this.name == "") {

@@ -18,27 +18,27 @@
 		<navigator url="../register/register" open-type="redirect" hover-class="navigator-hover">新用户注册</navigator>
 		<navigator url="../login_token/login_token" open-type="redirect" hover-class="navigator-hover">使用Token登录</navigator>
 	</view>
-	<block data-type="template" data-is="toast" data-attr="..._toast_">
+	<!-- <block data-type="template" data-is="toast" data-attr="..._toast_">
 	<view class="toast_content_box">
-		<!-- <view class="toast_content" >
+		<view class="toast_content" v-if="isHidefil">
 			<view class="toast_content_border"></view>
 			<view class="toast_content_icon">
 				<image class="toast_icon_img" src="/static/images/filled@2x.png"></image>
 			</view>
 			<view class="toast_content_text">{{content}}</view>
-		</view> -->
+		</view>
 
-		<!-- <view class="toast_content_box">
-			<view class="toast_content" >
+		<view class="toast_content_box">
+			<view class="toast_content" v-if="isHidescss">
 				<view class="toast_content_border toast_success"></view>
 				<view class="toast_content_icon">
 					<image class="toast_icon_img" src="/static/images/success@2x.png"></image>
 				</view>
 				<view class="toast_content_text">{{content}}</view>
 			</view>
-		</view> -->
+		</view>
 	</view>
-</block>
+</block> -->
 </view>
 </view>
 </template>
@@ -75,22 +75,34 @@ export default {
   },
   methods: {
     bindUsername: function (e) {
-      this.name = e.detail.value
+      this.setData({
+        name: e.detail.value
+      });
     },
     bindPassword: function (e) {
-      this.psd = e.detail.value
+      this.setData({
+        psd: e.detail.value
+      });
     },
     onFocusPsd: function () {
-      this.psdFocus = 'psdFocus'
+      this.setData({
+        psdFocus: 'psdFocus'
+      });
     },
     onBlurPsd: function () {
-      this.psdFocus = ''
+      this.setData({
+        psdFocus: ''
+      });
     },
     onFocusName: function () {
-      this.nameFocus = 'nameFocus'
+      this.setData({
+        nameFocus: 'nameFocus'
+      });
     },
     onBlurName: function () {
-      this.nameFocus = ''
+      this.setData({
+        nameFocus: ''
+      });
     },
     login: function () {
       runAnimation = !runAnimation;

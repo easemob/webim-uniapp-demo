@@ -183,8 +183,10 @@ export default {
     //监听加好友申请
 
     disp.on("em.subscribe", function () {
-      me.messageNum = getApp().globalData.saveFriendList.length;
-			me.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length;
+      me.setData({
+        messageNum: getApp().globalData.saveFriendList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      });
     });
     disp.on("em.contacts.remove", function (message) {
       var pageStack = getCurrentPages();
@@ -195,12 +197,16 @@ export default {
     }); //监听未读“聊天”
 
     disp.on("em.unreadspot", function () {
-      me.unReadSpotNum = getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+      me.setData({
+        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+      });
     }); //监听未读加群“通知”数
 
     disp.on("em.invite.joingroup", function () {
-      me.unReadNoticeNum = getApp().globalData.saveGroupInvitedList.length
-			me.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length;
+      me.setData({
+        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      });
     });
     disp.on("em.subscribed", function () {
       var pageStack = getCurrentPages();
@@ -215,17 +221,23 @@ export default {
 				me.getRoster();
 			}
 		});
-    this.myName = option.myName
+    this.setData({
+      myName: option.myName
+    });
   },
 
   onShow() {
-    this.messageNum = getApp().globalData.saveFriendList.length
-		this.unReadSpotNum = getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum;
-		this.unReadNoticeNum = getApp().globalData.saveGroupInvitedList.length;
-		this.unReadTotalNotNum = getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length;
+    this.setData({
+      messageNum: getApp().globalData.saveFriendList.length,
+      unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+      unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
+      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+    });
 
     if (getApp().globalData.isIPX) {
-      this.isIPX = true
+      this.setData({
+        isIPX: true
+      });
     }
 
     this.getRoster();
@@ -248,7 +260,9 @@ export default {
             key: "member",
             data: member
           });
-          me.member = member
+          me.setData({
+            member: member
+          });
 
           if (!systemReady) {
             disp.fire("em.main.ready");
@@ -279,7 +293,9 @@ export default {
             }
           }
 
-          me.member = member
+          me.setData({
+            member: member
+          });
         }
       };
 
@@ -348,28 +364,39 @@ export default {
       });
     },
     openSearch: function () {
-      this.search_btn = false;
-			this.search_friend = true;
-			this.show_mask = true;
-			this.gotop = true;
+      this.setData({
+        search_btn: false,
+        search_friend: true,
+        show_mask: true,
+        gotop: true
+      });
     },
     clearInput: function () {
-      this.input_code = '';
-			this.show_clear = false;
+      this.setData({
+        input_code: '',
+        show_clear: false
+      });
     },
     onInput: function (e) {
       let inputValue = e.detail.value;
 
       if (inputValue) {
-        this.show_clear = true
+        this.setData({
+          show_clear: true
+        });
       } else {
-        this.show_clear = false
+        this.setData({
+          show_clear: false
+        });
       }
     },
     cancel: function () {
-      this.search_btn = true
-      this.search_friend = false
-      this.gotop = false
+      this.setData({
+        search_btn: true,
+        search_friend: false,
+        gotop: false //show_mask: false
+
+      });
       this.getBrands(this.member);
     },
     onSearch: function (val) {
@@ -394,8 +421,11 @@ export default {
       });
     },
     close_mask: function () {
-      this.search_btn = true
-      this.search_friend = false
+      this.setData({
+        search_btn: true,
+        search_friend: false //show_mask: false
+
+      });
     },
     tab_setting: function () {
       uni.redirectTo({
@@ -439,8 +469,10 @@ export default {
 
       for (let i = 0; i < that.listMain.length; ++i) {
         if (that.listMain[i].id === _id) {
-          that.isActive = _id
-          that.toView = 'inToView' + _id
+          that.setData({
+            isActive: _id,
+            toView: 'inToView' + _id
+          });
           break;
         }
       }
@@ -519,11 +551,14 @@ export default {
       //赋值给列表值
 
 
-      //赋值给当前高亮的isActive
-      that.listMain = someArr
+      that.setData({
+        listMain: someArr
+      }); //赋值给当前高亮的isActive
 
-      //计算分组高度,uni.createSelectotQuery()获取节点信息
-      that.isActive = someArr.length > 0 ? someArr[0].id : ''
+      that.setData({
+        isActive: someArr.length > 0 ? someArr[0].id : '',
+      }); //计算分组高度,uni.createSelectotQuery()获取节点信息
+
       let number = 0;
 
       for (let j = 0; j < someArr.length; ++j) {

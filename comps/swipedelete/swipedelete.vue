@@ -19,7 +19,9 @@ export default {
   props: {},
   methods: {
     deleteItem: function (e) {
-      this.translateX = 0
+      this.setData({
+        translateX: 0
+      });
       this.$emit('deleteChatItem', {}, {
         bubbles: true
       });
@@ -49,14 +51,18 @@ export default {
         if (Math.abs(this.translateX) == 0) {
           return;
         } else {
-          this.translateX = 0
+          this.setData({
+            translateX: 0
+          });
         }
       } else {
         // 左滑 显示删除
         if (Math.abs(this.translateX) >= 160) {
           return;
         } else {
-          this.translateX = -160
+          this.setData({
+            translateX: -160
+          });
         }
       }
     }

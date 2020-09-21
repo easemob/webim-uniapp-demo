@@ -68,8 +68,10 @@ export default {
     },
 
     toggleRecordModal() {
-      this.recordStatus = this.recordStatus == RecordStatus.HIDE ? RecordStatus.SHOW : RecordStatus.HIDE
-      this.radomheight = InitHeight
+      this.setData({
+        recordStatus: this.recordStatus == RecordStatus.HIDE ? RecordStatus.SHOW : RecordStatus.HIDE,
+        radomheight: InitHeight
+      });
     },
 
     handleRecordingMove(e) {
@@ -82,20 +84,26 @@ export default {
 
       if (this.recordStatus == RecordStatus.SWIPE) {
         if (changedTouches.pageY - touches.pageY < 20) {
-          this.recordStatus = RecordStatus.HOLD
+          this.setData({
+            recordStatus: RecordStatus.HOLD
+          });
         }
       }
 
       if (this.recordStatus == RecordStatus.HOLD) {
         if (changedTouches.pageY - touches.pageY > 20) {
-          this.recordStatus = RecordStatus.SWIPE
+          this.setData({
+            recordStatus: RecordStatus.SWIPE
+          });
         }
       }
     },
 
     handleRecording(e) {
       let me = this;
-      me.recordClicked = true
+      me.setData({
+        recordClicked: true
+      });
       setTimeout(() => {
         if (me.recordClicked == true) {
           executeRecord();
@@ -125,7 +133,9 @@ export default {
                     });
                   }
 
-                  me.isLongPress = false
+                  me.setData({
+                    isLongPress: false
+                  });
                 }
               });
             } else if (recordAuth == true) {
@@ -156,7 +166,9 @@ export default {
 
       function startRecord() {
         me.changedTouches = e.touches[0];
-        me.recordStatus = RecordStatus.HOLD
+        me.setData({
+          recordStatus: RecordStatus.HOLD
+        });
         RunAnimation = true;
         me.myradom();
         let recorderManager = me.recorderManager || uni.getRecorderManager();
@@ -178,17 +190,23 @@ export default {
       let recorderManager = this.recorderManager; // 向上滑动状态停止：取消录音发放
 
       if (this.recordStatus == RecordStatus.SWIPE) {
-        this.recordStatus = RecordStatus.RELEASE
+        this.setData({
+          recordStatus: RecordStatus.RELEASE
+        });
       } else {
-        this.recordStatus = RecordStatus.HIDE
-        this.recordClicked = false
+        this.setData({
+          recordStatus: RecordStatus.HIDE,
+          recordClicked: false
+        });
       }
 
       recorderManager.onStop(res => {
         // console.log("结束录音...", res);
         if (this.recordStatus == RecordStatus.RELEASE) {
           console.log("user canceled");
-          this.recordStatus = RecordStatus.HIDE
+          this.setData({
+            recordStatus: RecordStatus.HIDE
+          });
           return;
         }
 
@@ -282,7 +300,9 @@ export default {
         _radomheight[i] = 100 * Math.random().toFixed(2) + 10;
       }
 
-      that.radomheight = _radomheight
+      that.setData({
+        radomheight: _radomheight
+      });
 
       if (RunAnimation) {
         setTimeout(function () {

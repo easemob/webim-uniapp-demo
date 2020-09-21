@@ -28,11 +28,15 @@ export default {
     var me = this; // 不需要 object 地址更新，就能刷
 
     disp.on("em.subscribe", function () {
-
-      me.friendList = getApp().globalData.saveFriendList
+      me.setData({
+        friendList: getApp().globalData.saveFriendList
+      });
     });
-    this.myName = options.myName
-    this.friendList = getApp().globalData.saveFriendList
+    this.setData({
+      myName: options.myName,
+      // 哈？global？好吧
+      friendList: getApp().globalData.saveFriendList
+    });
   },
 
   methods: {

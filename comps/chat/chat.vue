@@ -8,12 +8,7 @@
         @newAudioMsg="saveSendMsg"
       ></chatSuitAudio>
 
-      <chatMsglist
-        ref="chatMsglist"
-        :username="username"
-        @msglistTap="normalScroll"
-        id="chat-msglist"
-      ></chatMsglist>
+      <chatMsglist ref="chatMsglist" :username="username" @msglistTap="normalScroll" id="chat-msglist"></chatMsglist>
     </view>
     <chatInputbar
       ref="chatInputbar"
@@ -43,25 +38,25 @@ export default {
       __comps__: {
         msglist: null,
         inputbar: null,
-        audio: null,
-      },
+        audio: null
+      }
     };
   },
 
   components: {
     chatMsglist,
     chatInputbar,
-    chatSuitAudio,
+    chatSuitAudio
   },
   props: {
     username: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     chatType: {
       type: String,
-      default: msgType.chatType.SINGLE_CHAT,
-    },
+      default: msgType.chatType.SINGLE_CHAT
+    }
   },
 
   // lifetimes
@@ -69,13 +64,10 @@ export default {
 
   beforeMount() {},
 
-  created() {
-    uni.$on("saveSendMsg", (data) => {
-      this.saveSendMsg(data);
-    });
-  },
-  beforeDestroy() {
-    uni.$off("saveSendMsg");
+  mounted() {
+    // this.$data.__comps__.inputbar = this.selectComponent("#chat-inputbar");
+    // this.$data.__comps__.msglist = this.selectComponent("#chat-msglist");
+    // this.$data.__comps__.audio = this.selectComponent("#chat-suit-audio");
   },
 
   moved() {},
@@ -84,10 +76,15 @@ export default {
 
   methods: {
     toggleRecordModal() {
+      // this.$data.__comps__.audio.toggleRecordModal();
       this.$refs.chatSuitAudio.toggleRecordModal();
     },
 
     normalScroll() {
+      // this.$data.__comps__.msglist.normalScroll();
+
+      // this.$data.__comps__.inputbar.cancelEmoji();
+
       this.$refs.chatMsglist.normalScroll();
       this.$refs.chatInputbar.cancelEmoji();
     },
@@ -106,9 +103,10 @@ export default {
     },
 
     getMore() {
-      this.selectComponent("#chat-msglist").$vm.getHistoryMsg();
-    },
-  },
+      // this.selectComponent("#chat-msglist").$vm.getHistoryMsg()
+      this.$refs.chatMsglist.getHistoryMsg()
+    }
+  }
 };
 </script>
 <style>

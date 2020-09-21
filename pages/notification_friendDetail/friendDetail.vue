@@ -45,11 +45,42 @@ export default {
     var me = this; // 不需要 object 地址更新，就能刷
 
     disp.on("em.subscribe", function () {
-      me.friendList = getApp().globalData.saveFriendList
+      me.setData({
+        friendList: getApp().globalData.saveFriendList
+      });
       uni.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
     });
-    this.myName = uni.getStorageSync("myUsername")
-    this.friendList = uni.getStorageSync("friendNotiData") 
+    this.setData({
+      myName: uni.getStorageSync("myUsername"),
+      // 哈？global？好吧
+      friendList: uni.getStorageSync("friendNotiData") //getApp().globalData.saveFriendList 
+      // [{
+      // 	chatroom: false,
+      // 	code: "",
+      // 	from: "zdtest2",
+      // 	fromJid: "easemob-demo#chatdemoui_zdtest2@easemob.com",
+      // 	original_type: "subscribe",
+      // 	presence_type: "",
+      // 	status: "zdtest2请求添加好友",
+      // 	to: "zdtest",
+      // 	toJid: "easemob-demo#chatdemoui_zdtest@easemob.com/webim",
+      // 	type: "subscribe"
+      // },
+      // {
+      // 	chatroom: false,
+      // 	code: "",
+      // 	from: "zdtest3",
+      // 	fromJid: "easemob-demo#chatdemoui_zdtest3@easemob.com",
+      // 	original_type: "subscribe",
+      // 	presence_type: "",
+      // 	status: "zdtest3请求添加好友",
+      // 	to: "zdtest",
+      // 	toJid: "easemob-demo#chatdemoui_zdtest@easemob.com/webim",
+      // 	type: "subscribe"
+      // }
+      // ]
+
+    });
   },
 
   methods: {
@@ -62,6 +93,15 @@ export default {
       });
       this.friendList.splice(idx, 1);
       getApp().globalData.saveFriendList.splice(idx, 1); // if(!this.data.friendList.length){
+      // 	uni.navigateBack({
+      // 		url: "../main/main?myName=" + this.data.myName
+      // 	});
+      // }
+      // else{
+      // 	this.setData({
+      // 		friendList: this.data.friendList
+      // 	});
+      // }
     },
 
     agree(event) {

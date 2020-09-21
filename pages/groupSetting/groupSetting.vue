@@ -65,9 +65,11 @@ export default {
   props: {},
   onLoad: function (options) {
     let me = this;
-    this.roomId = JSON.parse(options.groupInfo).roomId
-		this.groupName = JSON.parse(options.groupInfo).groupName
-		this.currentName = JSON.parse(options.groupInfo).myName
+    this.setData({
+      roomId: JSON.parse(options.groupInfo).roomId,
+      groupName: JSON.parse(options.groupInfo).groupName,
+      currentName: JSON.parse(options.groupInfo).myName
+    });
     disp.on("em.group.leaveGroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
 
@@ -94,7 +96,9 @@ export default {
         groupId: this.roomId,
        success: function(resp){
 				if(resp && resp.data){
-          me.groupMember = resp.data
+					me.setData({
+						groupMember: resp.data
+					});
 				}
 			},
 			error: function(err){}
@@ -108,11 +112,15 @@ export default {
 			groupId: this.roomId,
 			success: function(resp){
 				if(resp && resp.data){
-          me.curOwner = resp.data.data[0].owner
-					me.groupDec = resp.data.data[0].description
+					me.setData({
+						curOwner: resp.data[0].owner,
+						groupDec: resp.data[0].description
+					});
 
 					if(me.currentName == resp.data[0].owner){
-            me.isOwner = true
+						me.setData({
+							isOwner: true
+						});
 					}
 				}
 			},
@@ -123,7 +131,9 @@ export default {
     addFriendNameFun: function (e) {
       var firendArr = [];
       firendArr.push(e.detail.value);
-      this.addFriendName = firendArr
+      this.setData({
+        addFriendName: firendArr
+      });
     },
     // 加好友入群
     addGroupMembers: function () {

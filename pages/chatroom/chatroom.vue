@@ -1,5 +1,5 @@
 <template>
-<chat ref="chat" :username="username" chatType="singleChat"></chat>
+<chat id="chat" ref="chat" :username="username" chatType="singleChat"></chat>
 </template>
 
 <script>
@@ -23,8 +23,9 @@ export default {
   // options = 系统传入的 url 参数
   onLoad(options) {
     let username = JSON.parse(options.username);
-    console.log('username>>',username)
-    this.username = username
+    this.setData({
+      username: username
+    });
     uni.setNavigationBarTitle({
       title: username.your
     });
@@ -36,7 +37,7 @@ export default {
 
   onPullDownRefresh: function () {
     uni.showNavigationBarLoading();
-    this.selectComponent('#chat').$vm.getMore()
+    this.$refs.chat.getMore();
     // 停止下拉动作
     uni.hideNavigationBarLoading();
     uni.stopPullDownRefresh();
