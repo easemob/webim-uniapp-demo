@@ -1,6 +1,6 @@
 {
-    "name" : "环信IM",
-    "appid" : "",
+    "name" : "环信IM-Beta",
+    "appid" : "__UNI__39A050C",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -41,7 +41,8 @@
                     "<uses-feature android:name=\"android.hardware.camera\"/>",
                     "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
-                ]
+                ],
+                "abiFilters" : [ "armeabi-v7a", "x86" ]
             },
             "ios" : {},
             "sdkConfigs" : {}

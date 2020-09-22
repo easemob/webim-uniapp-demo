@@ -26,7 +26,7 @@
 	<!-- 群聊列表 -->
 	<view v-for="(item, groupid) in groupList" :key="groupid" class="groupList">
 		<view class="nbr_header"></view>
-		<view class="info" @tap="into_info">
+		<view class="info">
 			<image src="/static/images/number.png" :data-username="item.groupname"></image>
 		</view>
 		<view class="nbr_body" :data-username="item.groupname" :data-roomid="item.groupid" @tap="into_room">

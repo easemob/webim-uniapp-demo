@@ -16,7 +16,7 @@
       :confirm-hold="isIPX?true:false"
       placeholder="输入新消息"
       placeholder-style="color:#CFCFCF ;padding-left:5px"
-    >
+    />
 
     <!-- 	</view> -->
   </form>
@@ -35,7 +35,7 @@ export default {
       // render input 的值
       userMessage: "", // input 的实时值
       changeValue: "",
-      isIPX:false
+      isIPX: false,
     };
   },
 
@@ -43,18 +43,18 @@ export default {
   props: {
     username: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     chatType: {
       type: String,
-      default: msgType.chatType.SINGLE_CHAT
-    }
+      default: msgType.chatType.SINGLE_CHAT,
+    },
   },
 
   // lifetimes
   created() {
-     this.setData({
-      isIPX: getApp().globalData.isIPX
+    this.setData({
+      isIPX: getApp().globalData.isIPX,
     });
   },
 
@@ -69,12 +69,12 @@ export default {
   methods: {
     focus() {
       this.$emit("inputFocused", null, {
-        bubbles: true
+        bubbles: true,
       });
     },
     blur() {
       this.$emit("inputBlured", null, {
-        bubbles: true
+        bubbles: true,
       });
     },
 
@@ -89,7 +89,7 @@ export default {
     // bindinput 不能打冒号！
     bindMessage(e) {
       this.setData({
-        userMessage: e.detail.value
+        userMessage: e.detail.value,
       });
     },
 
@@ -113,13 +113,13 @@ export default {
 
       this.setData({
         userMessage: str,
-        inputMessage: str
+        inputMessage: str,
       });
     },
 
     sendMessage() {
       let me = this;
-      String.prototype.trim = function() {
+      String.prototype.trim = function () {
         return this.replace(/(^\s*)|(\s*$)/g, "");
       };
       if (!this.userMessage.trim()) {
@@ -135,13 +135,14 @@ export default {
         chatType: this.chatType,
         success(id, serverMsgId) {
           console.log("成功了");
-          me.changeValue=""
-          me.userMessage=""
+          me.changeValue = "";
+          me.userMessage = "";
+          uni.hideKeyboard();
           disp.fire("em.chat.sendSuccess", id, me.userMessage);
         },
         fail(id, serverMsgId) {
           console.log("失败了");
-        }
+        },
       });
       if (this.chatType == msgType.chatType.CHAT_ROOM) {
         msg.setGroup("groupchat");
@@ -149,14 +150,14 @@ export default {
       WebIM.conn.send(msg.body);
       let obj = {
         msg: msg,
-        type: msgType.TEXT
+        type: msgType.TEXT,
       };
       this.saveSendMsg(obj);
     },
     saveSendMsg(evt) {
       msgStorage.saveMsg(evt.msg, evt.type);
-    }
-  }
+    },
+  },
 };
 </script>
 <style>
