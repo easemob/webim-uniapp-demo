@@ -1,6 +1,6 @@
 {
     "name" : "环信IM-Beta",
-    "appid" : "__UNI__39A050C",
+    "appid" : "",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -45,7 +45,9 @@
                 "abiFilters" : [ "armeabi-v7a", "x86" ]
             },
             "ios" : {},
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "ad" : {}
+            }
         }
     },
     "quickapp" : {},
