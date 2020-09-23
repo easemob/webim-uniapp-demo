@@ -1,18 +1,21 @@
 <template>
 <view class="room_bar">
-	<!-- <chatSuitEmoji ref="chatSuitEmoji" @newEmojiStr="emojiAction"></chatSuitEmoji> -->
+	<chatSuitEmoji ref="chatSuitEmoji" @newEmojiStr="emojiAction"></chatSuitEmoji>
 	<chatSuitMain ref="chatSuitMain" :username="username" :chatType="chatType" @inputFocused="cancelEmoji"></chatSuitMain>
 	<chatSuitImage ref="chatSuitImage" :username="username" :chatType="chatType"></chatSuitImage>
 	<!-- <chat-suit-location id="chat-suit-location" username="{{ username }}"></chat-suit-location> -->
 	<!-- <chat-suit-video id="chat-suit-video" username="{{ username }}"></chat-suit-video> -->
 	
 	<view :class="'other_func ' + (isIPX? 'other_func_X': '')">
-		<!-- <view class="open_emoji" bind:tap="openEmoji">
+		<view class="open_emoji" @tap="openEmoji">
 			<image src="/static/images/Emoji.png"/>
-		</view> -->
-		<!-- <view class="v-record" @tap="toggleRecordModal">
-			<image class="icon-record" :src="recordStatus != RecordStatus.HIDE ? '../../../static/images/iconAudioActive@2x.png' : '../../../static/images/voice.png'" style="width:16px; height: 18px"></image>
-		</view> -->
+		</view>
+		<view class="v-record" @tap="toggleRecordModal">
+			<image class="icon-record" 
+        src="../../../static/images/voice.png" 
+        style="width:16px; height: 18px">
+      </image>
+		</view>
 		<view class="open_camera" @tap="openCamera">
 			<image src="/static/images/camora.png" style="width:24px; height: 18px"></image>
 		</view>
@@ -29,7 +32,7 @@
 <script>
 let RecordStatus = require("./suit/audio/record_status").RecordStatus;
 let msgType = require("../msgtype");
-// import chatSuitEmoji from "./suit/emoji/emoji";
+import chatSuitEmoji from "./suit/emoji/emoji";
 import chatSuitImage from "./suit/image/image";
 import chatSuitLocation from "./suit/location/location";
 import chatSuitMain from "./suit/main/main";
@@ -51,7 +54,7 @@ export default {
   },
 
   components: {
-    // chatSuitEmoji,
+    chatSuitEmoji,
     chatSuitImage,
     chatSuitLocation,
     chatSuitMain
@@ -104,13 +107,11 @@ export default {
     },
 
     openEmoji() {
-      // this.__comps__.emoji.openEmoji();
        this.$refs.chatSuitEmoji.openEmoji();
     },
 
     cancelEmoji() {
-      // this.__comps__.emoji.cancelEmoji();
-      // this.$refs.chatSuitEmoji.cancelEmoji();
+      this.$refs.chatSuitEmoji.cancelEmoji();
     },
 
     sendImage() {
@@ -122,8 +123,7 @@ export default {
     },
 
     emojiAction(evt) {
-      // this.__comps__.main.emojiAction(evt.detail.msg);
-       this.$refs.chatSuitMain.emojiAction(evt.detail.msg);
+       this.$refs.chatSuitMain.emojiAction(evt.msg);
     }
 
   }

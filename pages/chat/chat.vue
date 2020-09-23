@@ -36,7 +36,7 @@
 					</view>
 					<view class="list_text">
 						<text class="list_user">{{(item.chatType == 'groupchat' || item.chatType == 'chatRoom' || item.groupName)?item.groupName : item.username}}</text>
-						<text class="list_word" v-if="item.msg.data && item.msg.type != 'img' && item.msg.type != 'audio'">{{item.msg.data}}</text>
+						<text class="list_word" v-if="item.msg.data[0].data">{{item.msg.data[0].data}}</text>
 						<text class="list_word" v-if="item.msg.type == 'img'">[图片]</text>
 						<text class="list_word" v-if="item.msg.type == 'audio'">[语音]</text>
 					</view>

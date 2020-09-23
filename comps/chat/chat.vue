@@ -8,7 +8,12 @@
         @newAudioMsg="saveSendMsg"
       ></chatSuitAudio>
 
-      <chatMsglist ref="chatMsglist" :username="username" @msglistTap="normalScroll" id="chat-msglist"></chatMsglist>
+      <chatMsglist
+        ref="chatMsglist"
+        :username="username"
+        @msglistTap="normalScroll"
+        id="chat-msglist"
+      ></chatMsglist>
     </view>
     <chatInputbar
       ref="chatInputbar"
@@ -38,29 +43,36 @@ export default {
       __comps__: {
         msglist: null,
         inputbar: null,
-        audio: null
-      }
+        audio: null,
+      },
     };
   },
 
   components: {
     chatMsglist,
     chatInputbar,
-    chatSuitAudio
+    chatSuitAudio,
   },
   props: {
     username: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     chatType: {
       type: String,
-      default: msgType.chatType.SINGLE_CHAT
-    }
+      default: msgType.chatType.SINGLE_CHAT,
+    },
   },
 
   // lifetimes
-  created() {},
+  created() {
+    uni.$on("saveSendMsg", (data) => {
+      this.saveSendMsg(data);
+    });
+  },
+  beforeDestroy() {
+    uni.$off("saveSendMsg");
+  },
 
   beforeMount() {},
 
@@ -96,7 +108,7 @@ export default {
     },
 
     saveSendMsg(evt) {
-      msgStorage.saveMsg(evt.detail.msg, evt.detail.type);
+      msgStorage.saveMsg(evt.msg, evt.type);
 
       // this.$data.__comps__.inputbar.cancelEmoji();
       this.$refs.chatInputbar.cancelEmoji();
@@ -104,9 +116,9 @@ export default {
 
     getMore() {
       // this.selectComponent("#chat-msglist").$vm.getHistoryMsg()
-      this.$refs.chatMsglist.getHistoryMsg()
-    }
-  }
+      this.$refs.chatMsglist.getHistoryMsg();
+    },
+  },
 };
 </script>
 <style>

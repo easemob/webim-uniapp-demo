@@ -1,32 +1,72 @@
-
 <template>
-		<!-- view 换成 scroll-view效果更好 用view是为了要stopPullDownRefresh -->
-		<view scroll-y="true" :class="view + ' wrap ' + (isIPX?'scroll_view_X': '')" @tap="onTap" 
-  
-     upper-threshold="-50" :scroll-into-view="toView">
-			<view class="message" v-for="(item, index) in chatMsg" :key="index" :id="item.mid">
-				<view class="main" :class="item.style">
-					<view class="user">
-						<!-- yourname：就是消息的 from -->
-						<text class="user-text">{{ item.yourname + ' ' + item.time}}</text>
-					</view>
-					<image class="avatar" src="/static/images/theme@2x.png"></image>
-					<view class="msg">
-						<image :class="'err ' + ((item.style == 'self' && item.isFail) ? 'show' : 'hide')" src="/static/images/msgerr.png"></image>
+  <view
+    scroll-y="true"
+    :class="view + ' wrap ' + (isIPX?'scroll_view_X': '')"
+    @tap="onTap"
+    upper-threshold="-50"
+    :scroll-into-view="toView"
+  >
+    <view class="message" v-for="item in chatMsg" :key="item.mid" :id="item.mid">
+      <!-- <view class="time">
+				<text class="time-text">{{ item.time }}</text>
+      </view>-->
+      <view class="main" :class="item.style">
+        <view class="user">
+          <!-- yourname：就是消息的 from -->
+          <text class="user-text">{{ item.yourname + ' ' + item.time}}</text>
+        </view>
+        <image class="avatar" src="/static/images/theme@2x.png" />
+        <view class="msg">
+          <image
+            class="err"
+            :class="(item.style == 'self' && item.isFail) ?  'show' : 'hide'"
+            src="/static/images/msgerr.png"
+          />
 
-						<image v-if="item.style == 'self'" src="/static/images/poprightarrow@2x.png" class="msg_poprightarrow"></image>
-						<image v-if="item.style == ''" src="/static/images/popleftarrow@2x.png" class="msg_popleftarrow"></image>
-						<view>
-              <text v-if="item.msg.type==='txt'" class="msg-text" style="float:left">{{ item.msg.data }}</text>
-              <image v-if="item.msg.type==='emoji'" class="avatar" :src="'../../../static/images/faces/' + item.data" style="width:25px;height:25px;margin:0 0 2px 0;float:left"></image>
-              <image v-if="item.msg.type==='img'" class="avatar" :src="item.msg.data" style="width:90px;height:120px;margin:2px auto" mode="aspectFit" @tap="previewImage" :data-url="item.msg.data"></image>
-              <video v-if="item.msg.type==='video'" :src="item.msg.data" controls autoplay></video>
-              <audioMsg v-if="item.msg.type == 'audio'" :msg="item"></audioMsg>
-						</view>
-					</view>
-				</view>
-			</view>
-		</view>
+          <image
+            v-if="item.style == 'self'"
+            src="/static/images/poprightarrow@2x.png"
+            class="msg_poprightarrow"
+          />
+          <image
+            v-if="item.style == ''"
+            src="/static/images/popleftarrow@2x.png"
+            class="msg_popleftarrow"
+          />
+          <view v-if="item.msg.type == 'img' || item.msg.type == 'video'">
+            <image
+              v-if="item.msg.type == 'img'"
+              class="avatar"
+              :src="item.msg.data"
+              style="width:90px; height:120px; margin:2px auto;"
+              mode="aspectFit"
+              @tap="previewImage"
+              :data-url="item.msg.data"
+            />
+            <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls autoplay />
+          </view>
+          <audio-msg v-if="item.msg.type == 'audio'" :msg="item"></audio-msg>
+          <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
+            <view class="template" v-for="(d_item, d_index) in item.msg.data" :key="d_index">
+              <text
+                v-if="d_item.type == 'txt'"
+                class="msg-text"
+                style="float:left;"
+              >{{ d_item.data }}</text>
+
+              <image
+                v-if="d_item.type == 'emoji'"
+                class="avatar"
+                :src="'/static/images/faces/' + d_item.data"
+                style="width:25px; height:25px; margin:0 0 2px 0; float:left;"
+              />
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- <view style="height: 1px;"></view> -->
 </template>
 
 
@@ -190,8 +230,19 @@ export default {
 
     renderMsg(renderableMsg, type, curChatMsg, sessionKey, isnew) {
       let me = this;
+      if (curChatMsg.length > 1) {
+					this.chatMsg.map(function(elem, index) {
+						curChatMsg.map(function(item, i) {
+							if(elem.mid == item.mid){
+								//me.data.chatMsg.splice(index, 1)
+								curChatMsg.splice(i, 1)
+							}
+						})
+					})
+				}
 
-      var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || []; // if (curChatMsg.length) {
+      var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || []; 
+      // if (curChatMsg.length) {
       // 	console.log(curMsgMid.substring(curMsgMid.length - 10) , curChatMsg[0].mid.substring(curChatMsg[0].mid.length - 10))
       // }
       // if(curChatMsg.length && curMsgMid.substring(curMsgMid.length - 10) == curChatMsg[curChatMsg.length - 1].mid.substring(curChatMsg[0].mid.length - 10)){

@@ -3,26 +3,26 @@
 	<block>
 		<swiper-item>
 			<view class="emoji_item">
-				<image v-for="(item, index) in emojiObj.map1" :key="index" :src="emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
+				<image v-for="(item, index) in emojiObj.map1" :key="index" :src="'../../../../' + emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
 			<view class="emoji_item">
-				<image v-for="(item, index) in emojiObj.map2" :key="index" :src="emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
+				<image v-for="(item, index) in emojiObj.map2" :key="index" :src="'../../../../' +emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
 			<view class="emoji_item">
-				<image v-for="(item, index) in emojiObj.map3" :key="index" :src="emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
+				<image v-for="(item, index) in emojiObj.map3" :key="index" :src="'../../../../' +emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
 		</swiper-item>
 	</block>
 	<block class="second">
 		<swiper-item>
 			<view class="emoji_item">
-				<image v-for="(item, index) in emojiObj.map4" :key="index" :src="emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
+				<image v-for="(item, index) in emojiObj.map4" :key="index" :src="'../../../../' +emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
 			<view class="emoji_item">
-				<image v-for="(item, index) in emojiObj.map5" :key="index" :src="emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
+				<image v-for="(item, index) in emojiObj.map5" :key="index" :src="'../../../../' +emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
 			<view class="emoji_item">
-				<image v-for="(item, index) in emojiObj.map6" :key="index" :src="emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
+				<image v-for="(item, index) in emojiObj.map6" :key="index" :src="'../../../../' +emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
 		</swiper-item>
 	</block>

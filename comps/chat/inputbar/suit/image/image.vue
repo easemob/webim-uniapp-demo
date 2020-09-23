@@ -90,10 +90,19 @@ export default {
               },
 
               success(res) {
+                if(res.statusCode === 400){
+									// 图片上传阿里云检验不合法
+									var errData = JSON.parse(res.data);
+									if (errData.error === 'content improper') {
+										wx.showToast({
+											title: '图片不合法'
+										});
+										return false
+									}
+								}
                 var data = res.data;
                 var dataObj = JSON.parse(data);
                 var id = WebIM.conn.getUniqueId(); // 生成本地消息 id
-                console.log('dataObj>>',dataObj);
                 
                 var msg = new WebIM.message(msgType.IMAGE, id);
                 var file = {

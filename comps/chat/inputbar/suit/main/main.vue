@@ -7,7 +7,7 @@
       type="text"
       cursor-spacing="65"
       confirm-type="send"
-      v-model="changeValue"
+      v-model="inputMessage"
       @confirm="sendMessage"
       @input="bindMessage"
       @tap="focus"
@@ -34,7 +34,6 @@ export default {
       inputMessage: "",
       // render input 的值
       userMessage: "", // input 的实时值
-      changeValue: "",
       isIPX: false,
     };
   },
@@ -110,11 +109,8 @@ export default {
           str = this.userMessage.slice(0, msglen);
         }
       }
-
-      this.setData({
-        userMessage: str,
-        inputMessage: str,
-      });
+      this.userMessage = str
+      this.inputMessage = str
     },
 
     sendMessage() {
@@ -135,9 +131,6 @@ export default {
         chatType: this.chatType,
         success(id, serverMsgId) {
           console.log("成功了");
-          me.changeValue = "";
-          me.userMessage = "";
-          uni.hideKeyboard();
           disp.fire("em.chat.sendSuccess", id, me.userMessage);
         },
         fail(id, serverMsgId) {
@@ -147,15 +140,22 @@ export default {
       if (this.chatType == msgType.chatType.CHAT_ROOM) {
         msg.setGroup("groupchat");
       }
-      WebIM.conn.send(msg.body);
-      let obj = {
-        msg: msg,
-        type: msgType.TEXT,
-      };
-      this.saveSendMsg(obj);
-    },
-    saveSendMsg(evt) {
-      msgStorage.saveMsg(evt.msg, evt.type);
+      try {
+        WebIM.conn.send(msg.body);
+        let obj = {
+          msg: msg,
+          type: msgType.TEXT,
+        };
+      } catch (error) {
+        console.log('error',error);
+      }
+      	uni.$emit('saveSendMsg', {
+					msg: msg,
+					type: msgType.TEXT,
+				})
+				this.userMessage = '';
+        this.inputMessage = '';
+        uni.hideKeyboard();
     },
   },
 };

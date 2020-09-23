@@ -111,6 +111,10 @@ export default {
       }, 350);
 
       function executeRecord() {
+        // #ifdef APP-PLUS
+        startRecord()
+        return;
+        // #endif
         uni.getSetting({
           success: res => {
             let recordAuth = res.authSetting['scope.record'];
@@ -210,7 +214,7 @@ export default {
           return;
         }
 
-        if (res.duration < 1000) {
+        if (res.duration <= 1000) {
           uni.showToast({
             title: "录音时间太短",
             icon: "none"
@@ -300,14 +304,12 @@ export default {
         _radomheight[i] = 100 * Math.random().toFixed(2) + 10;
       }
 
-      that.setData({
-        radomheight: _radomheight
-      });
+      that.radomheight = _radomheight
 
       if (RunAnimation) {
         setTimeout(function () {
           that.myradom();
-        }, 500);
+        }, 100);
       } else {
         return;
       }
