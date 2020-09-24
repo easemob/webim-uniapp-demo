@@ -65,14 +65,14 @@ export default {
   },
 
   // lifetimes
-  created() {
-    uni.$on("saveSendMsg", (data) => {
-      this.saveSendMsg(data);
-    });
-  },
-  beforeDestroy() {
-    uni.$off("saveSendMsg");
-  },
+  // created() {
+  //   uni.$on("saveSendMsg", (data) => {
+  //     this.saveSendMsg(data);
+  //   });
+  // },
+  // beforeDestroy() {
+  //   uni.$off("saveSendMsg");
+  // },
 
   beforeMount() {},
 

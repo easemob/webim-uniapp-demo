@@ -1,87 +1,152 @@
 <template>
-<view>
-<view :class="'chat_title ' + (gotop? 'main_title_hide':'main_title_show')">
-	<text>聊天</text>
-</view>
+  <view>
+    <view
+      :class="'chat_title ' + (gotop ? 'main_title_hide' : 'main_title_show')"
+    >
+      <text>聊天</text>
+    </view>
 
-<!-- <view class="chat_list_wraper" > -->
-<scroll-view scroll-y="true" :class="'chat_list_wraper ' + (gotop? (isIPX? 'goTopX': 'goTop'): 'goback')" :style="'padding-bottom: ' + (isIPX?'270rpx':'226rpx')">
+    <!-- <view class="chat_list_wraper" > -->
+    <scroll-view
+      scroll-y="true"
+      :class="
+        'chat_list_wraper ' + (gotop ? (isIPX ? 'goTopX' : 'goTop') : 'goback')
+      "
+      :style="'padding-bottom: ' + (isIPX ? '270rpx' : '226rpx')"
+    >
+      <view class="search" v-if="search_btn">
+        <view @tap="openSearch">
+          <icon type="search" size="12"></icon>
+          <text>搜索</text>
+        </view>
+      </view>
 
-	<view class="search" v-if="search_btn">
-		<view @tap="openSearch">
-			<icon type="search" size="12"></icon>
-			<text>搜索</text>
-		</view>
-	</view>
+      <view class="search_input" v-if="search_chats">
+        <view>
+          <icon type="search" size="12"></icon>
+          <input
+            placeholder="搜索"
+            placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;"
+            auto-focus
+            confirm-type="search"
+            type="text"
+            @confirm="onSearch"
+            @input="onInput"
+            :value="input_code"
+          />
+          <icon
+            type="clear"
+            size="12"
+            @tap.stop="clearInput"
+            v-if="show_clear"
+          ></icon>
+        </view>
+        <text @tap="cancel">取消</text>
+      </view>
 
-	<view class="search_input" v-if="search_chats">
-		<view>
-			<icon type="search" size="12"></icon>
-			<input placeholder="搜索" placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />
-				<icon type="clear" size="12" @tap.stop="clearInput" v-if="show_clear"></icon>
+      <view
+        v-for="(item, index) in arr"
+        :key="index"
+        class="chat_list"
+        :data-item="item"
+        @tap.stop="del_chat"
+      >
+        <swipe-delete>
+          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item">
+            <view class="list_box">
+              <view class="list_left" :data-username="item.username">
+                <view class="list_pic">
+                  <view
+                    class="em-msgNum"
+                    v-if="item.unReadCount > 0 || item.unReadCount == '99+'"
+                    >{{ item.unReadCount }}</view
+                  >
 
-		</view>
-		<text @tap="cancel">取消</text>
-	</view>
+                  <image
+                    :src="
+                      item.chatType == 'groupchat' ||
+                      item.chatType == 'chatRoom'
+                        ? '../../static/images/groupTheme.png'
+                        : '../../static/images/theme@2x.png'
+                    "
+                  ></image>
+                </view>
+                <view class="list_text">
+                  <text class="list_user">{{
+                    item.chatType == "groupchat" ||
+                    item.chatType == "chatRoom" ||
+                    item.groupName
+                      ? item.groupName
+                      : item.username
+                  }}</text>
+                  <text class="list_word" v-if="item.msg.data[0].data">{{
+                    item.msg.data[0].data
+                  }}</text>
+                  <text class="list_word" v-if="item.msg.type == 'img'"
+                    >[图片]</text
+                  >
+                  <text class="list_word" v-if="item.msg.type == 'audio'"
+                    >[语音]</text
+                  >
+                </view>
+              </view>
+              <view class="list_right">
+                <text :data-username="item.username">{{ item.time }}</text>
+              </view>
+            </view>
+          </view>
+        </swipe-delete>
+      </view>
 
-<view v-for="(item, index) in arr" :key="index" class="chat_list" :data-item="item" @tap.stop="del_chat">
-	<swipe-delete>
-		<view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item">
-			<view class="list_box">
-				<view class="list_left" :data-username="item.username">
-					<view class="list_pic">
-						<view class="em-msgNum" v-if="item.unReadCount > 0 || item.unReadCount == '99+'">{{ item.unReadCount }}</view>
-						
-						<image :src="(item.chatType == 'groupchat' || item.chatType == 'chatRoom')? '../../static/images/groupTheme.png':'../../static/images/theme@2x.png'"></image>
-					</view>
-					<view class="list_text">
-						<text class="list_user">{{(item.chatType == 'groupchat' || item.chatType == 'chatRoom' || item.groupName)?item.groupName : item.username}}</text>
-						<text class="list_word" v-if="item.msg.data[0].data">{{item.msg.data[0].data}}</text>
-						<text class="list_word" v-if="item.msg.type == 'img'">[图片]</text>
-						<text class="list_word" v-if="item.msg.type == 'audio'">[语音]</text>
-					</view>
-				</view>
-				<view class="list_right">
-					<text :data-username="item.username">{{item.time}}</text>
-				</view>
-			</view>
-		</view>
-	</swipe-delete>
-</view>
+      <view v-if="arr.length == 0" class="chat_noChat"
+        >当前没有历史聊天，添加一个好友开始聊天吧</view
+      >
+      <!-- </view> -->
+    </scroll-view>
+    <!-- bug: margin-bottom 不生效 需要加一个空标签-->
+    <view style="height: 1px"></view>
 
-<view v-if="arr.length == 0" class="chat_noChat">当前没有历史聊天，添加一个好友开始聊天吧</view>
-<!-- </view> -->
-</scroll-view>
-<!-- bug: margin-bottom 不生效 需要加一个空标签-->
-<view style="height: 1px;"></view>
+    <view class="mask" @tap="close_mask" v-if="show_mask"></view>
 
+    <view :class="isIPX ? 'chatRoom_tab_X' : 'chatRoom_tab'">
+      <view class="tableBar">
+        <view
+          v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'"
+          :class="
+            'em-unread-spot ' +
+            (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
+          "
+          >{{ unReadSpotNum }}</view
+        >
+        <image
+          :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
+          src="/static/images/sessionhighlight@2x.png"
+        ></image>
+        <text class="activeText">聊天</text>
+      </view>
 
-<view class="mask" @tap="close_mask" v-if="show_mask"></view>
+      <view class="tableBar" @tap="tab_contacts">
+        <image src="/static/images/comtacts@2x.png"></image>
+        <text>联系人</text>
+      </view>
 
-<view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
-	<view class="tableBar">
-		<view v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
-		<image :class="unReadSpotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/sessionhighlight@2x.png"></image>
-		<text class="activeText">聊天</text>
-	</view>
+      <view class="tableBar" @tap="tab_notification">
+        <view v-if="unReadTotalNotNum > 0" class="em-unread-spot">{{
+          unReadTotalNotNum
+        }}</view>
+        <image
+          :class="unReadTotalNotNum > 0 ? 'haveSpot' : ''"
+          src="/static/images/notice.png"
+        ></image>
+        <text>通知</text>
+      </view>
 
-	<view class="tableBar" @tap="tab_contacts">
-		<image src="/static/images/comtacts@2x.png"></image>
-		<text>联系人</text>
-	</view>
-
-	<view class="tableBar" @tap="tab_notification">
-		<view v-if="unReadTotalNotNum > 0" class="em-unread-spot">{{unReadTotalNotNum}}</view>
-		<image :class="unReadTotalNotNum > 0 ? 'haveSpot': ''" src="/static/images/notice.png"></image>
-		<text>通知</text>
-	</view>
-	
-	<view class="tableBar" @tap="tab_setting">
-		<image src="/static/images/setting@2x.png"></image>
-		<text>设置</text>
-	</view>
-</view>
-</view>
+      <view class="tableBar" @tap="tab_setting">
+        <image src="/static/images/setting@2x.png"></image>
+        <text>设置</text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -115,7 +180,7 @@ export default {
   },
   props: {},
 
-  mounted () {
+  onLoad () {
     let me = this; //监听加好友申请
 
     disp.on("em.subscribe", function () {
@@ -287,7 +352,8 @@ export default {
     
 
     // 包含陌生人版本
-    getChatList(){
+  getChatList(){
+    console.log('执行了');
 		var myName = uni.getStorageSync("myUsername");
 		var array = [];
 		const me = this
@@ -304,7 +370,7 @@ export default {
 					}
 				})
 
-				cul.call(me, newChatMsgKeys, historyChatMsgKeys)
+			  cul.call(me, newChatMsgKeys, historyChatMsgKeys)
 			}
 		})
 

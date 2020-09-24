@@ -146,16 +146,17 @@ export default {
           msg: msg,
           type: msgType.TEXT,
         };
+        this.saveSendMsg(obj);
       } catch (error) {
         console.log('error',error);
       }
-      	uni.$emit('saveSendMsg', {
-					msg: msg,
-					type: msgType.TEXT,
-				})
 				this.userMessage = '';
         this.inputMessage = '';
         uni.hideKeyboard();
+    },
+    
+     saveSendMsg(evt) {
+      msgStorage.saveMsg(evt.msg, evt.type);
     },
   },
 };

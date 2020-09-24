@@ -79,7 +79,7 @@ function calcUnReadSpot(message){
 			}, 0)
 
 			getApp().globalData.unReadMessageNum = count;
-			disp.fire("em.xmpp.unreadspot", message);
+			disp.fire("em.unreadspot", message);
     },
     fail:function(err){
       console.log(err);

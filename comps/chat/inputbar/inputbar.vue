@@ -79,7 +79,7 @@ export default {
 
   destroyed() {},
 
-  mounted() {
+  onLoad() {
     this.setData({
       isIPX: getApp().globalData.isIPX
     });
