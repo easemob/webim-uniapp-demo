@@ -21,7 +21,7 @@
 			<view class="emoji_item">
 				<image v-for="(item, index) in emojiObj.map5" :key="index" :src="'../../../../' +emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
-			<view class="emoji_item">
+			<view class="emoji_item last_item">
 				<image v-for="(item, index) in emojiObj.map6" :key="index" :src="'../../../../' +emojiObj.path + item" @tap="sendEmoji" :data-emoji="index"></image>
 			</view>
 		</swiper-item>
