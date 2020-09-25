@@ -35,57 +35,57 @@ function getCurrentRoute() {
   return '/'
 }
 
-// // 不包含陌生人版本
-// function calcUnReadSpot(message) {
-//   let myName = uni.getStorageSync("myUsername");
-//   let members = uni.getStorageSync("member") || []; //好友
+// 不包含陌生人版本
+function calcUnReadSpot(message) {
+  let myName = uni.getStorageSync("myUsername");
+  let members = uni.getStorageSync("member") || []; //好友
 
-//   var listGroups = uni.getStorageSync("listGroup") || []; //群组
-//   let allMembers = members.concat(listGroups);
-//   let count = allMembers.reduce(function(result, curMember, idx) {
-//     let chatMsgs;
-//     if (curMember.groupid) {
-//       chatMsgs =
-//         uni.getStorageSync(curMember.groupid + myName.toLowerCase()) || [];
-//     } else {
-//       chatMsgs =
-//         uni.getStorageSync(
-//           curMember.name && curMember.name.toLowerCase() + myName.toLowerCase()
-//         ) || [];
-//     }
-//     return result + chatMsgs.length;
-//   }, 0);
-//   getApp().globalData.unReadMessageNum = count;
-//   disp.fire("em.unreadspot", message);
-// }
-
-// 包含陌生人版本
-function calcUnReadSpot(message){
-	let myName = uni.getStorageSync("myUsername");
-	uni.getStorageInfo({
-		success: function(res){
-			let storageKeys = res.keys
-			let newChatMsgKeys = [];
-			let historyChatMsgKeys = [];
-			storageKeys.forEach((item) => {
-				if (item.indexOf(myName) > -1 && item.indexOf('rendered_') == -1) {
-					newChatMsgKeys.push(item)
-				}
-			})
-			let count = newChatMsgKeys.reduce(function(result, curMember, idx){
-				let chatMsgs;
-				chatMsgs = uni.getStorageSync(curMember) || [];
-				return result + chatMsgs.length;
-			}, 0)
-
-			getApp().globalData.unReadMessageNum = count;
-			disp.fire("em.unreadspot", message);
-    },
-    fail:function(err){
-      console.log(err);
+  var listGroups = uni.getStorageSync("listGroup") || []; //群组
+  let allMembers = members.concat(listGroups);
+  let count = allMembers.reduce(function(result, curMember, idx) {
+    let chatMsgs;
+    if (curMember.groupid) {
+      chatMsgs =
+        uni.getStorageSync(curMember.groupid + myName.toLowerCase()) || [];
+    } else {
+      chatMsgs =
+        uni.getStorageSync(
+          curMember.name && curMember.name.toLowerCase() + myName.toLowerCase()
+        ) || [];
     }
-	})
+    return result + chatMsgs.length;
+  }, 0);
+  getApp().globalData.unReadMessageNum = count;
+  disp.fire("em.unreadspot", message);
 }
+
+// // 包含陌生人版本
+// function calcUnReadSpot(message){
+// 	let myName = uni.getStorageSync("myUsername");
+// 	uni.getStorageInfo({
+// 		success: function(res){
+// 			let storageKeys = res.keys
+// 			let newChatMsgKeys = [];
+// 			let historyChatMsgKeys = [];
+// 			storageKeys.forEach((item) => {
+// 				if (item.indexOf(myName) > -1 && item.indexOf('rendered_') == -1) {
+// 					newChatMsgKeys.push(item)
+// 				}
+// 			})
+// 			let count = newChatMsgKeys.reduce(function(result, curMember, idx){
+// 				let chatMsgs;
+// 				chatMsgs = uni.getStorageSync(curMember) || [];
+// 				return result + chatMsgs.length;
+// 			}, 0)
+
+// 			getApp().globalData.unReadMessageNum = count;
+// 			disp.fire("em.unreadspot", message);
+//     },
+//     fail:function(err){
+//       console.log(err);
+//     }
+// 	})
+// }
 
 
 
