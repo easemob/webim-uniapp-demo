@@ -1,17 +1,29 @@
 <template>
-<view v-if="recordStatus != RecordStatus.HIDE" class="modal modal-record" @tap="toggleRecordModal">
-	<view class="modal-body" @tap.stop="toggleWithoutAction">
-
-		<view class="sound-waves">
-		  	<view v-for="(item, index) in radomheight" :key="index" :style="'height:' + item + 'rpx;margin-top:-' + (item/2) + 'rpx'"></view>
-		  	<view style="clear:both;width:0;height:0"></view>
-		</view>
-		<text class="desc">{{ RecordDesc[recordStatus] }}</text>
-		<button class="dot" @touchstart="handleRecording" @touchmove="handleRecordingMove" @touchend="handleRecordingCancel">
-			<image class="icon-mic" src="/static/images/send.png"></image>
-		</button>
-	</view>
-</view>
+  <view
+    v-if="recordStatus != RecordStatus.HIDE"
+    class="modal modal-record"
+    @tap="toggleRecordModal"
+  >
+    <view class="modal-body" @tap.stop="toggleWithoutAction">
+      <view class="sound-waves">
+        <view
+          v-for="(item, index) in radomheight"
+          :key="index"
+          :style="'height:' + item + 'rpx;margin-top:-' + item / 2 + 'rpx'"
+        ></view>
+        <view style="clear: both; width: 0; height: 0"></view>
+      </view>
+      <text class="desc">{{ RecordDesc[recordStatus] }}</text>
+      <button
+        class="dot"
+        @touchstart="handleRecording"
+        @touchmove="handleRecordingMove"
+        @touchend="handleRecordingCancel"
+      >
+        <image class="icon-mic" src="/static/images/send.png"></image>
+      </button>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -61,7 +73,10 @@ export default {
 
   moved() {},
 
-  destroyed() {},
+  destroyed() {
+    clearInterval(recordTimeInterval)
+    this.recordTime = 0
+  },
 
   mounted() {},
 
@@ -105,12 +120,11 @@ export default {
       }, 350);
 
       function executeRecord() {
-        // #ifdef APP-PLUS
-        startRecord()
-        return;
-        // #endif
+        if (uni.getSetting) {
         uni.getSetting({
           success: res => {
+            clearInterval(recordTimeInterval);
+            this.recordTime = 0
             let recordAuth = res.authSetting['scope.record'];
 
             if (recordAuth == false) {
@@ -157,10 +171,17 @@ export default {
               icon: "none"
             });
           }
-        });
+        })
+        return
+         }else{
+          startRecord()
+          return
+        }
       }
 
       function startRecord() {
+        clearInterval(recordTimeInterval);
+        me.recordTime = 0
         me.changedTouches = e.touches[0];
         me.recordStatus = RecordStatus.HOLD
         RunAnimation = true;
@@ -214,6 +235,9 @@ export default {
           // 上传
           this.uploadRecord(res.tempFilePath, duration);
         }
+        	clearInterval(recordTimeInterval);
+					this.recordStatus = RecordStatus.HIDE
+					this.recordTime = 0;
       }); // 停止录音
 
       recorderManager.stop();
