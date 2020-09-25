@@ -23,6 +23,7 @@ let RecordDesc = RECORD_CONST.RecordDesc;
 let disp = require("../../../../../utils/broadcast");
 let msgStorage = require("../../../msgstorage");
 let RunAnimation = false;
+let recordTimeInterval = null;
 const InitHeight = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
 
 export default {
@@ -36,7 +37,8 @@ export default {
       radomheight: InitHeight,
       recorderManager: uni.getRecorderManager(),
       recordClicked: false,
-      isLongPress: false
+      isLongPress: false,
+      recordTime: 0
     };
   },
 
@@ -68,10 +70,8 @@ export default {
     },
 
     toggleRecordModal() {
-      this.setData({
-        recordStatus: this.recordStatus == RecordStatus.HIDE ? RecordStatus.SHOW : RecordStatus.HIDE,
-        radomheight: InitHeight
-      });
+      this.recordStatus = this.recordStatus == RecordStatus.HIDE ? RecordStatus.SHOW : RecordStatus.HIDE
+      this.radomheight = InitHeight
     },
 
     handleRecordingMove(e) {
@@ -84,26 +84,20 @@ export default {
 
       if (this.recordStatus == RecordStatus.SWIPE) {
         if (changedTouches.pageY - touches.pageY < 20) {
-          this.setData({
-            recordStatus: RecordStatus.HOLD
-          });
+          this.recordStatus = RecordStatus.HOLD
         }
       }
 
       if (this.recordStatus == RecordStatus.HOLD) {
         if (changedTouches.pageY - touches.pageY > 20) {
-          this.setData({
-            recordStatus: RecordStatus.SWIPE
-          });
+          this.recordStatus = RecordStatus.SWIPE
         }
       }
     },
 
     handleRecording(e) {
       let me = this;
-      me.setData({
-        recordClicked: true
-      });
+      me.recordClicked = true
       setTimeout(() => {
         if (me.recordClicked == true) {
           executeRecord();
@@ -137,9 +131,7 @@ export default {
                     });
                   }
 
-                  me.setData({
-                    isLongPress: false
-                  });
+                  me.isLongPress = false
                 }
               });
             } else if (recordAuth == true) {
@@ -170,13 +162,16 @@ export default {
 
       function startRecord() {
         me.changedTouches = e.touches[0];
-        me.setData({
-          recordStatus: RecordStatus.HOLD
-        });
+        me.recordStatus = RecordStatus.HOLD
         RunAnimation = true;
         me.myradom();
         let recorderManager = me.recorderManager || uni.getRecorderManager();
-        recorderManager.onStart(() => {// console.log("开始录音...");
+        recorderManager.onStart(() => {
+          // console.log("开始录音...");
+          recordTimeInterval = setInterval(()=>{
+            me.recordTime ++
+          },1000)
+          
         });
         recorderManager.start({
           format: "mp3"
@@ -194,34 +189,30 @@ export default {
       let recorderManager = this.recorderManager; // 向上滑动状态停止：取消录音发放
 
       if (this.recordStatus == RecordStatus.SWIPE) {
-        this.setData({
-          recordStatus: RecordStatus.RELEASE
-        });
+        this.recordStatus = RecordStatus.RELEASE
       } else {
-        this.setData({
-          recordStatus: RecordStatus.HIDE,
-          recordClicked: false
-        });
+        this.recordStatus = RecordStatus.HIDE
+        this.recordClicked = false
       }
 
       recorderManager.onStop(res => {
         // console.log("结束录音...", res);
+        clearInterval(recordTimeInterval);
+        let duration = this.recordTime * 1000;
         if (this.recordStatus == RecordStatus.RELEASE) {
           console.log("user canceled");
-          this.setData({
-            recordStatus: RecordStatus.HIDE
-          });
+          this.recordStatus = RecordStatus.HIDE
           return;
         }
 
-        if (res.duration <= 1000) {
+        if (duration <= 1000) {
           uni.showToast({
             title: "录音时间太短",
             icon: "none"
           });
         } else {
           // 上传
-          this.uploadRecord(res.tempFilePath, res.duration);
+          this.uploadRecord(res.tempFilePath, duration);
         }
       }); // 停止录音
 
@@ -250,7 +241,6 @@ export default {
         },
 
         success(res) {
-          // 发送 xmpp 消息
           var id = WebIM.conn.getUniqueId();
           var msg = new WebIM.message(msgType.AUDIO, id);
           var dataObj = JSON.parse(res.data); // 接收消息对象
@@ -309,7 +299,7 @@ export default {
       if (RunAnimation) {
         setTimeout(function () {
           that.myradom();
-        }, 100);
+        }, 500);
       } else {
         return;
       }

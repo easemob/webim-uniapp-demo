@@ -53,7 +53,7 @@ export default {
     this.delEvent(); //audioCtx.destroy();
   },
 
-  onLoad() {
+  mounted() {
     let self = this;
     let curl = '';
     let audioCtx = this.$data.__comps__.audioCtx = audioCtxFc.getCtx(this.msg.mid);

@@ -495,7 +495,7 @@ export default {
           // 	return;
           // }
           uni.showToast({
-            title: "server-side close the websocket connection",
+            title: "websocket 断开",
             duration: 1000
           });
           uni.redirectTo({

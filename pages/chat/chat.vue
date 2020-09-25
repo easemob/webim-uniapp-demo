@@ -468,9 +468,9 @@ export default {
           serchList.push(item);
         }
       });
-      // this.setData({
-      //   arr: serchList
-      // });
+      this.setData({
+        arr: serchList
+      });
     },
     cancel: function () {
       // this.getChatList()
