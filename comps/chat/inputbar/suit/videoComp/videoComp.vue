@@ -1,6 +1,11 @@
-<template><view></view></template><script>
+<template>
+  <div></div>
+</template>
+
+<script>
 let WebIM = require("../../../../../utils/WebIM")["default"];
 let msgType = require("../../../msgtype");
+let msgStorage = require("../../../msgstorage");
 
 export default {
   data() {
@@ -11,25 +16,13 @@ export default {
   props: {
     username: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     chatType: {
       type: String,
-      default: msgType.chatType.SINGLE_CHAT
-    }
+      default: msgType.chatType.SINGLE_CHAT,
+    },
   },
-
-  // lifetimes
-  created() {},
-
-  beforeMount() {},
-
-  moved() {},
-
-  destroyed() {},
-
-  mounted() {},
-
   methods: {
     isGroupChat() {
       return this.chatType == msgType.chatType.CHAT_ROOM;
@@ -47,24 +40,22 @@ export default {
         sourceType: ["album", "camera"],
         maxDuration: 60,
         camera: "back",
-
         success(res) {
           var tempFilePaths = res.tempFilePath;
           var str = WebIM.config.appkey.split("#");
           uni.uploadFile({
-            url: "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
+            url:
+              "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
             filePath: tempFilePaths,
             name: "file",
             header: {
               "Content-Type": "multipart/form-data",
-              Authorization: "Bearer " + token
+              Authorization: "Bearer " + token,
             },
-
             success(res) {
               var data = res.data;
               var dataObj = JSON.parse(data);
               var id = WebIM.conn.getUniqueId(); // 生成本地消息id
-
               var msg = new WebIM.message("video", id);
               msg.set({
                 apiUrl: WebIM.config.apiURL,
@@ -72,34 +63,42 @@ export default {
                   type: "video",
                   url: dataObj.uri + "/" + dataObj.entities[0].uuid,
                   filetype: "mp4",
-                  filename: tempFilePaths
+                  filename: tempFilePaths,
                 },
                 from: me.username.myName,
                 to: me.getSendToParam(),
                 roomType: false,
-                chatType: me.chatType
+                chatType: me.chatType,
               });
-
               if (me.chatType == msgType.chatType.CHAT_ROOM) {
                 msg.setGroup("groupchat");
               }
-
               WebIM.conn.send(msg.body);
-              me.$emit("newVideoMsg", {
+              let obj = {
                 msg: msg,
-                type: msgType.VIDEO
-              }, {
-                bubbles: true,
-                composed: true
-              });
-            }
-
+                type: msgType.VIDEO,
+              };
+              me.saveSendMsg(obj);
+            },
           });
-        }
-
+        },
       });
-    }
+    },
+    saveSendMsg(evt) {
+      msgStorage.saveMsg(evt.msg, evt.type);
+    },
+  },
 
-  }
+  // lifetimes
+  created() {},
+
+  beforeMount() {},
+
+  moved() {},
+
+  destroyed() {},
+
+  mounted() {},
 };
 </script>
+

@@ -100,6 +100,30 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
         }
       }
     };
+  } else if (type == msgType.VIDEO) {
+    sendableMsg = {
+      id: receiveMsg.id,
+      type: type,
+      accessToken: receiveMsg.token || receiveMsg.accessToken,
+      body: {
+        id: receiveMsg.id,
+        length: receiveMsg.length,
+        from: receiveMsg.from,
+        to: receiveMsg.to,
+        type: receiveMsg.type,
+        ext: receiveMsg.ext,
+        chatType: type,
+        toJid: "",
+        body: {
+          type: type,
+          url: receiveMsg.url,
+          filename: receiveMsg.filename,
+          filetype: receiveMsg.filetype,
+          from: receiveMsg.from,
+          to: receiveMsg.to
+        },
+      },
+    };
   } else {
     return;
   }
@@ -117,8 +141,8 @@ msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
     sessionKey = receiveMsg.to + myName;
   } // 群聊发 & 单发 & 单收
   else {
-      sessionKey = sendableMsg.body.from == myName ? sendableMsg.body.to + myName : sendableMsg.body.from + myName;
-    }
+    sessionKey = sendableMsg.body.from == myName ? sendableMsg.body.to + myName : sendableMsg.body.from + myName;
+  }
 
   let curChatMsg = uni.getStorageSync(sessionKey) || [];
   let renderableMsg = msgPackager(sendableMsg, type, myName);
@@ -132,7 +156,7 @@ msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
 
   if (type == msgType.AUDIO) {
     renderableMsg.msg.token = sendableMsg.accessToken; //如果是音频则请求服务器转码
-  } 
+  }
 
 
   save();

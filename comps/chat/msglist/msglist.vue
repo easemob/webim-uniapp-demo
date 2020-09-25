@@ -43,7 +43,7 @@
               @tap="previewImage"
               :data-url="item.msg.data"
             />
-            <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls autoplay />
+            <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls autoplay style="width:300rpx"/>
           </view>
           <audio-msg v-if="item.msg.type == 'audio'" :msg="item"></audio-msg>
           <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">

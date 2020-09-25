@@ -4,23 +4,26 @@
 	<chatSuitMain ref="chatSuitMain" :username="username" :chatType="chatType" @inputFocused="cancelEmoji"></chatSuitMain>
 	<chatSuitImage ref="chatSuitImage" :username="username" :chatType="chatType"></chatSuitImage>
 	<!-- <chat-suit-location id="chat-suit-location" username="{{ username }}"></chat-suit-location> -->
-	<!-- <chat-suit-video id="chat-suit-video" username="{{ username }}"></chat-suit-video> -->
+	<chat-suit-video ref="chatSuitVideo" :username="username"></chat-suit-video>
 	
 	<view :class="'other_func ' + (isIPX? 'other_func_X': '')">
 		<view class="open_emoji" @tap="openEmoji">
-			<image src="/static/images/Emoji.png"/>
+			<image src="/static/images/Emoji.png" style="height:18px; width: 19px"/>
 		</view>
 		<view class="v-record" @tap="toggleRecordModal">
 			<image class="icon-record" 
         src="../../../static/images/voice.png" 
-        style="width:16px; height: 18px">
+        style="height:20px; width: 20px">
       </image>
 		</view>
 		<view class="open_camera" @tap="openCamera">
-			<image src="/static/images/camora.png" style="width:24px; height: 18px"></image>
+			<image src="/static/images/camora.png" style="height:20px; width: 20px"></image>
 		</view>
 		<view class="send_image" @tap="sendImage">
 			<image src="/static/images/pic.png" style="height:20px; width: 20px"></image>
+		</view>
+    <view class="send_image" @tap="sendVideo">
+			<image src="/static/images/video.png" style="height:20px; width: 20px"></image>
 		</view>
 		<!-- <view class="send_image" bind:tap="sendLocation">
 			<image src="../../../static/images/iconLocation@2x.png" style="height:18px;"/>
@@ -36,6 +39,7 @@ import chatSuitEmoji from "./suit/emoji/emoji";
 import chatSuitImage from "./suit/image/image";
 import chatSuitLocation from "./suit/location/location";
 import chatSuitMain from "./suit/main/main";
+import chatSuitVideo from "./suit/videoComp/videoComp"
 
 export default {
   data() {
@@ -46,8 +50,8 @@ export default {
         main: null,
         emoji: null,
         image: null,
-        location: null //video: null,
-
+        location: null,
+        video: null,
       },
       isIPX: ""
     };
@@ -57,7 +61,8 @@ export default {
     chatSuitEmoji,
     chatSuitImage,
     chatSuitLocation,
-    chatSuitMain
+    chatSuitMain,
+    chatSuitVideo
   },
   props: {
     username: {
@@ -98,9 +103,9 @@ export default {
       });
     },
 
-    // sendVideo(){
-    // 	this.data.__comps__.video.sendVideo();
-    // },
+    sendVideo(){
+    	this.$refs.chatSuitVideo.sendVideo();
+    },
     openCamera() {
       // this.__comps__.image.openCamera()
        this.$refs.chatSuitImage.openCamera();

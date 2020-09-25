@@ -88,6 +88,9 @@
                   <text class="list_word" v-if="item.msg.type == 'audio'"
                     >[语音]</text
                   >
+                  <text class="list_word" v-if="item.msg.type == 'video'"
+                    >[视频]</text
+                  >
                 </view>
               </view>
               <view class="list_right">
@@ -98,7 +101,7 @@
         </swipe-delete>
       </view>
 
-      <view v-if="arr.length == 0" class="chat_noChat"
+      <view v-if=" arr.length == 0" class="chat_noChat"
         >当前没有历史聊天，添加一个好友开始聊天吧</view
       >
       <!-- </view> -->
@@ -181,16 +184,21 @@ export default {
   props: {},
 
   onLoad () {
-    let me = this; //监听加好友申请
-
+    console.log('执行一');
+    let me = this; 
+    
+    //监听加好友申请
+    console.log('me.getChatList()>>',me.getChatList());
     disp.on("em.subscribe", function () {
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
-    }); //监听解散群
+    }); 
 
+    //监听解散群
     disp.on("em.invite.deleteGroup", function () {
+      console.log('执行2');
       me.listGroups();
       me.getRoster();
       me.getChatList()
@@ -198,9 +206,11 @@ export default {
         // arr: me.getChatList(),
         messageNum: getApp().globalData.saveFriendList.length
       });
-    }); //监听未读消息数
-
+    }); 
+    
+    //监听未读消息数
     disp.on("em.unreadspot", function (message) {
+      console.log('执行3');
       me.getChatList()
       me.setData({
         // arr: me.getChatList(),
@@ -224,8 +234,9 @@ export default {
   },
 
   onShow: function () {
+    this.getChatList()
     this.setData({
-      arr: this.getChatList(),
+      // arr: this.getChatList(),
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
       messageNum: getApp().globalData.saveFriendList.length,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
@@ -279,9 +290,9 @@ export default {
 
           disp.fire("em.main.ready"); //systemReady = true;
           //}
-
+          me.getChatList()
           me.setData({
-            arr: me.getChatList(),
+            // arr: me.getChatList(),
             unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
           });
         },
@@ -353,13 +364,13 @@ export default {
 
     // 包含陌生人版本
   getChatList(){
-    console.log('执行了');
 		var myName = uni.getStorageSync("myUsername");
 		var array = [];
 		const me = this
 		uni.getStorageInfo({
 			success: function(res){
-				let storageKeys = res.keys
+        let storageKeys = res.keys
+        console.log('storageKeys>',storageKeys);
 				let newChatMsgKeys = [];
 				let historyChatMsgKeys = [];
 				storageKeys.forEach((item) => {
@@ -375,12 +386,14 @@ export default {
 		})
 
 		function cul(newChatMsgKeys, historyChatMsgKeys){
+      console.log('historyChatMsgKeys>>',historyChatMsgKeys);
 			let array = []
 			let lastChatMsg;
 			for(let i = 0; i < historyChatMsgKeys.length; i++){
 				let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9))
 				if ( index > -1 ) {
-					let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
+          let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
+          console.log('newChatMsgs>>',newChatMsgs);
 					if(newChatMsgs.length){
 						lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
 						lastChatMsg.unReadCount = newChatMsgs.length;
@@ -454,23 +467,25 @@ export default {
       });
     },
     onSearch: function (val) {
+      this.getChatList()
       let searchValue = val.detail.value;
-      let chartList = this.getChatList();
+      // let chartList = this.getChatList();
       let serchList = [];
       chartList.forEach((item, index) => {
         if (String(item.username).indexOf(searchValue) != -1) {
           serchList.push(item);
         }
       });
-      this.setData({
-        arr: serchList
-      });
+      // this.setData({
+      //   arr: serchList
+      // });
     },
     cancel: function () {
+      this.getChatList()
       this.setData({
         search_btn: true,
         search_chats: false,
-        arr: this.getChatList(),
+        // arr: this.getChatList(),
         unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
         gotop: false
       });
