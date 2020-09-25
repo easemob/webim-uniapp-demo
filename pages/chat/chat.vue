@@ -88,9 +88,9 @@
                   <text class="list_word" v-if="item.msg.type == 'audio'"
                     >[语音]</text
                   >
-                  <text class="list_word" v-if="item.msg.type == 'video'"
+                  <!-- <text class="list_word" v-if="item.msg.type == 'video'"
                     >[视频]</text
-                  >
+                  > -->
                 </view>
               </view>
               <view class="list_right">
@@ -184,11 +184,9 @@ export default {
   props: {},
 
   onLoad () {
-    console.log('执行一');
     let me = this; 
     
     //监听加好友申请
-    console.log('me.getChatList()>>',me.getChatList());
     disp.on("em.subscribe", function () {
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
@@ -198,7 +196,6 @@ export default {
 
     //监听解散群
     disp.on("em.invite.deleteGroup", function () {
-      console.log('执行2');
       me.listGroups();
       me.getRoster();
       me.getChatList()
@@ -210,7 +207,6 @@ export default {
     
     //监听未读消息数
     disp.on("em.unreadspot", function (message) {
-      console.log('执行3');
       me.getChatList()
       me.setData({
         // arr: me.getChatList(),
@@ -370,7 +366,6 @@ export default {
 		uni.getStorageInfo({
 			success: function(res){
         let storageKeys = res.keys
-        console.log('storageKeys>',storageKeys);
 				let newChatMsgKeys = [];
 				let historyChatMsgKeys = [];
 				storageKeys.forEach((item) => {
@@ -386,14 +381,12 @@ export default {
 		})
 
 		function cul(newChatMsgKeys, historyChatMsgKeys){
-      console.log('historyChatMsgKeys>>',historyChatMsgKeys);
 			let array = []
 			let lastChatMsg;
 			for(let i = 0; i < historyChatMsgKeys.length; i++){
 				let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9))
 				if ( index > -1 ) {
           let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
-          console.log('newChatMsgs>>',newChatMsgs);
 					if(newChatMsgs.length){
 						lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
 						lastChatMsg.unReadCount = newChatMsgs.length;
@@ -586,8 +579,9 @@ export default {
           if (res.confirm) {
             uni.setStorageSync(nameList.your + myName, "");
             uni.setStorageSync("rendered_" + nameList.your + myName, "");
-
+            
             if (currentPage[0]) {
+              console.log('currentPage[0]>>',currentPage[0]);
               currentPage[0].onShow();
             }
 

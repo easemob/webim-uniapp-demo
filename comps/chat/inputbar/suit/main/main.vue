@@ -1,24 +1,29 @@
 <template>
   <!-- <chat-suit-emoji id="chat-suit-emoji" bind:newEmojiStr="emojiAction"></chat-suit-emoji> -->
   <form class="text-input">
-    <!-- <view class="f-row"> -->
-    <input
-      class="f news"
-      type="text"
-      cursor-spacing="65"
-      confirm-type="send"
-      v-model="inputMessage"
-      @confirm="sendMessage"
-      @input="bindMessage"
-      @tap="focus"
-      @focus="focus"
-      @blur="blur"
-      :confirm-hold="isIPX?true:false"
-      placeholder="输入新消息"
-      placeholder-style="color:#CFCFCF ;padding-left:5px"
-    />
-
-    <!-- 	</view> -->
+    <view class="f-row">
+      <input
+        class="f news"
+        type="text"
+        cursor-spacing="65"
+        confirm-type="send"
+        v-model="inputMessage"
+        @confirm="sendMessage"
+        @input="bindMessage"
+        @tap="focus"
+        @focus="focus"
+        @blur="blur"
+        :confirm-hold="isIPX ? true : false"
+        placeholder="输入新消息"
+        placeholder-style="color:#CFCFCF ;padding-left:5px"
+      />
+      <button 
+        class="send-btn-style" 
+        hover-class='hover'
+        @tap="sendMessage"
+        v-show="inputMessage" 
+      >发送</button>
+    </view>
   </form>
 </template>
 
@@ -109,8 +114,8 @@ export default {
           str = this.userMessage.slice(0, msglen);
         }
       }
-      this.userMessage = str
-      this.inputMessage = str
+      this.userMessage = str;
+      this.inputMessage = str;
     },
 
     sendMessage() {
@@ -131,6 +136,8 @@ export default {
         chatType: this.chatType,
         success(id, serverMsgId) {
           console.log("成功了");
+          // 关闭表情弹窗
+          me.$parent.cancelEmoji()
           disp.fire("em.chat.sendSuccess", id, me.userMessage);
         },
         fail(id, serverMsgId) {
@@ -148,14 +155,14 @@ export default {
         };
         this.saveSendMsg(obj);
       } catch (error) {
-        console.log('error',error);
+        console.log("error", error);
       }
-				this.userMessage = '';
-        this.inputMessage = '';
-        uni.hideKeyboard();
+      this.userMessage = "";
+      this.inputMessage = "";
+      uni.hideKeyboard();
     },
-    
-     saveSendMsg(evt) {
+
+    saveSendMsg(evt) {
       msgStorage.saveMsg(evt.msg, evt.type);
     },
   },

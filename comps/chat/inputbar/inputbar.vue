@@ -4,7 +4,7 @@
 	<chatSuitMain ref="chatSuitMain" :username="username" :chatType="chatType" @inputFocused="cancelEmoji"></chatSuitMain>
 	<chatSuitImage ref="chatSuitImage" :username="username" :chatType="chatType"></chatSuitImage>
 	<!-- <chat-suit-location id="chat-suit-location" username="{{ username }}"></chat-suit-location> -->
-	<chat-suit-video ref="chatSuitVideo" :username="username"></chat-suit-video>
+	<!-- <chat-suit-video ref="chatSuitVideo" :username="username"></chat-suit-video> -->
 	
 	<view :class="'other_func ' + (isIPX? 'other_func_X': '')">
 		<view class="open_emoji" @tap="openEmoji">
@@ -22,9 +22,9 @@
 		<view class="send_image" @tap="sendImage">
 			<image src="/static/images/pic.png" style="height:20px; width: 20px"></image>
 		</view>
-    <view class="send_image" @tap="sendVideo">
+    <!-- <view class="send_image" @tap="sendVideo">
 			<image src="/static/images/video.png" style="height:20px; width: 20px"></image>
-		</view>
+		</view> -->
 		<!-- <view class="send_image" bind:tap="sendLocation">
 			<image src="../../../static/images/iconLocation@2x.png" style="height:18px;"/>
 		</view> -->
@@ -39,7 +39,7 @@ import chatSuitEmoji from "./suit/emoji/emoji";
 import chatSuitImage from "./suit/image/image";
 import chatSuitLocation from "./suit/location/location";
 import chatSuitMain from "./suit/main/main";
-import chatSuitVideo from "./suit/videoComp/videoComp"
+// import chatSuitVideo from "./suit/videoComp/videoComp"
 
 export default {
   data() {
@@ -62,7 +62,7 @@ export default {
     chatSuitImage,
     chatSuitLocation,
     chatSuitMain,
-    chatSuitVideo
+    // chatSuitVideo
   },
   props: {
     username: {
@@ -103,9 +103,9 @@ export default {
       });
     },
 
-    sendVideo(){
-    	this.$refs.chatSuitVideo.sendVideo();
-    },
+    // sendVideo(){
+    // 	this.$refs.chatSuitVideo.sendVideo();
+    // },
     openCamera() {
       // this.__comps__.image.openCamera()
        this.$refs.chatSuitImage.openCamera();

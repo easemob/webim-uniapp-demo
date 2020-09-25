@@ -43,7 +43,7 @@
               @tap="previewImage"
               :data-url="item.msg.data"
             />
-            <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls autoplay style="width:300rpx"/>
+            <!-- <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls style="width:300rpx;"/> -->
           </view>
           <audio-msg v-if="item.msg.type == 'audio'" :msg="item"></audio-msg>
           <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
@@ -132,7 +132,6 @@ export default {
     let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
     let chatMsg = uni.getStorageSync(sessionKey) || [];
-    console.log('chatMsg>>',chatMsg);
     
     this.renderMsg(null, null, chatMsg, sessionKey);
     uni.setStorageSync(sessionKey, null);

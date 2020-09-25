@@ -36,3 +36,12 @@
 	display:flex;
 	align-items:center;
 }
+.send-btn-style{
+	font-size: 10px;
+	background-color: #2196F3;
+	color: #fff;
+    margin-right: 10px;
+}
+.hover{
+	background-color:#075ca1
+}
