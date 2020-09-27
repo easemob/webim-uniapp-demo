@@ -1,5 +1,5 @@
 {
-    "name" : "环信IM-Beta",
+    "name" : "环信",
     "appid" : "__UNI__DA31249",
     "description" : "",
     "versionName" : "1.0.0",
@@ -52,12 +52,21 @@
                 "ios" : {
                     "iphone" : {
                         "app@2x" : "/Users/lr/Downloads/30CD84AB0DBBA60649D759DABB0B0754.png",
-                        "app@3x" : "/Users/lr/Downloads/A9994E7895A25C34DBFDD874D223A6AC.png"
-                    }
+                        "app@3x" : "/Users/lr/Downloads/A9994E7895A25C34DBFDD874D223A6AC.png",
+                        "spotlight@2x" : "/Users/lr/Downloads/未命名文件夹 2/icon_80.png",
+                        "spotlight@3x" : "/Users/lr/Downloads/未命名文件夹 2/icon_120.png",
+                        "settings@2x" : "/Users/lr/Downloads/未命名文件夹 2/icon_58.png",
+                        "settings@3x" : "/Users/lr/Downloads/未命名文件夹 2/icon_87.png",
+                        "notification@3x" : "/Users/lr/Downloads/未命名文件夹 2/icon_58.png",
+                        "notification@2x" : "/Users/lr/Downloads/未命名文件夹 2/icon_57.png"
+                    },
+                    "appstore" : "/Users/lr/Downloads/未命名文件夹 2/icon_1024.png"
                 },
                 "android" : {
                     "xxhdpi" : "/Users/lr/Downloads/30CD84AB0DBBA60649D759DABB0B0754.png",
-                    "xxxhdpi" : "/Users/lr/Downloads/A9994E7895A25C34DBFDD874D223A6AC.png"
+                    "xxxhdpi" : "/Users/lr/Downloads/A9994E7895A25C34DBFDD874D223A6AC.png",
+                    "hdpi" : "/Users/lr/Downloads/未命名文件夹 2/icon_80.png",
+                    "xhdpi" : "/Users/lr/Downloads/未命名文件夹 2/icon_87.png"
                 }
             }
         }

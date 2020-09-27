@@ -91,14 +91,15 @@ export default {
 
               success(res) {
                 if(res.statusCode === 400){
-									// 图片上传阿里云检验不合法
-									var errData = JSON.parse(res.data);
-									if (errData.error === 'content improper') {
-										wx.showToast({
-											title: '图片不合法'
-										});
+                  // 图片上传阿里云检验不合法
+									// var errData = JSON.parse(res.data);
+									// if (errData.error === 'content improper') {
+                    uni.showToast({
+                      title: "图片检测不合法",
+                      duration: 1000
+                    });
 										return false
-									}
+									// }
 								}
                 var data = res.data;
                 var dataObj = JSON.parse(data);
