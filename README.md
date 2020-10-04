@@ -88,10 +88,6 @@ globalData:
 
 # 常见问题
 
-+ app端sdk报错
-
-  目前次版本sdk并未支持移动端，仅支持web端跟小程序。需要移动端开发可使用环信移动端版本的sdk
-
 + 小程序开发工具提示错误信息：{type: 206}，并提示 illegal buffer，然后socket连接中断并提示{code: 1000, reason: "normal closure"}
 
   {type: 206}:账号在另外一端服务登陆，socket断连。提示illegal buffer不影响业务功能，后期sdk会屏蔽此提示
