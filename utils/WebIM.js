@@ -1,5 +1,5 @@
 // 小程序3.0sdk
-import websdk from "../newSDK/wxsdk3.2.2";
+import websdk from "../newSDK/wxsdk3.3.0";
 
 // 小程序2.0sdk
 // import websdk from "../sdk2.0/connection.js"
