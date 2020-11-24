@@ -7,7 +7,7 @@
 
 		<view class="notInfoDetContent">
 			<view class="headContent">
-				<image src="/static/images/theme@2x.png"></image>
+				<image src="/static/images/theme2x.png"></image>
 			</view>
 			<view class="infoContent">
 				<text class="itemName">{{ item.from }}</text>

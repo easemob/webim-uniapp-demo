@@ -15,7 +15,7 @@
           <!-- yourname：就是消息的 from -->
           <text class="user-text">{{ item.yourname + ' ' + item.time}}</text>
         </view>
-        <image class="avatar" src="/static/images/theme@2x.png" />
+        <image class="avatar" src="/static/images/theme2x.png" />
         <view class="msg">
           <image
             class="err"
@@ -25,12 +25,12 @@
 
           <image
             v-if="item.style == 'self'"
-            src="/static/images/poprightarrow@2x.png"
+            src="/static/images/poprightarrow2x.png"
             class="msg_poprightarrow"
           />
           <image
             v-if="item.style == ''"
-            src="/static/images/popleftarrow@2x.png"
+            src="/static/images/popleftarrow2x.png"
             class="msg_popleftarrow"
           />
           <view v-if="item.msg.type == 'img' || item.msg.type == 'video'">
@@ -49,6 +49,8 @@
           <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
             <view class="template" v-for="(d_item, d_index) in item.msg.data" :key="d_index">
               <text
+				:data-msg="item"
+				@tap="clickMsg"
                 v-if="d_item.type == 'txt'"
                 class="msg-text"
                 style="float:left;"
@@ -132,7 +134,7 @@ export default {
     let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
     let chatMsg = uni.getStorageSync(sessionKey) || [];
-    
+    console.log('chatMsg', chatMsg)
     this.renderMsg(null, null, chatMsg, sessionKey);
     uni.setStorageSync(sessionKey, null);
     disp.on('em.error.sendMsgErr', function (err) {
@@ -299,7 +301,16 @@ export default {
 
       uni.setStorageSync("rendered_" + sessionKey, msgList);
       isFail = false;
-    }
+    },
+	
+	clickMsg(event){
+		// console.log('点击邀请消息', event.target.dataset.msg)
+		if(typeof(event.target.dataset.msg) == 'object' && 
+			event.target.dataset.msg.msg.ext && 
+			event.target.dataset.msg.msg.ext.msg_extension){
+			this.$emit("clickMsg", event.target.dataset.msg.msg.ext)
+		}
+	}
 
   }
 };

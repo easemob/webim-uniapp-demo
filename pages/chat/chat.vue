@@ -52,7 +52,7 @@
         @tap.stop="del_chat"
       >
         <swipe-delete>
-          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item">
+          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="JSON.stringify(item)">
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
                 <view class="list_pic">
@@ -67,7 +67,7 @@
                       item.chatType == 'groupchat' ||
                       item.chatType == 'chatRoom'
                         ? '../../static/images/groupTheme.png'
-                        : '../../static/images/theme@2x.png'
+                        : '../../static/images/theme2x.png'
                     "
                   ></image>
                 </view>
@@ -123,13 +123,13 @@
         >
         <image
           :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
-          src="/static/images/sessionhighlight@2x.png"
+          src="/static/images/sessionhighlight2x.png"
         ></image>
         <text class="activeText">聊天</text>
       </view>
 
       <view class="tableBar" @tap="tab_contacts">
-        <image src="/static/images/comtacts@2x.png"></image>
+        <image src="/static/images/comtacts2x.png"></image>
         <text>联系人</text>
       </view>
 
@@ -145,7 +145,7 @@
       </view>
 
       <view class="tableBar" @tap="tab_setting">
-        <image src="/static/images/setting@2x.png"></image>
+        <image src="/static/images/setting2x.png"></image>
         <text>设置</text>
       </view>
     </view>
@@ -502,6 +502,8 @@ export default {
       }
     },
     tab_contacts: function () {
+		
+		console.log('点击的时候username:', uni.getStorageSync("myUsername"))
       uni.redirectTo({
         url: "../main/main?myName=" + uni.getStorageSync("myUsername")
       });
@@ -524,8 +526,8 @@ export default {
       });
     },
     into_chatRoom: function (event) {
-      let detail = event.currentTarget.dataset.item; //群聊的chatType居然是singlechat？脏数据？ 等sdk重写后整理一下字段
-
+      let detail = JSON.parse(event.currentTarget.dataset.item); //群聊的chatType居然是singlechat？脏数据？ 等sdk重写后整理一下字段
+		console.log('detail', detail)
       if (detail.chatType == 'groupchat' || detail.chatType == 'chatRoom' || detail.groupName) {
         this.into_groupChatRoom(detail);
       } else {
@@ -539,6 +541,7 @@ export default {
         myName: my,
         your: detail.username
       };
+	  uni.$emit('goChatRoom', nameList)
       uni.navigateTo({
         url: "../chatroom/chatroom?username=" + JSON.stringify(nameList)
       });
@@ -551,6 +554,7 @@ export default {
         your: detail.groupName,
         groupId: detail.info.to
       };
+	  uni.$emit('goChatRoom', nameList)
       uni.navigateTo({
         url: "../groupChatRoom/groupChatRoom?username=" + JSON.stringify(nameList)
       });

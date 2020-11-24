@@ -9,7 +9,7 @@
 	<text v-if="messageNum > 0" class="notification_dot">{{ messageNum }}</text>
 </view>
 <view class="address_bottom" @tap="into_groupNot">
-	<image src="/static/images/jiaqun@2x.png"></image>
+	<image src="/static/images/jiaqun2x.png"></image>
 	<text>加群组申请</text>
 	<text v-if="groupInviteNum > 0" class="notification_dot">{{ groupInviteNum }}</text>
 </view>
@@ -17,12 +17,12 @@
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
 		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
-		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/session@2x.png"></image>
+		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/session2x.png"></image>
 		<text>聊天</text>
 	</view>
 
 	<view class="tableBar" @tap="tab_contact">
-		<image src="/static/images/comtacts@2x.png"></image>
+		<image src="/static/images/comtacts2x.png"></image>
 		<text>联系人</text>
 	</view>
 
@@ -33,7 +33,7 @@
 	</view>
 	
 	<view class="tableBar" @tap="tab_setting">
-		<image src="/static/images/setting@2x.png"></image>
+		<image src="/static/images/setting2x.png"></image>
 		<text>设置</text>
 	</view>
 </view>

@@ -148,6 +148,7 @@ export default {
         msg.setGroup("groupchat");
       }
       try {
+		  console.log('发送消息', msg.body)
         WebIM.conn.send(msg.body);
         let obj = {
           msg: msg,

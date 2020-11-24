@@ -38,7 +38,7 @@
 		<!-- other item -->
 		<view class="contain">
 			<view class="otherItem" @tap="add_new">
-				<image src="/static/images/invite_theme@2x.png" data-username="name"></image>
+				<image src="/static/images/invite_theme2x.png" data-username="name"></image>
 				<text>添加好友</text>
 				<!-- <image class='line' src="../../static/images/line.png"></image> -->
 				<!-- 0.5px border -->
@@ -50,7 +50,7 @@
 				<text wx:if="{{ messageNum > 0 }}" class="em-msgNum">{{ messageNum }}</text>
 			</view> -->
 			<view class="otherItem" @tap="into_groups">
-				<image src="/static/images/group@2x.png"></image>
+				<image src="/static/images/group2x.png"></image>
 				<text>群组</text>
 			</view>
 			<!-- <view class="chat_lists">
@@ -65,7 +65,7 @@
 				<swipe-delete>
 					<view class="tap_mask" @tap.stop="into_room" :data-username="item.name">
 			          	<view class="address_bottom" :data-username="item.name" @tap.stop="into_room">
-							<image src="/static/images/theme@2x.png" @tap.stop="into_room" :data-username="item.name"></image>
+							<image src="/static/images/theme2x.png" @tap.stop="into_room" :data-username="item.name"></image>
 				          	<text @tap.stop="into_room" :data-username="item.name">{{item.name}}</text>
 			      		</view>
 		      		</view>
@@ -88,12 +88,12 @@
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
 		<view v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
-		<image :class="unReadSpotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/session@2x.png"></image>
+		<image :class="unReadSpotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/session2x.png"></image>
 		<text>聊天</text>
 	</view>
 
 	<view class="tableBar">
-		<image src="/static/images/comtactshighlight@2x.png"></image>
+		<image src="/static/images/comtactshighlight2x.png"></image>
 		<text class="activeText">联系人</text>
 	</view>
 
@@ -104,7 +104,7 @@
 	</view>
 	
 	<view class="tableBar" @tap="tab_setting">
-		<image src="/static/images/setting@2x.png"></image>
+		<image src="/static/images/setting2x.png"></image>
 		<text>设置</text>
 	</view>
 </view>
@@ -114,7 +114,7 @@
 		<view class="toast_content" v-if="isHidefil">
 			<view class="toast_content_border"></view>
 			<view class="toast_content_icon">
-				<image class="toast_icon_img" src="/static/images/filled@2x.png"></image>
+				<image class="toast_icon_img" src="/static/images/filled2x.png"></image>
 			</view>
 			<view class="toast_content_text">{{content}}</view>
 		</view>
@@ -123,7 +123,7 @@
 			<view class="toast_content" v-if="isHidescss">
 				<view class="toast_content_border toast_success"></view>
 				<view class="toast_content_icon">
-					<image class="toast_icon_img" src="/static/images/success@2x.png"></image>
+					<image class="toast_icon_img" src="/static/images/success2x.png"></image>
 				</view>
 				<view class="toast_content_text">{{content}}</view>
 			</view>
