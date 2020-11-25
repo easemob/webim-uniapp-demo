@@ -1,0 +1,118 @@
+<template>
+	<view class="page">
+		<scroll-view
+			class="content" 
+			enable-back-to-top
+			scroll-y="true"
+			scroll-with-animation="true" 
+		> 
+		<checkbox-group v-for="item in renderList" :data-item="item" :key="item.member||item.owner"  :id="item.id" :data-id='item.id' @change="checkboxChange">
+			<view class="address_bottom" :data-username="item.member||item.owner" @tap="into_room">
+				<checkbox :value="item.member||item.owner" :checked="item.checked" :disabled="item.disabled"/>
+				<text @tap="into_room" :data-username="item.member||item.owner">{{item.member||item.owner}}</text>
+			</view>
+		</checkbox-group>
+		
+		</scroll-view>
+		<view class="btnBox">
+			<button @tap="inviteMember">邀请</button>
+			<button @tap="goBack">返回</button>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				renderList: [],
+				checkedValue:[]
+			}
+		},
+		props: {
+		  groupId: {
+		    type: String,
+		    default: ''
+		  }
+		},
+		mounted(){
+			console.log('** 邀请组件', this.groupId)
+			this.groupId && this.getGroupMember(this.groupId)
+		},
+		methods: {
+			getGroupMember: function(roomId){
+				var me = this;
+				// 获取群成员
+				var pageNum = 1,
+					pageSize = 1000;
+				var options = {
+					pageNum: pageNum,
+					pageSize: pageSize,
+					groupId: roomId,
+					success: function(resp){
+						console.log('获取群成员', resp)
+						if(resp && resp.data){
+							me.renderList =  resp.data
+						}
+					}
+				};
+				uni.WebIM.conn.listGroupMember(options);
+			},
+			checkboxChange(e){
+				console.log(e)
+				console.log('checkbox发生change事件，携带value值为：', e)
+				if(this.checkedValue.indexOf(e.detail.value) == -1 && e.detail.value[0]){
+					this.checkedValue.push(e.detail.value[0])
+					console.log(this.checkedValue)
+				}else{
+					let value = e.target.dataset.item.name
+					this.checkedValue.splice(this.checkedValue.indexOf(value), 1)
+					console.log(this.checkedValue)
+				}
+			},
+			
+			inviteMember(){
+				this.$emit('onInvite', this.checkedValue)
+			},
+			
+			goBack(){
+				this.$emit('goBack')
+			}
+		}
+	}
+</script>
+
+<style scoped>
+.page{
+	width: 750rpx;
+	height: 1334rpx;
+	position: fixed;
+	background-color: #FFFFFF;
+	z-index: 999;
+}
+.content{
+	height: 1000rpx;
+	/* background-color: #09BB07; */
+}
+.address_bottom{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 30rpx;
+	margin-left: 15rpx;
+	margin-right: 15rpx;
+	border-bottom-width: 1px;
+	border-bottom-color: #CCCCCC;
+	height: 130rpx;
+	/* background-color: #2892FD; */
+}
+.address_bottom checkbox{
+	margin-right: 20rpx;
+}
+.btnBox{
+	position: fixed;
+	bottom: 0;
+	width: 750rpx;
+	
+}
+</style>

@@ -6,7 +6,7 @@
 
 <view class="setting_head">
 	<view class="head_pic">
-		<image src="/static/images/theme@2x.png"></image>
+		<image src="/static/images/theme2x.png"></image>
 		<view>
 			<text class="setting_username">{{ yourname }}</text>
 			<text class="setting_username2">username</text>
@@ -30,12 +30,12 @@
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
 		<view v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
-		<image :class="unReadSpotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/session@2x.png"></image>
+		<image :class="unReadSpotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/session2x.png"></image>
 		<text>聊天</text>
 	</view>
 
 	<view class="tableBar" @tap="tab_contact">
-		<image src="/static/images/comtacts@2x.png"></image>
+		<image src="/static/images/comtacts2x.png"></image>
 		<text>联系人</text>
 	</view>
 
@@ -46,7 +46,7 @@
 	</view>
 	
 	<view class="tableBar">
-		<image src="/static/images/settinghighlight@2x.png"></image>
+		<image src="/static/images/settinghighlight2x.png"></image>
 		<text class="activeText">设置</text>
 	</view>
 </view>

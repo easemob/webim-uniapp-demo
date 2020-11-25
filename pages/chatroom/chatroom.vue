@@ -1,10 +1,10 @@
 <template>
-<chat id="chat" ref="chat" :username="username" chatType="singleChat"></chat>
+<chat id="chat" :username="username" ref="chat" chatType="singleChat" @onClickInviteMsg="onClickMsg"></chat>
 </template>
 
 <script>
 let disp = require("../../utils/broadcast");
-import chat from "../../comps/chat/chat";
+import chat from "../../comps/chat/chat.vue";
 
 export default {
   data() {
@@ -14,18 +14,23 @@ export default {
       }
     };
   },
-
+ 
   components: {
     chat
   },
   props: {},
 
   // options = 系统传入的 url 参数
+  beforeMount(data){
+	  console.log('渲染前接受的参数', data)
+  },
   onLoad(options) {
     let username = JSON.parse(options.username);
+	console.log('888888 chat room username', username)
     this.setData({
       username: username
     });
+	
     uni.setNavigationBarTitle({
       title: username.your
     });
@@ -42,7 +47,14 @@ export default {
     uni.hideNavigationBarLoading();
     uni.stopPullDownRefresh();
   },
-  methods: {}
+  methods: {
+	  onClickMsg(msg){
+		msg.action = 'join'
+		uni.navigateTo({
+			url: "../emedia/index?srcData="+JSON.stringify(msg)
+		});
+	  }
+  }
 };
 </script>
 <style>

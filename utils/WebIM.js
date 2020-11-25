@@ -1,6 +1,7 @@
 // 小程序3.0sdk
-import websdk from "../newSDK/wxsdk3.3.0";
+import websdk from "../newSDK/wxsdk3.3.2";
 // import websdk from "../sdk3.0/src/wxEntry"
+// import websdk from '../newSDK/sdk/src/wxEntry.js';
 
 // 小程序2.0sdk
 // import websdk from "../sdk2.0/connection.js"
@@ -207,6 +208,7 @@ WebIM.EmojiObj = {
 }; 
 // uni.connectSocket({url: WebIM.config.xmppURL, method: "GET"})
 
+
 WebIM.conn = new WebIM.connection({
   appKey: "easemob-demo#chatdemoui",
   isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
@@ -216,9 +218,12 @@ WebIM.conn = new WebIM.connection({
   isAutoLogin: false,
   heartBeatWait: WebIM.config.heartBeatWait,
   autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
-  autoReconnectInterval: WebIM.config.autoReconnectInterval
+  autoReconnectInterval: WebIM.config.autoReconnectInterval,
+  isDebug: false
 });
 
 module.exports = {
   "default": WebIM
 };
+
+

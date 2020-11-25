@@ -1,10 +1,13 @@
 <script>
 // require("sdk/libs/strophe");
-let WebIM = require("./utils/WebIM")["default"];
+let WebIM = wx.WebIM = require("./utils/WebIM")["default"];
 let msgStorage = require("./comps/chat/msgstorage");
 let msgType = require("./comps/chat/msgtype");
 let disp = require("./utils/broadcast");
 let logout = false;
+// let emedia = uni.emedia = require("./emediaSDK/webrtc/src/entry") 
+let emedia = uni.emedia = require("./emediaSDK/emedia_for_miniProgram") 
+emedia.config({useUniappPlugin: true})
 function ack(receiveMsg) {
   // 处理未读消息回执
   var bodyId = receiveMsg.id; // 需要发送已读回执的消息id
@@ -121,7 +124,7 @@ export default {
 
       open(opt) {
         uni.showLoading({
-          title: "正在初始化客户端...",
+          title: "正在初始化客户端..",
           mask: true
         });
         this.curOpenOpt = opt;
@@ -183,7 +186,7 @@ export default {
       uni.getSystemInfo({
         success: function(res) {
           // 根据 model 进行判断
-          if (res.model.search("iPhone X") != -1) {
+          if (res.model&&res.model.search("iPhone X") != -1) {
             me.isIPX = true;
           }
         }
@@ -258,6 +261,7 @@ export default {
           icon: "none",
           duration: 2000
         });
+		return;
         uni.redirectTo({
           url: "../login/login"
         });
@@ -489,31 +493,31 @@ export default {
       onError(error) {
         console.log(error); // 16: server-side close the websocket connection
 
-        if (error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED) {
-          // if(error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED && !logout){
-          // if(WebIM.conn.autoReconnectNumTotal < WebIM.conn.autoReconnectNumMax){
-          // 	return;
-          // }
-          uni.showToast({
-            title: "websocket 断开",
-            duration: 1000
-          });
-          uni.redirectTo({
-            url: "../login/login"
-          });
-          logout = true;
-          return;
-        } // 8: offline by multi login
+        // if (error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED) {
+        //   // if(error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED && !logout){
+        //   // if(WebIM.conn.autoReconnectNumTotal < WebIM.conn.autoReconnectNumMax){
+        //   // 	return;
+        //   // }
+        //   uni.showToast({
+        //     title: "websocket 断开",
+        //     duration: 1000
+        //   });
+        //   uni.redirectTo({
+        //     url: "../login/login"
+        //   });
+        //   logout = true;
+        //   return;
+        // } // 8: offline by multi login
 
-        if (error.type == WebIM.statusCode.WEBIM_CONNCTION_SERVER_ERROR) {
-          uni.showToast({
-            title: "offline by multi login",
-            duration: 1000
-          });
-          uni.redirectTo({
-            url: "../login/login"
-          });
-        }
+        // if (error.type == WebIM.statusCode.WEBIM_CONNCTION_SERVER_ERROR) {
+        //   uni.showToast({
+        //     title: "offline by multi login",
+        //     duration: 1000
+        //   });
+        //   uni.redirectTo({
+        //     url: "../login/login"
+        //   });
+        // }
 
         if (error.type == WebIM.statusCode.WEBIM_CONNCTION_OPEN_ERROR) {
           uni.hideLoading();

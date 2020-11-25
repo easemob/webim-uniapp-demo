@@ -1,6 +1,6 @@
 {
     "name" : "环信",
-    "appid" : "__UNI__DA31249",
+    "appid" : "__UNI__BCEECB4",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -51,22 +51,49 @@
             "icons" : {
                 "ios" : {
                     "iphone" : {
-                        "app@2x" : "/Users/lr/Downloads/30CD84AB0DBBA60649D759DABB0B0754.png",
-                        "app@3x" : "/Users/lr/Downloads/A9994E7895A25C34DBFDD874D223A6AC.png",
-                        "spotlight@2x" : "/Users/lr/Downloads/未命名文件夹 2/icon_80.png",
-                        "spotlight@3x" : "/Users/lr/Downloads/未命名文件夹 2/icon_120.png",
-                        "settings@2x" : "/Users/lr/Downloads/未命名文件夹 2/icon_58.png",
-                        "settings@3x" : "/Users/lr/Downloads/未命名文件夹 2/icon_87.png",
-                        "notification@3x" : "/Users/lr/Downloads/未命名文件夹 2/icon_58.png",
-                        "notification@2x" : "/Users/lr/Downloads/未命名文件夹 2/icon_57.png"
+                        "app@2x" : "unpackage/res/icons/120x120.png",
+                        "app@3x" : "unpackage/res/icons/180x180.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons/120x120.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "settings@3x" : "unpackage/res/icons/87x87.png",
+                        "notification@3x" : "unpackage/res/icons/60x60.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png"
                     },
-                    "appstore" : "/Users/lr/Downloads/未命名文件夹 2/icon_1024.png"
+                    "appstore" : "unpackage/res/icons/1024x1024.png",
+                    "ipad" : {
+                        "app" : "unpackage/res/icons/76x76.png",
+                        "app@2x" : "unpackage/res/icons/152x152.png",
+                        "notification" : "unpackage/res/icons/20x20.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "proapp@2x" : "unpackage/res/icons/167x167.png",
+                        "settings" : "unpackage/res/icons/29x29.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "spotlight" : "unpackage/res/icons/40x40.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png"
+                    }
                 },
                 "android" : {
-                    "xxhdpi" : "/Users/lr/Downloads/30CD84AB0DBBA60649D759DABB0B0754.png",
-                    "xxxhdpi" : "/Users/lr/Downloads/A9994E7895A25C34DBFDD874D223A6AC.png",
-                    "hdpi" : "/Users/lr/Downloads/未命名文件夹 2/icon_80.png",
-                    "xhdpi" : "/Users/lr/Downloads/未命名文件夹 2/icon_87.png"
+                    "xxhdpi" : "unpackage/res/icons/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons/192x192.png",
+                    "hdpi" : "unpackage/res/icons/72x72.png",
+                    "xhdpi" : "unpackage/res/icons/96x96.png"
+                }
+            }
+        },
+        "nativePlugins" : {
+            "EMLivePlugin" : {
+                "__plugin_info__" : {
+                    "name" : "EMLivePlugin",
+                    "description" : "easemob推流",
+                    "platforms" : "Android,iOS",
+                    "url" : "",
+                    "android_package_name" : "",
+                    "ios_bundle_id" : "",
+                    "isCloud" : false,
+                    "bought" : -1,
+                    "pid" : "",
+                    "parameters" : {}
                 }
             }
         }

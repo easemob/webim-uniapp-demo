@@ -1,10 +1,18 @@
 <template>
-<chat id="groupchat" ref="chat" :username="username" :groupId="groupId" chatType="chatRoom"></chat>
+<chat 
+	id="groupchat" 
+	ref="chat" 
+	:username="username" 
+	:groupId="groupId" 
+	chatType="chatRoom" 
+	@onMakeVideoCall="makeVideoCall" 
+	@onClickInviteMsg="onClickMsg">
+</chat>
 </template>
 
 <script>
 let disp = require("../../utils/broadcast");
-import chat from "../../comps/chat/chat";
+import chat from "../../comps/chat/chat.vue";
 
 export default {
   data() {
@@ -49,7 +57,33 @@ export default {
     uni.hideNavigationBarLoading();
     uni.stopPullDownRefresh();
   },
-  methods: {}
+  methods: {
+	makeVideoCall(data){
+		 if(false){
+			uni.showToast({
+				title: '请输入会议Id',
+				duration: 2000
+			});
+			return
+		}
+		console.log('携带的参数', data)
+		uni.navigateTo({
+		  url: "../emedia/index?srcData="+JSON.stringify(data)
+		});
+		// let subNVue = uni.getSubNVueById('drawer')
+		// subNVue.show('fade-out', 200)
+		// uni.$emit('page-popup', {
+		// 	state: 201,
+		// 	room:{
+		// 		id: 'LBJ13H05522QATH0DW164400C69796', //this.confrId,
+		// 		pwd:this.pwd||''
+		// 	},
+		// 	desp: "开始初始化nvue",
+		// })
+	},
+	onClickMsg(msg){
+	}
+  }
 };
 </script>
 <style>

@@ -1,0 +1,199 @@
+<template>
+	<view class="wraper">
+		<scroll-view
+			style="{height:'860rpx'}"
+			scroll-y = "true"
+		>
+			<view class="infoConnecting">
+				多人会议 {{groupId}} {{time}}
+			</view>
+			<live-pusher class="live-pusher" :url="pubUrl" @netstatus="netstatusChange" :muted="false" :enable-camera="true" id="livepusher"
+			 ref="livepusher" @statechange="statechange" mode="HD" @error="error"></live-pusher>
+
+				<cover-view
+				 class="userName">{{myName}}</cover-view>
+			</live-pusher>
+			<view  
+				v-if="subUrls.length > 0"
+				v-for="item in subUrls">
+	
+				<video
+					:id="item.streamId"
+					:src="item.subUrl" 
+					object-fit="contain"
+					autoplay 
+				>
+					<view class="userName">{{item.memName}}</view>
+				</video>
+	
+			</view>
+		</scroll-view>
+	
+	
+		<view class="controlContent">
+			<view class="emediaContrContent">
+				<view class="controlItem" @tap="toggleCamera" style="{color: devicePositionColor}">
+					<image
+						class="icon-record"
+						:src="'../../static/images/'+devicePositionIcon+'@2x.png'" style="{width:'22px'; height: '24px'}"/>
+					切换摄像头
+				</view>
+				<view class="controlItem" @tap="toggleMuted" style="{color: micphoneColor}">
+					<image
+						class="icon-record"
+						:src="'../../static/images/'+micphoneIcon+'@2x.png'" style="{width:'22px'; height: '24px'}"/>
+					麦克风</view>
+				<view class="controlItem" @tap="togglePlay" style="{color: videoColor}">
+					<image
+						class="icon-record"
+						:src="'../../static/images/'+videoIcon+'@2x.png'" style="{width:'22px'; height: '24px'}"/>
+					视频</view>
+				<view class="controlItem" @tap="toggleBeauty" style="{color: beautyColor}">
+					<image
+						class="icon-record"
+						:src="'../../static/images/'+beautyIcon+'.png'" style="{width:'16px'; height: '24px'}"/>
+					美颜</view>
+				<view class="controlItem" @tap="inviteMember">
+					<image
+						class="icon-record"
+						src='../../static/images/invite_white@2x.png' style="{width:'22px'; height: '24px'"/>
+					邀请</view>
+			</view>
+	
+			<view class="hangup" @tap="hangup">
+				<image
+					class="icon-record"
+					src='../../static/images/hangup@2x.png'/>
+			</view>
+		</view>
+	
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				pubUrl: "",
+				subUrls: [],
+				showInvite: true,
+				devicePosition: "front",
+				muted: false,
+				playVideoMuted: false,
+		
+				devicePositionIcon: 'switchCamera_white',
+				devicePositionColor: '#fff',
+				micphoneIcon: 'micphone_white',
+				beautyIcon: 'beauty',
+				micphoneColor: '#fff',
+				videoIcon: 'video_white',
+				videoColor: '#fff',
+				beauty: 9,
+				beautyColor: '#fff',
+				myName: '',
+				confrId: '',
+				enableCamera: true,
+				time: '',
+				context: {}
+			}
+		},
+		props: {
+		  username: {
+		    type: Object,
+		    default: () => ({}),
+		  },
+		  action: {
+		    type: Object,
+		    default: ()=>({}),
+		  },
+		  groupId:{
+		    type: String,
+		    default: '',
+		  },
+		},
+		methods: {
+			onReady() {
+				// 注意：需要在onReady中 或 onLoad 延时
+				this.context = uni.createLivePusherContext("livePusher", this);
+			},
+			statechange(e) {
+				console.log("statechange:" + JSON.stringify(e));
+			},
+			netstatus(e) {
+				console.log("netstatus:" + JSON.stringify(e));
+			},
+			error(e) {
+				console.log("error:" + JSON.stringify(e));
+			},
+			start: function() {
+				this.context.start({
+					success: (a) => {
+						console.log("livePusher.start:" + JSON.stringify(a));
+					}
+				});
+			},
+			close: function() {
+				this.context.close({
+					success: (a) => {
+						console.log("livePusher.close:" + JSON.stringify(a));
+					}
+				});
+			},
+			snapshot: function() {
+				this.context.snapshot({
+					success: (e) => {
+						console.log(JSON.stringify(e));
+					}
+				});
+			},
+			resume: function() {
+				this.context.resume({
+					success: (a) => {
+						console.log("livePusher.resume:" + JSON.stringify(a));
+					}
+				});
+			},
+			pause: function() {
+				this.context.pause({
+					success: (a) => {
+						console.log("livePusher.pause:" + JSON.stringify(a));
+					}
+				});
+			},
+			stop: function() {
+				this.context.stop({
+					success: (a) => {
+						console.log(JSON.stringify(a));
+					}
+				});
+			},
+			switchCamera: function() {
+				this.context.switchCamera({
+					success: (a) => {
+						console.log("livePusher.switchCamera:" + JSON.stringify(a));
+					}
+				});
+			},
+			startPreview: function() {
+				this.context.startPreview({
+					success: (a) => {
+						console.log("livePusher.startPreview:" + JSON.stringify(a));
+					}
+				});
+			},
+			stopPreview: function() {
+				this.context.stopPreview({
+					success: (a) => {
+						console.log("livePusher.stopPreview:" + JSON.stringify(a));
+					}
+				});
+			},
+		
+		}
+	}
+</script>
+
+<style>
+/* @import url("./index.css"); */
+
+</style>

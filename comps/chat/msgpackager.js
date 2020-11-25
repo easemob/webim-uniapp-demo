@@ -14,7 +14,8 @@ module.exports = function (sendableMsg, type, myName) {
     msg: {
       type: type,
       url: sendableMsg.body.url ? sendableMsg.body.url : '',
-      data: getMsgData(sendableMsg, type)
+      data: getMsgData(sendableMsg, type),
+	  ext: sendableMsg.body.ext
     },
     style: sendableMsg.body.from == myName ? "self" : "",
     time: time,

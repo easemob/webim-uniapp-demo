@@ -14,11 +14,13 @@ let config = {
    * XMPP server
    */
 
-  // xmppURL: "wss:////im-api-v2.easemob.com/ws", websdk 3.0 server
+  // xmppURL: "wss://im-api-new-hsb.easemob.com/websocket",// websdk 3.0 server
   
   // xmppURL: "wss://im-api.easemob.com/ws",  //小程序sdk 2.0 server
 
   xmppURL: 'wss://im-api-wechat.easemob.com/websocket', //小程序3.0 server
+  
+  // xmppURL: 'wss://im-api-v2-hsb-alipay.easemob.com/websocket', // 支付宝测试
 
   /*
    * Backend REST API URL
@@ -26,6 +28,8 @@ let config = {
   // apiURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//a1.easemob.com',
   // ios must be https!!! by lwz
   apiURL: "https://a1.easemob.com",
+  
+  // apiURL: 'https://192.168.43.137:8080', // 支付宝测试
   // apiURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//172.17.3.155:8080',
 
   /*

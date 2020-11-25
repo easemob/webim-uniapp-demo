@@ -5,7 +5,11 @@
 	<chatSuitImage ref="chatSuitImage" :username="username" :chatType="chatType"></chatSuitImage>
 	<!-- <chat-suit-location id="chat-suit-location" username="{{ username }}"></chat-suit-location> -->
 	<!-- <chat-suit-video ref="chatSuitVideo" :username="username"></chat-suit-video> -->
-	
+	<chatSuitPtopcall ref="chatSuitPtopcall" :chatType="chatType"
+		@makeVideoCall="onMakeVideoCall"
+		>
+	</chatSuitPtopcall>
+
 	<view :class="'other_func ' + (isIPX? 'other_func_X': '')">
 		<view class="open_emoji" @tap="openEmoji">
 			<image src="/static/images/Emoji.png" style="height:18px; width: 19px"/>
@@ -26,8 +30,11 @@
 			<image src="/static/images/video.png" style="height:20px; width: 20px"></image>
 		</view> -->
 		<!-- <view class="send_image" bind:tap="sendLocation">
-			<image src="../../../static/images/iconLocation@2x.png" style="height:18px;"/>
+			<image src="../../../static/images/iconLocation2x.png" style="height:18px;"/>
 		</view> -->
+		<view class="v-record" @tap="callVideo" v-if="username.groupId">
+			<image src="/static/images/call2x.png" style="height:24px; width: 15px"/>
+		</view>
 	</view>
 </view>
 </template>
@@ -39,6 +46,8 @@ import chatSuitEmoji from "./suit/emoji/emoji";
 import chatSuitImage from "./suit/image/image";
 import chatSuitLocation from "./suit/location/location";
 import chatSuitMain from "./suit/main/main";
+import chatSuitPtopcall from "./suit/ptopcall/ptopcall.vue";
+
 // import chatSuitVideo from "./suit/videoComp/videoComp"
 
 export default {
@@ -62,6 +71,7 @@ export default {
     chatSuitImage,
     chatSuitLocation,
     chatSuitMain,
+	chatSuitPtopcall
     // chatSuitVideo
   },
   props: {
@@ -86,7 +96,7 @@ export default {
 
   onLoad() {
     this.setData({
-      isIPX: getApp().globalData.isIPX
+      isIPX: false,  //getApp().globalData.isIPX
     });
     // let comps = this.$data.__comps__;
     // comps.main = this.selectComponent("#chatSuitMain");
@@ -129,7 +139,17 @@ export default {
 
     emojiAction(evt) {
        this.$refs.chatSuitMain.emojiAction(evt.msg);
-    }
+    },
+	
+	callVideo(){
+		//console.log('this.data.__comps__.ptopcall', this.data.__comps__.ptopcall)
+		this.$refs.chatSuitPtopcall.show()
+	},
+	
+	onMakeVideoCall(){
+		console.log('onMakeVideoCall -> inputbar')
+		this.$emit('makeVideoCall', null, 'single')
+	},
 
   }
 };
