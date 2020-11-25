@@ -211,6 +211,7 @@ page{
 	padding-bottom: 270rpx; 
 	box-sizing: border-box; 
 	height: 100%;
+	width: 100%;
 	position: fixed;
 	top: 128rpx;
 } 
