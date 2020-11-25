@@ -56,7 +56,6 @@ export default {
               var id = WebIM.conn.getUniqueId();
               var msg = new WebIM.message(msgType.LOCATION, id);
               msg.set({
-                // location 需要消息值吗？写死不行？
                 msg: "",
                 from: me.username.myName,
                 to: me.getSendToParam(),

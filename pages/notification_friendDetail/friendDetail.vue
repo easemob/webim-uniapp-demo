@@ -42,7 +42,7 @@ export default {
   props: {},
 
   onLoad(options) {
-    var me = this; // 不需要 object 地址更新，就能刷
+    var me = this;
 
     disp.on("em.subscribe", function () {
       me.setData({
@@ -52,7 +52,6 @@ export default {
     });
     this.setData({
       myName: uni.getStorageSync("myUsername"),
-      // 哈？global？好吧
       friendList: uni.getStorageSync("friendNotiData") //getApp().globalData.saveFriendList 
       // [{
       // 	chatroom: false,

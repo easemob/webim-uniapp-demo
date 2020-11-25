@@ -92,7 +92,7 @@ export default {
         success: function (res) {
           me.setData({
             groupList: res.data
-          }); // 好像也没有别的官方通道共享数据啊
+          });
 
           getApp().globalData.groupList = res.data || [];
         },

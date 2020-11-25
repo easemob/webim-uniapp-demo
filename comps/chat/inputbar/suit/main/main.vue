@@ -90,7 +90,6 @@ export default {
       return this.isGroupChat() ? this.username.groupId : this.username.your;
     },
 
-    // bindinput 不能打冒号！
     bindMessage(e) {
       this.setData({
         userMessage: e.detail.value,

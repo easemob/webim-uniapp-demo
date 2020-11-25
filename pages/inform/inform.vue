@@ -25,7 +25,7 @@ export default {
   props: {},
 
   onLoad(options) {
-    var me = this; // 不需要 object 地址更新，就能刷
+    var me = this;
 
     disp.on("em.subscribe", function () {
       me.setData({
@@ -34,7 +34,6 @@ export default {
     });
     this.setData({
       myName: options.myName,
-      // 哈？global？好吧
       friendList: getApp().globalData.saveFriendList
     });
   },
