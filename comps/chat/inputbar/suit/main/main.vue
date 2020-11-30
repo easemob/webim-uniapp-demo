@@ -131,7 +131,7 @@ export default {
         msg: this.userMessage,
         from: this.username.myName,
         to: this.getSendToParam(),
-        roomType: false,
+        // roomType: false,
         chatType: this.chatType,
         success(id, serverMsgId) {
           console.log("成功了");
@@ -143,11 +143,12 @@ export default {
           console.log("失败了");
         },
       });
+	  
       if (this.chatType == msgType.chatType.CHAT_ROOM) {
-        msg.setGroup("groupchat");
+        // msg.setGroup("groupchat");
+		msg.setChatType("groupChat");
       }
       try {
-		  console.log('发送消息', msg.body)
         WebIM.conn.send(msg.body);
         let obj = {
           msg: msg,
