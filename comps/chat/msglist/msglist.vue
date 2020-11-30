@@ -123,13 +123,13 @@ export default {
 
   mounted(event) {
     let me = this;
-
     if (getApp().globalData.isIPX) {
       this.setData({
         isIPX: true
       });
     }
-
+	
+	this.username = uni.username;
     let username = this.username;
     let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
@@ -271,11 +271,20 @@ export default {
       });
       uni.setStorageSync(sessionKey, chatMsg);
       Index = historyChatMsgs.slice(-10).length;
-      uni.pageScrollTo({
-        scrollTop: 5000,
-        duration: 300,
-      });
-
+	  // setTimeout 兼容支付宝小程序
+	  setTimeout(() => {
+		  uni.pageScrollTo({
+		    scrollTop: 5000,
+		    duration: 300,
+		  		fail: (e) => {
+		  			console.log('滚失败了', e)
+		  		},
+		  		complete: (e) => {
+		  			console.log('滚完了', e)
+		  		}
+		  });
+	  }, 100)
+      
       if (isFail) {
         this.renderFail(sessionKey);
       }
