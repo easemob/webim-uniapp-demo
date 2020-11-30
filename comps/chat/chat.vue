@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view class="main">
     <view class="main">
       <chatSuitAudio
         ref="chatSuitAudio"
@@ -121,9 +121,8 @@ export default {
     // this.$data.__comps__.inputbar = this.selectComponent("#chat-inputbar");
     // this.$data.__comps__.msglist = this.selectComponent("#chat-msglist");
     // this.$data.__comps__.audio = this.selectComponent("#chat-suit-audio");
-	
-	console.log('888888 username', this.username)
-	console.log("computedUserName", this.computedUserName)
+
+	this.username = uni.username;
 	uni.$on('createConfrSuccess', this.onCreateConfrSuccess)
   },
 

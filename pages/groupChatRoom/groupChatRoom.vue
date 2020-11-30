@@ -40,6 +40,7 @@ export default {
     this.setData({
       username: username
     });
+	uni.username = username;
     uni.setNavigationBarTitle({
       title: username.your
     });
@@ -66,7 +67,6 @@ export default {
 			});
 			return
 		}
-		console.log('携带的参数', data)
 		uni.navigateTo({
 		  url: "../emedia/index?srcData="+JSON.stringify(data)
 		});

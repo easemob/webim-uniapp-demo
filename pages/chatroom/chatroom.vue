@@ -14,23 +14,19 @@ export default {
       }
     };
   },
- 
+
   components: {
     chat
   },
   props: {},
-
   // options = 系统传入的 url 参数
-  beforeMount(data){
-	  console.log('渲染前接受的参数', data)
-  },
   onLoad(options) {
     let username = JSON.parse(options.username);
-	console.log('888888 chat room username', username)
     this.setData({
       username: username
     });
-	
+	// 生成的支付宝小程序在onLoad里获取不到，这里放到全局变量下
+	uni.username = username;
     uni.setNavigationBarTitle({
       title: username.your
     });

@@ -127,6 +127,7 @@ export default {
         your: event.currentTarget.dataset.username,
         groupId: event.currentTarget.dataset.roomid
       };
+	  uni.username = nameList
       uni.navigateTo({
         url: "../groupChatRoom/groupChatRoom?username=" + JSON.stringify(nameList)
       });

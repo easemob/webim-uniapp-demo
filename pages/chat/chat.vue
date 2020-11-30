@@ -502,8 +502,6 @@ export default {
       }
     },
     tab_contacts: function () {
-		
-		console.log('点击的时候username:', uni.getStorageSync("myUsername"))
       uni.redirectTo({
         url: "../main/main?myName=" + uni.getStorageSync("myUsername")
       });
