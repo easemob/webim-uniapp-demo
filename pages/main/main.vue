@@ -225,7 +225,9 @@ export default {
       myName: option.myName
     });
   },
-
+	mounted(){
+		this.getRoster();
+	},
   onShow() {
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
@@ -239,8 +241,6 @@ export default {
         isIPX: true
       });
     }
-
-    this.getRoster();
   },
 
   methods: {
@@ -574,7 +574,7 @@ export default {
           oHeight = oHeight.concat(newArry);
           }else{
             this.$nextTick(()=>{
-              this.getBrands(member)
+              //this.getBrands(member)
             })
           }
         }).exec();
