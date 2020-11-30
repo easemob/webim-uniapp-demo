@@ -117,6 +117,14 @@ export default {
 
   methods: {
     audioPlay() {
+	if(uni.getSystemInfo().app === 'alipay'){
+		// https://forum.alipay.com/mini-app/post/7301031?ant_source=opendoc_recommend
+		uni.showToast({
+			duration: 2000,
+			title: '支付宝小程序不支持音频消息'
+		})
+		return 
+	}
       uni.inter && clearInterval(uni.inter);
       let audioCtx = this.$data.__comps__.audioCtx;
       var curl = '';

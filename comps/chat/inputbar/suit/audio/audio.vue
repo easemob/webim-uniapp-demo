@@ -14,14 +14,14 @@
         <view style="clear: both; width: 0; height: 0"></view>
       </view>
       <text class="desc">{{ RecordDesc[recordStatus] }}</text>
-      <button
+      <view
         class="dot"
         @touchstart="handleRecording"
         @touchmove="handleRecordingMove"
         @touchend="handleRecordingCancel"
       >
         <image class="icon-mic" src="/static/images/send.png"></image>
-      </button>
+      </view>
     </view>
   </view>
 </template>
@@ -111,7 +111,16 @@ export default {
     },
 
     handleRecording(e) {
+		console.log('开始点击',uni.getSystemInfoSync())
+		if(uni.getSystemInfoSync().app === "alipay"){
+			// https://forum.alipay.com/mini-app/post/7301031?ant_source=opendoc_recommend
+			uni.showModal({
+				content: '支付宝小程序不支持语音消息，请查看支付宝相关api了解详情'
+			})
+			return
+		}
       let me = this;
+	  
       me.recordClicked = true
       setTimeout(() => {
         if (me.recordClicked == true) {
@@ -124,7 +133,7 @@ export default {
         uni.getSetting({
           success: res => {
             clearInterval(recordTimeInterval);
-            this.recordTime = 0
+            me.recordTime = 0
             let recordAuth = res.authSetting['scope.record'];
 
             if (recordAuth == false) {
@@ -258,6 +267,7 @@ export default {
       uni.uploadFile({
         url: "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
         filePath: tempFilePath,
+		fileType: 'audio',
         name: "file",
         header: {
           "Content-Type": "multipart/form-data",
