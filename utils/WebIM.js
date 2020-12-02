@@ -210,7 +210,7 @@ WebIM.EmojiObj = {
 
 
 WebIM.conn = new WebIM.connection({
-  appKey: "easemob-demo#chatdemoui",
+  appKey: WebIM.config.appkey,
   isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
   https: typeof WebIM.config.https === "boolean" ? WebIM.config.https : location.protocol === "https:",
   url: WebIM.config.xmppURL,
