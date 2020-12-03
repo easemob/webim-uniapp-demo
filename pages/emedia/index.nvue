@@ -124,7 +124,7 @@ import chatEmediaInvite from "../../comps/invite/index.nvue"
 		  }
 		},
 		methods: {
-			joinRome(data){
+			joinRoom(data){
 				console.log(new Date().toLocaleString()+' joinRoom',data)
 				let me = this;
 				let rec = wx.getStorageSync("rec") || true;
@@ -270,6 +270,7 @@ import chatEmediaInvite from "../../comps/invite/index.nvue"
 			statechange(e) {
 				console.log(new Date().toLocaleString()+" statechange:" + JSON.stringify(e));
 				// 没有权限请允许权限，再重新进入会议，或者提前打开app 麦克风 摄像头权限
+				// 安卓授权慢的话会出现没有画面声音
 				switch(e.detail.code){
 					case 3001:
 						uni.showToast({
@@ -519,12 +520,12 @@ import chatEmediaInvite from "../../comps/invite/index.nvue"
 				clearInterval(this.timer)
 			},
 			
+			// 截取出im的userId 
 			getName(str){
 				console.log('name', str)
 				if(typeof str !== 'string') return '';
 				return (str.match(/chatdemoui_(\S*)@|chatdemoui_(\S*)/)[1] || str.match(/chatdemoui_(\S*)@|chatdemoui_(\S*)/)[2])
 			}
-			
 		
 		},
 		
@@ -537,18 +538,19 @@ import chatEmediaInvite from "../../comps/invite/index.nvue"
 			this.getTimer()
 			setTimeout(() => {
 				if(data.action == 'join'){
+					// 受邀请加入会议
 					let {conferenceId, password, msg_extension} = data
 					this.confrId = conferenceId;
 					let msgExt = JSON.parse(msg_extension)
 					this.groupId = msgExt.group_id
-					this.joinRome({conferenceId, password})
+					this.joinRoom({conferenceId, password})
 					return
 				}
 				let members = data.confrMember
 				let groupId = data.groupId
 				this.members = members;
 				this.groupId = groupId;
-				this.joinRome()
+				this.joinRoom()
 			})
 			
 			uni.onNetworkStatusChange(function (res) {
@@ -565,7 +567,6 @@ import chatEmediaInvite from "../../comps/invite/index.nvue"
 			console.log(new Date().toLocaleString()+' 退出')
 			uni.emedia.mgr.exitConference(this.confrId)
 			this.stopTimer()
-			
 		}
 	}
 </script>
@@ -630,14 +631,6 @@ import chatEmediaInvite from "../../comps/invite/index.nvue"
 	color: #fff;
 }
 .hangup{
-	/* width: 750rpx;
-	height: 100rpx;
-	display: flex;
-	flex: 1;
-	align-items: center;
-	justify-content: center;
-	background-color: #2892FD; */
-	
 	width: 100rpx;
 	height: 100rpx;
 	border-radius: 50rpx;
