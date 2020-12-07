@@ -132,7 +132,7 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
 };
 
 msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
-  //console.log('sendableMsgsendableMsg', sendableMsg)
+  console.log('sendableMsgsendableMsg', sendableMsg)
   let me = this;
   let myName = uni.getStorageSync("myUsername");
   let sessionKey; // 仅用作群聊收消息，发消息没有 receiveMsg

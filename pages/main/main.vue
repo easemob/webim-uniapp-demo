@@ -5,18 +5,6 @@
 </view>
 
 <view class="main_body">
-	<!-- <view wx:for="{{ member }}" class="numbers" wx:key="word">
-		<view class="nbr_header">{{ item.word }}</view>
-		<view class="info" bindtap="into_info">
-			<image src="../../static/images/number.png"  data-username="{{ item.name }}"></image>
-		</view>
-		<view class="nbr_body" data-username="{{ item.name }}" bindtap="into_room">
-			<text data-username="{{ item.name }}">{{ item.name }}</text>
-		</view>
-		<view class="delete" bindtap="delete_friend" data-username="{{ item.name }}">
-			<image src="../../static/images/delete.png"  data-username="{{ item.name }}"></image>
-		</view>
-	</view> -->
 <view>
 	<!-- 左侧列表内容部分 -->
 	<scroll-view :class="'content ' + (gotop? (isIPX? 'goTopX': 'goTop'): 'goback')" enable-back-to-top :scroll-into-view="toView" scroll-y="true" scroll-with-animation="true" :style="'padding-bottom: ' + (isIPX?'270rpx':'226rpx')"> 
@@ -35,28 +23,15 @@
 			</view>
 			<text @tap="cancel">取消</text>
 		</view>
-		<!-- other item -->
 		<view class="contain">
 			<view class="otherItem" @tap="add_new">
 				<image src="/static/images/invite_theme2x.png" data-username="name"></image>
 				<text>添加好友</text>
-				<!-- <image class='line' src="../../static/images/line.png"></image> -->
-				<!-- 0.5px border -->
 			</view>
-		<!-- 	<view class="chat" bindtap="into_inform">
-				<image src="../../static/images/chat.png"></image>
-				<text>申请与通知</text>
-				<text  class="em-msgNum">3</text>
-				<text wx:if="{{ messageNum > 0 }}" class="em-msgNum">{{ messageNum }}</text>
-			</view> -->
 			<view class="otherItem" @tap="into_groups">
 				<image src="/static/images/group2x.png"></image>
 				<text>群组</text>
 			</view>
-			<!-- <view class="chat_lists">
-				<image src="../../static/images/cell_groups.png"></image>
-				<text>聊天室列表</text>
-			</view> -->
 		</view>
 
 	    <view v-for="(group, id) in listMain" :key="id" :id="'inToView'+group.id" :data-id="group.id"> 
@@ -75,15 +50,12 @@
 	  </scroll-view> 
 	  <!-- 右侧字母导航 -->
 	  <view class="orientation_region"> 
-	   <!--  <view class="orientation">#</view> --> 
 	     	 <block v-for="(item, id) in listMain" :key="id"> 
 		        <view :class="'orientation_city ' + (isActive==item.id ? 'active':'' )" @tap="scrollToViewFn" :data-id="item.id">{{item.region}}</view> 
 	    	</block> 
 	  </view>  
 	</view>
 </view>
-
-<!-- <view class="mask" bindtap="close_mask" wx:if="{{show_mask}}"></view> -->
 
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
@@ -108,28 +80,6 @@
 		<text>设置</text>
 	</view>
 </view>
-
-<!-- <block data-type="template" data-is="toast" data-attr="..._toast_">
-	<view class="toast_content_box">
-		<view class="toast_content" v-if="isHidefil">
-			<view class="toast_content_border"></view>
-			<view class="toast_content_icon">
-				<image class="toast_icon_img" src="/static/images/filled2x.png"></image>
-			</view>
-			<view class="toast_content_text">{{content}}</view>
-		</view>
-
-		<view class="toast_content_box">
-			<view class="toast_content" v-if="isHidescss">
-				<view class="toast_content_border toast_success"></view>
-				<view class="toast_content_icon">
-					<image class="toast_icon_img" src="/static/images/success2x.png"></image>
-				</view>
-				<view class="toast_content_text">{{content}}</view>
-			</view>
-		</view>
-	</view>
-</block> -->
 </view>
 </template>
 
@@ -276,7 +226,7 @@ export default {
           console.log("[main:getRoster]", err);
         }
 
-      }; // WebIM.conn.setPresence()
+      };
 
       WebIM.conn.getRoster(rosters);
     },
@@ -481,14 +431,7 @@ export default {
     // 处理数据格式，及获取分组高度
     getBrands: function (member) {
       const that = this;
-      const reg = /[a-z]/i; // member = [
-      // 	{
-      // 		groups: [],
-      // 		jid: "easemob-demo#chatdemoui_zdtest2@easemob.com",
-      // 		name: "adtest2",
-      // 		subscription:"both"
-      // 	}
-      // ]
+      const reg = /[a-z]/i;
 
       member.forEach(item => {
         if (reg.test(item.name.substring(0, 1))) {
@@ -537,20 +480,8 @@ export default {
 
       if (lastObj) {
         someArr.push(lastObj);
-      } //  someArr = [
-      // 	{
-      //         id: "1", region: "A",
-      //         brands: [
-      //           	{ brandId: "..", name: "阿明" },
-      //           	{ brandId: "..", name: "奥特曼" },
-      //           	{ brandId: "..", name: "安庆" },
-      //           	{ brandId: "..", name: "阿曼" }
-      //         ]
-      //     },
-      // ]
+      }
       //赋值给列表值
-
-
       that.setData({
         listMain: someArr
       }); //赋值给当前高亮的isActive

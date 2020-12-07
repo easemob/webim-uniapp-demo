@@ -18,27 +18,6 @@
 		<navigator url="../register/register" open-type="redirect" hover-class="navigator-hover">新用户注册</navigator>
 		<navigator url="../login_token/login_token" open-type="redirect" hover-class="navigator-hover">使用Token登录</navigator>
 	</view>
-	<!-- <block data-type="template" data-is="toast" data-attr="..._toast_">
-	<view class="toast_content_box">
-		<view class="toast_content" v-if="isHidefil">
-			<view class="toast_content_border"></view>
-			<view class="toast_content_icon">
-				<image class="toast_icon_img" src="/static/images/filled2x.png"></image>
-			</view>
-			<view class="toast_content_text">{{content}}</view>
-		</view>
-
-		<view class="toast_content_box">
-			<view class="toast_content" v-if="isHidescss">
-				<view class="toast_content_border toast_success"></view>
-				<view class="toast_content_icon">
-					<image class="toast_icon_img" src="/static/images/success2x.png"></image>
-				</view>
-				<view class="toast_content_text">{{content}}</view>
-			</view>
-		</view>
-	</view>
-</block> -->
 </view>
 </view>
 </template>
@@ -46,10 +25,7 @@
 <script>
 let WebIM = require("../../utils/WebIM")["default"];
 let __test_account__, __test_psword__;
-let disp = require("../../utils/broadcast"); // __test_account__ = "easezy";
-// __test_psword__ = "111111";
-// __test_account__ = "easezy";
-// __test_psword__ = "111111";
+let disp = require("../../utils/broadcast");
 let runAnimation = true;
 
 export default {
