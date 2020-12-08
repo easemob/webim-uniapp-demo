@@ -1,9 +1,12 @@
 <template>
   <view>
-    <view
-      :class="'chat_title ' + (gotop ? 'main_title_hide' : 'main_title_show')"
-    >
-      <text>聊天</text>
+    <view>
+       <view class="search" v-if="search_btn">
+        <view @tap="openSearch">
+          <icon type="search" size="12"></icon>
+          <text>搜索</text>
+        </view>
+      </view>
     </view>
 
     <!-- <view class="chat_list_wraper" > -->
@@ -14,13 +17,6 @@
       "
       :style="'padding-bottom: ' + (isIPX ? '270rpx' : '226rpx')"
     >
-      <view class="search" v-if="search_btn">
-        <view @tap="openSearch">
-          <icon type="search" size="12"></icon>
-          <text>搜索</text>
-        </view>
-      </view>
-
       <view class="search_input" v-if="search_chats">
         <view>
           <icon type="search" size="12"></icon>
@@ -50,9 +46,11 @@
         class="chat_list"
         :data-item="item"
         @tap.stop="del_chat"
+        @longpress="longpress"
       >
         <swipe-delete>
           <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="JSON.stringify(item)">
+            <!-- 消息列表 -->
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
                 <view class="list_pic">
@@ -64,7 +62,7 @@
 
                   <image
                     :src="
-                      item.chatType == 'groupchat' ||
+                      item.chatType == 'groupChat' ||
                       item.chatType == 'chatRoom'
                         ? '../../static/images/groupTheme.png'
                         : '../../static/images/theme2x.png'
@@ -73,7 +71,7 @@
                 </view>
                 <view class="list_text">
                   <text class="list_user">{{
-                    item.chatType == "groupchat" ||
+                    item.chatType == "groupChat" ||
                     item.chatType == "chatRoom" ||
                     item.groupName
                       ? item.groupName
@@ -97,7 +95,30 @@
                 <text :data-username="item.username">{{ item.time }}</text>
               </view>
             </view>
-          </view>
+
+            <!-- 通知模块 -->
+            <!-- <view class="list_box">
+              <view class="list_left">
+                <view class="list_pic">
+                  <view v-if="unReadTotalNotNum > 0" class="em-unread-spot2">{{
+                    unReadTotalNotNum
+                  }}</view>
+                  <image
+                    :class="unReadTotalNotNum > 0 ? 'haveSpot' : ''"
+                    src="../../static/images/inform.png"
+                  ></image>
+                </view>
+                <view class="list_text">
+                  <text class="list_user2">
+                    通知
+                  </text>
+                </view>
+              </view>
+              <view class="list_right">
+                <text :data-username="item.username">{{ item.time }}</text>
+              </view>
+            </view>
+          </view> -->
         </swipe-delete>
       </view>
 
@@ -125,7 +146,7 @@
           :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
           src="/static/images/sessionhighlight2x.png"
         ></image>
-        <text class="activeText">聊天</text>
+        <text class="activeText">消息</text>
       </view>
 
       <view class="tableBar" @tap="tab_contacts">
@@ -174,7 +195,9 @@ export default {
       member: "",
       isIPX: false,
       gotop: false,
-      input_code: ""
+      input_code: "",
+
+		  groupName: {}
     };
   },
 
@@ -187,12 +210,12 @@ export default {
     let me = this; 
     
     //监听加好友申请
-    disp.on("em.subscribe", function () {
-      me.setData({
-        messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-      });
-    }); 
+    disp.on("em.subscribe", function(){
+			me.setData({
+				messageNum: getApp().globalData.saveFriendList.length,
+				unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+			});
+		});
 
     //监听解散群
     disp.on("em.invite.deleteGroup", function () {
@@ -203,7 +226,18 @@ export default {
         arr: me.getChatList(),
         messageNum: getApp().globalData.saveFriendList.length
       });
-    }); 
+    });
+
+    // //监听解散群
+		// disp.on("em..invite.deleteGroup", function(){
+		// 	me.listGroups();
+		// 	me.getRoster();
+		// 	me.getChatList()
+		// 	me.setData({
+		// 		// arr: me.getChatList(),
+		// 		messageNum: getApp().globalData.saveFriendList.length
+		// 	});
+		// });
     
     //监听未读消息数
     disp.on("em.unreadspot", function (message) {
@@ -325,7 +359,7 @@ export default {
           let timeArr = lastChatMsg.time.split(' ')[1].split(':');
           let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2];
           lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-          lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`;
+          lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
           array.push(lastChatMsg);
         }
       }
@@ -343,7 +377,7 @@ export default {
 				let dateArr = lastChatMsg.time.split(' ')[0].split('-')
 				let timeArr = lastChatMsg.time.split(' ')[1].split(':')
 				let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-				lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+				lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
 				lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
 				lastChatMsg.groupName = listGroups[i].groupname
 				array.push(lastChatMsg);
@@ -595,6 +629,9 @@ export default {
         },
         fail: function (err) {}
       });
+    },
+    longpress:function(e){
+      console.log('长按',e);
     }
   }
 };
