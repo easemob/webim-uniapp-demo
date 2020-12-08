@@ -20,7 +20,7 @@ page{
 .search,.search_input {
 	width: 100%;
 	height: 88rpx;
-	background-color: #fff;
+	background-color: #f2f2f2;
 	display: flex;
 	align-items: center;
 	top: 0;
@@ -37,8 +37,8 @@ page{
 .search view, .search_input view {
 	height: 64rpx;
 	line-height: 64rpx;
-	background-color: #F5F5F5;
-	border-radius: 16rpx;
+	background-color: #fff;
+	border-radius: 17px;
 	text-align: center;
 	display: flex;
 	align-items: center;
@@ -48,6 +48,7 @@ page{
 	width: 100%;
 	justify-content: center;
 	align-items: center;
+	background-color: #fff;
 }
 .search image {
 	display: block;
@@ -96,7 +97,6 @@ page{
 	box-sizing: border-box; 
 	height: 100%;
 	position: fixed;
-	top: 128rpx;
 	overflow: hidden;
 }
 
@@ -138,7 +138,7 @@ page{
 	width: 88rpx;
 	height: 88rpx;
 }
-.list_user{
+.list_user,.list_user2{
 	font-size: 34rpx;
 	color: #000;
 	position: relative;
@@ -148,18 +148,21 @@ page{
 	display: inline-block;
 	text-overflow: ellipsis;
 }
+.list_user2{
+	top: 40rpx !important;
+}
 .em-msgNum {
 	position: absolute;
-	right: 32rpx;
-	top: 76rpx;
+	left: 84rpx;
+	top: 20rpx;
 	min-width: 28rpx;
-	height: 28rpx;
 	border-radius: 14rpx;
 	background: #f04134;
 	color: #fff;
 	line-height: 28rpx;
-	font-size: 24rpx;
+	font-size: 25rpx;
 	text-align: center;
+	padding: 3rpx;
 }
 .list_word {
 	height: 40rpx;
@@ -201,15 +204,15 @@ page{
 	margin-top: 400rpx;
 }
 
-.main_title_hide{
+/* .main_title_hide{
 	top: -128rpx;
 	transition: top 0.5s;
 }
 .main_title_show{
 	top: 0;
 	transition: top 0.5s;
-}
-.goTop{
+} */
+/* .goTop{
 	top: 0rpx;
 	transition: top 0.5s;
 	padding-bottom: 104rpx!important;
@@ -222,4 +225,4 @@ page{
 .goback{
 	top: 128rpx;
 	transition: top 0.5s;
-}
+} */

@@ -18,7 +18,7 @@
 	<view class="tableBar" @tap="tab_chat">
 		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
 		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/session2x.png"></image>
-		<text>聊天</text>
+		<text>消息</text>
 	</view>
 
 	<view class="tableBar" @tap="tab_contact">

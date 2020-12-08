@@ -79,9 +79,14 @@
 						var width = res.width;
 						var height = res.height;
 						var index = res.path.lastIndexOf(".");
+						console.log('index>>',index);
 						var filetype = ~index && res.path.slice(index + 1) || "";
-						console.log('图片信息：', res)
-
+						if (!res.type) {
+							uni.showToast({
+								title: "H5端，uni-app暂未支持",
+                      			icon: "none"
+							})
+						}
 						if (filetype.toLowerCase() in allowType || res.type in allowType) {
 							uni.uploadFile({
 								url: "https://a1-hsb.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
