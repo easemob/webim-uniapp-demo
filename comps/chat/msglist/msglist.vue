@@ -134,14 +134,13 @@ export default {
     let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
     let chatMsg = uni.getStorageSync(sessionKey) || [];
-    console.log('chatMsg', chatMsg)
     this.renderMsg(null, null, chatMsg, sessionKey);
     uni.setStorageSync(sessionKey, null);
     disp.on('em.error.sendMsgErr', function (err) {
       curMsgMid = err.data.mid;
       isFail = true;
-      return;
       console.log('发送失败了');
+	  return;
       let msgList = me.chatMsg;
       msgList.map(item => {
         if (item.mid.substring(item.mid.length - 10) == curMsgMid.substring(curMsgMid.length - 10)) {
@@ -160,7 +159,7 @@ export default {
 
       uni.setStorageSync("rendered_" + sessionKey, msgList);
     });
-    msgStorage.on("newChatMsg", function (renderableMsg, type, curChatMsg, sesskey) {
+    msgStorage.on("newChatMsg", function dispMsg(renderableMsg, type, curChatMsg, sesskey) {
       me.curChatMsg = curChatMsg;
       if (!me.__visibility__) return; // 判断是否属于当前会话
 
@@ -277,10 +276,7 @@ export default {
 		    scrollTop: 5000,
 		    duration: 300,
 		  		fail: (e) => {
-		  			console.log('滚失败了', e)
-		  		},
-		  		complete: (e) => {
-		  			console.log('滚完了', e)
+		  			//console.log('滚失败了', e)
 		  		}
 		  });
 	  }, 100)

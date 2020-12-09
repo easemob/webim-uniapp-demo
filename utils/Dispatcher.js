@@ -10,9 +10,16 @@ Dispatcher.prototype = {
   on(type, cb) {
     let cbtypes = dispCbs[dispIns.indexOf(this)];
     let cbs = cbtypes[type] = cbtypes[type] || [];
-
     if (!~cbs.indexOf(cb)) {
-      cbs.push(cb);
+		let includ = false
+		if(cb.name){
+			cbs.forEach(item => {
+				if(item.name == cb.name){
+					includ = true
+				}
+			})
+		}
+      !includ && cbs.push(cb);
     }
   },
 
@@ -20,7 +27,6 @@ Dispatcher.prototype = {
     let cbtypes = dispCbs[dispIns.indexOf(this)];
     let cbs = cbtypes[type] = cbtypes[type] || [];
     let curTypeCbIdx = cbs.indexOf(cb);
-
     if (~curTypeCbIdx) {
       cbs.splice(curTypeCbIdx, 1);
     }
