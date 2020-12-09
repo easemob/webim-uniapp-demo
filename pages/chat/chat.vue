@@ -49,7 +49,7 @@
         @longpress="longpress"
       >
         <swipe-delete>
-          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="JSON.stringify(item)">
+          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item">
             <!-- 消息列表 -->
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
@@ -62,21 +62,14 @@
 
                   <image
                     :src="
-                      item.chatType == 'groupChat' ||
-                      item.chatType == 'chatRoom'
+                      item.chatType == 'groupchat' || item.chatType == 'chatRoom'
                         ? '../../static/images/groupTheme.png'
                         : '../../static/images/theme2x.png'
                     "
                   ></image>
                 </view>
                 <view class="list_text">
-                  <text class="list_user">{{
-                    item.chatType == "groupChat" ||
-                    item.chatType == "chatRoom" ||
-                    item.groupName
-                      ? item.groupName
-                      : item.username
-                  }}</text>
+                  <text class="list_user">{{(item.chatType == 'groupchat' || item.chatType == 'chatRoom' || item.groupName)?item.groupName : item.username}}</text>
                   <text class="list_word" v-if="item.msg.data[0].data">{{
                     item.msg.data[0].data
                   }}</text>
@@ -117,8 +110,8 @@
               <view class="list_right">
                 <text :data-username="item.username">{{ item.time }}</text>
               </view>
-            </view>
-          </view> -->
+            </view> -->
+          </view>
         </swipe-delete>
       </view>
 
@@ -197,7 +190,7 @@ export default {
       gotop: false,
       input_code: "",
 
-		  groupName: {}
+      groupName: {}
     };
   },
 
@@ -208,65 +201,57 @@ export default {
 
   onLoad () {
     let me = this; 
-    
     //监听加好友申请
     disp.on("em.subscribe", function(){
-			me.setData({
-				messageNum: getApp().globalData.saveFriendList.length,
-				unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-			});
-		});
+      me.setData({
+        messageNum: getApp().globalData.saveFriendList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      });
+    });
 
     //监听解散群
-    disp.on("em.invite.deleteGroup", function () {
+    disp.on("em.invite.deleteGroup", function(){
       me.listGroups();
       me.getRoster();
-      // me.getChatList()
+      me.getChatList()
       me.setData({
-        arr: me.getChatList(),
+        // arr: me.getChatList(),
         messageNum: getApp().globalData.saveFriendList.length
       });
     });
 
-    // //监听解散群
-		// disp.on("em..invite.deleteGroup", function(){
-		// 	me.listGroups();
-		// 	me.getRoster();
-		// 	me.getChatList()
-		// 	me.setData({
-		// 		// arr: me.getChatList(),
-		// 		messageNum: getApp().globalData.saveFriendList.length
-		// 	});
-		// });
-    
     //监听未读消息数
-    disp.on("em.unreadspot", function (message) {
-      // me.getChatList()
+    disp.on("em.unreadspot", function(message){
+      me.getChatList()
       me.setData({
-        arr: me.getChatList(),
-        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+        // arr: me.getChatList(),
+        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
       });
-    }); //监听未读加群“通知”
+    });
 
-    disp.on("em.invite.joingroup", function () {
+    //监听未读加群“通知”
+    disp.on("em.invite.joingroup", function(){
       me.setData({
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     });
-    disp.on("em.contacts.remove", function () {
-      me.getRoster(); // me.setData({
-      // 	arr: me.getChatList(),
-      // 	unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
-      // });
+
+
+
+    disp.on("em.contacts.remove", function(){
+      me.getChatList()
+      me.getRoster();
     });
+
+
     this.getRoster();
   },
 
-  onShow: function () {
-    // this.getChatList()
+  onShow: function(){
+    this.getChatList()
     this.setData({
-      arr: this.getChatList(),
+      //arr: this.getChatList(),
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
       messageNum: getApp().globalData.saveFriendList.length,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
@@ -276,270 +261,313 @@ export default {
     if (getApp().globalData.isIPX) {
       this.setData({
         isIPX: true
-      });
+      })
     }
   },
   methods: {
-    listGroups() {
-      var me = this;
-      return WebIM.conn.getGroup({
-        limit: 50,
-        success: function (res) {
-          uni.setStorage({
-            key: "listGroup",
-            data: res.data
-          });
-          me.getChatList();
-        },
-        error: function (err) {
-          console.log(err);
-        }
-      });
-    },
+    listGroups(){
+    var me = this;
+    return WebIM.conn.getGroup({
+      limit: 50,
+      success: function(res){
+        let groupName = {}
+        let listGroup = res.data || []
+        listGroup.forEach((item) => {
+          groupName[item.groupid] = item.groupname
+        })
 
-    getRoster() {
-      let me = this;
-      let rosters = {
-        success(roster) {
-          var member = [];
-
-          for (let i = 0; i < roster.length; i++) {
-            if (roster[i].subscription == "both") {
-              member.push(roster[i]);
-            }
-          }
-
-          uni.setStorage({
-            key: "member",
-            data: member
-          });
-          me.setData({
-            member: member
-          });
-          me.listGroups(); //if(!systemReady){
-
-          disp.fire("em.main.ready"); //systemReady = true;
-          //}
-          // me.getChatList()
-          me.setData({
-            arr: me.getChatList(),
-            unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
-          });
-        },
-
-        error(err) {
-          console.log(err);
-        }
-
-      };
-      WebIM.conn.getRoster(rosters);
-    },
-
-    // 不包含陌生人版本
-    getChatList() {
-      var array = [];
-      var member = uni.getStorageSync("member");
-      var myName = uni.getStorageSync("myUsername");
-      var listGroups = uni.getStorageSync('listGroup') || [];
-
-      for (let i = 0; i < member.length; i++) {
-        let newChatMsgs = uni.getStorageSync(member[i].name + myName) || [];
-        let historyChatMsgs = uni.getStorageSync("rendered_" + member[i].name + myName) || [];
-        let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
-
-        if (curChatMsgs.length) {
-          let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
-          lastChatMsg.unReadCount = newChatMsgs.length;
-
-          if (lastChatMsg.unReadCount > 99) {
-            lastChatMsg.unReadCount = "99+";
-          }
-
-          let dateArr = lastChatMsg.time.split(' ')[0].split('-');
-          let timeArr = lastChatMsg.time.split(' ')[1].split(':');
-          let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2];
-          lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-          lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
-          array.push(lastChatMsg);
-        }
+        me.setData({
+          groupName:groupName
+        })
+        uni.setStorage({
+          key: "listGroup",
+          data: res.data
+        });
+        me.getChatList()
+      },
+      error: function(err){
+        console.log(err)
       }
+    });
+  },
 
-      for(let i = 0; i < listGroups.length; i++){
-			let newChatMsgs = uni.getStorageSync(listGroups[i].groupid + myName) || [];
-			let historyChatMsgs = uni.getStorageSync("rendered_" + listGroups[i].groupid + myName) || [];
-			let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
-			if(curChatMsgs.length){
-				let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
-				lastChatMsg.unReadCount = newChatMsgs.length;
-				if(lastChatMsg.unReadCount > 99) {
-					lastChatMsg.unReadCount = "99+";
-				}
-				let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-				let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-				let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-				lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
-				lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-				lastChatMsg.groupName = listGroups[i].groupname
-				array.push(lastChatMsg);
-			}
-		} 
+    getRoster(){
+    let me = this;
+    let rosters = {
+      success(roster){
+        var member = [];
+        for(let i = 0; i < roster.length; i++){
+          if(roster[i].subscription == "both"){
+            member.push(roster[i]);
+          }
+        }
+        uni.setStorage({
+          key: "member",
+          data: member
+        });
+        me.setData({member: member});
+        me.listGroups()
+        //if(!systemReady){
+          disp.fire("em.main.ready");
+          //systemReady = true;
+        //}
+        me.setData({
+          arr: me.getChatList(),
+          unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+        });
+      },
+      error(err){
+        console.log(err);
+      }
+    };
+    WebIM.conn.getRoster(rosters);
+  },
 
-      array.sort((a, b) => {
-        return b.dateTimeNum - a.dateTimeNum;
-      });
-      return array;
-    },
+    // // 不包含陌生人版本
+    // getChatList() {
+    //   var array = [];
+    //   var member = uni.getStorageSync("member");
+    //   var myName = uni.getStorageSync("myUsername");
+    //   var listGroups = uni.getStorageSync('listGroup') || [];
+
+    //   for (let i = 0; i < member.length; i++) {
+    //     let newChatMsgs = uni.getStorageSync(member[i].name + myName) || [];
+    //     let historyChatMsgs = uni.getStorageSync("rendered_" + member[i].name + myName) || [];
+    //     let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
+
+    //     if (curChatMsgs.length) {
+    //       let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
+    //       lastChatMsg.unReadCount = newChatMsgs.length;
+
+    //       if (lastChatMsg.unReadCount > 99) {
+    //         lastChatMsg.unReadCount = "99+";
+    //       }
+
+    //       let dateArr = lastChatMsg.time.split(' ')[0].split('-');
+    //       let timeArr = lastChatMsg.time.split(' ')[1].split(':');
+    //       let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2];
+    //       lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
+    //       lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
+    //       array.push(lastChatMsg);
+    //     }
+    //   }
+
+    //   for(let i = 0; i < listGroups.length; i++){
+    //  let newChatMsgs = uni.getStorageSync(listGroups[i].groupid + myName) || [];
+    //  let historyChatMsgs = uni.getStorageSync("rendered_" + listGroups[i].groupid + myName) || [];
+    //  let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
+    //  if(curChatMsgs.length){
+    //    let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
+    //    lastChatMsg.unReadCount = newChatMsgs.length;
+    //    if(lastChatMsg.unReadCount > 99) {
+    //      lastChatMsg.unReadCount = "99+";
+    //    }
+    //    let dateArr = lastChatMsg.time.split(' ')[0].split('-')
+    //    let timeArr = lastChatMsg.time.split(' ')[1].split(':')
+    //    let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
+    //    lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
+    //    lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
+    //    lastChatMsg.groupName = listGroups[i].groupname
+    //    array.push(lastChatMsg);
+    //  }
+    // } 
+
+    //   array.sort((a, b) => {
+    //     return b.dateTimeNum - a.dateTimeNum;
+    //   });
+    //   return array;
+    // },
     
 
-  //// 包含陌生人版本
-  // getChatList(){
-	// 	var myName = uni.getStorageSync("myUsername");
-	// 	var array = [];
-	// 	const me = this
-	// 	uni.getStorageInfo({
-	// 		success: function(res){
-  //       let storageKeys = res.keys
-	// 			let newChatMsgKeys = [];
-	// 			let historyChatMsgKeys = [];
-	// 			storageKeys.forEach((item) => {
-	// 				if (item.indexOf(myName) > -1 && item.indexOf('rendered_') == -1) {
-	// 					newChatMsgKeys.push(item)
-	// 				}else if(item.indexOf(myName) > -1 && item.indexOf('rendered_') > -1){
-	// 					historyChatMsgKeys.push(item)
-	// 				}
-	// 			})
+    
 
-	// 		  cul.call(me, newChatMsgKeys, historyChatMsgKeys)
-	// 		}
-	// 	})
+// 包含陌生人版本
+ 	getChatList(){
+		var myName = uni.getStorageSync("myUsername");
+		var array = [];
+		const me = this
+		uni.getStorageInfo({
+			success: function(res){
+				let storageKeys = res.keys
+				let newChatMsgKeys = [];
+				let historyChatMsgKeys = [];
+				let len = myName.length
+				storageKeys.forEach((item) => {
+					if (item.slice(-len) == myName && item.indexOf('rendered_') == -1) {
+						newChatMsgKeys.push(item)
+					}else if(item.slice(-len) == myName && item.indexOf('rendered_') > -1){
+						historyChatMsgKeys.push(item)
+					}
+				})
 
-	// 	function cul(newChatMsgKeys, historyChatMsgKeys){
-	// 		let array = []
-	// 		let lastChatMsg;
-	// 		for(let i = 0; i < historyChatMsgKeys.length; i++){
-	// 			let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9))
-	// 			if ( index > -1 ) {
-  //         let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
-	// 				if(newChatMsgs.length){
-	// 					lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-	// 					lastChatMsg.unReadCount = newChatMsgs.length;
-	// 					if(lastChatMsg.unReadCount > 99) {
-	// 						lastChatMsg.unReadCount = "99+";
-	// 					}
-	// 					let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-	// 					let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-	// 					let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-	// 					lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-	// 					lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
-	// 					newChatMsgKeys.splice(index, 1)
-	// 				}else{
-	// 					let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
-	// 					if (historyChatMsgs.length) {
-	// 						lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-	// 						let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-	// 						let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-	// 						let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-	// 						lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-	// 						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
-	// 					}
-	// 				}
-	// 			}else{
-	// 				let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
-	// 				if (historyChatMsgs.length) {
-	// 					lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-	// 					let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-	// 					let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-	// 					let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-	// 					lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-	// 					lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
-	// 				}
+				cul.call(me, newChatMsgKeys, historyChatMsgKeys)
+			}
+		})
+
+		function cul(newChatMsgKeys, historyChatMsgKeys){
+			let array = []
+			let lastChatMsg;
+			for(let i = 0; i < historyChatMsgKeys.length; i++){
+				let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9))
+				if ( index > -1 ) {
+					let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
+					if (newChatMsgKeys.includes()) {}
+					if(newChatMsgs.length){
+						lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
+						lastChatMsg.unReadCount = newChatMsgs.length;
+						if(lastChatMsg.unReadCount > 99) {
+							lastChatMsg.unReadCount = "99+";
+						}
+						let dateArr = lastChatMsg.time.split(' ')[0].split('-')
+						let timeArr = lastChatMsg.time.split(' ')[1].split(':')
+						let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
+						lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
+						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+						newChatMsgKeys.splice(index, 1)
+					}else{
+						let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
+						if (historyChatMsgs.length) {
+							lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
+							let dateArr = lastChatMsg.time.split(' ')[0].split('-')
+							let timeArr = lastChatMsg.time.split(' ')[1].split(':')
+							let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
+							lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
+							lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+						}
+					}
+				}else{
+					let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
+					if (historyChatMsgs.length) {
+						lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
+						let dateArr = lastChatMsg.time.split(' ')[0].split('-')
+						let timeArr = lastChatMsg.time.split(' ')[1].split(':')
+						let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
+						lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
+						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+					}
 					
-	// 			}
-	// 			lastChatMsg && array.push(lastChatMsg)
-	// 		}
+				}
+				if (lastChatMsg.chatType == 'groupchat' || lastChatMsg.chatType == 'chatRoom') {
+					lastChatMsg.groupName = me.groupName[lastChatMsg.info.to]
+        }
+        // console.log('历史消息》》',lastChatMsg);
+				lastChatMsg && lastChatMsg.username != myName && array.push(lastChatMsg)
+			}
 
-	// 		for(let i = 0; i < newChatMsgKeys.length; i++){
-	// 			let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
-	// 			if(newChatMsgs.length){
-	// 				lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-	// 				lastChatMsg.unReadCount = newChatMsgs.length;
-	// 				if(lastChatMsg.unReadCount > 99) {
-	// 					lastChatMsg.unReadCount = "99+";
-	// 				}
-	// 				let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-	// 				let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-	// 				let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-	// 				lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-	// 				lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
-	// 				array.push(lastChatMsg)
-	// 			}
-	// 		}
+			for(let i = 0; i < newChatMsgKeys.length; i++){
+				let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
+				if(newChatMsgs.length){
+					lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
+					lastChatMsg.unReadCount = newChatMsgs.length;
+					if(lastChatMsg.unReadCount > 99) {
+						lastChatMsg.unReadCount = "99+";
+					}
+					let dateArr = lastChatMsg.time.split(' ')[0].split('-')
+					let timeArr = lastChatMsg.time.split(' ')[1].split(':')
+					let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
+					lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
+					lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+					if (lastChatMsg.chatType == 'groupchat' || lastChatMsg.chatType == 'chatRoom') {
+            console.log('新消息》》',lastChatMsg);
+						lastChatMsg.groupName = me.groupName[lastChatMsg.info.to]
+					}
+					lastChatMsg.username != myName && array.push(lastChatMsg)
+				}
+			}
 
-	// 		array.sort((a, b) => {
-	// 			return b.dateTimeNum - a.dateTimeNum
-	// 		})
-	// 		this.setData({
-	// 			arr: array
-	// 		})
-	// 	}
-  // },
+			array.sort((a, b) => {
+				return b.dateTimeNum - a.dateTimeNum
+			})
+			this.setData({
+				arr: array
+			})
+		}
+	},
   
 
-    openSearch: function () {
+    openSearch: function(){
       this.setData({
         search_btn: false,
         search_chats: true,
         gotop: true
-      });
-    },
-    onSearch: function (val) {
-      // this.getChatList()
-      let searchValue = val.detail.value;
-      let chartList = this.getChatList();
-      let serchList = [];
-      chartList.forEach((item, index) => {
-        if (String(item.username).indexOf(searchValue) != -1) {
-          serchList.push(item);
-        }
-      });
-      this.setData({
-        arr: serchList
-      });
-    },
-    cancel: function () {
-      // this.getChatList()
-      this.setData({
-        search_btn: true,
-        search_chats: false,
-        arr: this.getChatList(),
-        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
-        gotop: false
-      });
-    },
-    clearInput: function () {
-      this.setData({
-        input_code: '',
-        show_clear: false
-      });
-    },
-    onInput: function (e) {
-      let inputValue = e.detail.value;
+    });
+  },
+  
 
-      if (inputValue) {
-        this.setData({
-          show_clear: true
-        });
-      } else {
-        this.setData({
-          show_clear: false
-        });
+    onSearch: function(val){
+    let searchValue = val.detail.value
+    var myName = uni.getStorageSync("myUsername");
+    const me = this
+    let serchList = [];
+    let arr = []
+    uni.getStorageInfo({
+      success: function(res){
+        let storageKeys = res.keys
+        let chatKeys = []
+        let len = myName.length
+        storageKeys.forEach((item) => {
+          if (item.slice(-len) == myName) {
+            chatKeys.push(item)
+          }
+        })
+        chatKeys.forEach((item, index)=>{
+          if(item.indexOf(searchValue) != -1){
+            serchList.push(item)
+          }
+        })
+        let lastChatMsg = ''
+        serchList.forEach((item, index) => {
+          let chatMsgs = uni.getStorageSync(item) || [];
+          if(chatMsgs.length){
+            lastChatMsg = chatMsgs[chatMsgs.length - 1];
+            
+            let dateArr = lastChatMsg.time.split(' ')[0].split('-')
+            let timeArr = lastChatMsg.time.split(' ')[1].split(':')
+            let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
+            lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
+            lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+            arr.push(lastChatMsg)
+          }
+        })
+        me.setData({arr})
       }
-    },
-    tab_contacts: function () {
-      uni.redirectTo({
-        url: "../main/main?myName=" + uni.getStorageSync("myUsername")
-      });
-    },
+    })
+  },
+
+    
+    cancel: function(){
+    this.getChatList()
+    this.setData({
+      search_btn: true,
+      search_chats: false,
+      //arr: this.getChatList(),
+      unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+      gotop: false
+    });
+  },
+    clearInput: function(){
+    this.setData({
+      input_code: '',
+      show_clear: false
+    })
+  },
+   onInput: function(e){
+    let inputValue = e.detail.value
+    if (inputValue) {
+      this.setData({
+        show_clear: true
+      })
+    } else {
+      this.setData({
+        show_clear: false
+      })
+    }
+  },
+    tab_contacts: function(){
+    uni.redirectTo({
+      url: "../main/main?myName=" + uni.getStorageSync("myUsername")
+    });
+  },
     close_mask: function () {
       this.setData({
         search_btn: true,
@@ -557,79 +585,73 @@ export default {
         url: "../notification/notification"
       });
     },
-    into_chatRoom: function (event) {
-      let detail = JSON.parse(event.currentTarget.dataset.item); //群聊的chatType居然是singlechat？脏数据？ 等sdk重写后整理一下字段
-		console.log('detail', detail)
+  into_chatRoom: function (event) {
+      let detail = event.currentTarget.dataset.item;
       if (detail.chatType == 'groupchat' || detail.chatType == 'chatRoom' || detail.groupName) {
         this.into_groupChatRoom(detail);
       } else {
         this.into_singleChatRoom(detail);
       }
     },
-    //	单聊
-    into_singleChatRoom: function (detail) {
-      var my = uni.getStorageSync("myUsername");
-      var nameList = {
-        myName: my,
+   // 单聊
+  into_singleChatRoom: function(detail){
+    var my = uni.getStorageSync("myUsername");
+    var nameList = {
+      myName: my,
+      your: detail.username
+    };
+    uni.navigateTo({
+      url: "../chatroom/chatroom?username=" + JSON.stringify(nameList)
+    });
+  },
+   // 群聊 和 聊天室 （两个概念）
+  into_groupChatRoom: function(detail){
+    var my = uni.getStorageSync("myUsername");
+    var nameList = {
+      myName: my,
+      your: detail.groupName,
+      groupId: detail.info.to
+    };
+    uni.navigateTo({
+      url: "../groupChatRoom/groupChatRoom?username=" + JSON.stringify(nameList)
+    });
+  },
+
+    del_chat: function(event){
+    let detail = event.currentTarget.dataset.item;
+    let nameList;
+    let me = this;
+    if (detail.chatType == 'groupchat' || detail.chatType == 'chatRoom') {
+      nameList = {
+        your: detail.info.to
+      };
+    } else {
+      nameList = {
         your: detail.username
       };
-	  uni.$emit('goChatRoom', nameList)
-      uni.navigateTo({
-        url: "../chatroom/chatroom?username=" + JSON.stringify(nameList)
-      });
-    },
-    //	群聊 和 聊天室 （两个概念）
-    into_groupChatRoom: function (detail) {
-      var my = uni.getStorageSync("myUsername");
-      var nameList = {
-        myName: my,
-        your: detail.groupName,
-        groupId: detail.info.to
-      };
-	  uni.$emit('goChatRoom', nameList)
-      uni.navigateTo({
-        url: "../groupChatRoom/groupChatRoom?username=" + JSON.stringify(nameList)
-      });
-    },
-    del_chat: function (event) {
-      let me = this
-      let detail = event.currentTarget.dataset.item;
-      let nameList;
+    }
 
-      if (detail.chatType == 'groupchat' || detail.chatType == 'chatRoom') {
-        nameList = {
-          your: detail.info.to
-        };
-      } else {
-        nameList = {
-          your: detail.username
-        };
-      }
-
-      var myName = uni.getStorageSync("myUsername");
-      // var currentPage = getCurrentPages();
-      // console.log('currentPage>>',currentPage);
-      uni.showModal({
-        title: "删除该聊天记录",
-        confirmText: "删除",
-        success: function (res) {
-          if (res.confirm) {
-            uni.setStorageSync(nameList.your + myName, "");
-            uni.setStorageSync("rendered_" + nameList.your + myName, "");
-            
-            // if (currentPage[0]) {
-            //   console.log('currentPage[0]>>',currentPage[0]);
-            //   const val = currentPage[0]
-            //   val.onShow();
-            // }
-            me.getChatList()
-
-            disp.fire("em.chat.session.remove");
+    var myName = uni.getStorageSync("myUsername");
+    var currentPage = getCurrentPages();
+    
+    uni.showModal({
+      title: "删除该聊天记录",
+      confirmText: "删除",
+      success: function(res){
+        if(res.confirm){
+          uni.removeStorageSync(nameList.your + myName);
+          uni.removeStorageSync("rendered_" + nameList.your + myName);
+          if(currentPage[0]){
+            currentPage[0].onShow();
           }
-        },
-        fail: function (err) {}
-      });
-    },
+          me.getChatList()
+          disp.fire("em.chat.session.remove");
+        }
+      },
+      fail: function(err){
+      }
+    });
+  },
     longpress:function(e){
       console.log('长按',e);
     }

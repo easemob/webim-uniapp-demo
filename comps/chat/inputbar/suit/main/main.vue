@@ -146,7 +146,7 @@ export default {
 	  
       if (this.chatType == msgType.chatType.CHAT_ROOM) {
         // msg.setGroup("groupchat");
-		msg.setChatType("groupChat");
+		msg.setChatType("groupchat");
       }
       try {
         WebIM.conn.send(msg.body);
