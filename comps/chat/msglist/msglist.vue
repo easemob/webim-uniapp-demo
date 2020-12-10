@@ -159,23 +159,7 @@ export default {
 
       uni.setStorageSync("rendered_" + sessionKey, msgList);
     });
-    msgStorage.on("newChatMsg", function dispMsg(renderableMsg, type, curChatMsg, sesskey) {
-      me.curChatMsg = curChatMsg;
-      if (!me.__visibility__) return; // 判断是否属于当前会话
-
-      if (username.groupId) {
-        // 群消息的 to 是 id，from 是 name
-        if (renderableMsg.info.from == username.groupId || renderableMsg.info.to == username.groupId) {
-          if (sesskey == sessionKey) {
-            me.renderMsg(renderableMsg, type, curChatMsg, sessionKey, 'newMsg');
-          }
-        }
-      } else if (renderableMsg.info.from == username.your || renderableMsg.info.to == username.your) {
-        if (sesskey == sessionKey) {
-          me.renderMsg(renderableMsg, type, curChatMsg, sessionKey, 'newMsg');
-        }
-      }
-    });
+    msgStorage.on("newChatMsg", this.dispMsg);
   },
 
   methods: {
@@ -184,7 +168,28 @@ export default {
         view: LIST_STATUS.NORMAL
       });
     },
-
+	dispMsg(renderableMsg, type, curChatMsg, sesskey) {
+	  let me = this;
+	  let username = this.username;
+	  let myUsername = uni.getStorageSync("myUsername");
+	  let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
+	  me.curChatMsg = curChatMsg;
+	  
+	  if (!me.__visibility__) return; // 判断是否属于当前会话
+	
+	  if (username.groupId) {
+	    // 群消息的 to 是 id，from 是 name
+	    if (renderableMsg.info.from == username.groupId || renderableMsg.info.to == username.groupId) {
+	      if (sesskey == sessionKey) {
+	        me.renderMsg(renderableMsg, type, curChatMsg, sessionKey, 'newMsg');
+	      }
+	    }
+	  } else if (renderableMsg.info.from == username.your || renderableMsg.info.to == username.your) {
+	    if (sesskey == sessionKey) {
+	      me.renderMsg(renderableMsg, type, curChatMsg, sessionKey, 'newMsg');
+	    }
+	  }
+	},
     shortScroll() {
       this.setData({
         view: LIST_STATUS.SHORT
