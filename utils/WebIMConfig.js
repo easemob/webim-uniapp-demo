@@ -14,14 +14,16 @@ let config = {
    * XMPP server
    */
 
-  // xmppURL: "wss://im-api-new-hsb.easemob.com/websocket",// websdk 3.0 server
+  // xmppURL: "wss://im-api-new-hsb.easemob.com/websocket",// websdk 3.0 server 沙箱
   
   // xmppURL: "wss://im-api.easemob.com/ws",  //小程序sdk 2.0 server
 
-  xmppURL: 'wss://im-api-wechat.easemob.com/websocket', //小程序3.0 server
+  // xmppURL: 'wss://im-api-wechat.easemob.com/websocket', //小程序3.0 server 线上
   
-  // xmppURL: 'wss://im-api-v2-hsb-alipay.easemob.com/websocket', // 支付宝测试
-
+  // xmppURL: 'wss://im-api-v2-hsb-alipay.easemob.com/websocket', // 支付宝沙箱
+  
+     xmppURL: 'wss://im-api-alipay.easemob.com/websocket', // 支付宝线上
+  
   /*
    * Backend REST API URL
    */
