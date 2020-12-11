@@ -11,15 +11,7 @@ Dispatcher.prototype = {
     let cbtypes = dispCbs[dispIns.indexOf(this)];
     let cbs = cbtypes[type] = cbtypes[type] || [];
     if (!~cbs.indexOf(cb)) {
-		let includ = false
-		if(cb.name){
-			cbs.forEach(item => {
-				if(item.name == cb.name){
-					includ = true
-				}
-			})
-		}
-      !includ && cbs.push(cb);
+		cbs.push(cb);
     }
   },
 

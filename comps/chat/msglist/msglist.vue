@@ -119,6 +119,7 @@ export default {
 
   destroyed() {
     this.__visibility__ = false;
+	msgStorage.off("newChatMsg", this.dispMsg)
   },
 
   mounted(event) {
