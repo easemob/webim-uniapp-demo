@@ -49,7 +49,39 @@
         @longpress="longpress"
       >
         <swipe-delete>
-          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item">
+          <!-- 通知模块 -->
+          <view
+            class="tap_mask"
+            @tap.stop="into_inform"
+            :data-item="item"
+            v-if="item.chatType == 'INFORM'"
+          >
+            <view class="list_box">
+              <view class="list_left">
+                <view class="list_pic">
+                  <view v-if="unReadTotalNotNum > 0" class="em-unread-spot2">{{
+                    unReadTotalNotNum
+                  }}</view>
+                  <image
+                    :class="unReadTotalNotNum > 0 ? 'haveSpot' : ''"
+                    src="../../static/images/inform.png"
+                  ></image>
+                </view>
+                <view class="list_text">
+                  <text class="list_user"> 系统通知 </text>
+                  <text class="list_word" v-if="item.chatType == 'INFORM'"
+                    >申请通知来自：{{ item.info.from }}</text
+                  >
+                </view>
+              </view>
+              <view class="list_right">
+                <text :data-username="item.username">{{ item.time }}</text>
+              </view>
+            </view>
+          </view>
+            
+
+          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item" v-else>
             <!-- 消息列表 -->
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
@@ -89,28 +121,6 @@
               </view>
             </view>
 
-            <!-- 通知模块 -->
-            <!-- <view class="list_box">
-              <view class="list_left">
-                <view class="list_pic">
-                  <view v-if="unReadTotalNotNum > 0" class="em-unread-spot2">{{
-                    unReadTotalNotNum
-                  }}</view>
-                  <image
-                    :class="unReadTotalNotNum > 0 ? 'haveSpot' : ''"
-                    src="../../static/images/inform.png"
-                  ></image>
-                </view>
-                <view class="list_text">
-                  <text class="list_user2">
-                    通知
-                  </text>
-                </view>
-              </view>
-              <view class="list_right">
-                <text :data-username="item.username">{{ item.time }}</text>
-              </view>
-            </view> -->
           </view>
         </swipe-delete>
       </view>
@@ -133,7 +143,7 @@
             'em-unread-spot ' +
             (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
           "
-          >{{ unReadSpotNum }}</view
+          >{{ unReadSpotNum +  unReadTotalNotNum}}</view
         >
         <image
           :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
@@ -147,7 +157,7 @@
         <text>联系人</text>
       </view>
 
-      <view class="tableBar" @tap="tab_notification">
+      <!-- <view class="tableBar" @tap="tab_notification">
         <view v-if="unReadTotalNotNum > 0" class="em-unread-spot">{{
           unReadTotalNotNum
         }}</view>
@@ -156,7 +166,7 @@
           src="/static/images/notice.png"
         ></image>
         <text>通知</text>
-      </view>
+      </view> -->
 
       <view class="tableBar" @tap="tab_setting">
         <image src="/static/images/setting2x.png"></image>
@@ -203,6 +213,7 @@ export default {
     let me = this; 
     //监听加好友申请
     disp.on("em.subscribe", function(){
+      me.getChatList()
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
@@ -391,13 +402,16 @@ export default {
 				let storageKeys = res.keys
 				let newChatMsgKeys = [];
 				let historyChatMsgKeys = [];
-				let len = myName.length
+        let len = myName.length
+        console.log('storageKeys>.',storageKeys);
 				storageKeys.forEach((item) => {
 					if (item.slice(-len) == myName && item.indexOf('rendered_') == -1) {
 						newChatMsgKeys.push(item)
 					}else if(item.slice(-len) == myName && item.indexOf('rendered_') > -1){
 						historyChatMsgKeys.push(item)
-					}
+					}else if(item === 'INFORM'){
+            newChatMsgKeys.push(item)
+          }
 				})
 
 				cul.call(me, newChatMsgKeys, historyChatMsgKeys)
@@ -422,7 +436,7 @@ export default {
 						let timeArr = lastChatMsg.time.split(' ')[1].split(':')
 						let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
 						lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
 						newChatMsgKeys.splice(index, 1)
 					}else{
 						let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
@@ -432,7 +446,7 @@ export default {
 							let timeArr = lastChatMsg.time.split(' ')[1].split(':')
 							let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
 							lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-							lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+							lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
 						}
 					}
 				}else{
@@ -443,14 +457,13 @@ export default {
 						let timeArr = lastChatMsg.time.split(' ')[1].split(':')
 						let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
 						lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
 					}
 					
 				}
-				if (lastChatMsg.chatType == 'groupchat' || lastChatMsg.chatType == 'chatRoom') {
+				if (lastChatMsg && (lastChatMsg.chatType == 'groupchat' || lastChatMsg.chatType == 'chatRoom')) {
 					lastChatMsg.groupName = me.groupName[lastChatMsg.info.to]
         }
-        // console.log('历史消息》》',lastChatMsg);
 				lastChatMsg && lastChatMsg.username != myName && array.push(lastChatMsg)
 			}
 
@@ -466,9 +479,8 @@ export default {
 					let timeArr = lastChatMsg.time.split(' ')[1].split(':')
 					let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
 					lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-					lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+					lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
 					if (lastChatMsg.chatType == 'groupchat' || lastChatMsg.chatType == 'chatRoom') {
-            console.log('新消息》》',lastChatMsg);
 						lastChatMsg.groupName = me.groupName[lastChatMsg.info.to]
 					}
 					lastChatMsg.username != myName && array.push(lastChatMsg)
@@ -525,7 +537,7 @@ export default {
             let timeArr = lastChatMsg.time.split(' ')[1].split(':')
             let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
             lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-            lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}时${timeArr[1]}分`
+            lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
             arr.push(lastChatMsg)
           }
         })
@@ -617,30 +629,45 @@ export default {
     });
   },
 
+  into_inform: function(){
+    uni.redirectTo({
+        url: "../notification/notification"
+      });
+  },
+
     del_chat: function(event){
+      console.log('event>>',event);
     let detail = event.currentTarget.dataset.item;
     let nameList;
     let me = this;
+    // 删除当前选中群组聊天列表
     if (detail.chatType == 'groupchat' || detail.chatType == 'chatRoom') {
       nameList = {
         your: detail.info.to
       };
-    } else {
+      //删除当前选中通知列表
+    } else if (detail.chatType === 'INFORM'){
+      nameList = {
+        your:'INFORM'
+      }
+    }
+    //删除当前选中好友聊天列表
+    else {
       nameList = {
         your: detail.username
       };
     }
-
     var myName = uni.getStorageSync("myUsername");
     var currentPage = getCurrentPages();
     
     uni.showModal({
-      title: "删除该聊天记录",
+      title: "确认删除？",
       confirmText: "删除",
       success: function(res){
         if(res.confirm){
           uni.removeStorageSync(nameList.your + myName);
           uni.removeStorageSync("rendered_" + nameList.your + myName);
+          uni.removeStorageSync(nameList.your)
           if(currentPage[0]){
             currentPage[0].onShow();
           }

@@ -54,6 +54,18 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
       },
       value: receiveMsg.data
     };
+  } 
+  else if (type == msgType.INFORM) { // 通知消息
+    console.log('进来了');
+    sendableMsg = {
+      body: {
+        from: receiveMsg.from,
+        to: receiveMsg.to,
+        chatType: 'INFORM',
+        gid:receiveMsg.gid ? receiveMsg.gid:'',
+        type:receiveMsg.type
+      },
+    };
   } else if (type == msgType.FILE) {
     sendableMsg = {
       id: receiveMsg.id,
@@ -139,7 +151,11 @@ msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
 
   if (receiveMsg && receiveMsg.type == "groupchat") {
     sessionKey = receiveMsg.to + myName;
-  } // 群聊发 & 单发 & 单收
+  } else if (sendableMsg.body.chatType === 'INFORM'){
+    sessionKey = 'INFORM'
+  }
+  
+  // 群聊发 & 单发 & 单收
   else {
     sessionKey = sendableMsg.body.from == myName ? sendableMsg.body.to + myName : sendableMsg.body.from + myName;
   }

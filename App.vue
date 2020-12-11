@@ -38,57 +38,54 @@ function getCurrentRoute() {
   return '/'
 }
 
-// 不包含陌生人版本
-function calcUnReadSpot(message) {
-  let myName = uni.getStorageSync("myUsername");
-  let members = uni.getStorageSync("member") || []; //好友
+// // 不包含陌生人版本(不接收陌生人消息)
+// function calcUnReadSpot(message) {
+//   let myName = uni.getStorageSync("myUsername");
+//   let members = uni.getStorageSync("member") || []; //好友
 
-  var listGroups = uni.getStorageSync("listGroup") || []; //群组
-  let allMembers = members.concat(listGroups);
-  let count = allMembers.reduce(function(result, curMember, idx) {
-    let chatMsgs;
-    if (curMember.groupid) {
-      chatMsgs =
-        uni.getStorageSync(curMember.groupid + myName.toLowerCase()) || [];
-    } else {
-      chatMsgs =
-        uni.getStorageSync(
-          curMember.name && curMember.name.toLowerCase() + myName.toLowerCase()
-        ) || [];
-    }
-    return result + chatMsgs.length;
-  }, 0);
-  getApp().globalData.unReadMessageNum = count;
-  disp.fire("em.unreadspot", message);
-}
-
-// // 包含陌生人版本
-// function calcUnReadSpot(message){
-// 	let myName = uni.getStorageSync("myUsername");
-// 	uni.getStorageInfo({
-// 		success: function(res){
-// 			let storageKeys = res.keys
-// 			let newChatMsgKeys = [];
-// 			let historyChatMsgKeys = [];
-// 			storageKeys.forEach((item) => {
-// 				if (item.indexOf(myName) > -1 && item.indexOf('rendered_') == -1) {
-// 					newChatMsgKeys.push(item)
-// 				}
-// 			})
-// 			let count = newChatMsgKeys.reduce(function(result, curMember, idx){
-// 				let chatMsgs;
-// 				chatMsgs = uni.getStorageSync(curMember) || [];
-// 				return result + chatMsgs.length;
-// 			}, 0)
-
-// 			getApp().globalData.unReadMessageNum = count;
-// 			disp.fire("em.unreadspot", message);
-//     },
-//     fail:function(err){
-//       console.log(err);
+//   var listGroups = uni.getStorageSync("listGroup") || []; //群组
+//   let allMembers = members.concat(listGroups);
+//   let count = allMembers.reduce(function(result, curMember, idx) {
+//     let chatMsgs;
+//     if (curMember.groupid) {
+//       chatMsgs =
+//         uni.getStorageSync(curMember.groupid + myName.toLowerCase()) || [];
+//     } else {
+//       chatMsgs =
+//         uni.getStorageSync(
+//           curMember.name && curMember.name.toLowerCase() + myName.toLowerCase()
+//         ) || [];
 //     }
-// 	})
+//     return result + chatMsgs.length;
+//   }, 0);
+//   getApp().globalData.unReadMessageNum = count;
+//   disp.fire("em.unreadspot", message);
 // }
+
+// 包含陌生人版本
+function calcUnReadSpot(message){
+	let myName = uni.getStorageSync("myUsername");
+	uni.getStorageInfo({
+		success: function(res){
+			let storageKeys = res.keys
+			let newChatMsgKeys = [];
+			let historyChatMsgKeys = [];
+			storageKeys.forEach((item) => {
+				if (item.indexOf(myName) > -1 && item.indexOf('rendered_') == -1) {
+					newChatMsgKeys.push(item)
+				}
+			})
+			let count = newChatMsgKeys.reduce(function(result, curMember, idx){
+				let chatMsgs;
+				chatMsgs = uni.getStorageSync(curMember) || [];
+				return result + chatMsgs.length;
+			}, 0)
+
+			getApp().globalData.unReadMessageNum = count;
+			disp.fire("em.unreadspot", message);
+		}
+	})
+}
 
 
 
@@ -140,20 +137,6 @@ export default {
         }
       }
     },
-    // onShow(){
-    // 	WebIM.conn.reconnect();
-    // },
-    // onHide(){
-    // 	WebIM.conn.close();
-    // 	WebIM.conn.stopHeartBeat();
-    // },
-    // onUnload(){
-    // 	WebIM.conn.close();
-    // 	WebIM.conn.stopHeartBeat();
-    // 	uni.redirectTo({
-    // 		url: "../login/login?myName=" + myName
-    // 	});
-    // },
     onLoginSuccess: function(myName) {
       uni.hideLoading();
       uni.redirectTo({
@@ -303,7 +286,7 @@ export default {
                   return;
                 }
               }
-
+              msgStorage.saveReceiveMsg(message, msgType.INFORM); //存添加好友消息，方便展示通知
               me.globalData.saveFriendList.push(message);
               disp.fire("em.subscribe");
             }
@@ -340,30 +323,34 @@ export default {
             });
             break;
           case "invite":
-            let info = message.from + "邀请你加入群组";
-            uni.showModal({
-              title: "提示",
-              content: info,
-              success(res) {
-                if (res.confirm) {
-                  console.log("用户点击确定");
-                  WebIM.conn.agreeInviteIntoGroup({
-                    invitee: WebIM.conn.context.userId,
-                    groupId: message.gid,
-                    success: () => {
-                      saveGroups()
-                      console.log("加入成功");
-                    }
-                  });
-                } else if (res.cancel) {
-                  console.log("用户点击取消");
-                  WebIM.conn.rejectInviteIntoGroup({
-                    invitee: WebIM.conn.context.userId,
-                    groupId: message.gid
-                  });
-                }
-              }
-            });
+            console.log('message?>',message);
+            me.globalData.saveGroupInvitedList.push(message);
+            disp.fire("em.invite.joingroup", message);
+            msgStorage.saveReceiveMsg(message, msgType.INFORM); //存添加好友消息，方便展示通知
+            // let info = message.from + "邀请你加入群组";
+            // uni.showModal({
+            //   title: "提示",
+            //   content: info,
+            //   success(res) {
+            //     if (res.confirm) {
+            //       console.log("用户点击确定");
+            //       WebIM.conn.agreeInviteIntoGroup({
+            //         invitee: WebIM.conn.context.userId,
+            //         groupId: message.gid,
+            //         success: () => {
+            //           saveGroups()
+            //           console.log("加入成功");
+            //         }
+            //       });
+            //     } else if (res.cancel) {
+            //       console.log("用户点击取消");
+            //       WebIM.conn.rejectInviteIntoGroup({
+            //         invitee: WebIM.conn.context.userId,
+            //         groupId: message.gid
+            //       });
+            //     }
+            //   }
+            // });
             break;
           case "unavailable":
             disp.fire("em.contacts.remove");
@@ -551,6 +538,7 @@ export default {
   methods: {}
 };
 </script>
-<style>
+<style lang="scss">
 @import "./app.css";
+@import "uview-ui/index.scss";
 </style>

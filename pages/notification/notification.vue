@@ -16,9 +16,9 @@
 
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
-		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
-		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/session2x.png"></image>
-		<text>消息</text>
+		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum + unReadTotalNotNum }}</view>
+		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/sessionhighlight2x.png"></image>
+		<text class="activeText">消息</text>
 	</view>
 
 	<view class="tableBar" @tap="tab_contact">
@@ -26,11 +26,11 @@
 		<text>联系人</text>
 	</view>
 
-	<view class="tableBar">
+	<!-- <view class="tableBar">
 		<view v-if="unReadTotalNotNum > 0 || unReadSpotNum == '99+'" class="em-unread-spot">{{ unReadTotalNotNum }}</view>
 		<image :class="unReadTotalNotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/noticeActive.png"></image>
 		<text class="activeText">通知</text>
-	</view>
+	</view> -->
 	
 	<view class="tableBar" @tap="tab_setting">
 		<image src="/static/images/setting2x.png"></image>

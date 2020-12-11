@@ -13,7 +13,6 @@
 			"path": "pages/notification_groupDetail/groupDetail",
 			"style": {
 				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
 				"backgroundTextStyle": "light",
 				"navigationBarTitleText": "加群组申请"
 			}
@@ -180,5 +179,8 @@
 		"navigationBarBackgroundColor": "#fff",
 		"navigationBarTextStyle": "black"
 	},
+	"easycom": {
+        "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+    },
 	"subPackages": []
 }

@@ -23,6 +23,9 @@
 		</view>
 
 	</view>
+  <view class="black">
+      <u-button :ripple="true" @click="into_chat">返回</u-button>
+    </view>
 </view>
 </template>
 
@@ -170,9 +173,15 @@ export default {
         }
       });
       this.removeAndRefresh(event.currentTarget.dataset.from);
-    }
-
+    },
+    into_chat() {
+      uni.navigateTo({
+        url: "../chat/chat",
+      });
   }
+
+  },
+  
 };
 </script>
 <style>
