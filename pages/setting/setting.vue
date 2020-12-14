@@ -47,7 +47,7 @@
 	
 	<view class="tableBar">
 		<image src="/static/images/settinghighlight2x.png"></image>
-		<text class="activeText">设置</text>
+		<text class="activeText">我的</text>
 	</view>
 </view>
 </view>
@@ -99,6 +99,7 @@ export default {
   },
 
   onShow() {
+    wx.hideHomeButton()
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,

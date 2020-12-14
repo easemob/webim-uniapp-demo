@@ -86,7 +86,7 @@
  </template>
  
 <script>
-import chatEmediaInvite from "../../comps/invite/index.nvue"
+import chatEmediaInvite from "../../components/invite/index.nvue"
 	export default {
 		data() {
 			return {

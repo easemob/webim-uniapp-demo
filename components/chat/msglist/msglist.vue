@@ -134,7 +134,6 @@ export default {
     let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;
     let chatMsg = uni.getStorageSync(sessionKey) || [];
-    console.log('chatMsg', chatMsg)
     this.renderMsg(null, null, chatMsg, sessionKey);
     uni.setStorageSync(sessionKey, null);
     disp.on('em.error.sendMsgErr', function (err) {
@@ -233,16 +232,8 @@ export default {
       let me = this;
 
       var historyChatMsgs = uni.getStorageSync("rendered_" + sessionKey) || []; 
-      // if (curChatMsg.length) {
-      // 	console.log(curMsgMid.substring(curMsgMid.length - 10) , curChatMsg[0].mid.substring(curChatMsg[0].mid.length - 10))
-      // }
-      // if(curChatMsg.length && curMsgMid.substring(curMsgMid.length - 10) == curChatMsg[curChatMsg.length - 1].mid.substring(curChatMsg[0].mid.length - 10)){
-      // 	//curChatMsg[curChatMsg.length - 1].msg.data[0].isSuc = true
-      // 	curChatMsg[curChatMsg.length - 1].isSuc = true
-      // }
 
-      historyChatMsgs = historyChatMsgs.concat(curChatMsg); //console.log('当前历史',renderableMsg)
-      //console.log('历史消息', historyChatMsgs)
+      historyChatMsgs = historyChatMsgs.concat(curChatMsg); 
 
       if (!historyChatMsgs.length) return;
 
@@ -313,7 +304,6 @@ export default {
     },
 	
 	clickMsg(event){
-		// console.log('点击邀请消息', event.target.dataset.msg)
 		if(typeof(event.target.dataset.msg) == 'object' && 
 			event.target.dataset.msg.msg.ext && 
 			event.target.dataset.msg.msg.ext.msg_extension){

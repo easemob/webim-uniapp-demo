@@ -3,8 +3,8 @@
 		{
 			"path": "pages/login/login",
 			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#0873DE",
+				"navigationBarTextStyle": "white",
 				"backgroundTextStyle": "dark",
 				"navigationBarTitleText": "环信"
 			}

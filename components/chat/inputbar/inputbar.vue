@@ -117,7 +117,6 @@ export default {
     // 	this.$refs.chatSuitVideo.sendVideo();
     // },
     openCamera() {
-      // this.__comps__.image.openCamera()
        this.$refs.chatSuitImage.openCamera();
     },
 
@@ -130,7 +129,6 @@ export default {
     },
 
     sendImage() {
-      // this.__comps__.image.sendImage();
       this.$refs.chatSuitImage.sendImage();
     },
 
@@ -142,7 +140,6 @@ export default {
     },
 	
 	callVideo(){
-		//console.log('this.data.__comps__.ptopcall', this.data.__comps__.ptopcall)
 		this.$refs.chatSuitPtopcall.show()
 	},
 	

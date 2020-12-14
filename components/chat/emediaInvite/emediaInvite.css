@@ -249,12 +249,12 @@ page{
 	display: -webkit-flex;
 } 
 .address_top{
-	height:40rpx;
-	line-height:40rpx;
-	background:#FAFAFA;
-	color:#9B9B9B;
-	font-size:20rpx;
-	padding:0 32rpx;
+	height: 80rpx;
+    line-height: 70rpx;
+    background: #FAFAFA;
+    color: #9B9B9B;
+    font-size: 17px;
+    padding: 10rpx 32rpx;
 } 
 .address_bottom{
 	height: 108rpx;

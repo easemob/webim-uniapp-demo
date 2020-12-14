@@ -1,8 +1,8 @@
 <script>
 // require("sdk/libs/strophe");
 let WebIM = wx.WebIM = require("./utils/WebIM")["default"];
-let msgStorage = require("./comps/chat/msgstorage");
-let msgType = require("./comps/chat/msgtype");
+let msgStorage = require("./components/chat/msgstorage");
+let msgType = require("./components/chat/msgtype");
 let disp = require("./utils/broadcast");
 let logout = false;
 // let emedia = uni.emedia = require("./emediaSDK/webrtc/src/entry") 
@@ -323,7 +323,6 @@ export default {
             });
             break;
           case "invite":
-            console.log('message?>',message);
             me.globalData.saveGroupInvitedList.push(message);
             disp.fire("em.invite.joingroup", message);
             msgStorage.saveReceiveMsg(message, msgType.INFORM); //存添加好友消息，方便展示通知
@@ -534,7 +533,6 @@ export default {
     });
     this.globalData.checkIsIPhoneX();
   },
-
   methods: {}
 };
 </script>

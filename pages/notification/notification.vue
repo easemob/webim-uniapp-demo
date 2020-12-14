@@ -34,7 +34,7 @@
 	
 	<view class="tableBar" @tap="tab_setting">
 		<image src="/static/images/setting2x.png"></image>
-		<text>设置</text>
+		<text>我的</text>
 	</view>
 </view>
 </view>

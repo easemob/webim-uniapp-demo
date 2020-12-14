@@ -105,23 +105,8 @@ export default {
 	  return this.username
 	}
   },
-  
-  // created() {
-  //   uni.$on("saveSendMsg", (data) => {
-  //     this.saveSendMsg(data);
-  //   });
-  // },
-  // beforeDestroy() {
-  //   uni.$off("saveSendMsg");
-  // },
-
-  beforeMount() {},
 
   mounted() {
-    // this.$data.__comps__.inputbar = this.selectComponent("#chat-inputbar");
-    // this.$data.__comps__.msglist = this.selectComponent("#chat-msglist");
-    // this.$data.__comps__.audio = this.selectComponent("#chat-suit-audio");
-
 	this.username = uni.username;
 	uni.$on('createConfrSuccess', this.onCreateConfrSuccess)
   },
@@ -132,15 +117,10 @@ export default {
 
   methods: {
     toggleRecordModal() {
-      // this.$data.__comps__.audio.toggleRecordModal();
       this.$refs.chatSuitAudio.toggleRecordModal();
     },
 
     normalScroll() {
-      // this.$data.__comps__.msglist.normalScroll();
-
-      // this.$data.__comps__.inputbar.cancelEmoji();
-
       this.$refs.chatMsglist.normalScroll();
       this.$refs.chatInputbar.cancelEmoji();
     },
@@ -150,20 +130,15 @@ export default {
 		
 	},
     shortScroll() {
-      // this.$data.__comps__.msglist.shortScroll();
-
       this.$refs.chatMsglist.shortScroll();
     },
 
     saveSendMsg(evt) {
       msgStorage.saveMsg(evt.msg, evt.type);
-
-      // this.$data.__comps__.inputbar.cancelEmoji();
       this.$refs.chatInputbar.cancelEmoji();
     },
 
     getMore() {
-      // this.selectComponent("#chat-msglist").$vm.getHistoryMsg()
       this.$refs.chatMsglist.getHistoryMsg();
     },
 	onMakeVideoCall(){
@@ -188,10 +163,6 @@ export default {
 			}
 		})
 		
-		// if(data.action == 'invite'){
-		// 	console.log('发出邀请')
-		// 	this.sendInviteMsg(data.confrMember, getApp().globalData.confrId)
-		// }
 		this.$emit('onMakeVideoCall', {
 			confrMember: data.confrMember,
 			groupId: this.username.groupId
@@ -254,9 +225,6 @@ export default {
 			showmultiEmedia: true,
 			inputbarVisible: 'none',
 			groupId: msg_extension.group_id
-			// username: {
-			// 	groupId: msg_extension.group_id
-			// }
 		})
 	},
 	onHangup(){

@@ -170,7 +170,7 @@
 
       <view class="tableBar" @tap="tab_setting">
         <image src="/static/images/setting2x.png"></image>
-        <text>设置</text>
+        <text>我的</text>
       </view>
     </view>
   </view>
@@ -180,7 +180,7 @@
 let disp = require("../../utils/broadcast");
 var WebIM = require("../../utils/WebIM")["default"];
 let isfirstTime = true;
-import swipeDelete from "../../comps/swipedelete/swipedelete";
+import swipeDelete from "../../components/swipedelete/swipedelete";
 
 export default {
   data() {
@@ -260,6 +260,7 @@ export default {
   },
 
   onShow: function(){
+    wx.hideHomeButton()
     this.getChatList()
     this.setData({
       //arr: this.getChatList(),
@@ -403,7 +404,6 @@ export default {
 				let newChatMsgKeys = [];
 				let historyChatMsgKeys = [];
         let len = myName.length
-        console.log('storageKeys>.',storageKeys);
 				storageKeys.forEach((item) => {
 					if (item.slice(-len) == myName && item.indexOf('rendered_') == -1) {
 						newChatMsgKeys.push(item)
@@ -636,7 +636,6 @@ export default {
   },
 
     del_chat: function(event){
-      console.log('event>>',event);
     let detail = event.currentTarget.dataset.item;
     let nameList;
     let me = this;

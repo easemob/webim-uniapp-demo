@@ -4,7 +4,7 @@
 
 <script>
 let disp = require("../../utils/broadcast");
-import chat from "../../comps/chat/chat.vue";
+import chat from "../../components/chat/chat.vue";
 
 export default {
   data() {

@@ -56,7 +56,6 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
     };
   } 
   else if (type == msgType.INFORM) { // 通知消息
-    console.log('进来了');
     sendableMsg = {
       body: {
         from: receiveMsg.from,
@@ -144,7 +143,6 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
 };
 
 msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
-  console.log('sendableMsgsendableMsg', sendableMsg)
   let me = this;
   let myName = uni.getStorageSync("myUsername");
   let sessionKey; // 仅用作群聊收消息，发消息没有 receiveMsg
