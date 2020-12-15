@@ -1,7 +1,7 @@
 <template>
 <view>
 <view class="register">
-  <image src="/static/images/loginBg.png" class="bg-img"></image>
+  <image src="/static/images/loginBg.jpg" class="bg-img"></image>
 	<view class="register_title">
 		<text style="color:#fff">注册账号</text>
 	</view>
@@ -16,7 +16,7 @@
 		<button hover-class="btn_hover" @tap="register">注册</button>
 	</view>
 	<view class="register_back">
-		<navigator url="../login/login" open-type="redirect" hover-class="navigator-hover">账号登录</navigator>
+		<navigator url="../login/login" open-type="redirect" >账号登录</navigator>
 	</view>
 </view>
 </view>

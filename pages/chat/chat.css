@@ -203,7 +203,12 @@ page{
 	color: #9B9B9B;
 	margin-top: 400rpx;
 }
-
+.ctbg{
+	width: 138px;
+    height: 106px;
+    display: block;
+    margin: 20rpx auto;
+}
 /* .main_title_hide{
 	top: -128rpx;
 	transition: top 0.5s;

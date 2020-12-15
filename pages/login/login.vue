@@ -1,7 +1,7 @@
 <template>
 <view>
 <view class="login">
-  <image src="/static/images/loginBg.png" class="bg-img"></image>
+  <image src="/static/images/loginBg.jpg" class="bg-img"></image>
 	<view class="login_title">
     <image src="/static/images/loginIcon.png" style="width:100px;height:100px"></image>
 	</view>
@@ -17,7 +17,7 @@
 	</view>
 
 	<view class="login_text">
-		<navigator url="../register/register" open-type="redirect" hover-class="navigator-hover">账号注册</navigator>
+		<navigator url="../register/register" open-type="redirect">账号注册</navigator>
 		<!-- <navigator url="../login_token/login_token" open-type="redirect" hover-class="navigator-hover">使用Token登录</navigator> -->
 	</view>
 </view>
