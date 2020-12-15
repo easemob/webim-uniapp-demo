@@ -1,22 +1,24 @@
 <template>
 <view>
 <view class="login">
+  <image src="/static/images/loginBg.png" class="bg-img"></image>
 	<view class="login_title">
-		<text>登录</text>
+    <image src="/static/images/loginIcon.png" style="width:100px;height:100px"></image>
 	</view>
 	<view :class="'login_user ' + nameFocus">
 		<input type="text" placeholder="用户ID" placeholder-style="color:rgb(173,185,193)" @input="bindUsername" @focus="onFocusName" @blur="onBlurName">
 	</view>
 	<view :class="'login_pwd ' + psdFocus">
-		<input type="text" password placeholder="用户密码" placeholder-style="color:rgb(173,185,193)" @input="bindPassword" @focus="onFocusPsd" @blur="onBlurPsd">
+		<input :type="type == 'password' ? 'text' : type" :password="!showPassword" placeholder="用户密码" placeholder-style="color:rgb(173,185,193)" @input="bindPassword" @focus="onFocusPsd" @blur="onBlurPsd">
+    <image class="psdIcon" :src="!showPassword ? '/static/images/eye.png' : '/static/images/eye-fill.png'" @tap="showPassword = !showPassword"></image>
 	</view>
 	<view class="login_btn">
 		<button hover-class="btn_hover" @tap="login">登录</button>
 	</view>
 
 	<view class="login_text">
-		<navigator url="../register/register" open-type="redirect" hover-class="navigator-hover">新用户注册</navigator>
-		<navigator url="../login_token/login_token" open-type="redirect" hover-class="navigator-hover">使用Token登录</navigator>
+		<navigator url="../register/register" open-type="redirect" hover-class="navigator-hover">账号注册</navigator>
+		<!-- <navigator url="../login_token/login_token" open-type="redirect" hover-class="navigator-hover">使用Token登录</navigator> -->
 	</view>
 </view>
 </view>
@@ -35,7 +37,9 @@ export default {
       psd: "",
       grant_type: "password",
       psdFocus: "",
-      nameFocus: ""
+      nameFocus: "",
+      showPassword:false,
+      type:'text'
     };
   },
 

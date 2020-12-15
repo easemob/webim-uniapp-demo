@@ -3,7 +3,7 @@
 		{
 			"path": "pages/login/login",
 			"style": {
-				"navigationBarBackgroundColor": "#0873DE",
+				"navigationBarBackgroundColor": "#3E4091",
 				"navigationBarTextStyle": "white",
 				"backgroundTextStyle": "dark",
 				"navigationBarTitleText": "环信"
@@ -59,9 +59,9 @@
 		{
 			"path": "pages/register/register",
 			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
-				"backgroundTextStyle": "light",
+				"navigationBarBackgroundColor": "#3E4091",
+				"navigationBarTextStyle": "white",
+				"backgroundTextStyle": "dark",
 				"navigationBarTitleText": "环信"
 			}
 		},
