@@ -122,7 +122,8 @@ export default {
 
     normalScroll() {
       this.$refs.chatMsglist.normalScroll();
-      this.$refs.chatInputbar.cancelEmoji();
+	  this.$refs.chatInputbar.cancelEmoji();
+	  this.$refs.chatInputbar.closeFunModal();
     },
 	clickMsg(msg){
 		this.$emit('onClickInviteMsg', msg)
@@ -135,7 +136,8 @@ export default {
 
     saveSendMsg(evt) {
       msgStorage.saveMsg(evt.msg, evt.type);
-      this.$refs.chatInputbar.cancelEmoji();
+	  this.$refs.chatInputbar.cancelEmoji();
+	  this.$refs.chatInputbar.closeFunModal()
     },
 
     getMore() {

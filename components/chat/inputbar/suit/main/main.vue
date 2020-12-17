@@ -1,12 +1,17 @@
 <template>
   <!-- <chat-suit-emoji id="chat-suit-emoji" bind:newEmojiStr="emojiAction"></chat-suit-emoji> -->
   <form class="text-input">
-    <view class="f-row">
-      <input
+    <view :class="isIPX ?'f-row-x' :'f-row'">
+      <!-- 发送语音 -->
+      <view>
+        <image class="icon-mic" src="/static/images/voice.png" @tap="openRecordModal"></image>
+      </view>
+      <!-- 输入框 -->
+      <textarea
         class="f news"
         type="text"
         cursor-spacing="65"
-        confirm-type="send"
+        confirm-type='done'
         v-model="inputMessage"
         @confirm="sendMessage"
         @input="bindMessage"
@@ -14,10 +19,17 @@
         @focus="focus"
         @blur="blur"
         :confirm-hold="isIPX ? true : false"
-        placeholder="输入新消息"
-        placeholder-style="color:#CFCFCF ;padding-left:5px"
+        auto-height
+        :show-confirm-bar='false'
+        maxlength="300"
       />
-      <button 
+      <view>
+        <image class="icon-mic" src="/static/images/Emoji.png" @tap="openEmoji"></image>
+      </view>
+      <view v-show="!inputMessage" @tap="openFunModal">
+        <image class="icon-mic" src="/static/images/ad.png"></image>
+      </view>
+       <button 
         class="send-btn-style" 
         hover-class='hover'
         @tap="sendMessage"
@@ -137,6 +149,7 @@ export default {
           console.log("成功了");
           // 关闭表情弹窗
           me.$parent.cancelEmoji()
+          me.$parent.closeFunModal()
           disp.fire("em.chat.sendSuccess", id, me.userMessage);
         },
         fail(id, serverMsgId) {
@@ -166,6 +179,16 @@ export default {
     saveSendMsg(evt) {
       msgStorage.saveMsg(evt.msg, evt.type);
     },
+
+    openEmoji(){
+      this.$emit('openEmoji')
+    },
+    openRecordModal(){
+      this.$emit('openRecordModal')
+    },
+    openFunModal(){
+      this.$emit('openFunModal')
+    }
   },
 };
 </script>

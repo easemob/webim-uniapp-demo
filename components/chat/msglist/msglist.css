@@ -5,26 +5,21 @@
 	z-index: 0;
 	top: 50px;
 }*/
-.scroll_view,
-.scroll_view_change {
+.scroll_view,.scroll_view_change {
 	/* width: 100%;
 	position: absolute;
 	left: 0;
 	right: 0;
 	bottom: 170rpx; */
-	margin-bottom: 170rpx;
 	background-color: #FAFAFA;
+	padding-bottom: 100rpx;
 }
 
 .scroll_view_X,
 .scroll_view_change_X{
-	margin-bottom: 230px;
+	padding-bottom: 230rpx;
 }
 
-.scroll_view_change {
-	/*bottom: 440rpx;*/
-	margin-bottom: 590rpx;
-}
 
 .message {
 	width: 100%;

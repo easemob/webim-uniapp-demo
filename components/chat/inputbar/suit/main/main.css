@@ -1,21 +1,24 @@
 
 .text-input {
 	width: 100%;
-	height: 100rpx;
+	/* height: 100rpx; */
 	padding: 0;
 	display: block;
 }
 
 .news {
 	width: 100%;
-	height: 62rpx;
 	font-size: 14px;
-	padding: 0 32rpx;
+	padding: 0 10px;
 	display: inline-block;
-	margin-top: 10rpx;
+	margin: 10rpx;
 	line-height: 48rpx;
 	position:relative;
 	top: 0;
+	background-color: #fff;
+	border-radius: 16px;
+	flex: 1;
+	min-height: 60rpx;
 }
 
 .send_btn {
@@ -32,9 +35,10 @@
 }
 
 .f-row{
-	height:100rpx;
+	/* height:100rpx; */
 	display:flex;
 	align-items:center;
+	background-color: #f2f2f2;
 }
 .send-btn-style{
 	font-size: 10px;
@@ -44,4 +48,17 @@
 }
 .hover{
 	background-color:#075ca1
+}
+.icon-mic{
+	width: 22px;
+    height: 22px;
+	padding: 5px 10px;
+	position: relative;
+	top: 2px;
+}
+.f-row-x{
+	padding-bottom: 30px;
+	display:flex;
+	align-items:center;
+	background-color: #f2f2f2;
 }
