@@ -49,11 +49,12 @@
           <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
             <view class="template" v-for="(d_item, d_index) in item.msg.data" :key="d_index">
               <text
-				:data-msg="item"
-				@tap="clickMsg"
+				        :data-msg="item"
+				        @tap="clickMsg"
                 v-if="d_item.type == 'txt'"
                 class="msg-text"
                 style="float:left;"
+                selectable="true"
               >{{ d_item.data }}</text>
 
               <image

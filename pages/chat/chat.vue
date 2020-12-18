@@ -422,8 +422,9 @@ export default {
 
 		function cul(newChatMsgKeys, historyChatMsgKeys){
 			let array = []
-			let lastChatMsg;
-			for(let i = 0; i < historyChatMsgKeys.length; i++){
+      let lastChatMsg;
+        
+			for(let i = historyChatMsgKeys.length; i--;){
 				let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9))
 				if ( index > -1 ) {
 					let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
@@ -469,7 +470,7 @@ export default {
 				lastChatMsg && lastChatMsg.username != myName && array.push(lastChatMsg)
 			}
 
-			for(let i = 0; i < newChatMsgKeys.length; i++){
+			for(let i = newChatMsgKeys.length; i--;){
 				let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
 				if(newChatMsgs.length){
 					lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
