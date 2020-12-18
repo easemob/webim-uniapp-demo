@@ -2,11 +2,11 @@
 <view class="group-wrap">
     <view class="wrap">
     <view class="group-name">
-        <text class="pd-10">群组名称</text>
+        <text class="pd-10">群名称</text>
         <text class="item-name">{{ groupName }}</text>
     </view>
     <view class="group-name">
-        <text class="pd-10">群描述</text>
+        <text class="pd-10">群简介</text>
         <view class="item-name">{{ groupDec }}</view>
     </view>
     <view class="group-member">

@@ -16,7 +16,8 @@
 <view class="contain">
 	<view class="build_group" @tap="build_group">
 		<image src="/static/images/invite_theme2x.png"></image>
-		<text>新建群聊</text>
+		<text style="">新建群聊</text>
+    <image style="margin:20px 15px" class="next2" src="/static/images/next2.png"></image>
 	</view>
 	<!-- <view class="add_group">
 		<image src="../../static/images/cell_groups.png"></image>
@@ -32,7 +33,7 @@
 			<text :data-username="item.groupname">{{ item.groupname }}</text>
 		</view>
 		<view class="edit" @tap="edit_group" :data-username="item.groupname" :data-roomid="item.groupid">
-			<image src="/static/images/cell_groups.png" :data-username="item.groupname"></image>
+			<image src="/static/images/edit.png" :data-username="item.groupname"></image>
 		</view>
 	</view>
 </view>
