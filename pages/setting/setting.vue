@@ -140,8 +140,8 @@ export default {
         title: "是否退出登录",
         success: function (res) {
           if (res.confirm) {
+            uni.setStorageSync("INFORM",[])
             WebIM.conn.close(); // uni.closeSocket()
-
             uni.redirectTo({
               url: "../login/login"
             });
