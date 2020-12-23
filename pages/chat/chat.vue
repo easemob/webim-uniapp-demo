@@ -1,7 +1,7 @@
 <template>
   <view>
     <view>
-       <view class="search" v-if="search_btn">
+      <view class="search" v-if="search_btn">
         <view @tap="openSearch">
           <icon type="search" size="12"></icon>
           <text>搜索</text>
@@ -79,9 +79,13 @@
               </view>
             </view>
           </view>
-            
 
-          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item" v-else>
+          <view
+            class="tap_mask"
+            @tap.stop="into_chatRoom"
+            :data-item="item"
+            v-else
+          >
             <!-- 消息列表 -->
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
@@ -94,14 +98,21 @@
 
                   <image
                     :src="
-                      item.chatType == 'groupchat' || item.chatType == 'chatRoom'
+                      item.chatType == 'groupchat' ||
+                      item.chatType == 'chatRoom'
                         ? '../../static/images/groupTheme.png'
                         : '../../static/images/theme2x.png'
                     "
                   ></image>
                 </view>
                 <view class="list_text">
-                  <text class="list_user">{{(item.chatType == 'groupchat' || item.chatType == 'chatRoom' || item.groupName)?item.groupName : item.username}}</text>
+                  <text class="list_user">{{
+                    item.chatType == "groupchat" ||
+                    item.chatType == "chatRoom" ||
+                    item.groupName
+                      ? item.groupName
+                      : item.username
+                  }}</text>
                   <text class="list_word" v-if="item.msg.data[0].data">{{
                     item.msg.data[0].data
                   }}</text>
@@ -120,16 +131,22 @@
                 <text :data-username="item.username">{{ item.time }}</text>
               </view>
             </view>
-
           </view>
         </swipe-delete>
       </view>
 
-      <view v-if=" arr.length == 0" class="chat_noChat">
-        <image class="ctbg" src='/static/images/ctbg.png'></image>
+      <long-press-modal
+        :winSize="winSize"
+        :popButton="popButton"
+        @change="pickerMenuChange"
+        :showPop="showPop"
+        @hidePop="hidePop"
+        :popStyle="popStyle"
+      />
+      <view v-if="arr.length == 0" class="chat_noChat">
+        <image class="ctbg" src="/static/images/ctbg.png"></image>
         暂无聊天消息
-      </view
-    >
+      </view>
       <!-- </view> -->
     </scroll-view>
     <!-- bug: margin-bottom 不生效 需要加一个空标签-->
@@ -145,7 +162,7 @@
             'em-unread-spot ' +
             (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
           "
-          >{{ unReadSpotNum +  unReadTotalNotNum}}</view
+          >{{ unReadSpotNum + unReadTotalNotNum }}</view
         >
         <image
           :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
@@ -183,6 +200,7 @@ let disp = require("../../utils/broadcast");
 var WebIM = require("../../utils/WebIM")["default"];
 let isfirstTime = true;
 import swipeDelete from "../../components/swipedelete/swipedelete";
+import longPressModal from "../../components/longPressModal/index";
 
 export default {
   data() {
@@ -202,140 +220,160 @@ export default {
       gotop: false,
       input_code: "",
 
-      groupName: {}
+      groupName: {},
+      winSize: {},
+      popButton: ["删除该聊天"],
+      showPop: false,
+      popStyle: "",
+      currentVal:''
     };
   },
 
   components: {
-    swipeDelete
+    swipeDelete,
+    longPressModal,
   },
   props: {},
 
-  onLoad () {
-    let me = this; 
+  onLoad() {
+    this.getWindowSize();
+
+    let me = this;
     //监听加好友申请
-    disp.on("em.subscribe", function(){
-      me.getChatList()
+    disp.on("em.subscribe", function () {
+      me.getChatList();
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
       });
     });
 
     //监听解散群
-    disp.on("em.invite.deleteGroup", function(){
+    disp.on("em.invite.deleteGroup", function () {
       me.listGroups();
       me.getRoster();
-      me.getChatList()
+      me.getChatList();
       me.setData({
         // arr: me.getChatList(),
-        messageNum: getApp().globalData.saveFriendList.length
+        messageNum: getApp().globalData.saveFriendList.length,
       });
     });
 
     //监听未读消息数
-    disp.on("em.unreadspot", function(message){
-      me.getChatList()
+    disp.on("em.unreadspot", function (message) {
+      me.getChatList();
       me.setData({
         // arr: me.getChatList(),
-        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+        unReadSpotNum:
+          getApp().globalData.unReadMessageNum > 99
+            ? "99+"
+            : getApp().globalData.unReadMessageNum,
       });
     });
 
     //监听未读加群“通知”
-    disp.on("em.invite.joingroup", function(){
+    disp.on("em.invite.joingroup", function () {
       me.setData({
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
       });
     });
 
-
-
-    disp.on("em.contacts.remove", function(){
-      me.getChatList()
+    disp.on("em.contacts.remove", function () {
+      me.getChatList();
       me.getRoster();
     });
-
 
     this.getRoster();
   },
 
-  onShow: function(){
-    wx.hideHomeButton()
-    this.getChatList()
+  onShow: function () {
+    uni.hideHomeButton();
+    this.getChatList();
     this.setData({
       //arr: this.getChatList(),
-      unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+      unReadSpotNum:
+        getApp().globalData.unReadMessageNum > 99
+          ? "99+"
+          : getApp().globalData.unReadMessageNum,
       messageNum: getApp().globalData.saveFriendList.length,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      unReadTotalNotNum:
+        getApp().globalData.saveFriendList.length +
+        getApp().globalData.saveGroupInvitedList.length,
     });
 
     if (getApp().globalData.isIPX) {
       this.setData({
-        isIPX: true
-      })
+        isIPX: true,
+      });
     }
   },
   methods: {
-    listGroups(){
-    var me = this;
-    return WebIM.conn.getGroup({
-      limit: 50,
-      success: function(res){
-        let groupName = {}
-        let listGroup = res.data || []
-        listGroup.forEach((item) => {
-          groupName[item.groupid] = item.groupname
-        })
+    listGroups() {
+      var me = this;
+      return WebIM.conn.getGroup({
+        limit: 50,
+        success: function (res) {
+          let groupName = {};
+          let listGroup = res.data || [];
+          listGroup.forEach((item) => {
+            groupName[item.groupid] = item.groupname;
+          });
 
-        me.setData({
-          groupName:groupName
-        })
-        uni.setStorage({
-          key: "listGroup",
-          data: res.data
-        });
-        me.getChatList()
-      },
-      error: function(err){
-        console.log(err)
-      }
-    });
-  },
+          me.setData({
+            groupName: groupName,
+          });
+          uni.setStorage({
+            key: "listGroup",
+            data: res.data,
+          });
+          me.getChatList();
+        },
+        error: function (err) {
+          console.log(err);
+        },
+      });
+    },
 
-    getRoster(){
-    let me = this;
-    let rosters = {
-      success(roster){
-        var member = [];
-        for(let i = 0; i < roster.length; i++){
-          if(roster[i].subscription == "both"){
-            member.push(roster[i]);
+    getRoster() {
+      let me = this;
+      let rosters = {
+        success(roster) {
+          var member = [];
+          for (let i = 0; i < roster.length; i++) {
+            if (roster[i].subscription == "both") {
+              member.push(roster[i]);
+            }
           }
-        }
-        uni.setStorage({
-          key: "member",
-          data: member
-        });
-        me.setData({member: member});
-        me.listGroups()
-        //if(!systemReady){
+          uni.setStorage({
+            key: "member",
+            data: member,
+          });
+          me.setData({ member: member });
+          me.listGroups();
+          //if(!systemReady){
           disp.fire("em.main.ready");
           //systemReady = true;
-        //}
-        me.setData({
-          arr: me.getChatList(),
-          unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
-        });
-      },
-      error(err){
-        console.log(err);
-      }
-    };
-    WebIM.conn.getRoster(rosters);
-  },
+          //}
+          me.setData({
+            arr: me.getChatList(),
+            unReadSpotNum:
+              getApp().globalData.unReadMessageNum > 99
+                ? "99+"
+                : getApp().globalData.unReadMessageNum,
+          });
+        },
+        error(err) {
+          console.log(err);
+        },
+      };
+      WebIM.conn.getRoster(rosters);
+    },
 
     // // 不包含陌生人版本
     // getChatList() {
@@ -384,307 +422,361 @@ export default {
     //    lastChatMsg.groupName = listGroups[i].groupname
     //    array.push(lastChatMsg);
     //  }
-    // } 
+    // }
 
     //   array.sort((a, b) => {
     //     return b.dateTimeNum - a.dateTimeNum;
     //   });
     //   return array;
     // },
-    
 
-    
+    // 包含陌生人版本
+    getChatList() {
+      var myName = uni.getStorageSync("myUsername");
+      var array = [];
+      const me = this;
+      uni.getStorageInfo({
+        success: function (res) {
+          let storageKeys = res.keys;
+          let newChatMsgKeys = [];
+          let historyChatMsgKeys = [];
+          let len = myName.length;
+          storageKeys.forEach((item) => {
+            if (item.slice(-len) == myName && item.indexOf("rendered_") == -1) {
+              newChatMsgKeys.push(item);
+            } else if (
+              item.slice(-len) == myName &&
+              item.indexOf("rendered_") > -1
+            ) {
+              historyChatMsgKeys.push(item);
+            } else if (item === "INFORM") {
+              newChatMsgKeys.push(item);
+            }
+          });
 
-// 包含陌生人版本
- 	getChatList(){
-		var myName = uni.getStorageSync("myUsername");
-		var array = [];
-		const me = this
-		uni.getStorageInfo({
-			success: function(res){
-				let storageKeys = res.keys
-				let newChatMsgKeys = [];
-				let historyChatMsgKeys = [];
-        let len = myName.length
-				storageKeys.forEach((item) => {
-					if (item.slice(-len) == myName && item.indexOf('rendered_') == -1) {
-						newChatMsgKeys.push(item)
-					}else if(item.slice(-len) == myName && item.indexOf('rendered_') > -1){
-						historyChatMsgKeys.push(item)
-					}else if(item === 'INFORM'){
-            newChatMsgKeys.push(item)
+          cul.call(me, newChatMsgKeys, historyChatMsgKeys);
+        },
+      });
+
+      function cul(newChatMsgKeys, historyChatMsgKeys) {
+        let array = [];
+        let lastChatMsg;
+
+        for (let i = historyChatMsgKeys.length; i--; ) {
+          let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9));
+          if (index > -1) {
+            let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
+            if (newChatMsgKeys.includes()) {
+            }
+            if (newChatMsgs.length) {
+              lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
+              lastChatMsg.unReadCount = newChatMsgs.length;
+              if (lastChatMsg.unReadCount > 99) {
+                lastChatMsg.unReadCount = "99+";
+              }
+              let dateArr = lastChatMsg.time.split(" ")[0].split("-");
+              let timeArr = lastChatMsg.time.split(" ")[1].split(":");
+              let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
+              lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
+              lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
+              newChatMsgKeys.splice(index, 1);
+            } else {
+              let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
+              if (historyChatMsgs.length) {
+                lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
+                let dateArr = lastChatMsg.time.split(" ")[0].split("-");
+                let timeArr = lastChatMsg.time.split(" ")[1].split(":");
+                let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
+                lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
+                lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
+              }
+            }
+          } else {
+            let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
+            if (historyChatMsgs.length) {
+              lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
+              let dateArr = lastChatMsg.time.split(" ")[0].split("-");
+              let timeArr = lastChatMsg.time.split(" ")[1].split(":");
+              let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
+              lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
+              lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
+            }
           }
-				})
-
-				cul.call(me, newChatMsgKeys, historyChatMsgKeys)
-			}
-		})
-
-		function cul(newChatMsgKeys, historyChatMsgKeys){
-			let array = []
-      let lastChatMsg;
-        
-			for(let i = historyChatMsgKeys.length; i--;){
-				let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9))
-				if ( index > -1 ) {
-					let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
-					if (newChatMsgKeys.includes()) {}
-					if(newChatMsgs.length){
-						lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-						lastChatMsg.unReadCount = newChatMsgs.length;
-						if(lastChatMsg.unReadCount > 99) {
-							lastChatMsg.unReadCount = "99+";
-						}
-						let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-						let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-						let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-						lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
-						newChatMsgKeys.splice(index, 1)
-					}else{
-						let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
-						if (historyChatMsgs.length) {
-							lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-							let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-							let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-							let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-							lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-							lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
-						}
-					}
-				}else{
-					let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
-					if (historyChatMsgs.length) {
-						lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-						let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-						let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-						let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-						lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-						lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
-					}
-					
-				}
-				if (lastChatMsg && (lastChatMsg.chatType == 'groupchat' || lastChatMsg.chatType == 'chatRoom')) {
-					lastChatMsg.groupName = me.groupName[lastChatMsg.info.to]
+          if (
+            lastChatMsg &&
+            (lastChatMsg.chatType == "groupchat" ||
+              lastChatMsg.chatType == "chatRoom")
+          ) {
+            lastChatMsg.groupName = me.groupName[lastChatMsg.info.to];
+          }
+          lastChatMsg &&
+            lastChatMsg.username != myName &&
+            array.push(lastChatMsg);
         }
-				lastChatMsg && lastChatMsg.username != myName && array.push(lastChatMsg)
-			}
 
-			for(let i = newChatMsgKeys.length; i--;){
-				let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
-				if(newChatMsgs.length){
-					lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-					lastChatMsg.unReadCount = newChatMsgs.length;
-					if(lastChatMsg.unReadCount > 99) {
-						lastChatMsg.unReadCount = "99+";
-					}
-					let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-					let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-					let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-					lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-					lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
-					if (lastChatMsg.chatType == 'groupchat' || lastChatMsg.chatType == 'chatRoom') {
-						lastChatMsg.groupName = me.groupName[lastChatMsg.info.to]
-					}
-					lastChatMsg.username != myName && array.push(lastChatMsg)
-				}
-			}
+        for (let i = newChatMsgKeys.length; i--; ) {
+          let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
+          if (newChatMsgs.length) {
+            lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
+            lastChatMsg.unReadCount = newChatMsgs.length;
+            if (lastChatMsg.unReadCount > 99) {
+              lastChatMsg.unReadCount = "99+";
+            }
+            let dateArr = lastChatMsg.time.split(" ")[0].split("-");
+            let timeArr = lastChatMsg.time.split(" ")[1].split(":");
+            let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
+            lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
+            lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
+            if (
+              lastChatMsg.chatType == "groupchat" ||
+              lastChatMsg.chatType == "chatRoom"
+            ) {
+              lastChatMsg.groupName = me.groupName[lastChatMsg.info.to];
+            }
+            lastChatMsg.username != myName && array.push(lastChatMsg);
+          }
+        }
 
-			array.sort((a, b) => {
-				return b.dateTimeNum - a.dateTimeNum
-			})
-			this.setData({
-				arr: array
-			})
-		}
-	},
-  
+        array.sort((a, b) => {
+          return b.dateTimeNum - a.dateTimeNum;
+        });
+        this.setData({
+          arr: array,
+        });
+      }
+    },
 
-    openSearch: function(){
+    openSearch: function () {
       this.setData({
         search_btn: false,
         search_chats: true,
-        gotop: true
-    });
-  },
-  
+        gotop: true,
+      });
+    },
 
-    onSearch: function(val){
-    let searchValue = val.detail.value
-    var myName = uni.getStorageSync("myUsername");
-    const me = this
-    let serchList = [];
-    let arr = []
-    uni.getStorageInfo({
-      success: function(res){
-        let storageKeys = res.keys
-        let chatKeys = []
-        let len = myName.length
-        storageKeys.forEach((item) => {
-          if (item.slice(-len) == myName) {
-            chatKeys.push(item)
-          }
-        })
-        chatKeys.forEach((item, index)=>{
-          if(item.indexOf(searchValue) != -1){
-            serchList.push(item)
-          }
-        })
-        let lastChatMsg = ''
-        serchList.forEach((item, index) => {
-          let chatMsgs = uni.getStorageSync(item) || [];
-          if(chatMsgs.length){
-            lastChatMsg = chatMsgs[chatMsgs.length - 1];
-            
-            let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-            let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-            let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-            lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-            lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
-            arr.push(lastChatMsg)
-          }
-        })
-        me.setData({arr})
+    onSearch: function (val) {
+      let searchValue = val.detail.value;
+      var myName = uni.getStorageSync("myUsername");
+      const me = this;
+      let serchList = [];
+      let arr = [];
+      uni.getStorageInfo({
+        success: function (res) {
+          let storageKeys = res.keys;
+          let chatKeys = [];
+          let len = myName.length;
+          storageKeys.forEach((item) => {
+            if (item.slice(-len) == myName) {
+              chatKeys.push(item);
+            }
+          });
+          chatKeys.forEach((item, index) => {
+            if (item.indexOf(searchValue) != -1) {
+              serchList.push(item);
+            }
+          });
+          let lastChatMsg = "";
+          serchList.forEach((item, index) => {
+            let chatMsgs = uni.getStorageSync(item) || [];
+            if (chatMsgs.length) {
+              lastChatMsg = chatMsgs[chatMsgs.length - 1];
+
+              let dateArr = lastChatMsg.time.split(" ")[0].split("-");
+              let timeArr = lastChatMsg.time.split(" ")[1].split(":");
+              let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
+              lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
+              lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
+              arr.push(lastChatMsg);
+            }
+          });
+          me.setData({ arr });
+        },
+      });
+    },
+
+    cancel: function () {
+      this.getChatList();
+      this.setData({
+        search_btn: true,
+        search_chats: false,
+        //arr: this.getChatList(),
+        unReadSpotNum:
+          getApp().globalData.unReadMessageNum > 99
+            ? "99+"
+            : getApp().globalData.unReadMessageNum,
+        gotop: false,
+      });
+    },
+    clearInput: function () {
+      this.setData({
+        input_code: "",
+        show_clear: false,
+      });
+    },
+    onInput: function (e) {
+      let inputValue = e.detail.value;
+      if (inputValue) {
+        this.setData({
+          show_clear: true,
+        });
+      } else {
+        this.setData({
+          show_clear: false,
+        });
       }
-    })
-  },
-
-    
-    cancel: function(){
-    this.getChatList()
-    this.setData({
-      search_btn: true,
-      search_chats: false,
-      //arr: this.getChatList(),
-      unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
-      gotop: false
-    });
-  },
-    clearInput: function(){
-    this.setData({
-      input_code: '',
-      show_clear: false
-    })
-  },
-   onInput: function(e){
-    let inputValue = e.detail.value
-    if (inputValue) {
-      this.setData({
-        show_clear: true
-      })
-    } else {
-      this.setData({
-        show_clear: false
-      })
-    }
-  },
-    tab_contacts: function(){
-    uni.redirectTo({
-      url: "../main/main?myName=" + uni.getStorageSync("myUsername")
-    });
-  },
+    },
+    tab_contacts: function () {
+      uni.redirectTo({
+        url: "../main/main?myName=" + uni.getStorageSync("myUsername"),
+      });
+    },
     close_mask: function () {
       this.setData({
         search_btn: true,
         search_chats: false,
-        show_mask: false
+        show_mask: false,
       });
     },
     tab_setting: function () {
       uni.redirectTo({
-        url: "../setting/setting"
+        url: "../setting/setting",
       });
     },
     tab_notification: function () {
       uni.redirectTo({
-        url: "../notification/notification"
+        url: "../notification/notification",
       });
     },
-  into_chatRoom: function (event) {
+    into_chatRoom: function (event) {
       let detail = event.currentTarget.dataset.item;
-      if (detail.chatType == 'groupchat' || detail.chatType == 'chatRoom' || detail.groupName) {
+      if (
+        detail.chatType == "groupchat" ||
+        detail.chatType == "chatRoom" ||
+        detail.groupName
+      ) {
         this.into_groupChatRoom(detail);
       } else {
         this.into_singleChatRoom(detail);
       }
     },
-   // 单聊
-  into_singleChatRoom: function(detail){
-    var my = uni.getStorageSync("myUsername");
-    var nameList = {
-      myName: my,
-      your: detail.username
-    };
-    uni.navigateTo({
-      url: "../chatroom/chatroom?username=" + JSON.stringify(nameList)
-    });
-  },
-   // 群聊 和 聊天室 （两个概念）
-  into_groupChatRoom: function(detail){
-    var my = uni.getStorageSync("myUsername");
-    var nameList = {
-      myName: my,
-      your: detail.groupName,
-      groupId: detail.info.to
-    };
-    uni.navigateTo({
-      url: "../groupChatRoom/groupChatRoom?username=" + JSON.stringify(nameList)
-    });
-  },
-
-  into_inform: function(){
-    uni.redirectTo({
-        url: "../notification/notification"
+    // 单聊
+    into_singleChatRoom: function (detail) {
+      var my = uni.getStorageSync("myUsername");
+      var nameList = {
+        myName: my,
+        your: detail.username,
+      };
+      uni.navigateTo({
+        url: "../chatroom/chatroom?username=" + JSON.stringify(nameList),
       });
-  },
+    },
+    // 群聊 和 聊天室 （两个概念）
+    into_groupChatRoom: function (detail) {
+      var my = uni.getStorageSync("myUsername");
+      var nameList = {
+        myName: my,
+        your: detail.groupName,
+        groupId: detail.info.to,
+      };
+      uni.navigateTo({
+        url:
+          "../groupChatRoom/groupChatRoom?username=" + JSON.stringify(nameList),
+      });
+    },
 
-    del_chat: function(event){
-    let detail = event.currentTarget.dataset.item;
-    let nameList;
-    let me = this;
-    // 删除当前选中群组聊天列表
-    if (detail.chatType == 'groupchat' || detail.chatType == 'chatRoom') {
-      nameList = {
-        your: detail.info.to
-      };
-      //删除当前选中通知列表
-    } else if (detail.chatType === 'INFORM'){
-      nameList = {
-        your:'INFORM'
+    into_inform: function () {
+      uni.redirectTo({
+        url: "../notification/notification",
+      });
+    },
+
+    del_chat: function (event) {
+      let detail = event.currentTarget.dataset.item;
+      let nameList;
+      let me = this;
+      // 删除当前选中群组聊天列表
+      if (detail.chatType == "groupchat" || detail.chatType == "chatRoom") {
+        nameList = {
+          your: detail.info.to,
+        };
+        //删除当前选中通知列表
+      } else if (detail.chatType === "INFORM") {
+        nameList = {
+          your: "INFORM",
+        };
       }
-    }
-    //删除当前选中好友聊天列表
-    else {
-      nameList = {
-        your: detail.username
-      };
-    }
-    var myName = uni.getStorageSync("myUsername");
-    var currentPage = getCurrentPages();
-    
-    uni.showModal({
-      title: "确认删除？",
-      confirmText: "删除",
-      success: function(res){
-        if(res.confirm){
-          uni.removeStorageSync(nameList.your + myName);
-          uni.removeStorageSync("rendered_" + nameList.your + myName);
-          uni.removeStorageSync(nameList.your)
-          if(currentPage[0]){
-            currentPage[0].onShow();
+      //删除当前选中好友聊天列表
+      else {
+        nameList = {
+          your: detail.username,
+        };
+      }
+      var myName = uni.getStorageSync("myUsername");
+      var currentPage = getCurrentPages();
+
+      uni.showModal({
+        title: "确认删除？",
+        confirmText: "删除",
+        success: function (res) {
+          if (res.confirm) {
+            uni.removeStorageSync(nameList.your + myName);
+            uni.removeStorageSync("rendered_" + nameList.your + myName);
+            uni.removeStorageSync(nameList.your);
+            if (currentPage[0]) {
+              currentPage[0].onShow();
+            }
+            me.getChatList();
+            disp.fire("em.chat.session.remove");
           }
-          me.getChatList()
-          disp.fire("em.chat.session.remove");
-        }
-      },
-      fail: function(err){
+        },
+        fail: function (err) {},
+      });
+    },
+    longpress: function (e) {
+      //将当前选中的值存在data中方便后续操作
+      this.currentVal = e
+      let [touches, style, index] = [e.touches[0],"",e.currentTarget.dataset.index,];
+
+      /* 因 非H5端不兼容 style 属性绑定 Object ，所以拼接字符 */
+      if (touches.clientY > this.winSize.height / 2) {
+        style = `bottom:${this.winSize.height - touches.clientY}px;`;
+      } else {
+        style = `top:${touches.clientY}px;`;
       }
-    });
+      if (touches.clientX > this.winSize.witdh / 2) {
+        style += `right:${this.winSize.witdh - touches.clientX}px`;
+      } else {
+        style += `left:${touches.clientX}px`;
+      }
+
+      this.popStyle = style;
+      // this.pickerUserIndex = Number(index);
+      this.showShade = true;
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.showPop = true;
+        }, 10);
+      });
+    },
+    /* 获取窗口尺寸 */
+    getWindowSize() {
+      uni.getSystemInfo({
+        success: (res) => {
+          this.winSize = {
+            witdh: res.windowWidth,
+            height: res.windowHeight,
+          };
+        },
+      });
+    },
+    hidePop() {
+      this.showPop = false;
+    },
+    pickerMenuChange() {
+      console.log("当前选中>>", this.currentVal);
+      this.del_chat(this.currentVal)
+    },
   },
-    longpress:function(e){
-      console.log('长按',e);
-    }
-  }
 };
 </script>
 <style>

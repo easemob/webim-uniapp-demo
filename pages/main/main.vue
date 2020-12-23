@@ -253,7 +253,7 @@ export default {
     this.getRoster();
   },
   onShow() {
-    wx.hideHomeButton()
+    uni.hideHomeButton()
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum:

@@ -88,7 +88,6 @@ export default {
           nickname: "",
           appKey: WebIM.config.appkey,
           success: function (res) {
-            console.log('res', res);
             uni.showToast({title: "注册成功"});
             var data = {
               apiUrl: WebIM.config.apiURL,
@@ -103,7 +102,6 @@ export default {
             });
           },
           error: function (res) {
-            console.log('res', res);
 
             if (res.statusCode !== "200") {
               if (res.statusCode == '400' && res.data.error == 'illegal_argument') {

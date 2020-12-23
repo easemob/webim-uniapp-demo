@@ -37,16 +37,21 @@
       <swiper-item>
         <view :class="'other_func ' + (isIPX ? 'other_func_X' : '')">
           <view class="open_camera" @tap="openCamera">
-            <image
-              src="/static/images/camora.png"
-            ></image>
+            <image src="/static/images/camora.png"></image>
             相机
           </view>
           <view class="send_image" @tap="sendImage">
-            <image
-              src="/static/images/pic.png"
-            ></image>
+            <image src="/static/images/pic.png"></image>
             相册
+          </view>
+
+          <view
+            class="send_image"
+            @tap="edit_group"
+            v-show="chatType === 'chatRoom'"
+          >
+            <image src="/static/images/pic.png"></image>
+            群信息
           </view>
 
           <!-- <view class="send_image" @tap="sendVideo">
@@ -163,12 +168,12 @@ export default {
 
     openEmoji() {
       this.$refs.chatSuitEmoji.openEmoji();
-      this.showFunModal === 'showFunModal' && this.closeFunModal()
+      this.showFunModal === "showFunModal" && this.closeFunModal();
     },
 
     cancelEmoji() {
       this.$refs.chatSuitEmoji.cancelEmoji();
-      this.closeFunModal()
+      this.closeFunModal();
     },
 
     sendImage() {
@@ -200,6 +205,17 @@ export default {
     closeFunModal() {
       this.setData({
         showFunModal: FUNMODAL_STATUS.CLOSED,
+      });
+    },
+    edit_group() {
+      var nameList = {
+        myName: this.username.myName,
+        groupName: this.username.your,
+        roomId: this.username.groupId,
+      };
+      uni.navigateTo({
+        url:
+          "../groupSetting/groupSetting?groupInfo=" + JSON.stringify(nameList),
       });
     },
   },

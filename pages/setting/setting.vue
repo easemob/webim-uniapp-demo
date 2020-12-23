@@ -99,7 +99,7 @@ export default {
   },
 
   onShow() {
-    wx.hideHomeButton()
+    uni.hideHomeButton()
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,

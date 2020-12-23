@@ -7,6 +7,17 @@
 	background: #fff;
 	height:100%;
 }
+.title-card{
+	height: 72px;
+	display: flex;
+	align-items: center;
+	border-bottom: 10px solid #f2f2f2;
+}
+.title-card image{
+	height: 40px;
+	width: 40px;
+	margin: 15px;
+}
 .border-bottom{
 	border-bottom: 1px solid #e1e1e1;
 }
@@ -18,9 +29,9 @@ text{
 }
 .group-name{
 	width: 100%;
-	height: 40px;
-    line-height: 40px;
-    border-top: 1px solid #cfcfcf;
+	line-height: 40px;
+	padding: 10px;
+    border-bottom: 1px solid #f2f2f2;
 }
 .group-name .item-name{
 	float: right;
@@ -28,20 +39,37 @@ text{
 	color: #ccc;
 	font-size: 14px;
 }
-.invite-member,.group-member{
-    border-top: 1px solid #cfcfcf;
+.group-member,.invite-member{
+	padding: 10px;
+}
+.invite-member{
+	border-bottom: 10px solid #f2f2f2;
+}
+.group-member{
+	max-height: 300px;
+	overflow-y: auto;
+	border-bottom: 1px solid #f2f2f2;
 }
 
 .group-member .member-list{
 	padding-left: 10px;
 	font-size: 14px;
-	height: 30px;
 	line-height: 30px;
 	color: #ccc;
 }
+.member-list{
+	width: 50px;
+	text-align: center;
+	line-height: normal !important;
+	margin: 0 0 10px 12px;
+}
+.member-list image{
+	width: 40px;
+	height: 40px;
+}
 .invite-member .invite-wrap input{
     display:inline-block;
-    width: calc(100% - 80px);
+    width: calc(100% - 110px);
     height:40px;
     line-height:40px;
     font-size:14px;
@@ -53,7 +81,6 @@ text{
 .invite-wrap{
     padding: 0 10px 0 10px;
     box-sizing: border-box;
-    margin-bottom:6px;
 }
 .invite-member .invite-wrap button{
     float:right;
