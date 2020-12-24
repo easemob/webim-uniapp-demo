@@ -167,13 +167,16 @@ export default {
     },
 
     openEmoji() {
+        setTimeout(() => {
+        this.setData({
+          showFunModal: FUNMODAL_STATUS.CLOSED,
+        });
+      }, 100);
       this.$refs.chatSuitEmoji.openEmoji();
-      this.showFunModal === "showFunModal" && this.closeFunModal();
     },
 
     cancelEmoji() {
       this.$refs.chatSuitEmoji.cancelEmoji();
-      this.closeFunModal();
     },
 
     sendImage() {
@@ -201,11 +204,13 @@ export default {
       this.setData({
         showFunModal: FUNMODAL_STATUS.OPENED,
       });
+      this.cancelEmoji()
     },
     closeFunModal() {
       this.setData({
         showFunModal: FUNMODAL_STATUS.CLOSED,
       });
+      this.cancelEmoji()
     },
     edit_group() {
       var nameList = {

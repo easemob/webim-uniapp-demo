@@ -40,7 +40,7 @@
 			"style": {
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "环信",
+				"navigationBarTitleText": "联系人",
 				"enablePullDownRefresh": true
 			}
 		},
@@ -70,7 +70,7 @@
 			"style": {
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "环信"
+				"navigationBarTitleText": "添加好友"
 			}
 		},
 		{
@@ -78,7 +78,7 @@
 			"style": {
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "环信"
+				"navigationBarTitleText": "消息"
 			}
 		},
 		{
@@ -119,7 +119,7 @@
 			"style": {
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "环信"
+				"navigationBarTitleText": "设置"
 			}
 		},
 		{

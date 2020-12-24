@@ -18,6 +18,7 @@
 	background-color: #fff;
 	border-radius: 16px;
 	flex: 1;
+	max-height: 200rpx;
 	min-height: 60rpx;
 }
 

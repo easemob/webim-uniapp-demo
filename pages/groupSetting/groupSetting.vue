@@ -5,12 +5,20 @@
         <image src="/static/images/groupTheme.png"></image>
         <view>
           <p>{{ groupName }}</p>
-          <p style="color:#a3a3a3">{{ groupDec }}</p>
+          <p style="color: #a3a3a3">{{ groupDec }}</p>
         </view>
       </view>
       <view class="group-member">
-        <p class="pd-10" style="margin:5px 0 20px 5px">群组成员</p>
-        <view v-for="(item, index) in groupMember" :key="index" style="display:inline-block">
+        <view style="padding:10px">
+          <text class="textd-10" style="margin: 5px 0 20px 5px">群组成员</text>
+          <text style="float:right">{{ groupCount }}人</text>
+        </view>
+
+        <view
+          v-for="(item, index) in groupMember"
+          :key="index"
+          style="display: inline-block"
+        >
           <view class="member-list">
             <image src="/static/images/theme2x.png"></image>
             <text>{{ item.member || item.owner }}</text>
@@ -26,10 +34,16 @@
             placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;"
             auto-focus
           />
-          <button style="background:#0091FF;width:100px" type="primary" @tap="addGroupMembers">发送邀请</button>
+          <button
+            style="background: #0091ff; width: 100px"
+            type="primary"
+            @tap="addGroupMembers"
+          >
+            发送邀请
+          </button>
         </view>
       </view>
-       <view class="group-name">
+      <view class="group-name">
         <text class="pd-10">群名称</text>
         <text class="item-name">{{ groupName }}</text>
       </view>
@@ -50,7 +64,7 @@
 </template>
 
 <script>
-import Image from '../../components/chat/inputbar/suit/image/image.vue';
+import Image from "../../components/chat/inputbar/suit/image/image.vue";
 var WebIM = require("../../utils/WebIM")["default"];
 let disp = require("../../utils/broadcast");
 
@@ -69,6 +83,8 @@ export default {
       // 当前群管理员
       groupDec: "",
       // 群描述
+      groupCount: "",
+      //群人数
       addFriendName: [],
       isOwner: false,
     };
@@ -110,6 +126,7 @@ export default {
           if (resp && resp.data) {
             me.setData({
               groupMember: resp.data,
+              groupCount: resp.count,
             });
           }
         },

@@ -10,7 +10,7 @@
 	</view>
 	<view :class="'login_pwd ' + psdFocus">
 		<input :type="type == 'password' ? 'text' : type" :password="!showPassword" placeholder="用户密码" placeholder-style="color:rgb(173,185,193)" @input="bindPassword" @focus="onFocusPsd" @blur="onBlurPsd">
-    <image class="psdIcon" :src="!showPassword ? '/static/images/eye.png' : '/static/images/eye-fill.png'" @tap="showPassword = !showPassword"></image>
+    <image class="psdIcon" :src="showPassword ? '/static/images/eye.png' : '/static/images/eye-fill.png'" @tap="showPassword = !showPassword"></image>
 	</view>
 	<view class="login_btn">
 		<button hover-class="btn_hover" @tap="login">登录</button>
