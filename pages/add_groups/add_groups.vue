@@ -40,7 +40,7 @@
 	</view> -->
 	<!-- 获取需要邀请的好友列表 -->
 	<view class="friend_list">
-		<view style="padding:10px 0">
+		<view style="padding:10px 0;border-top:10px solid #f2f2f2">
 			<text class="invite_text">邀请好友</text>
 			<checkbox-group class="checkbox-group" @change="inviteFriendFun">
 				<label class="checkbox labelStyle" v-for="(item, index) in friendList" :key="index">

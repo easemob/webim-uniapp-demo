@@ -8,7 +8,7 @@
       ref="chatSuitMain"
       :username="username"
       :chatType="chatType"
-      @inputFocused="cancelEmoji"
+      @inputFocused="closeAllModal"
       @openEmoji="openEmoji"
       @openRecordModal="toggleRecordModal"
       @openFunModal="openFunModal"
@@ -211,6 +211,10 @@ export default {
         showFunModal: FUNMODAL_STATUS.CLOSED,
       });
       this.cancelEmoji()
+    },
+    closeAllModal(){
+      this.cancelEmoji()
+      this.closeFunModal()
     },
     edit_group() {
       var nameList = {

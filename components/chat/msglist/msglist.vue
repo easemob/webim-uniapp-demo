@@ -130,7 +130,7 @@ export default {
       });
     }
 	
-	this.username = uni.username;
+	  this.username = uni.username;
     let username = this.username;
     let myUsername = uni.getStorageSync("myUsername");
     let sessionKey = username.groupId ? username.groupId + myUsername : username.your + myUsername;

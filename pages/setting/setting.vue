@@ -1,8 +1,5 @@
 <template>
 <view>
-<view class="setting_title">
-	<text>设置</text>
-</view>
 
 <view class="setting_head">
 	<view class="head_pic">
