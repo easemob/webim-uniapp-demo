@@ -89,7 +89,7 @@
 						}
 						if (filetype.toLowerCase() in allowType || res.type in allowType) {
 							uni.uploadFile({
-								url: "https://a1-hsb.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
+								url: "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
 								filePath: tempFilePaths[0],
 								fileType: 'image',
 								name: "file",
