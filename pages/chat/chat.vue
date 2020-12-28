@@ -462,7 +462,7 @@ export default {
         let array = [];
         let lastChatMsg;
 
-        for (let i = historyChatMsgKeys.length; i--; ) {
+        for (let i = historyChatMsgKeys.length; i>0, i--; ) {
           let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9));
           if (index > -1) {
             let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
@@ -509,12 +509,11 @@ export default {
           ) {
             lastChatMsg.groupName = me.groupName[lastChatMsg.info.to];
           }
-          lastChatMsg &&
-            lastChatMsg.username != myName &&
+          lastChatMsg && lastChatMsg.username != myName &&
             array.push(lastChatMsg);
         }
 
-        for (let i = newChatMsgKeys.length; i--; ) {
+        for (let i = newChatMsgKeys.length;i>0, i--; ) {
           let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
           if (newChatMsgs.length) {
             lastChatMsg = newChatMsgs[newChatMsgs.length - 1];

@@ -35,6 +35,7 @@ page {
 	text-align: center;
 	line-height: 32rpx;
 	padding: 2rpx;
+	z-index: 99;
 }
 .em-unread-spot2{
 	height: 32rpx;
@@ -49,6 +50,7 @@ page {
 	text-align: center;
 	line-height: 32rpx;
 	padding: 2rpx;
+	z-index: 99;
 }
 .em-unread-spot-litleFont {
 	font-size: 16rpx;
