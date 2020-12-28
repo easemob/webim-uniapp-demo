@@ -162,7 +162,7 @@
             'em-unread-spot ' +
             (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
           "
-          >{{ unReadSpotNum + unReadTotalNotNum }}</view
+          >{{ unReadSpotNum == '99+'?unReadSpotNum:unReadSpotNum+ unReadTotalNotNum }}</view
         >
         <image
           :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
@@ -692,7 +692,7 @@ export default {
 
     del_chat: function (event) {
       let detail = event.currentTarget.dataset.item;
-      let nameList;
+      let nameList = {};
       let me = this;
       // 删除当前选中群组聊天列表
       if (detail.chatType == "groupchat" || detail.chatType == "chatRoom") {
@@ -722,14 +722,17 @@ export default {
             uni.removeStorageSync(nameList.your + myName);
             uni.removeStorageSync("rendered_" + nameList.your + myName);
             uni.removeStorageSync(nameList.your);
-            if (currentPage[0]) {
-              currentPage[0].onShow();
-            }
-            me.getChatList();
+            console.log('currentPage>>',currentPage[0]);
+            // if (Object.keys(currentPage[0]).length>0) {
+            //   currentPage[0].onShow();
+            // }
             disp.fire("em.chat.session.remove");
+            me.getChatList();
           }
         },
-        fail: function (err) {},
+        fail: function (err) {
+          console.log('删除列表',err);
+        },
       });
     },
     longpress: function (e) {

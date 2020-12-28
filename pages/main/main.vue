@@ -122,7 +122,7 @@
             'em-unread-spot ' +
             (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
           "
-          >{{ unReadSpotNum + unReadTotalNotNum }}</view
+          >{{ unReadSpotNum == '99+'?unReadSpotNum:unReadSpotNum+ unReadTotalNotNum }}</view
         >
         <image
           :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"

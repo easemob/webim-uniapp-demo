@@ -163,6 +163,7 @@ page{
 	font-size: 25rpx;
 	text-align: center;
 	padding: 3rpx;
+	z-index: 999;
 }
 .list_word {
 	height: 40rpx;

@@ -9,8 +9,9 @@
 	</view>
 	<!-- 群简介 -->
 	<view class="create_textarea">
+    <text>群简介</text>
 		<view>
-			<textarea @input="getGroupDec" placeholder="群简介" auto-focus placeholder-style="line-height:20px;font-size:12px;"></textarea>
+			<textarea @input="getGroupDec" placeholder="添加更多备注信息" auto-focus placeholder-style="line-height:20px;font-size:12px;"></textarea>
 		</view>
 	</view>
 	<!-- 此版本注释 -->
@@ -187,9 +188,9 @@ export default {
             title: "添加成功",
             duration: 2000,
             success: function (res) {
-              setTimeout(() => uni.navigateTo({
-                url: "../groups/groups?myName=" + me.owner
-              }), 2000);
+              setTimeout(() => uni.redirectTo({
+                url: "../main/main?myName=" + uni.getStorageSync("myUsername")
+              }), 1000);
             }
           });
         },

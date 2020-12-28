@@ -16,7 +16,7 @@
 
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
-		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum + unReadTotalNotNum }}</view>
+		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum == '99+'?unReadSpotNum:unReadSpotNum+ unReadTotalNotNum }}</view>
 		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/sessionhighlight2x.png"></image>
 		<text class="activeText">消息</text>
 	</view>
