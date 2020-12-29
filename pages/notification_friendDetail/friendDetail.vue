@@ -84,6 +84,9 @@ export default {
 
     });
   },
+  onShow(){
+    uni.hideHomeButton()
+  },
 
   methods: {
     removeAndRefresh(removeId) {

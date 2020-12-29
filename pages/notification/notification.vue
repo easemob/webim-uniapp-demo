@@ -57,6 +57,9 @@ export default {
   components: {},
   props: {},
 
+  mounted(){
+
+  },
   onLoad(option) {
     let me = this; //监听加好友申请
 
@@ -101,12 +104,12 @@ export default {
 
   methods: {
     into_friendNot: function () {
-      uni.navigateTo({
+      uni.redirectTo({
         url: "../notification_friendDetail/friendDetail?myName=" + uni.getStorageSync("myUsername")
       });
     },
     into_groupNot: function () {
-      uni.navigateTo({
+      uni.redirectTo({
         url: "../notification_groupDetail/groupDetail?myName=" + uni.getStorageSync("myUsername")
       });
     },

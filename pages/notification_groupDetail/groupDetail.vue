@@ -73,11 +73,8 @@ export default {
 
   onShow() {
     // getApp().globalData.saveGroupInvitedList = [];
+    uni.hideHomeButton()
     this.listGroups();
-  },
-
-  mounted() {
-    console.log("21", this.groupList);
   },
 
   methods: {
