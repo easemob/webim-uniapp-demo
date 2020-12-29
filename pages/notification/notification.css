@@ -41,4 +41,5 @@ page{
 	text-align: center;
 	font-size: 24rpx;
 	top: 38rpx;
+	z-index: 99;
 }

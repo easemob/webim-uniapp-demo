@@ -528,13 +528,7 @@ export default {
     });
     this.globalData.checkIsIPhoneX();
   },
-  onHide() {
-    console.log("执行了");
-    WebIM.conn.close();
-    uni.redirectTo({
-      url: "../login/login",
-    });
-  },
+
   methods: {},
 };
 </script>
