@@ -21,7 +21,6 @@
 			"path": "pages/notification_friendDetail/friendDetail",
 			"style": {
 				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
 				"backgroundTextStyle": "light",
 				"navigationBarTitleText": "加好友申请"
 			}
@@ -134,7 +133,8 @@
 			"style": {
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "群信息"
+				"navigationBarTitleText": "群聊",
+				"enablePullDownRefresh": true
 			}
 			// "style": {
 			// 	"navigationBarTitleText": "uni-app",

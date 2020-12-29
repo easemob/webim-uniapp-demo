@@ -175,7 +175,7 @@ export default {
       this.removeAndRefresh(event.currentTarget.dataset.from);
     },
     into_chat() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: "../chat/chat",
       });
   }

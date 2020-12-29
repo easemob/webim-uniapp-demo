@@ -163,7 +163,7 @@ export default {
     },
 
     into_chat() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: "../chat/chat",
       });
     },
