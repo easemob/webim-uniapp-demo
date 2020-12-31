@@ -55,7 +55,7 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
       value: receiveMsg.data
     };
   } 
-  else if (type == msgType.INFORM) { // 通知消息
+  else if (type == 'INFORM') { // 通知消息
     sendableMsg = {
       body: {
         from: receiveMsg.from,

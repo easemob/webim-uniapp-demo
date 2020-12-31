@@ -239,7 +239,6 @@ export default {
           icon: "none",
           duration: 2000,
         });
-        return;
         uni.redirectTo({
           url: "../login/login",
         });
@@ -264,16 +263,14 @@ export default {
         //console.log('已读', message)
       },
 
+      //onPresence为旧版 ，建议参考最新增删好友api文档 ：http://docs-im.easemob.com/im/web/basics/buddy
       onPresence(message) {
-        //console.log("onPresence", message);
+
         switch (message.type) {
           case "unsubscribe":
             break;
           // 好友邀请列表
           case "subscribe":
-            if (message.status === "[resp:true]") {
-            } else {
-              // pages[0].handleFriendMsg(message);
               for (let i = 0; i < me.globalData.saveFriendList.length; i++) {
                 if (me.globalData.saveFriendList[i].from === message.from) {
                   me.globalData.saveFriendList[i] = message;
@@ -281,10 +278,9 @@ export default {
                   return;
                 }
               }
-              msgStorage.saveReceiveMsg(message, msgType.INFORM); //存添加好友消息，方便展示通知
+              msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
               me.globalData.saveFriendList.push(message);
               disp.fire("em.subscribe");
-            }
 
             break;
 
@@ -297,10 +293,6 @@ export default {
             break;
 
           case "unsubscribed":
-            // uni.showToast({
-            // 	title: "已拒绝",
-            // 	duration: 1000
-            // });
             disp.fire("em.unsubscribed");
             break;
           case "direct_joined":
@@ -320,31 +312,7 @@ export default {
           case "invite":
             me.globalData.saveGroupInvitedList.push(message);
             disp.fire("em.invite.joingroup", message);
-            msgStorage.saveReceiveMsg(message, msgType.INFORM); //存添加好友消息，方便展示通知
-            // let info = message.from + "邀请你加入群组";
-            // uni.showModal({
-            //   title: "提示",
-            //   content: info,
-            //   success(res) {
-            //     if (res.confirm) {
-            //       console.log("用户点击确定");
-            //       WebIM.conn.agreeInviteIntoGroup({
-            //         invitee: WebIM.conn.context.userId,
-            //         groupId: message.gid,
-            //         success: () => {
-            //           saveGroups()
-            //           console.log("加入成功");
-            //         }
-            //       });
-            //     } else if (res.cancel) {
-            //       console.log("用户点击取消");
-            //       WebIM.conn.rejectInviteIntoGroup({
-            //         invitee: WebIM.conn.context.userId,
-            //         groupId: message.gid
-            //       });
-            //     }
-            //   }
-            // });
+            msgStorage.saveReceiveMsg(message,'INFORM'); //存添加好友消息，方便展示通知
             break;
           case "unavailable":
             disp.fire("em.contacts.remove");
@@ -473,7 +441,6 @@ export default {
       // 各种异常
       onError(error) {
         console.log(error); // 16: server-side close the websocket connection
-
         // if (error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED) {
         //   // if(error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED && !logout){
         //   // if(WebIM.conn.autoReconnectNumTotal < WebIM.conn.autoReconnectNumMax){

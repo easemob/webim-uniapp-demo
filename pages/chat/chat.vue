@@ -689,6 +689,22 @@ export default {
       });
     },
 
+    removeAndRefresh:function(event){
+     let removeId = event.currentTarget.dataset.item.info.from
+     let ary = getApp().globalData.saveFriendList
+     let idx
+      console.log('etApp().globalData.saveFriendLis>>',getApp().globalData.saveFriendList);
+    if (ary.length>0) {
+      ary.forEach((v,k)=>{
+        if (v.from == removeId) {
+          idx = k
+        }
+      })
+      getApp().globalData.saveFriendList.splice(idx, 1);
+    }
+      uni.removeStorageSync('INFORM')
+    },
+
     del_chat: function (event) {
       let detail = event.currentTarget.dataset.item;
       let nameList = {};
@@ -720,7 +736,7 @@ export default {
           if (res.confirm) {
             uni.removeStorageSync(nameList.your + myName);
             uni.removeStorageSync("rendered_" + nameList.your + myName);
-            uni.removeStorageSync(nameList.your);
+            nameList.your === 'INFORM' && me.removeAndRefresh(event);
             console.log('currentPage>>',currentPage[0]);
             // if (Object.keys(currentPage[0]).length>0) {
             //   currentPage[0].onShow();
