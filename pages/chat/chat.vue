@@ -693,7 +693,6 @@ export default {
      let removeId = event.currentTarget.dataset.item.info.from
      let ary = getApp().globalData.saveFriendList
      let idx
-      console.log('etApp().globalData.saveFriendLis>>',getApp().globalData.saveFriendList);
     if (ary.length>0) {
       ary.forEach((v,k)=>{
         if (v.from == removeId) {
@@ -737,7 +736,6 @@ export default {
             uni.removeStorageSync(nameList.your + myName);
             uni.removeStorageSync("rendered_" + nameList.your + myName);
             nameList.your === 'INFORM' && me.removeAndRefresh(event);
-            console.log('currentPage>>',currentPage[0]);
             // if (Object.keys(currentPage[0]).length>0) {
             //   currentPage[0].onShow();
             // }

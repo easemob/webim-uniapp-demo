@@ -310,8 +310,16 @@ export default {
             });
             break;
           case "invite":
+            // 防止重复添加
+            for (let i = 0; i < me.globalData.saveGroupInvitedList.length; i++) {
+                if (me.globalData.saveGroupInvitedList[i].from === message.from) {
+                  me.globalData.saveGroupInvitedList[i] = message;
+                  disp.fire("em.invite.joingroup")
+                  return;
+                }
+              }
             me.globalData.saveGroupInvitedList.push(message);
-            disp.fire("em.invite.joingroup", message);
+            disp.fire("em.invite.joingroup");
             msgStorage.saveReceiveMsg(message,'INFORM'); //存添加好友消息，方便展示通知
             break;
           case "unavailable":
