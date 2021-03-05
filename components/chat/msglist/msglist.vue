@@ -138,9 +138,9 @@ export default {
     this.renderMsg(null, null, chatMsg, sessionKey);
     uni.setStorageSync(sessionKey, null);
     disp.on('em.error.sendMsgErr', function (err) {
-      curMsgMid = err.data.mid;
+      // curMsgMid = err.data.mid;
       isFail = true;
-      return;
+      // return;
       console.log('发送失败了');
       let msgList = me.chatMsg;
       msgList.map(item => {
@@ -153,10 +153,10 @@ export default {
         }
       });
 
-      if (me.curChatMsg[0].mid == curMsgMid) {
-        me.curChatMsg[0].msg.data[0].isShow = false;
-        me.curChatMsg[0].isShow = false;
-      }
+      // if (me.curChatMsg[0].mid == curMsgMid) {
+      //   me.curChatMsg[0].msg.data[0].isShow = false;
+      //   me.curChatMsg[0].isShow = false;
+      // }
 
       uni.setStorageSync("rendered_" + sessionKey, msgList);
     });

@@ -161,16 +161,12 @@ export default {
         // msg.setGroup("groupchat");
 		msg.setChatType("groupchat");
       }
-      try {
         WebIM.conn.send(msg.body);
         let obj = {
           msg: msg,
           type: msgType.TEXT,
         };
         this.saveSendMsg(obj);
-      } catch (error) {
-        console.log("error", error);
-      }
       this.userMessage = "";
       this.inputMessage = "";
       uni.hideKeyboard();
