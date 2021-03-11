@@ -99,7 +99,7 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
         to: receiveMsg.to,
         type: receiveMsg.type,
         ext: receiveMsg.ext,
-        chatType: type,
+        chatType: receiveMsg.type,
         toJid: "",
         body: {
           type: type,
@@ -123,7 +123,7 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
         to: receiveMsg.to,
         type: receiveMsg.type,
         ext: receiveMsg.ext,
-        chatType: type,
+        chatType: receiveMsg.type,
         toJid: "",
         body: {
           type: type,
