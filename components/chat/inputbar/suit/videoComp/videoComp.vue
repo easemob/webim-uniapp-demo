@@ -6,6 +6,7 @@
 let WebIM = require("../../../../../utils/WebIM")["default"];
 let msgType = require("../../../msgtype");
 let msgStorage = require("../../../msgstorage");
+let disp = require("../../../../../utils/broadcast");
 
 export default {
   data() {
@@ -56,21 +57,26 @@ export default {
               var data = res.data;
               var dataObj = JSON.parse(data);
               var id = WebIM.conn.getUniqueId(); // 生成本地消息id
-              var msg = new WebIM.message("video", id);
+              var msg = new WebIM.message(msgType.VIDEO, id);
               msg.set({
                 apiUrl: WebIM.config.apiURL,
+                accessToken: token,
                 body: {
-                  type: "video",
+                  type: msgType.VIDEO,
                   url: dataObj.uri + "/" + dataObj.entities[0].uuid,
                   filetype: "mp4",
                   filename: tempFilePaths,
+									accessToken: token,
                 },
                 from: me.username.myName,
                 to: me.getSendToParam(),
                 roomType: false,
                 chatType: me.chatType,
+                success: function (argument) {
+									disp.fire('em.chat.sendSuccess', id);
+								}
               });
-              if (me.chatType == msgType.chatType.CHAT_ROOM) {
+              if (me.isGroupChat()) {
                 msg.setGroup("groupchat");
               }
               WebIM.conn.send(msg.body);
