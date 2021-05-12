@@ -1,86 +1,153 @@
 <template>
-<view>
-<view :class="'main_title ' + (gotop? 'main_title_hide':'main_title_show')">
-	<text>联系人</text>
-</view>
+  <view>
+    <view>
+      <view class="search" v-if="search_btn">
+        <view @tap="openSearch">
+          <icon type="search" size="12"></icon>
+          <text>搜索</text>
+        </view>
+      </view>
+    </view>
 
-<view class="main_body">
-<view>
-	<!-- 左侧列表内容部分 -->
-	<scroll-view :class="'content ' + (gotop? (isIPX? 'goTopX': 'goTop'): 'goback')" enable-back-to-top :scroll-into-view="toView" scroll-y="true" scroll-with-animation="true" :style="'padding-bottom: ' + (isIPX?'270rpx':'226rpx')"> 
-		<!-- search -->
-		<view class="search" v-if="search_btn">
-			<view @tap="openSearch">
-				<icon type="search" size="13"></icon>
-				<text>搜索</text>
-			</view>
-		</view>
-		<view class="search_input" v-if="search_friend">
-			<view>
-				<icon type="search" size="13"></icon>
-				<input placeholder="搜索" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />
-					<icon type="clear" size="13" @tap.stop="clearInput" v-if="show_clear"></icon>
-			</view>
-			<text @tap="cancel">取消</text>
-		</view>
-		<view class="contain">
-			<view class="otherItem" @tap="add_new">
-				<image src="/static/images/invite_theme2x.png" data-username="name"></image>
-				<text>添加好友</text>
-			</view>
-			<view class="otherItem" @tap="into_groups">
-				<image src="/static/images/group2x.png"></image>
-				<text>群组</text>
-			</view>
-		</view>
+    <view class="main_body">
+      <view>
+        <!-- 左侧列表内容部分 -->
+        <scroll-view
+          :class="
+            'content ' + (gotop ? (isIPX ? 'goTopX' : 'goTop') : 'goback')
+          "
+          enable-back-to-top
+          :scroll-into-view="toView"
+          scroll-y="true"
+          scroll-with-animation="true"
+          :style="'padding-bottom: ' + (isIPX ? '270rpx' : '226rpx')"
+        >
+          <!-- search -->
 
-	    <view v-for="(group, id) in listMain" :key="id" :id="'inToView'+group.id" :data-id="group.id"> 
-	      <view class="address_top">{{group.region}}</view> 
-	        <view v-for="(item, brandId) in group.brands" :key="brandId" :data-username="item.name" @tap.stop="delete_friend"> 
-				<swipe-delete>
-					<view class="tap_mask" @tap.stop="into_room" :data-username="item.name">
-			          	<view class="address_bottom" :data-username="item.name" @tap.stop="into_room">
-							<image src="/static/images/theme2x.png" @tap.stop="into_room" :data-username="item.name"></image>
-				          	<text @tap.stop="into_room" :data-username="item.name">{{item.name}}</text>
-			      		</view>
-		      		</view>
-	      		</swipe-delete>
-	        </view> 
-	    </view> 
-	  </scroll-view> 
-	  <!-- 右侧字母导航 -->
-	  <view class="orientation_region"> 
-	     	 <block v-for="(item, id) in listMain" :key="id"> 
-		        <view :class="'orientation_city ' + (isActive==item.id ? 'active':'' )" @tap="scrollToViewFn" :data-id="item.id">{{item.region}}</view> 
-	    	</block> 
-	  </view>  
-	</view>
-</view>
+          <view class="search_input" v-if="search_friend">
+            <view>
+              <icon type="search" size="13"></icon>
+              <input
+                placeholder="搜索"
+                placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;"
+                auto-focus
+                confirm-type="search"
+                type="text"
+                @confirm="onSearch"
+                @input="onInput"
+                :value="input_code"
+              />
+              <icon
+                type="clear"
+                size="13"
+                @tap.stop="clearInput"
+                v-if="show_clear"
+              ></icon>
+            </view>
+            <text @tap="cancel">取消</text>
+          </view>
+          <view class="contain">
+            <view class="otherItem" @tap="add_new">
+              <image
+                src="/static/images/invite_theme2x.png"
+                data-username="name"
+              ></image>
+              <text>添加好友</text>
+            </view>
+            <view class="otherItem" @tap="into_groups">
+              <image src="/static/images/groupTheme.png"></image>
+              <text>群组</text>
+            </view>
+          </view>
 
-<view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
-	<view class="tableBar" @tap="tab_chat">
-		<view v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
-		<image :class="unReadSpotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/session2x.png"></image>
-		<text>聊天</text>
-	</view>
+          <view
+            v-for="(group, id) in listMain"
+            :key="id"
+            :id="'inToView' + group.id"
+            :data-id="group.id"
+          >
+            <view class="address_top">{{ group.region }}</view>
+            <view
+              v-for="(item, brandId) in group.brands"
+              :key="brandId"
+              :data-username="item.name"
+              @tap.stop="delete_friend"
+            >
+              <swipe-delete>
+                <view
+                  class="tap_mask"
+                  @tap.stop="into_room"
+                  :data-username="item.name"
+                >
+                  <view
+                    class="address_bottom"
+                    :data-username="item.name"
+                    @tap.stop="into_room"
+                  >
+                    <image
+                      src="/static/images/theme2x.png"
+                      @tap.stop="into_room"
+                      :data-username="item.name"
+                    ></image>
+                    <text @tap.stop="into_room" :data-username="item.name">{{
+                      item.name
+                    }}</text>
+                  </view>
+                </view>
+              </swipe-delete>
+            </view>
+          </view>
+        </scroll-view>
+        <!-- 右侧字母导航 -->
+        <view class="orientation_region">
+          <block v-for="(item, id) in listMain" :key="id">
+            <view
+              :class="
+                'orientation_city ' + (isActive == item.id ? 'active' : '')
+              "
+              @tap="scrollToViewFn"
+              :data-id="item.id"
+              >{{ item.region }}</view
+            >
+          </block>
+        </view>
+      </view>
+    </view>
 
-	<view class="tableBar">
-		<image src="/static/images/comtactshighlight2x.png"></image>
-		<text class="activeText">联系人</text>
-	</view>
+    <view :class="isIPX ? 'chatRoom_tab_X' : 'chatRoom_tab'">
+      <view class="tableBar" @tap="tab_chat">
+        <view
+          v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'"
+          :class="
+            'em-unread-spot ' +
+            (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
+          "
+          >{{ unReadSpotNum == '99+'?unReadSpotNum:unReadSpotNum+ unReadTotalNotNum }}</view
+        >
+        <image
+          :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
+          src="/static/images/session2x.png"
+        ></image>
+        <text>消息</text>
+      </view>
 
-	<view class="tableBar" @tap="tab_notification">
+      <view class="tableBar">
+        <image src="/static/images/comtactshighlight2x.png"></image>
+        <text class="activeText">联系人</text>
+      </view>
+
+      <!-- <view class="tableBar" @tap="tab_notification">
 		<view v-if="unReadTotalNotNum > 0" class="em-unread-spot">{{ unReadTotalNotNum }}</view>
 		<image :class="unReadTotalNotNum > 0 ? 'haveSpot': ''" src="/static/images/notice.png"></image>
 		<text>通知</text>
-	</view>
-	
-	<view class="tableBar" @tap="tab_setting">
-		<image src="/static/images/setting2x.png"></image>
-		<text>设置</text>
-	</view>
-</view>
-</view>
+	</view> -->
+
+      <view class="tableBar" @tap="tab_setting">
+        <image src="/static/images/setting2x.png"></image>
+        <text>我的</text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -89,7 +156,7 @@ let disp = require("../../utils/broadcast");
 let systemReady = false;
 let canPullDownreffesh = true;
 let oHeight = [];
-import swipeDelete from "../../comps/swipedelete/swipedelete";
+import swipeDelete from "../../components/swipedelete/swipedelete";
 
 export default {
   data() {
@@ -110,7 +177,7 @@ export default {
       isActive: null,
       listMain: [],
       listTitles: [],
-      toView: 'inToView0',
+      toView: "inToView0",
       oHeight: [],
       scroolHeight: 0,
       show_clear: false,
@@ -118,24 +185,26 @@ export default {
       isIPX: false,
       gotop: false,
       input_code: "",
-      showFixedTitile: false
+      showFixedTitile: false,
     };
   },
 
   components: {
-    swipeDelete
+    swipeDelete,
   },
   props: {},
 
   onLoad(option) {
     const me = this;
-    const app = getApp().globalData; 
+    const app = getApp().globalData;
     //监听加好友申请
 
     disp.on("em.subscribe", function () {
       me.setData({
         messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
       });
     });
     disp.on("em.contacts.remove", function (message) {
@@ -148,14 +217,19 @@ export default {
 
     disp.on("em.unreadspot", function () {
       me.setData({
-        unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum
+        unReadSpotNum:
+          getApp().globalData.unReadMessageNum > 99
+            ? "99+"
+            : getApp().globalData.unReadMessageNum,
       });
     }); //监听未读加群“通知”数
 
     disp.on("em.invite.joingroup", function () {
       me.setData({
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
       });
     });
     disp.on("em.subscribed", function () {
@@ -165,30 +239,36 @@ export default {
       }
     });
     // 监听被解除好友
-		disp.on("em.unsubscribed", function(){
+    disp.on("em.unsubscribed", function () {
       var pageStack = getCurrentPages();
-			if(pageStack[pageStack.length - 1].route === me.__route__){
-				me.getRoster();
-			}
-		});
+      if (pageStack[pageStack.length - 1].route === me.__route__) {
+        me.getRoster();
+      }
+    });
     this.setData({
-      myName: option.myName
+      myName: option.myName,
     });
   },
-	mounted(){
-		this.getRoster();
-	},
+  mounted() {
+    this.getRoster();
+  },
   onShow() {
+    uni.hideHomeButton()
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
-      unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
+      unReadSpotNum:
+        getApp().globalData.unReadMessageNum > 99
+          ? "99+"
+          : getApp().globalData.unReadMessageNum,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      unReadTotalNotNum:
+        getApp().globalData.saveFriendList.length +
+        getApp().globalData.saveGroupInvitedList.length,
     });
 
     if (getApp().globalData.isIPX) {
       this.setData({
-        isIPX: true
+        isIPX: true,
       });
     }
   },
@@ -208,10 +288,10 @@ export default {
 
           uni.setStorage({
             key: "member",
-            data: member
+            data: member,
           });
           me.setData({
-            member: member
+            member: member,
           });
 
           if (!systemReady) {
@@ -224,8 +304,7 @@ export default {
 
         error(err) {
           console.log("[main:getRoster]", err);
-        }
-
+        },
       };
 
       WebIM.conn.getRoster(rosters);
@@ -244,9 +323,9 @@ export default {
           }
 
           me.setData({
-            member: member
+            member: member,
           });
-        }
+        },
       };
 
       if (message.type == "unsubscribe" || message.type == "unsubscribed") {
@@ -254,10 +333,10 @@ export default {
           to: message.from,
           success: function () {
             WebIM.conn.unsubscribed({
-              to: message.from
+              to: message.from,
             });
             WebIM.conn.getRoster(rosters);
-          }
+          },
         });
       }
     },
@@ -269,20 +348,20 @@ export default {
           if (res.confirm == true) {
             WebIM.conn.subscribed({
               to: message.from,
-              message: "[resp:true]"
+              message: "[resp:true]",
             });
             WebIM.conn.subscribe({
               to: message.from,
-              message: "[resp:true]"
+              message: "[resp:true]",
             });
           } else {
             WebIM.conn.unsubscribed({
               to: message.from,
-              message: "rejectAddFriend"
+              message: "rejectAddFriend",
             });
           }
         },
-        fail: function (err) {}
+        fail: function (err) {},
       });
     },
     delete_friend: function (event) {
@@ -301,16 +380,15 @@ export default {
               to: delName,
             });
             uni.showToast({
-                	title: "删除成功",
-                });
-					// 删除好友后 同时清空会话
-					uni.setStorageSync(delName + myName, "");
-					uni.setStorageSync("rendered_" + delName + myName, "");
-					me.getRoster();
-					disp.fire('em.main.deleteFriend')
+              title: "删除成功",
+            });
+            // 删除好友后 同时清空会话
+            uni.setStorageSync(delName + myName, "");
+            uni.setStorageSync("rendered_" + delName + myName, "");
+            me.getRoster();
+            disp.fire("em.main.deleteFriend");
           }
-        }
-
+        },
       });
     },
     openSearch: function () {
@@ -318,13 +396,13 @@ export default {
         search_btn: false,
         search_friend: true,
         show_mask: true,
-        gotop: true
+        gotop: true,
       });
     },
     clearInput: function () {
       this.setData({
-        input_code: '',
-        show_clear: false
+        input_code: "",
+        show_clear: false,
       });
     },
     onInput: function (e) {
@@ -332,11 +410,11 @@ export default {
 
       if (inputValue) {
         this.setData({
-          show_clear: true
+          show_clear: true,
         });
       } else {
         this.setData({
-          show_clear: false
+          show_clear: false,
         });
       }
     },
@@ -344,8 +422,7 @@ export default {
       this.setData({
         search_btn: true,
         search_friend: false,
-        gotop: false //show_mask: false
-
+        gotop: false, //show_mask: false
       });
       this.getBrands(this.member);
     },
@@ -362,54 +439,54 @@ export default {
     },
     add_new: function () {
       uni.navigateTo({
-        url: "../add_new/add_new"
+        url: "../add_new/add_new",
       });
     },
     tab_chat: function () {
       uni.redirectTo({
-        url: "../chat/chat"
+        url: "../chat/chat",
       });
     },
     close_mask: function () {
       this.setData({
         search_btn: true,
-        search_friend: false //show_mask: false
-
+        search_friend: false, //show_mask: false
       });
     },
     tab_setting: function () {
       uni.redirectTo({
-        url: "../setting/setting"
+        url: "../setting/setting",
       });
     },
     tab_notification: function () {
       uni.redirectTo({
-        url: "../notification/notification"
+        url: "../notification/notification",
       });
     },
     into_inform: function () {
       uni.navigateTo({
-        url: "../inform/inform?myName=" + this.myName //uni.getStorageSync("myUsername")
-
+        url: "../inform/inform?myName=" + this.myName, //uni.getStorageSync("myUsername")
       });
     },
     into_groups: function () {
       uni.navigateTo({
-        url: "../groups/groups?myName=" + this.myName
+        url: "../groups/groups?myName=" + this.myName,
       });
     },
     into_room: function (event) {
       var nameList = {
         myName: this.myName,
-        your: event.target.dataset.username
+        your: event.target.dataset.username,
       };
       uni.navigateTo({
-        url: "../chatroom/chatroom?username=" + JSON.stringify(nameList)
+        url: "../chatroom/chatroom?username=" + JSON.stringify(nameList),
       });
     },
     into_info: function (event) {
       uni.navigateTo({
-        url: "../friend_info/friend_info?yourname=" + event.target.dataset.username
+        url:
+          "../friend_info/friend_info?yourname=" +
+          event.target.dataset.username,
       });
     },
     //点击右侧字母导航定位触发
@@ -421,7 +498,7 @@ export default {
         if (that.listMain[i].id === _id) {
           that.setData({
             isActive: _id,
-            toView: 'inToView' + _id
+            toView: "inToView" + _id,
           });
           break;
         }
@@ -433,11 +510,11 @@ export default {
       const that = this;
       const reg = /[a-z]/i;
 
-      member.forEach(item => {
+      member.forEach((item) => {
         if (reg.test(item.name.substring(0, 1))) {
           item.initial = item.name.substring(0, 1).toUpperCase();
         } else {
-          item.initial = '#';
+          item.initial = "#";
         }
       });
       member.sort((a, b) => a.initial.charCodeAt(0) - b.initial.charCodeAt(0));
@@ -447,15 +524,15 @@ export default {
       for (var i = 0; i < member.length; i++) {
         var newBrands = {
           brandId: member[i].jid,
-          name: member[i].name
+          name: member[i].name,
         };
 
-        if (member[i].initial == '#') {
+        if (member[i].initial == "#") {
           if (!lastObj) {
             var lastObj = {
               id: i,
-              region: '#',
-              brands: []
+              region: "#",
+              brands: [],
             };
           }
 
@@ -466,7 +543,7 @@ export default {
             var newObj = {
               id: i,
               region: someTtitle,
-              brands: []
+              brands: [],
             };
             someArr.push(newObj);
           }
@@ -475,7 +552,6 @@ export default {
         }
       }
 
-      ;
       someArr.sort((a, b) => a.region.charCodeAt(0) - b.region.charCodeAt(0));
 
       if (lastObj) {
@@ -483,37 +559,40 @@ export default {
       }
       //赋值给列表值
       that.setData({
-        listMain: someArr
+        listMain: someArr,
       }); //赋值给当前高亮的isActive
 
       that.setData({
-        isActive: someArr.length > 0 ? someArr[0].id : '',
+        isActive: someArr.length > 0 ? someArr[0].id : "",
       }); //计算分组高度,uni.createSelectotQuery()获取节点信息
 
       let number = 0;
 
       for (let j = 0; j < someArr.length; ++j) {
-        const query = uni.createSelectorQuery().in(this)
-        query.select(`#inToView${someArr[j].id}`).boundingClientRect(rect => {
-          if (rect) {
-             number = rect.height + number;
-          var newArry = [{
-            'height': number,
-            'key': rect.dataset.id,
-            "name": someArr[j].region
-          }];
-          oHeight = oHeight.concat(newArry);
-          }else{
-            this.$nextTick(()=>{
-              //this.getBrands(member)
-            })
-          }
-        }).exec();
+        const query = uni.createSelectorQuery().in(this);
+        query
+          .select(`#inToView${someArr[j].id}`)
+          .boundingClientRect((rect) => {
+            if (rect) {
+              number = rect.height + number;
+              var newArry = [
+                {
+                  height: number,
+                  key: rect.dataset.id,
+                  name: someArr[j].region,
+                },
+              ];
+              oHeight = oHeight.concat(newArry);
+            } else {
+              this.$nextTick(() => {
+                //this.getBrands(member)
+              });
+            }
+          })
+          .exec();
       }
-
-      ;
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

@@ -15,8 +15,9 @@
 </view>
 <view class="contain">
 	<view class="build_group" @tap="build_group">
-		<image src="/static/images/chat-list.png"></image>
-		<text>新建群聊</text>
+		<image src="/static/images/invite_theme2x.png"></image>
+		<text style="">新建群聊</text>
+    <image style="margin:20px 15px" class="next2" src="/static/images/next2.png"></image>
 	</view>
 	<!-- <view class="add_group">
 		<image src="../../static/images/cell_groups.png"></image>
@@ -25,15 +26,14 @@
 	<!-- <view class="line"></view> -->
 	<!-- 群聊列表 -->
 	<view v-for="(item, groupid) in groupList" :key="groupid" class="groupList">
-		<view class="nbr_header"></view>
 		<view class="info">
-			<image src="/static/images/number.png" :data-username="item.groupname"></image>
+			<image src="/static/images/groupTheme.png" :data-username="item.groupname"></image>
 		</view>
 		<view class="nbr_body" :data-username="item.groupname" :data-roomid="item.groupid" @tap="into_room">
 			<text :data-username="item.groupname">{{ item.groupname }}</text>
 		</view>
 		<view class="edit" @tap="edit_group" :data-username="item.groupname" :data-roomid="item.groupid">
-			<image src="/static/images/cell_groups.png" :data-username="item.groupname"></image>
+			<image src="/static/images/edit.png" :data-username="item.groupname"></image>
 		</view>
 	</view>
 </view>

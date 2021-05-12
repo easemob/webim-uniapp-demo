@@ -1,8 +1,5 @@
 <template>
 <view>
-<view class="setting_title">
-	<text>设置</text>
-</view>
 
 <view class="setting_head">
 	<view class="head_pic">
@@ -29,9 +26,9 @@
 
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
-		<view v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
+		<view v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum +  unReadTotalNotNum }}</view>
 		<image :class="unReadSpotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/session2x.png"></image>
-		<text>聊天</text>
+		<text>消息</text>
 	</view>
 
 	<view class="tableBar" @tap="tab_contact">
@@ -39,15 +36,15 @@
 		<text>联系人</text>
 	</view>
 
-	<view class="tableBar" @tap="tab_notification">
+	<!-- <view class="tableBar" @tap="tab_notification">
 		<view v-if="unReadTotalNotNum > 0" class="em-unread-spot">{{ unReadTotalNotNum }}</view>
 		<image :class="unReadTotalNotNum > 0 ? 'haveSpot': ''" src="/static/images/notice.png"></image>
 		<text>通知</text>
-	</view>
+	</view> -->
 	
 	<view class="tableBar">
 		<image src="/static/images/settinghighlight2x.png"></image>
-		<text class="activeText">设置</text>
+		<text class="activeText">我的</text>
 	</view>
 </view>
 </view>
@@ -99,6 +96,7 @@ export default {
   },
 
   onShow() {
+    uni.hideHomeButton()
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
@@ -139,8 +137,8 @@ export default {
         title: "是否退出登录",
         success: function (res) {
           if (res.confirm) {
+            uni.setStorageSync("INFORM",[])
             WebIM.conn.close(); // uni.closeSocket()
-
             uni.redirectTo({
               url: "../login/login"
             });

@@ -3,7 +3,7 @@
 }
 .create_input {
 	width: 100%;
-	height: 40px;
+	height: 50px;
 	background-color: #ffffff;
 	border-top: 1px solid #CFCFCF;
 }
@@ -18,17 +18,22 @@
 	width: 100%;
 	height: 100%;
 	line-height: 100%;
+	
 }
 
 .create_textarea {
 	width: 100%;
-	height: 150px;
+	height: 200px;
 	background-color: #ffffff;
 	border-top: 1px solid #CFCFCF;
 }
+.create_textarea text{
+	display: block;
+	margin: 10px;
+}
 .create_textarea view {
 	width: 100%;
-	height: 100%;
+	height: 70%;
 	line-height: 100;
 	padding: 0 10px 0 10px;
 	box-sizing: border-box;
@@ -40,6 +45,9 @@
 	height: 100%;
 	box-sizing: border-box;
 	line-height: 20px;
+	border: 1px dashed #b8b8b8;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 /*  */
@@ -70,10 +78,10 @@
 /*  */
 .friend_list {
 	margin-top: 1px;
-	background: #fff;
+	background: #ffffff;
 }
 .friend_list .checkbox-group {
-	background: #fff;
+	background: #ffffff;
 	padding: 10px;
 	box-sizing: border-box;
 }
@@ -81,7 +89,7 @@
 	display: block;
 	font-size: 14px;
 	line-height:30px;
-	margin-bottom: 8px;
+	margin-bottom: 12px;
 }
 
 .create_btn {
@@ -90,4 +98,8 @@
 .create_btn button {
 	margin: 0 auto;
 	width: calc(100% - 20px);
+}
+.labelStyle{
+	display: flex !important;
+	align-items: center;
 }

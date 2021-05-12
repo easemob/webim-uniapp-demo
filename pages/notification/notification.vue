@@ -16,9 +16,9 @@
 
 <view :class="isIPX?'chatRoom_tab_X':'chatRoom_tab'">
 	<view class="tableBar" @tap="tab_chat">
-		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum }}</view>
-		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/session2x.png"></image>
-		<text>聊天</text>
+		<view v-if="unReadSpotNum > 0" :class="'em-unread-spot ' + (unReadSpotNum == '99+'?'em-unread-spot-litleFont':'')">{{ unReadSpotNum == '99+'?unReadSpotNum:unReadSpotNum+ unReadTotalNotNum }}</view>
+		<image :class="unReadSpotNum > 0 ? 'haveSpot': ''" src="/static/images/sessionhighlight2x.png"></image>
+		<text class="activeText">消息</text>
 	</view>
 
 	<view class="tableBar" @tap="tab_contact">
@@ -26,15 +26,15 @@
 		<text>联系人</text>
 	</view>
 
-	<view class="tableBar">
+	<!-- <view class="tableBar">
 		<view v-if="unReadTotalNotNum > 0 || unReadSpotNum == '99+'" class="em-unread-spot">{{ unReadTotalNotNum }}</view>
 		<image :class="unReadTotalNotNum > 0 || unReadSpotNum == '99+'? 'haveSpot': ''" src="/static/images/noticeActive.png"></image>
 		<text class="activeText">通知</text>
-	</view>
+	</view> -->
 	
 	<view class="tableBar" @tap="tab_setting">
 		<image src="/static/images/setting2x.png"></image>
-		<text>设置</text>
+		<text>我的</text>
 	</view>
 </view>
 </view>
@@ -57,6 +57,9 @@ export default {
   components: {},
   props: {},
 
+  mounted(){
+
+  },
   onLoad(option) {
     let me = this; //监听加好友申请
 
@@ -84,6 +87,7 @@ export default {
   },
 
   onShow() {
+    uni.hideHomeButton();
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
@@ -100,12 +104,12 @@ export default {
 
   methods: {
     into_friendNot: function () {
-      uni.navigateTo({
+      uni.redirectTo({
         url: "../notification_friendDetail/friendDetail?myName=" + uni.getStorageSync("myUsername")
       });
     },
     into_groupNot: function () {
-      uni.navigateTo({
+      uni.redirectTo({
         url: "../notification_groupDetail/groupDetail?myName=" + uni.getStorageSync("myUsername")
       });
     },

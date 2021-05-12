@@ -1,0 +1,65 @@
+.room_bar {
+	width: 100%;
+	height: auto;
+	border-top: 1px solid rgba(0 0 0 0.5);
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	z-index: 999;
+	background-color: #FFFFFF;
+	transform: translateZ(1000px);
+}
+
+.other_func {
+	width: 100%;
+	/* height: 60rpx; */
+	display: flex;
+}
+.other_func_X{
+	/* height: 128rpx; */
+}
+
+.other_func image {
+	width: 54px;
+	height: 54px;
+	display: block;
+	margin-bottom: 5px;
+}
+
+.open_emoji,
+.send_image,
+.open_camera,
+.v-record {
+	margin-left: 48rpx;
+	text-align: center;
+	color: #b7b7b7;
+    font-size: 13px;
+}
+
+
+.v-record .icon-record {
+	width: 18rpx;
+	height: 40rpx;
+}
+.v-record{
+	margin-left: 48rpx;
+}
+
+.fun_list {
+	margin-top: 30px;
+	width: 100%;
+	height: 145px;
+	background-color: #dddddd;
+	padding-top: 10px;
+	padding-left: 3%;
+	display: none;
+}
+.showFunModal {
+	width: 100%;
+	height: 145px;
+	padding-top: 10px;
+	display: block;
+	background-color: #f2f2f2;
+}
+
+

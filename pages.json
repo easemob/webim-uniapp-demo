@@ -3,17 +3,16 @@
 		{
 			"path": "pages/login/login",
 			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#3E4091",
+				"navigationBarTextStyle": "white",
 				"backgroundTextStyle": "dark",
-				"navigationBarTitleText": "Easemob IM"
+				"navigationBarTitleText": "环信"
 			}
 		},
 		{
 			"path": "pages/notification_groupDetail/groupDetail",
 			"style": {
 				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
 				"backgroundTextStyle": "light",
 				"navigationBarTitleText": "加群组申请"
 			}
@@ -22,8 +21,8 @@
 			"path": "pages/notification_friendDetail/friendDetail",
 			"style": {
 				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
 				"backgroundTextStyle": "light",
+				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "加好友申请"
 			}
 		},
@@ -33,16 +32,15 @@
 				"navigationBarBackgroundColor": "#ffffff",
 				"navigationBarTextStyle": "black",
 				"backgroundTextStyle": "light",
-				"navigationBarTitleText": "Easemob IM"
+				"navigationBarTitleText": "环信"
 			}
 		},
 		{
 			"path": "pages/main/main",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "Easemob IM",
-				"enablePullDownRefresh": true
+				"navigationBarTitleText": "联系人"
 			}
 		},
 		{
@@ -60,26 +58,26 @@
 		{
 			"path": "pages/register/register",
 			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
-				"backgroundTextStyle": "light",
-				"navigationBarTitleText": "Easemob IM"
+				"navigationBarBackgroundColor": "#3E4091",
+				"navigationBarTextStyle": "white",
+				"backgroundTextStyle": "dark",
+				"navigationBarTitleText": "环信"
 			}
 		},
 		{
 			"path": "pages/add_new/add_new",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "Easemob IM"
+				"navigationBarTitleText": "添加好友"
 			}
 		},
 		{
 			"path": "pages/chat/chat",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "Easemob IM"
+				"navigationBarTitleText": "消息"
 			}
 		},
 		{
@@ -88,13 +86,13 @@
 				"navigationBarBackgroundColor": "#ffffff",
 				"navigationBarTextStyle": "black",
 				"backgroundTextStyle": "light",
-				"navigationBarTitleText": "Easemob IM"
+				"navigationBarTitleText": "环信"
 			}
 		},
 		{
 			"path": "pages/setting_general/setting_general",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "通用设置"
 			}
@@ -102,7 +100,7 @@
 		{
 			"path": "pages/groups/groups",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "群组"
 			}
@@ -110,7 +108,7 @@
 		{
 			"path": "pages/inform/inform",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "申请与通知"
 			}
@@ -118,15 +116,15 @@
 		{
 			"path": "pages/setting/setting",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "Easemob IM"
+				"navigationBarTitleText": "设置"
 			}
 		},
 		{
 			"path": "pages/add_groups/add_groups",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "创建群组"
 			}
@@ -134,9 +132,10 @@
 		{
 			"path": "pages/groupChatRoom/groupChatRoom",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "群信息"
+				"navigationBarTitleText": "群聊",
+				"enablePullDownRefresh": true
 			}
 			// "style": {
 			// 	"navigationBarTitleText": "uni-app",
@@ -161,7 +160,7 @@
 		{
 			"path": "pages/groupSetting/groupSetting",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "群信息"
 			}
@@ -169,7 +168,7 @@
 		{
 			"path": "pages/emedia/index",
 			"style": {
-				"navigationBarBackgroundColor": "#fafafa",
+				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "emedia"
 			}
@@ -180,5 +179,8 @@
 		"navigationBarBackgroundColor": "#fff",
 		"navigationBarTextStyle": "black"
 	},
+	"easycom": {
+        "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+    },
 	"subPackages": []
 }

@@ -1,43 +1,70 @@
 <template>
-<view class="group-wrap">
+  <view class="group-wrap">
     <view class="wrap">
-    <view class="group-name">
-        <text class="pd-10">群组名称</text>
-        <text class="item-name">{{ groupName }}</text>
-    </view>
-    <view class="group-name">
-        <text class="pd-10">群描述</text>
-        <view class="item-name">{{ groupDec }}</view>
-    </view>
-    <view class="group-member">
-        <text class="pd-10">群组成员</text>
-        <view v-for="(item, index) in groupMember" :key="index">
-            <view class="member-list">{{ item.member || item.owner }}</view>
+      <view class="title-card">
+        <image src="/static/images/groupTheme.png"></image>
+        <view>
+          <p>{{ groupName }}</p>
+          <p style="color: #a3a3a3">{{ groupDec }}</p>
         </view>
-    </view>
-    <view class="invite-member">
-        <text class="pd-10 invite-title">邀请群成员</text>
+      </view>
+      <view class="group-member">
+        <view style="padding:10px">
+          <text class="textd-10" style="margin: 5px 0 20px 5px">群组成员</text>
+          <text style="float:right">{{ groupCount }}人</text>
+        </view>
+
+        <view
+          v-for="(item, index) in groupMember"
+          :key="index"
+          style="display: inline-block"
+        >
+          <view class="member-list">
+            <image src="/static/images/theme2x.png"></image>
+            <text>{{ item.member || item.owner }}</text>
+          </view>
+        </view>
+      </view>
+      <view class="invite-member">
+        <!-- <text class="pd-10 invite-title">邀请群成员</text> -->
         <view class="invite-wrap">
-            <input placeholder="用户名" @input="addFriendNameFun" placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;" auto-focus>
-            <button type="primary" @tap="addGroupMembers">邀请</button>
+          <input
+            placeholder="请输入用户名"
+            @input="addFriendNameFun"
+            placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;"
+            auto-focus
+          />
+          <button
+            style="background: #0091ff; width: 100px"
+            type="primary"
+            @tap="addGroupMembers"
+          >
+            发送邀请
+          </button>
         </view>
+      </view>
+      <view class="group-name">
+        <text class="pd-10">群名称</text>
+        <text class="item-name">{{ groupName }}</text>
+      </view>
+      <view class="group-name">
+        <text class="pd-10">群简介</text>
+        <view class="item-name">{{ groupDec }}</view>
+      </view>
+      <view class="bottom-wrap">
+        <view class="disband-group" v-if="isOwner">
+          <button type="warn" @tap="dissolveGroup">解散群组</button>
+        </view>
+        <view class="exit-group" v-if="!isOwner">
+          <button type="warn" @tap="leaveGroup">退出群组</button>
+        </view>
+      </view>
     </view>
-    <!-- <view class="black-list border-bottom">
-        <text class="pd-5">群组黑名单</text>
-    </view> -->
-    <view class="bottom-wrap">
-    <view class="disband-group" v-if="isOwner">
-        <button type="warn" @tap="dissolveGroup">解散群组</button>
-    </view>
-    <view class="exit-group" v-if="!isOwner">
-        <button type="warn" @tap="leaveGroup">退出群组</button>
-    </view>
-    </view>
-    </view>
-</view>
+  </view>
 </template>
 
 <script>
+import Image from "../../components/chat/inputbar/suit/image/image.vue";
 var WebIM = require("../../utils/WebIM")["default"];
 let disp = require("../../utils/broadcast");
 
@@ -56,19 +83,20 @@ export default {
       // 当前群管理员
       groupDec: "",
       // 群描述
+      groupCount: "",
+      //群人数
       addFriendName: [],
-      isOwner: false
+      isOwner: false,
     };
   },
 
   components: {},
-  props: {},
   onLoad: function (options) {
     let me = this;
     this.setData({
       roomId: JSON.parse(options.groupInfo).roomId,
       groupName: JSON.parse(options.groupInfo).groupName,
-      currentName: JSON.parse(options.groupInfo).myName
+      currentName: JSON.parse(options.groupInfo).myName,
     });
     disp.on("em.group.leaveGroup", function () {
       var pageStack = getCurrentPages(); // 判断是否当前路由是本页
@@ -89,50 +117,51 @@ export default {
       var me = this; // 获取群成员
 
       var pageNum = 1,
-          pageSize = 1000;
+        pageSize = 1000;
       var options = {
         pageNum: pageNum,
         pageSize: pageSize,
         groupId: this.roomId,
-       success: function(resp){
-				if(resp && resp.data){
-					me.setData({
-						groupMember: resp.data
-					});
-				}
-			},
-			error: function(err){}
+        success: function (resp) {
+          if (resp && resp.data) {
+            me.setData({
+              groupMember: resp.data,
+              groupCount: resp.count,
+            });
+          }
+        },
+        error: function (err) {},
       };
       WebIM.conn.listGroupMember(options);
     },
-   getGroupInfo: function(){
-		var me = this;
-		// 获取群信息
-		var options = {
-			groupId: this.roomId,
-			success: function(resp){
-				if(resp && resp.data){
-					me.setData({
-						curOwner: resp.data[0].owner,
-						groupDec: resp.data[0].description
-					});
+    getGroupInfo: function () {
+      var me = this;
+      // 获取群信息
+      var options = {
+        groupId: this.roomId,
+        success: function (resp) {
+          if (resp && resp.data) {
+            me.setData({
+              curOwner: resp.data[0].owner,
+              groupDec: resp.data[0].description,
+            });
 
-					if(me.currentName == resp.data[0].owner){
-						me.setData({
-							isOwner: true
-						});
-					}
-				}
-			},
-			error: function(){}
-		};
-		WebIM.conn.getGroupInfo(options);
-	},
+            if (me.currentName == resp.data[0].owner) {
+              me.setData({
+                isOwner: true,
+              });
+            }
+          }
+        },
+        error: function () {},
+      };
+      WebIM.conn.getGroupInfo(options);
+    },
     addFriendNameFun: function (e) {
       var firendArr = [];
       firendArr.push(e.detail.value);
       this.setData({
-        addFriendName: firendArr
+        addFriendName: firendArr,
       });
     },
     // 加好友入群
@@ -140,17 +169,17 @@ export default {
       var me = this;
       var option = {
         users: this.addFriendName,
-			  groupId: this.roomId,
+        groupId: this.roomId,
         success: function () {
           if (me.isExistGroup(me.addFriendName, me.groupMember)) {
             uni.showToast({
               title: "已在群中",
-              duration: 2000
+              duration: 2000,
             });
           } else {
             uni.showToast({
               title: "邀请已发出",
-              duration: 2000
+              duration: 2000,
             });
           }
           me.getGroupMember();
@@ -158,9 +187,9 @@ export default {
         error: function (err) {
           uni.showToast({
             title: err.data.error_description,
-            icon:'none'
+            icon: "none",
           });
-        }
+        },
       };
       WebIM.conn.inviteToGroup(option);
     },
@@ -183,19 +212,23 @@ export default {
             duration: 2000,
             success: function (res) {
               // redirectTo = 此操作不可返回
-              setTimeout(() => uni.navigateBack({
-                url: "../groups/groups?myName=" + me.currentName
-              }), 2000);
-            }
+              setTimeout(
+                () =>
+                  uni.navigateBack({
+                    url: "../groups/groups?myName=" + me.currentName,
+                  }),
+                2000
+              );
+            },
           });
           disp.fire("em.invite.deleteGroup"); //退群
         },
         error: function (err) {
           uni.showToast({
             title: err.data.error_description,
-            icon:'none'
+            icon: "none",
           });
-        }
+        },
       });
     },
     dissolveGroup: function () {
@@ -209,21 +242,25 @@ export default {
             duration: 2000,
             success: function (res) {
               // redirectTo = 此操作不可返回
-              setTimeout(() => uni.navigateBack({
-                url: "../groups/groups?myName=" + me.currentName
-              }), 2000);
-            }
+              setTimeout(
+                () =>
+                  uni.redirectTo({
+                    url: "../chat/chat",
+                  }),
+                1000
+              );
+            },
           });
         },
         error: function (err) {
           uni.showToast({
             title: err.data.error_description,
-            icon:'none'
+            icon: "none",
           });
-        }
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

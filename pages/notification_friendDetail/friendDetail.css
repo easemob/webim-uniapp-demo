@@ -85,5 +85,11 @@ page{
 	justify-content: center;
 	color: #999999;
 }
+.black{
+	width: 80%;
+    margin: 0 auto;
+    position: relative;
+    top: 100px;
+}
 
 

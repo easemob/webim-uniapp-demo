@@ -59,7 +59,7 @@ globalData:
 
 # 项目结构
 ```shell
-|- comps 自定义组件目录
+|- components 自定义组件目录
     |-chat 聊天页面
     |-swipedelete 测滑删除
 |-static/images demo中用到的图片 还有表情

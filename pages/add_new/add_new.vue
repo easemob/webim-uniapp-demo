@@ -140,7 +140,7 @@ export default {
                 });
           } else {
              uni.showToast({
-                	title: "已经发出好友申请",
+                	title: "已发出好友申请",
                 });
           }
 

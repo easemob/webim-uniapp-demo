@@ -4,13 +4,14 @@
 	<!-- 群组名称 -->
 	<view class="create_input">
 		<view>
-			<input @input="getGroupName" placeholder="群名称" placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;" auto-focus>
+			<input @input="getGroupName" placeholder="群名称" placeholder-style="line-height:20px;font-size:12px;" auto-focus>
 		</view>
 	</view>
 	<!-- 群简介 -->
 	<view class="create_textarea">
+    <text>群简介</text>
 		<view>
-			<textarea @input="getGroupDec" placeholder="群简介" auto-focus placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;"></textarea>
+			<textarea @input="getGroupDec" placeholder="添加更多备注信息" auto-focus placeholder-style="line-height:20px;font-size:12px;"></textarea>
 		</view>
 	</view>
 	<!-- 此版本注释 -->
@@ -40,17 +41,20 @@
 	</view> -->
 	<!-- 获取需要邀请的好友列表 -->
 	<view class="friend_list">
-		<view>
+		<view style="padding:10px 0;border-top:10px solid #f2f2f2">
 			<text class="invite_text">邀请好友</text>
 			<checkbox-group class="checkbox-group" @change="inviteFriendFun">
-				<label class="checkbox" v-for="(item, index) in friendList" :key="index">
-					<checkbox :value="item.name"></checkbox>{{ item.name }}</label>
+				<label class="checkbox labelStyle" v-for="(item, index) in friendList" :key="index">
+					<checkbox :value="item.name"></checkbox>
+            <image src="/static/images/theme2x.png" style="height:40px;width:40px;margin:0 5px"/>
+            <text>{{ item.name }}</text>
+          </label>
 			</checkbox-group>
 		</view>
 	</view>
 	<!--  -->
 	<view class="create_btn">
-		<button type="primary" @tap="createGroup">创建</button>
+		<button style="background: #0091FF;" type="primary" @tap="createGroup">创建</button>
 	</view>
 </view>
 </template>
@@ -82,7 +86,7 @@ export default {
     };
   },
 
-  components: {},
+  // components: {Images},
   props: {},
   onLoad: function (options) {
     this.setData({
@@ -184,9 +188,9 @@ export default {
             title: "添加成功",
             duration: 2000,
             success: function (res) {
-              setTimeout(() => uni.navigateTo({
-                url: "../groups/groups?myName=" + me.owner
-              }), 2000);
+              setTimeout(() => uni.redirectTo({
+                url: "../main/main?myName=" + uni.getStorageSync("myUsername")
+              }), 1000);
             }
           });
         },

@@ -1,26 +1,30 @@
 .register {
 	width: 100%;
-	height: 100%;
-	background-color: #ffffff;
+    height: 100%;
+    background-color: #ffffff;
+    position: fixed;
+    background-size: contain;
 }
 .register_title {
-	height: 128rpx;
-	padding-left: 32rpx;
+	text-align: center;
+	margin-top: 150rpx;
 }
 .register_title text{
-	font-size: 64rpx;
+	font-size: 18px;
 	font-weight: 400;
 	line-height: 96rpx;
+	color: #fff;
 }
 
 .register_user, .register_pwd, .register_btn {
 	display: flex;
+	position: relative;
 }
 .register_user input, .register_pwd input {
 	height: 96rpx;
 	background-color: #ffffff;
 	border: 2rpx solid #999999;
-	border-radius: 8rpx;
+	border-radius: 57px;
 	box-sizing: border-box;
 	padding: 0 32rpx;
 	font-size: 34rpx;
@@ -35,7 +39,7 @@
 	box-sizing: border-box;
 }
 .register_user input {
-	margin-top: 128rpx
+	margin-top: 80rpx
 }
 .register_pwd input {
 	margin-top: 32rpx;
@@ -43,29 +47,40 @@
 .register_btn button{
 	flex: 1;
 	height: 96rpx;
-	margin: 32rpx 64rpx 0;
-	border-radius: 8rpx;
+	margin: 100rpx 64rpx 0;
+	border-radius: 57px;
 	line-height: 96rpx;
 	color: rgb(255,255,255);
-	background-color: #0873DE;
+	background: linear-gradient(90deg, #04AEF0 0%, #5A5DD0 100%);
 	font-size: 34rpx;
 }
 .btn_hover {
-	background-color: #137DCD;
+	background-color: #90a7b9;
 }
 .register_back {
-	margin-top: 28rpx;
-	padding: 0 64rpx;
-	height: 34rpx;
+	text-align: center;
+    position: relative;
+    top: 300rpx;
 }
 .register_back navigator {
 	font-size: 24rpx;
-	color: #0873DE;
-}
-.navigator-hover{
-	color: #2892FD;
-	background-color: #fff;
+	color: #ffffff;
+	display: inline-block;
 }
 .input-hover{
 	border: 2rpx solid red;
+}
+.bg-img{
+	position: absolute;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+}
+.psdIcon{
+	position: absolute;
+    width: 24px;
+    height: 24px;
+	right: 90rpx;
+	top: 58rpx;
+	z-index: 2;
 }
