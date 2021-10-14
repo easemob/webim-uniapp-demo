@@ -1,5 +1,5 @@
 // 小程序3.0sdk
-import websdk from "../newSDK/wxsdk3.6.3";
+import websdk from "../newSDK/uni_sdk3.6.3";
 // import websdk from "../sdk3.0/src/wxEntry"
 // import websdk from '../newSDK/sdk/src/wxEntry.js';
 
