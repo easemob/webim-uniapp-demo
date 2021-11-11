@@ -219,7 +219,8 @@ WebIM.conn = new WebIM.connection({
   heartBeatWait: WebIM.config.heartBeatWait,
   autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
   autoReconnectInterval: WebIM.config.autoReconnectInterval,
-  isDebug: false
+  isDebug: false,
+  isHttpDNS:false
 });
 
 module.exports = {
