@@ -1,13 +1,6 @@
-// 小程序3.0sdk
-import websdk from "../newSDK/uni_sdk3.6.3";
-// import websdk from "../sdk3.0/src/wxEntry"
-// import websdk from '../newSDK/sdk/src/wxEntry.js';
 
-// 小程序2.0sdk
-// import websdk from "../sdk2.0/connection.js"
+import websdk from "../newSDK/uni_sdk4.0.1";
 
-//websdk 3.0
-// import websdk from "../newSDK/websdk3.2.2";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
