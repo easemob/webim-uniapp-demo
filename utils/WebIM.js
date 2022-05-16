@@ -1,5 +1,5 @@
 
-import websdk from "../newSDK/uni_sdk4.0.4";
+import websdk from "../newSDK/uni_sdk4.0.5";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
