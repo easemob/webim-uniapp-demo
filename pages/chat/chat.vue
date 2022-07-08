@@ -10,68 +10,35 @@
     </view>
 
     <!-- <view class="chat_list_wraper" > -->
-    <scroll-view
-      scroll-y="true"
-      :class="
-        'chat_list_wraper ' + (gotop ? (isIPX ? 'goTopX' : 'goTop') : 'goback')
-      "
-      :style="'padding-bottom: ' + (isIPX ? '270rpx' : '226rpx')"
-    >
+    <scroll-view scroll-y="true" :class="
+      'chat_list_wraper ' + (gotop ? (isIPX ? 'goTopX' : 'goTop') : 'goback')
+    " :style="'padding-bottom: ' + (isIPX ? '270rpx' : '226rpx')">
       <view class="search_input" v-if="search_chats">
         <view>
           <icon type="search" size="12"></icon>
-          <input
-            placeholder="搜索"
-            placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;"
-            auto-focus
-            confirm-type="search"
-            type="text"
-            @confirm="onSearch"
-            @input="onInput"
-            :value="input_code"
-          />
-          <icon
-            type="clear"
-            size="12"
-            @tap.stop="clearInput"
-            v-if="show_clear"
-          ></icon>
+          <input placeholder="搜索" placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;" auto-focus
+            confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />
+          <icon type="clear" size="12" @tap.stop="clearInput" v-if="show_clear"></icon>
         </view>
         <text @tap="cancel">取消</text>
       </view>
 
-      <view
-        v-for="(item, index) in arr"
-        :key="index"
-        class="chat_list"
-        :data-item="item"
-        @tap.stop="del_chat"
-        @longpress="longpress"
-      >
+      <view v-for="(item, index) in arr" :key="index" class="chat_list" :data-item="item" @tap.stop="del_chat"
+        @longpress="longpress">
         <swipe-delete>
           <!-- 通知模块 -->
-          <view
-            class="tap_mask"
-            @tap.stop="into_inform"
-            :data-item="item"
-            v-if="item.chatType == 'INFORM'"
-          >
+          <view class="tap_mask" @tap.stop="into_inform" :data-item="item" v-if="item.chatType == 'INFORM'">
             <view class="list_box">
               <view class="list_left">
                 <view class="list_pic">
                   <view v-if="unReadTotalNotNum > 0" class="em-unread-spot2">{{
-                    unReadTotalNotNum
+                      unReadTotalNotNum
                   }}</view>
-                  <image
-                    :class="unReadTotalNotNum > 0 ? 'haveSpot' : ''"
-                    src="../../static/images/inform.png"
-                  ></image>
+                  <image :class="unReadTotalNotNum > 0 ? 'haveSpot' : ''" src="../../static/images/inform.png"></image>
                 </view>
                 <view class="list_text">
                   <text class="list_user"> 系统通知 </text>
-                  <text class="list_word" v-if="item.chatType == 'INFORM'"
-                    >申请通知来自：{{ item.info.from }}</text
-                  >
+                  <text class="list_word" v-if="item.chatType == 'INFORM'">申请通知来自：{{ item.info.from }}</text>
                 </view>
               </view>
               <view class="list_right">
@@ -80,48 +47,34 @@
             </view>
           </view>
 
-          <view
-            class="tap_mask"
-            @tap.stop="into_chatRoom"
-            :data-item="item"
-            v-else
-          >
+          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item" v-else>
             <!-- 消息列表 -->
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
                 <view class="list_pic">
-                  <view
-                    class="em-msgNum"
-                    v-if="item.unReadCount > 0 || item.unReadCount == '99+'"
-                    >{{ item.unReadCount }}</view
-                  >
+                  <view class="em-msgNum" v-if="item.unReadCount > 0 || item.unReadCount == '99+'">{{ item.unReadCount
+                  }}</view>
 
-                  <image
-                    :src="
-                      item.chatType == 'groupchat' ||
+                  <image :src="
+                    item.chatType == 'groupchat' ||
                       item.chatType == 'chatRoom'
-                        ? '../../static/images/groupTheme.png'
-                        : '../../static/images/theme2x.png'
-                    "
-                  ></image>
+                      ? '../../static/images/groupTheme.png'
+                      : '../../static/images/theme2x.png'
+                  "></image>
                 </view>
                 <view class="list_text">
                   <text class="list_user">{{
-                    item.chatType == "groupchat" ||
-                    item.chatType == "chatRoom" ||
-                    item.groupName
-                      ? item.groupName
-                      : item.username
+                      item.chatType == "groupchat" ||
+                        item.chatType == "chatRoom" ||
+                        item.groupName
+                        ? item.groupName
+                        : item.username
                   }}</text>
                   <text class="list_word" v-if="item.msg.data[0].data">{{
-                    item.msg.data[0].data
+                      item.msg.data[0].data
                   }}</text>
-                  <text class="list_word" v-if="item.msg.type == 'img'"
-                    >[图片]</text
-                  >
-                  <text class="list_word" v-if="item.msg.type == 'audio'"
-                    >[语音]</text
-                  >
+                  <text class="list_word" v-if="item.msg.type == 'img'">[图片]</text>
+                  <text class="list_word" v-if="item.msg.type == 'audio'">[语音]</text>
                   <!-- <text class="list_word" v-if="item.msg.type == 'video'"
                     >[视频]</text
                   > -->
@@ -135,14 +88,8 @@
         </swipe-delete>
       </view>
 
-      <long-press-modal
-        :winSize="winSize"
-        :popButton="popButton"
-        @change="pickerMenuChange"
-        :showPop="showPop"
-        @hidePop="hidePop"
-        :popStyle="popStyle"
-      />
+      <long-press-modal :winSize="winSize" :popButton="popButton" @change="pickerMenuChange" :showPop="showPop"
+        @hidePop="hidePop" :popStyle="popStyle" />
       <view v-if="arr.length == 0" class="chat_noChat">
         <image class="ctbg" src="/static/images/ctbg.png"></image>
         暂无聊天消息
@@ -156,18 +103,12 @@
 
     <view :class="isIPX ? 'chatRoom_tab_X' : 'chatRoom_tab'">
       <view class="tableBar">
-        <view
-          v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'"
-          :class="
-            'em-unread-spot ' +
-            (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
-          "
-          >{{ unReadSpotNum == '99+'?unReadSpotNum:unReadSpotNum+ unReadTotalNotNum }}</view
-        >
-        <image
-          :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
-          src="/static/images/sessionhighlight2x.png"
-        ></image>
+        <view v-if="unReadSpotNum > 0 || unReadSpotNum == '99+'" :class="
+          'em-unread-spot ' +
+          (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
+        ">{{ unReadSpotNum == '99+' ? unReadSpotNum : unReadSpotNum + unReadTotalNotNum }}</view>
+        <image :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
+          src="/static/images/sessionhighlight2x.png"></image>
         <text class="activeText">消息</text>
       </view>
 
@@ -225,7 +166,7 @@ export default {
       popButton: ["删除该聊天"],
       showPop: false,
       popStyle: "",
-      currentVal:''
+      currentVal: ''
     };
   },
 
@@ -251,7 +192,7 @@ export default {
     });
 
     //监听解散群
-    disp.on("em.invite.deleteGroup", function () {
+    disp.on("em.invite.deleteGroup", function (infos) {
       me.listGroups();
       me.getRoster();
       me.getChatList();
@@ -259,6 +200,8 @@ export default {
         // arr: me.getChatList(),
         messageNum: getApp().globalData.saveFriendList.length,
       });
+      //如果会话存在则执行删除会话
+      me.removeLocalStorage(infos.gid)
     });
 
     //监听未读消息数
@@ -462,7 +405,7 @@ export default {
         let array = [];
         let lastChatMsg;
 
-        for (let i = historyChatMsgKeys.length; i>0, i--; ) {
+        for (let i = historyChatMsgKeys.length; i > 0, i--;) {
           let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9));
           if (index > -1) {
             let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
@@ -513,7 +456,7 @@ export default {
             array.push(lastChatMsg);
         }
 
-        for (let i = newChatMsgKeys.length;i>0, i--; ) {
+        for (let i = newChatMsgKeys.length; i > 0, i--;) {
           let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
           if (newChatMsgs.length) {
             lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
@@ -689,22 +632,23 @@ export default {
       });
     },
 
-    removeAndRefresh:function(event){
-     let removeId = event.currentTarget.dataset.item.info.from
-     let ary = getApp().globalData.saveFriendList
-     let idx
-    if (ary.length>0) {
-      ary.forEach((v,k)=>{
-        if (v.from == removeId) {
-          idx = k
-        }
-      })
-      getApp().globalData.saveFriendList.splice(idx, 1);
-    }
+    removeAndRefresh: function (event) {
+      let removeId = event.currentTarget.dataset.item.info.from
+      let ary = getApp().globalData.saveFriendList
+      let idx
+      if (ary.length > 0) {
+        ary.forEach((v, k) => {
+          if (v.from == removeId) {
+            idx = k
+          }
+        })
+        getApp().globalData.saveFriendList.splice(idx, 1);
+      }
       uni.removeStorageSync('INFORM')
     },
 
     del_chat: function (event) {
+      console.log('>>>>>>>>删除会话列表', event)
       let detail = event.currentTarget.dataset.item;
       let nameList = {};
       let me = this;
@@ -744,14 +688,20 @@ export default {
           }
         },
         fail: function (err) {
-          console.log('删除列表',err);
+          console.log('删除列表', err);
         },
       });
+    },
+    removeLocalStorage: function (yourname) {
+      console.log('>>>>>>>>执行删除本地会话')
+      var myName = uni.getStorageSync("myUsername");
+      uni.removeStorageSync(yourname + myName);
+      uni.removeStorageSync("rendered_" + yourname + myName);
     },
     longpress: function (e) {
       //将当前选中的值存在data中方便后续操作
       this.currentVal = e
-      let [touches, style, index] = [e.touches[0],"",e.currentTarget.dataset.index,];
+      let [touches, style, index] = [e.touches[0], "", e.currentTarget.dataset.index,];
 
       /* 因 非H5端不兼容 style 属性绑定 Object ，所以拼接字符 */
       if (touches.clientY > this.winSize.height / 2) {

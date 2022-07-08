@@ -80,22 +80,7 @@
                 }
             }
         },
-        "nativePlugins" : {
-            "EMLivePlugin" : {
-                "__plugin_info__" : {
-                    "name" : "EMLivePlugin",
-                    "description" : "easemob推流",
-                    "platforms" : "Android,iOS",
-                    "url" : "",
-                    "android_package_name" : "",
-                    "ios_bundle_id" : "",
-                    "isCloud" : false,
-                    "bought" : -1,
-                    "pid" : "",
-                    "parameters" : {}
-                }
-            }
-        }
+        "nativePlugins" : {}
     },
     "quickapp" : {},
     "mp-weixin" : {
