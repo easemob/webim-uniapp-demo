@@ -14,11 +14,7 @@
           <text style="float:right">{{ groupCount }}人</text>
         </view>
 
-        <view
-          v-for="(item, index) in groupMember"
-          :key="index"
-          style="display: inline-block"
-        >
+        <view v-for="(item, index) in groupMember" :key="index" style="display: inline-block">
           <view class="member-list">
             <image src="/static/images/theme2x.png"></image>
             <text>{{ item.member || item.owner }}</text>
@@ -28,17 +24,9 @@
       <view class="invite-member">
         <!-- <text class="pd-10 invite-title">邀请群成员</text> -->
         <view class="invite-wrap">
-          <input
-            placeholder="请输入用户名"
-            @input="addFriendNameFun"
-            placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;"
-            auto-focus
-          />
-          <button
-            style="background: #0091ff; width: 100px"
-            type="primary"
-            @tap="addGroupMembers"
-          >
+          <input placeholder="请输入用户名" @input="addFriendNameFun"
+            placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;" auto-focus />
+          <button style="background: #0091ff; width: 100px" type="primary" @tap="addGroupMembers">
             发送邀请
           </button>
         </view>
@@ -130,7 +118,7 @@ export default {
             });
           }
         },
-        error: function (err) {},
+        error: function (err) { },
       };
       WebIM.conn.listGroupMember(options);
     },
@@ -153,7 +141,7 @@ export default {
             }
           }
         },
-        error: function () {},
+        error: function () { },
       };
       WebIM.conn.getGroupInfo(options);
     },
@@ -242,6 +230,9 @@ export default {
             duration: 2000,
             success: function (res) {
               // redirectTo = 此操作不可返回
+              console.log('>>>>>解散群组且跳转至会话列表');
+              //发布解散群组事件
+              disp.fire("em.invite.deleteGroup", { gid: me.roomId });
               setTimeout(
                 () =>
                   uni.redirectTo({

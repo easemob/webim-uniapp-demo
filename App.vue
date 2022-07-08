@@ -5,9 +5,7 @@ let msgStorage = require("./components/chat/msgstorage");
 let msgType = require("./components/chat/msgtype");
 let disp = require("./utils/broadcast");
 let logout = false;
-// let emedia = uni.emedia = require("./emediaSDK/webrtc/src/entry")
-let emedia = (uni.emedia = require("./emediaSDK/emedia_for_miniProgram"));
-emedia.config({ useUniappPlugin: true });
+
 function ack(receiveMsg) {
   // 处理未读消息回执
   var bodyId = receiveMsg.id; // 需要发送已读回执的消息id
@@ -271,16 +269,16 @@ export default {
             break;
           // 好友邀请列表
           case "subscribe":
-              for (let i = 0; i < me.globalData.saveFriendList.length; i++) {
-                if (me.globalData.saveFriendList[i].from === message.from) {
-                  me.globalData.saveFriendList[i] = message;
-                  disp.fire("em.subscribe");
-                  return;
-                }
+            for (let i = 0; i < me.globalData.saveFriendList.length; i++) {
+              if (me.globalData.saveFriendList[i].from === message.from) {
+                me.globalData.saveFriendList[i] = message;
+                disp.fire("em.subscribe");
+                return;
               }
-              msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
-              me.globalData.saveFriendList.push(message);
-              disp.fire("em.subscribe");
+            }
+            msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
+            me.globalData.saveFriendList.push(message);
+            disp.fire("em.subscribe");
 
             break;
 
@@ -312,15 +310,15 @@ export default {
           case "invite":
             // 防止重复添加
             for (let i = 0; i < me.globalData.saveGroupInvitedList.length; i++) {
-                if (me.globalData.saveGroupInvitedList[i].from === message.from) {
-                  me.globalData.saveGroupInvitedList[i] = message;
-                  disp.fire("em.invite.joingroup")
-                  return;
-                }
+              if (me.globalData.saveGroupInvitedList[i].from === message.from) {
+                me.globalData.saveGroupInvitedList[i] = message;
+                disp.fire("em.invite.joingroup")
+                return;
               }
+            }
             me.globalData.saveGroupInvitedList.push(message);
             disp.fire("em.invite.joingroup");
-            msgStorage.saveReceiveMsg(message,'INFORM'); //存添加好友消息，方便展示通知
+            msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
             break;
           case "unavailable":
             disp.fire("em.contacts.remove");
