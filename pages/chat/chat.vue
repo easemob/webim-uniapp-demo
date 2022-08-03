@@ -52,8 +52,8 @@
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
                 <view class="list_pic">
-                  <view class="em-msgNum" v-if="item.unReadCount > 0 || item.unReadCount == '99+'">{{ item.unReadCount
-                  }}</view>
+                  <view class="em-msgNum" v-if="(item.unReadCount > 0 || item.unReadCount == '99+') && !pushConfigData.includes(item.chatType === 'chat' ? item.username : item.info.to)">
+                  {{ item.unReadCount}}</view>
 
                   <image :src="
                     item.chatType == 'groupchat' ||
@@ -166,7 +166,9 @@ export default {
       popButton: ["删除该聊天"],
       showPop: false,
       popStyle: "",
-      currentVal: ''
+      currentVal: '',
+
+      pushConfigData: []
     };
   },
 
@@ -207,6 +209,12 @@ export default {
     //监听未读消息数
     disp.on("em.unreadspot", function (message) {
       me.getChatList();
+      let id = message && message.chatType === 'groupchat' ? message?.to : message?.from;
+      let pushValue = JSON.parse(uni.getStorageSync("pushStorageData")) || [];
+      me.setData({
+        pushConfigData:pushValue,
+        });
+      if (message && pushValue.includes(id)) return
       me.setData({
         // arr: me.getChatList(),
         unReadSpotNum:

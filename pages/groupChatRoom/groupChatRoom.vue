@@ -81,6 +81,12 @@ export default {
 		// 	desp: "开始初始化nvue",
 		// })
 	},
+
+  onNavigationBarButtonTap(e) {
+      uni.navigateTo({
+          url: `/pages/moreMenu/moreMenu?username=${this.username.groupId}&type=groupChat`
+      })
+  },
 	onClickMsg(msg){
 	}
   }
