@@ -36,6 +36,33 @@ function getCurrentRoute() {
   return "/";
 }
 
+// 获取当前会话推送免打扰
+function onGetSilentConfig(message) {
+  // 
+  const {from, to, type} = message;
+  const res = uni.getStorageInfoSync();
+	console.log(res.keys);
+  let newAry = res.keys.includes('pushStorageData') ? JSON.parse(uni.getStorageSync('pushStorageData')) : [];
+  const option = {
+    conversationId: type === "chat" ? from : to,
+    type: type === "chat" ? "singleChat" : "groupChat",
+  };
+  WebIM.conn.getSilentModeForConversation(option).then((res) => {
+    if (res.data.type === "NONE") {
+      if (!newAry.includes(option.conversationId)) {
+         newAry.push(option.conversationId)
+      }
+    }
+    uni.setStorage({
+        key: 'pushStorageData',
+        data: JSON.stringify(newAry),
+        success: function (params) {
+            console.log('>>>>>>', JSON.parse(uni.getStorageSync("pushStorageData")));
+        }
+    });
+  });
+}
+
 // // 不包含陌生人版本(不接收陌生人消息)
 // function calcUnReadSpot(message) {
 //   let myName = uni.getStorageSync("myUsername");
@@ -63,6 +90,8 @@ function getCurrentRoute() {
 // 包含陌生人版本
 function calcUnReadSpot(message) {
   let myName = uni.getStorageSync("myUsername");
+  let pushValue = uni.getStorageSync("pushStorageData")
+  console.log('pushValue>>>',pushValue);
   uni.getStorageInfo({
     success: function (res) {
       let storageKeys = res.keys;
@@ -74,11 +103,14 @@ function calcUnReadSpot(message) {
         }
       });
       let count = newChatMsgKeys.reduce(function (result, curMember, idx) {
+        let newName = curMember.split(myName)[0]
         let chatMsgs;
         chatMsgs = uni.getStorageSync(curMember) || [];
+        if (pushValue.includes(newName)) {
+          return result
+        }
         return result + chatMsgs.length;
       }, 0);
-
       getApp().globalData.unReadMessageNum = count;
       disp.fire("em.unreadspot", message);
     },
@@ -242,6 +274,7 @@ export default {
         });
         me.globalData.conn.closed = true;
         WebIM.conn.close();
+        // uni.removeStorageSync('pushStorageData');
       },
 
       onInviteMessage(message) {
@@ -263,7 +296,6 @@ export default {
 
       //onPresence为旧版 ，建议参考最新增删好友api文档 ：http://docs-im.easemob.com/im/web/basics/buddy
       onPresence(message) {
-
         switch (message.type) {
           case "unsubscribe":
             break;
@@ -276,7 +308,7 @@ export default {
                 return;
               }
             }
-            msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
+            msgStorage.saveReceiveMsg(message, "INFORM"); //存添加好友消息，方便展示通知
             me.globalData.saveFriendList.push(message);
             disp.fire("em.subscribe");
 
@@ -309,16 +341,20 @@ export default {
             break;
           case "invite":
             // 防止重复添加
-            for (let i = 0; i < me.globalData.saveGroupInvitedList.length; i++) {
+            for (
+              let i = 0;
+              i < me.globalData.saveGroupInvitedList.length;
+              i++
+            ) {
               if (me.globalData.saveGroupInvitedList[i].from === message.from) {
                 me.globalData.saveGroupInvitedList[i] = message;
-                disp.fire("em.invite.joingroup")
+                disp.fire("em.invite.joingroup");
                 return;
               }
             }
             me.globalData.saveGroupInvitedList.push(message);
             disp.fire("em.invite.joingroup");
-            msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
+            msgStorage.saveReceiveMsg(message, "INFORM"); //存添加好友消息，方便展示通知
             break;
           case "unavailable":
             disp.fire("em.contacts.remove");
@@ -358,6 +394,7 @@ export default {
 
         calcUnReadSpot(message);
         ack(message);
+        onGetSilentConfig(message);
       },
 
       onAudioMessage(message) {
@@ -370,6 +407,7 @@ export default {
 
           calcUnReadSpot(message);
           ack(message);
+          onGetSilentConfig(message);
         }
       },
 
@@ -383,6 +421,7 @@ export default {
 
           calcUnReadSpot(message);
           ack(message);
+          onGetSilentConfig(message);
         }
       },
 
@@ -402,6 +441,7 @@ export default {
 
           calcUnReadSpot(message);
           ack(message);
+          onGetSilentConfig(message);
         }
       },
 
@@ -415,6 +455,7 @@ export default {
 
           calcUnReadSpot(message);
           ack(message);
+          onGetSilentConfig(message);
         }
       },
 
@@ -428,6 +469,7 @@ export default {
 
           calcUnReadSpot(message);
           ack(message);
+          onGetSilentConfig(message);
         }
       },
 
@@ -441,6 +483,7 @@ export default {
 
           calcUnReadSpot(message);
           ack(message);
+          onGetSilentConfig(message);
         }
       },
 

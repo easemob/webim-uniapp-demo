@@ -48,7 +48,17 @@
 			"style": {
 				"navigationBarTitleText": "chatting",
 				"backgroundTextStyle": "dark",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"titleNView":{
+						"buttons":[{
+							"text":"...",
+							"fontSrc": "./static/iconfont/iconfont.ttf",
+							"fontSize": "24",
+							"float": "right"
+						}]
+					}
+				}
 			}
 		},
 		{
@@ -135,7 +145,19 @@
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "群聊",
-				"enablePullDownRefresh": true
+				"enablePullDownRefresh": true,
+				"app-plus": {
+					"titleNView": {
+						"buttons": [
+							{
+								"text": "...",
+								"fontSrc": "./static/iconfont/iconfont.ttf",
+								"fontSize": "24",
+								"float": "right"
+							}
+						]
+					}
+				}
 			}
 			// "style": {
 			// 	"navigationBarTitleText": "uni-app",
@@ -171,6 +193,22 @@
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",
 				"navigationBarTitleText": "emedia"
+			}
+		},
+		{
+			"path": "pages/moreMenu/moreMenu",
+			"style": {
+				"navigationBarBackgroundColor": "#f2f2f2",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "好友配置"
+			}
+		},
+		{
+			"path": "pages/searchMsg/searchMsg",
+			"style": {
+				"navigationBarBackgroundColor": "#f2f2f2",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "历史记录"
 			}
 		}
     ],
