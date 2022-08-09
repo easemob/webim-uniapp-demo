@@ -209,12 +209,14 @@ export default {
     //监听未读消息数
     disp.on("em.unreadspot", function (message) {
       me.getChatList();
+      let currentLoginUser = WebIM.conn.context.userId;
       let id = message && message.chatType === 'groupchat' ? message?.to : message?.from;
-      let pushValue = JSON.parse(uni.getStorageSync("pushStorageData")) || [];
+      let pushObj = uni.getStorageSync("pushStorageData");
+      let pushAry = pushObj[currentLoginUser] || []
       me.setData({
-        pushConfigData:pushValue,
+        pushConfigData:pushAry,
         });
-      if (message && pushValue.includes(id)) return
+      // if (message && pushValue.includes(id)) return
       me.setData({
         // arr: me.getChatList(),
         unReadSpotNum:

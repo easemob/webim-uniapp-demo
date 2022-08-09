@@ -6,6 +6,8 @@ let msgType = require("./components/chat/msgtype");
 let disp = require("./utils/broadcast");
 let logout = false;
 
+import { onGetSilentConfig } from './components/chat/pushStorage'
+
 function ack(receiveMsg) {
   // 处理未读消息回执
   var bodyId = receiveMsg.id; // 需要发送已读回执的消息id
@@ -36,32 +38,7 @@ function getCurrentRoute() {
   return "/";
 }
 
-// 获取当前会话推送免打扰
-function onGetSilentConfig(message) {
-  // 
-  const {from, to, type} = message;
-  const res = uni.getStorageInfoSync();
-	console.log(res.keys);
-  let newAry = res.keys.includes('pushStorageData') ? JSON.parse(uni.getStorageSync('pushStorageData')) : [];
-  const option = {
-    conversationId: type === "chat" ? from : to,
-    type: type === "chat" ? "singleChat" : "groupChat",
-  };
-  WebIM.conn.getSilentModeForConversation(option).then((res) => {
-    if (res.data.type === "NONE") {
-      if (!newAry.includes(option.conversationId)) {
-         newAry.push(option.conversationId)
-      }
-    }
-    uni.setStorage({
-        key: 'pushStorageData',
-        data: JSON.stringify(newAry),
-        success: function (params) {
-            console.log('>>>>>>', JSON.parse(uni.getStorageSync("pushStorageData")));
-        }
-    });
-  });
-}
+
 
 // // 不包含陌生人版本(不接收陌生人消息)
 // function calcUnReadSpot(message) {
@@ -90,8 +67,8 @@ function onGetSilentConfig(message) {
 // 包含陌生人版本
 function calcUnReadSpot(message) {
   let myName = uni.getStorageSync("myUsername");
-  let pushValue = uni.getStorageSync("pushStorageData")
-  console.log('pushValue>>>',pushValue);
+  let pushObj = uni.getStorageSync("pushStorageData")
+  let pushAry = pushObj[myName] || []
   uni.getStorageInfo({
     success: function (res) {
       let storageKeys = res.keys;
@@ -106,9 +83,7 @@ function calcUnReadSpot(message) {
         let newName = curMember.split(myName)[0]
         let chatMsgs;
         chatMsgs = uni.getStorageSync(curMember) || [];
-        if (pushValue.includes(newName)) {
-          return result
-        }
+        if (pushAry.includes(newName)) return result
         return result + chatMsgs.length;
       }, 0);
       getApp().globalData.unReadMessageNum = count;
@@ -275,6 +250,7 @@ export default {
         me.globalData.conn.closed = true;
         WebIM.conn.close();
         // uni.removeStorageSync('pushStorageData');
+        // uni.clearStorageSync();
       },
 
       onInviteMessage(message) {

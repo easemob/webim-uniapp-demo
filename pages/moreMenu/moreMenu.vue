@@ -22,7 +22,7 @@
 <script>
 let WebIM = require("../../utils/WebIM")["default"];
 let msgType = require("../../components/chat/msgtype");
-import pushStorageSave from '../../components/chat/pushStorage'
+import { pushStorageSave } from '../../components/chat/pushStorage'
 
 export default {
   data() {
@@ -47,6 +47,9 @@ export default {
     });
   },
    mounted() {
+    let currentLoginUser = WebIM.conn.context.userId
+    let newObj = uni.getStorageSync("pushStorageData") || {};
+    let newAry = newObj[currentLoginUser] || [];
     // 当前会话是否被禁言
     const option = {
 				conversationId: this.currentUser,
@@ -55,8 +58,17 @@ export default {
 			WebIM.conn.getSilentModeForConversation(option).then(res => {
         if (res.data.type === "NONE") {
           this.switchStatus = true
+          newAry = newAry.concat(this.currentUser);
         }
       })
+      newObj[currentLoginUser] = newAry;
+      uni.setStorage({
+        key: 'pushStorageData',
+        data: newObj,
+        success: function (params) {
+            console.log('>>>>>>', uni.getStorageSync("pushStorageData"));
+        }
+    });
   },
   methods: {
     onSwitchChange(event) {
