@@ -22,20 +22,14 @@ export function pushStorageSave(data) {
 };
 
 export function onGetSilentConfig(message) {
-    console.log('message>>>',message);
     const currentLoginUser = WebIM.conn.context.userId;
     const { from, to, type } = message;
-    const res = uni.getStorageInfoSync();
-    console.log("uni.getStorageSync('pushStorageData')>>>", uni.getStorageSync('pushStorageData'));
     let pushObj = uni.getStorageSync('pushStorageData') || {};
-    console.log('obj>>>', pushObj);
     let pushAry = pushObj[currentLoginUser] || [];
-    console.log('pushAry>>>', pushAry);
     const option = {
         conversationId: type === "chat" ? from : to,
         type: type === "chat" ? "singleChat" : "groupChat",
     };
-    console.log('option>>>',option);
     WebIM.conn.getSilentModeForConversation(option).then((res) => {
         if (res.data.type === "NONE") {
             if (!pushAry.includes(option.conversationId)) {
@@ -45,10 +39,7 @@ export function onGetSilentConfig(message) {
         pushObj.pushAry = pushAry;
         uni.setStorage({
             key: 'pushStorageData',
-            data: pushObj,
-            success: function (params) {
-                console.log('>>>>>>', JSON.parse(uni.getStorageSync("pushStorageData")));
-            }
+            data: pushObj
         });
     });
 }
