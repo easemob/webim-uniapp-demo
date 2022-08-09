@@ -32,7 +32,7 @@ export default {
     });
   },
 
-  onUnload() {
+  onUnload(options) {
     disp.fire("em.chatroom.leave");
   },
 
@@ -49,7 +49,12 @@ export default {
 		uni.navigateTo({
 			url: "../emedia/index?srcData="+JSON.stringify(msg)
 		});
-	  }
+	  },
+    onNavigationBarButtonTap(e) {
+      uni.navigateTo({
+          url: `/pages/moreMenu/moreMenu?username=${this.username.your}&type=singleChat`
+      })
+  },
   }
 };
 </script>
