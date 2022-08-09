@@ -1,17 +1,17 @@
 <template>
   <view>
-      <view class="search" v-if="search_btn">
+      <view class="search" v-if="searchBtn">
         <view @tap="openSearch">
           <icon type="search" size="12"></icon>
           <text>搜索</text>
         </view>
       </view>
-      <view class="search_input" v-if="search_chats">
+      <view class="search_input" v-if="searchChats">
         <view>
           <icon type="search" size="12"></icon>
           <input placeholder="搜索" placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;" auto-focus
-            confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code"/>
-          <icon type="clear" size="12" @tap.stop="clearInput" v-if="show_clear"></icon>
+            confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="inputCode"/>
+          <icon type="clear" size="12" @tap.stop="clearInput" v-if="showClear"></icon>
         </view>
         <text @tap="cancel">取消</text>
       </view>
@@ -65,10 +65,10 @@ export default {
       currentUser: "",
       type:"",
       messageList: [],
-      search_btn: true,
-      search_chats: false,
-      input_code: "",
-      show_clear: false,
+      searchBtn: true,
+      searchChats: false,
+      inputCode: "",
+      showClear: false,
       isIPX: false,
       gotop: false,
       pushConfigData: [],
@@ -95,7 +95,6 @@ export default {
     }
   },
   onLoad(options) {
-    console.log('option>>>',options);
     this.setData({
       currentUser: options.username,
       type: options.type
@@ -127,8 +126,8 @@ export default {
   methods: { 
     openSearch: function () {
       this.setData({
-        search_btn: false,
-        search_chats: true,
+        searchBtn: false,
+        searchChats: true,
         gotop: true,
       });
     },
@@ -155,15 +154,15 @@ export default {
 
     cancel: function () {
        this.setData({
-        search_btn: true,
-        search_chats: false,
+        searchBtn: true,
+        searchChats: false,
         searchValue: ""
       });
     },
     clearInput: function () {
       this.setData({
-        input_code: "",
-        show_clear: false,
+        inputCode: "",
+        showClear: false,
         searchValue:""
       });
     },
@@ -171,11 +170,11 @@ export default {
       let inputValue = e.detail.value;
       if (inputValue) {
         this.setData({
-          show_clear: true,
+          showClear: true,
         });
       } else {
         this.setData({
-          show_clear: false,
+          showClear: false,
           searchValue:""
         });
       }
@@ -187,8 +186,8 @@ export default {
     },
     close_mask: function () {
       this.setData({
-        search_btn: true,
-        search_chats: false,
+        searchBtn: true,
+        searchChats: false,
       });
     },
     tab_setting: function () {
