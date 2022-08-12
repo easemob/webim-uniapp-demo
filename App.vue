@@ -110,6 +110,7 @@ function saveGroups() {
 
 export default {
   globalData: {
+	phoneNumber: '',
     unReadMessageNum: 0,
     userInfo: null,
     saveFriendList: [],

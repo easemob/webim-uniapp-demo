@@ -22,7 +22,6 @@
         </view>
         <text @tap="cancel">取消</text>
       </view>
-
       <view v-for="(item, index) in arr" :key="index" class="chat_list" :data-item="item" @tap.stop="del_chat"
         @longpress="longpress">
         <swipe-delete>
@@ -245,7 +244,7 @@ export default {
   },
 
   onShow: function () {
-    uni.hideHomeButton();
+    uni.hideHomeButton && uni.hideHomeButton();
     this.getChatList();
     this.setData({
       //arr: this.getChatList(),

@@ -44,6 +44,14 @@
 .register_pwd input {
 	margin-top: 32rpx;
 }
+
+.register-image {
+	height: 48px;
+	margin-top: 15px;
+	margin-right: 33px;
+	border: 1px solid #ddd;
+	width: 120px;
+}
 .register_btn button{
 	flex: 1;
 	height: 96rpx;

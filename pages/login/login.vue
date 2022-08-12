@@ -99,20 +99,39 @@ export default {
         key: "myUsername",
         data: __test_account__ || this.name.toLowerCase()
       });
-	  console.log(111, {
-        apiUrl: WebIM.config.apiURL,
-        user: __test_account__ || this.name.toLowerCase(),
-        pwd: __test_psword__ || this.psd,
-        grant_type: this.grant_type,
-        appKey: WebIM.config.appkey
-      })
-      getApp().globalData.conn.open({
-        apiUrl: WebIM.config.apiURL,
-        user: __test_account__ || this.name.toLowerCase(),
-        pwd: __test_psword__ || this.psd,
-        grant_type: this.grant_type,
-        appKey: WebIM.config.appkey
-      });
+	  
+	  
+		const that = this;
+		uni.request({
+			url: 'https://a1.easemob.com/inside/app/user/login',
+			header: {
+				'content-type': 'application/json'
+			},
+			method: 'POST',
+			data: {
+				userId: that.name,
+				userPassword: that.psd
+			},
+			success (res) {
+				if(res.statusCode == 200){
+					const {phoneNumber, token} = res.data
+					getApp().globalData.conn.open({
+						user: that.name,
+						accessToken: token,
+					});
+					getApp().globalData.phoneNumber = phoneNumber;
+				}else if(res.statusCode == 400){
+					if(res.data.errorInfo){
+						uni.showToast({title: res.data.errorInfo,icon:'none'});
+					}
+				}else{
+					uni.showToast({title: '登录失败！',icon:'none'});
+				}
+			},
+			fail(error){
+				uni.showToast({title: '登录失败！',icon:'none'});
+			}
+		})
     }
   }
 };

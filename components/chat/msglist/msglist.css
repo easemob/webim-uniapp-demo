@@ -20,7 +20,13 @@
 	padding-bottom: 230rpx;
 }
 
-
+.tips{
+	position: fixed;
+	top: 200px;
+	left: 40px;
+	right: 40px;
+	color: #bbb;
+}
 .message {
 	width: 100%;
 	height: auto;

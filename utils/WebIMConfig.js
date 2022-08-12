@@ -37,7 +37,7 @@ let config = {
   /*
    * Application AppKey
    */
-  appkey: "easemob-demo#easeim",
+  appkey: "easemob#easeim",
 
   /*
    * Whether to use HTTPS      '1177161227178308#xcx'

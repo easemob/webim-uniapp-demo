@@ -6,7 +6,7 @@
 		<image src="/static/images/theme2x.png"></image>
 		<view>
 			<text class="setting_username">{{ yourname }}</text>
-			<text class="setting_username2">username</text>
+			<text class="setting_username2">{{phoneNumber}}</text>
 		</view>
 	</view>
 </view>
@@ -62,7 +62,8 @@ export default {
       unReadSpotNum: 0,
       unReadNoticeNum: 0,
       unReadTotalNotNum: 0,
-      isIPX: false
+      isIPX: false,
+	  phoneNumber: ''
     };
   },
 
@@ -93,6 +94,10 @@ export default {
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     });
+	
+	this.setData({
+		phoneNumber: getApp().globalData.phoneNumber
+	})
   },
 
   onShow() {
