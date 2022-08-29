@@ -192,7 +192,7 @@ export default {
     var me = this;
     var logs = uni.getStorageSync("logs") || [];
     logs.unshift(Date.now());
-    uni.setStorageSync("logs", logs); //
+    uni.setStorageSync("logs", logs); 
 
     disp.on("em.main.ready", function () {
       calcUnReadSpot();

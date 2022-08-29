@@ -19,16 +19,15 @@
 
 	<view class="register_pwd">
 		<input type="text" placeholder="图片验证码" hover-class="input-hover" placeholder-style="color:rgb(173,185,193)" @input="bindImageCode" />
-		<image class="register-image" :src="imageUrl" @tap="getImageCode"></image>
+		<view class="register-image" @tap="getImageCode">
+			<image :src="imageUrl"></image>
+		</view>
 	</view>
 
 	<view class="register_pwd">
 		<input type="text" placeholder="短信验证码" hover-class="input-hover" placeholder-style="color:rgb(173,185,193)" @input="bindSmsCode"/>
 		<button class="register-image" @tap="getSmsCode">{{btnText}}</button>
 	</view>
-	
-	
-	
 	
 	<view class="register_btn">
 		<button hover-class="btn_hover" @tap="register">注册</button>
@@ -162,14 +161,17 @@ export default {
 				console.log('res', res)
 				if(res.statusCode == 200){
 					uni.showToast({title: "短信发送成功！",icon:'none'})
+					self.countDown()
 				}else if(res.statusCode == 400){
 					if(res.data.errorInfo == 'phone number illegal'){
 						uni.showToast({title: "请输入正确的手机号！",icon:'none'})
 					}else if(res.data.errorInfo == 'Please wait a moment while trying to send.'){
-						uni.showToast({title: "你的操作过于频繁，请守候再试！",icon:'none'})
+						uni.showToast({title: "你的操作过于频繁，请稍后再试！",icon:'none'})
 					}else if(res.data.errorInfo == 'Image verification code error.'){
 						uni.showToast({title: "图片验证码错误！",icon:'none'})
 						self.getImageCode()
+					}else{
+						uni.showToast({title: res.data.errorInfo,icon:'none'})
 					}
 				}
 			},
@@ -178,7 +180,6 @@ export default {
 			}
 		})
 		
-		this.countDown()
 	},
     countDown: function(){
 		timer && clearTimeout(timer)

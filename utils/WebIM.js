@@ -33,24 +33,6 @@ WebIM.isDebug = function (option) {
  */
 
 
-WebIM.config.autoSignIn = false;
-
-if (WebIM.config.autoSignIn) {
-  WebIM.config.autoSignInName = "lwz2";
-  WebIM.config.autoSignInPwd = "1";
-} // var stropheConn = new window.Strophe.Connection("ws://im-api.easemob.com/ws/", {
-//                 inactivity: 30,
-//                 maxRetries: 5,
-//                 pollingTime: 4500
-//             });
-//
-// stropheConn.connect(
-//   '$t$' + 'YWMtmbQEBKKIEeaGmMtXyg5n1wAAAVlkQvGO2WOJGlMCEJKM4VV9GCMnb_XLCXU',
-//   function() {
-//     console.log(arguments, 'ggogogo');
-//   }, stropheConn.wait, stropheConn.hold);
-
-
 WebIM.parseEmoji = function (msg) {
   if (typeof WebIM.Emoji === "undefined" || typeof WebIM.Emoji.map === "undefined") {
     return msg;
@@ -203,16 +185,8 @@ WebIM.EmojiObj = {
 
 WebIM.conn = new WebIM.connection({
   appKey: WebIM.config.appkey,
-  isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
-  https: typeof WebIM.config.https === "boolean" ? WebIM.config.https : location.protocol === "https:",
   url: WebIM.config.xmppURL,
   apiUrl: WebIM.config.apiURL,
-  isAutoLogin: false,
-  heartBeatWait: WebIM.config.heartBeatWait,
-  autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
-  autoReconnectInterval: WebIM.config.autoReconnectInterval,
-  isDebug: false,
-  isHttpDNS:false
 });
 
 module.exports = {
