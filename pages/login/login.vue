@@ -18,6 +18,7 @@
 
 	<view class="login_text">
 		<navigator url="../register/register" open-type="redirect">账号注册</navigator>
+		<navigator url="../resetpassword/resetpassword" open-type="redirect">找回密码</navigator>
 		<!-- <navigator url="../login_token/login_token" open-type="redirect" hover-class="navigator-hover">使用Token登录</navigator> -->
 	</view>
 </view>
