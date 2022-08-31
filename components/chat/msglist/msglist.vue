@@ -173,6 +173,7 @@ export default {
   },
 
   mounted(event) {
+
     let me = this;
     if (getApp().globalData.isIPX) {
       this.setData({
@@ -312,6 +313,7 @@ export default {
         show: true
       })
     },
+    
 
     previewImage(event) {
       var url = event.target.dataset.url;
