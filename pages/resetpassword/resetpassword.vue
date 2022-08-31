@@ -366,10 +366,10 @@ export default {
               title: "重置密码成功！",
               icon: "none"
             });
-            
+
             setTimeout(() => {
-              uni.navigateTo({
-                url: "../login/login"
+              uni.redirectTo({
+                url: "../login/login",
               });
             }, 1000);
           }
