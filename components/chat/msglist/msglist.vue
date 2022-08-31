@@ -6,8 +6,26 @@
     upper-threshold="-50"
     :scroll-into-view="toView"
   >
+  <view>
+    <u-modal v-model="show" title="消息举报" ref="uModal" confirm-text="举报" :async-close="true" @confirm="reportMsg" >
+      <view class="slot-content">
+         <u-field
+            v-model="reason"
+            label="举报原因"
+            placeholder="请填写举报原因"
+            type="textarea"
+            :auto-height="false"
+            :clearable="false"
+            maxlength="100"
+		      >
+		    </u-field>
+			</view>
+    </u-modal>
+		<u-action-sheet :list="list" @click="onMenuClick" v-model="showRpt"></u-action-sheet>
+		<u-action-sheet :list="typeList" @click="onReportTypeClick" v-model="showRptType"></u-action-sheet>
+	</view>
 	<view class="tips">本应用仅用于环信产品功能开发测试，请勿用于非法用途。任何涉及转账、汇款、裸聊、网恋、网购退款、投资理财等统统都是诈骗，请勿相信！</view>
-    <view class="message" v-for="item in chatMsg" :key="item.mid" :id="item.mid">
+    <view @longtap="onMsgTap(item)" class="message" v-for="item in chatMsg" :key="item.mid" :id="item.mid">
       <!-- <view class="time">
 				<text class="time-text">{{ item.time }}</text>
       </view>-->
@@ -86,7 +104,7 @@ let Index = 0;
 let curMsgMid = '';
 let isFail = false;
 import audioMsg from "./type/audio/audio";
-
+let WebIM = require("../../../utils/WebIM")["default"];
 export default {
   data() {
     return {
@@ -94,7 +112,37 @@ export default {
       toView: "",
       chatMsg: [],
       __visibility__: false,
-      isIPX: false
+      isIPX: false,
+      title:'消息举报',
+			list: [{
+					text: '举报'
+			}],
+      show: false,
+			showRpt: false,
+      showRptType: false,
+      rptMsgId: '', // 举报消息id
+      rptType: '', // 举报类型
+      reason: '',
+      typeList: [
+        {
+          text: "涉政"
+        },
+        {
+          text: "涉黄"
+        },
+        {
+          text: "广告"
+        },
+        {
+          text: "辱骂"
+        },
+        {
+          text: "暴恐"
+        },
+        {
+          text: "违禁"
+        }
+      ]
     };
   },
 
@@ -194,6 +242,11 @@ export default {
 	    }
 	  }
 	},
+    onInput(e){
+      this.setData({
+        reason: e.target.value
+      })
+    },
     shortScroll() {
       this.setData({
         view: LIST_STATUS.SHORT
@@ -206,11 +259,64 @@ export default {
       });
     },
 
+    onMsgTap(item){
+      // 别人发的消息
+      if(item.style !== 'self'){
+        this.setData({
+          showRpt: true,
+          rptMsgId: item.id
+        })
+      }
+    },
+
+    onMenuClick(idx){
+      if(idx === 0){
+        this.setData({
+          showRptType: true
+        })
+      }
+    },
+
+    reportMsg(){
+      let that = this
+      if(this.reason === ''){
+        this.$refs.uModal.clearLoading();
+        uni.showToast({title: "请填写举报原因",icon:'none'});
+        return false
+      }
+      WebIM.conn
+        .reportMessage({
+          reportType: that.rptType, // 举报类型
+          reportReason: that.reason, // 举报原因。
+          messageId: that.rptMsgId // 上报消息id
+        })
+        .then(() => {
+          uni.showToast({title: "举报成功",icon:'none'});
+        })
+        .catch((e) => {
+           uni.showToast({title: "举报失败",icon:'none'});
+        }).finally(() => {
+            that.setData({
+              reason: '',
+              rptType: '',
+              rptMsgId: '',
+              show: false
+            })
+        });
+    },
+
+    onReportTypeClick(idx){
+      // 设置举报类型
+      this.setData({
+        rptType: this.typeList[idx].text,
+        show: true
+      })
+    },
+
     previewImage(event) {
       var url = event.target.dataset.url;
       uni.previewImage({
         urls: [url] // 需要预览的图片 http 链接列表
-
       });
     },
 
