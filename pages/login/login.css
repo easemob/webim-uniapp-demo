@@ -54,9 +54,12 @@
 	font-size: 34rpx;
 }
 .login_text {
+	display: flex;
+	justify-content: space-between;
 	text-align: center;
-    position: relative;
-    top: 300rpx;
+  position: relative;
+	padding: 0 50rpx;
+  top: 300rpx;
 }
 
 .login_text navigator {

@@ -75,6 +75,15 @@
 			}
 		},
 		{
+			"path": "pages/resetpassword/resetpassword",
+			"style": {
+				"navigationBarBackgroundColor": "#3E4091",
+				"navigationBarTextStyle": "white",
+				"backgroundTextStyle": "dark",
+				"navigationBarTitleText": "环信"
+			}
+		},
+		{
 			"path": "pages/add_new/add_new",
 			"style": {
 				"navigationBarBackgroundColor": "#f2f2f2",

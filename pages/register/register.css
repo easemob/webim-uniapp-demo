@@ -19,6 +19,7 @@
 .register_user, .register_pwd, .register_btn {
 	display: flex;
 	position: relative;
+	align-items: center;
 }
 .register_user input, .register_pwd input {
 	height: 96rpx;
