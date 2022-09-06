@@ -30,6 +30,15 @@ page {
 	border-radius: 56rpx;
 	display: block;
 }
+.feedback {
+	background: none;
+	padding: 0;
+	margin: 0;
+	font-size: 16px;
+}
+.feedback:after {
+	border: none;
+}
 .setting_username {
 	height: 68rpx;
 	line-height: 68rpx;
