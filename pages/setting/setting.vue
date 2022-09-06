@@ -18,6 +18,20 @@
 	</view>
 </view>
 
+
+<view class="setting_list">
+	<view class="setting_listContent">
+		<text>意见反馈（yunying@easemob.com）</text>
+	</view>
+</view>
+
+<!-- 小程序意见反馈 -->
+<!-- <view class="setting_list">
+	<view class="setting_listContent">
+		<button class="feedback" open-type="feedback">意见反馈</button>
+	</view>
+</view> -->
+
 <view class="setting_list">
 	<view class="setting_listContent" @tap="logout">
 		<text class="setting_redtext">退出登录</text>
