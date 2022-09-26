@@ -112,7 +112,7 @@ export default {
     agree(event) {
       var me = this; 
       // 同意（无回调）
-      WebIM.conn.subscribed({
+      WebIM.conn.acceptContactInvite({
         to: event.currentTarget.dataset.from,
         message: "[resp:true]"
       }); 
@@ -154,13 +154,13 @@ export default {
         }
 
       };
-      WebIM.conn.getRoster(rosters);
+      WebIM.conn.getContacts(rosters);
     },
 
     reject(event) {
       var me = this; // 无回调
 
-      WebIM.conn.unsubscribed({
+      WebIM.conn.declineContactInvite({
         to: event.currentTarget.dataset.from,
         message: "rejectAddFriend"
       });

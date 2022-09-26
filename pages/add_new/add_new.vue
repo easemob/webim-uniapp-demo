@@ -118,7 +118,7 @@ export default {
         return;
       }
 
-      WebIM.conn.subscribe({
+      WebIM.conn.addContact({
         to: me.friend_name,
         message: myName + '请求添加好友'
       });
@@ -149,7 +149,7 @@ export default {
           });
         }
       };
-      WebIM.conn.getRoster(rosters);
+      WebIM.conn.getContacts(rosters);
     },
     isExistFriend: function (name, list) {
       for (let index = 0; index < list.length; index++) {

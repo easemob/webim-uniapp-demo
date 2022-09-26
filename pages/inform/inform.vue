@@ -63,12 +63,12 @@ export default {
     agree(event) {
       var me = this; // 同意（无回调）
 
-      WebIM.conn.subscribed({
-        to: event.currentTarget.dataset.from,
-        message: "[resp:true]"
-      }); // 需要反向添加对方好友（无回调）
+      // WebIM.conn.subscribed({
+      //  to: event.currentTarget.dataset.from,
+      //  message: "[resp:true]"
+      // }); // 需要反向添加对方好友（无回调）
 
-      WebIM.conn.subscribe({
+      WebIM.conn.addContact({
         to: event.currentTarget.dataset.from,
         message: "[resp:true]"
       }); // uni.showToast({
@@ -84,7 +84,7 @@ export default {
     reject(event) {
       var me = this; // 无回调
 
-      WebIM.conn.unsubscribed({
+      WebIM.conn.declineContactInvite({
         to: event.currentTarget.dataset.from,
         message: "rejectAddFriend"
       });

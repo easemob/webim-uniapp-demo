@@ -96,7 +96,7 @@ export default {
   onShow: function () {
     var me = this; // 获取当前用户的好友信息
 
-    WebIM.conn.getRoster({
+    WebIM.conn.getContacts({
       success: function (roster) {
         var member = [];
 
