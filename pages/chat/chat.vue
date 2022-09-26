@@ -46,7 +46,7 @@
             </view>
           </view>
 
-          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="item" v-else>
+          <view class="tap_mask" @tap.stop="into_chatRoom" :data-item="JSON.stringify(item)" v-else>
             <!-- 消息列表 -->
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
@@ -89,7 +89,7 @@
 
       <long-press-modal :winSize="winSize" :popButton="popButton" @change="pickerMenuChange" :showPop="showPop"
         @hidePop="hidePop" :popStyle="popStyle" />
-      <view v-if="arr.length == 0" class="chat_noChat">
+      <view v-if="arr && arr.length == 0" class="chat_noChat">
         <image class="ctbg" src="/static/images/ctbg.png"></image>
         暂无聊天消息
       </view>
@@ -296,6 +296,7 @@ export default {
       let me = this;
       let rosters = {
         success(roster) {
+			console.log('roster', roster)
           var member = [];
           for (let i = 0; i < roster.length; i++) {
             if (roster[i].subscription == "both") {
@@ -324,7 +325,7 @@ export default {
           console.log(err);
         },
       };
-      WebIM.conn.getRoster(rosters);
+      WebIM.conn.getContacts(rosters);
     },
 
     // // 不包含陌生人版本
@@ -491,6 +492,7 @@ export default {
         array.sort((a, b) => {
           return b.dateTimeNum - a.dateTimeNum;
         });
+		console.log('array', array)
         this.setData({
           arr: array,
         });
@@ -599,7 +601,7 @@ export default {
       });
     },
     into_chatRoom: function (event) {
-      let detail = event.currentTarget.dataset.item;
+      let detail = JSON.parse(event.currentTarget.dataset.item);
       if (
         detail.chatType == "groupchat" ||
         detail.chatType == "chatRoom" ||

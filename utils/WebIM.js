@@ -3,8 +3,8 @@
 // import websdk from "../sdk3.0/src/wxEntry"
 // import websdk from '../newSDK/sdk/src/wxEntry.js';
 
-
-import websdk from "../newSDK/uniapp-sdk-4.1.0";
+// import websdk from "../newSDK/Easemob-chat-web.js";
+import websdk from "../newSDK/uniapp-sdk-4.1.1";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
