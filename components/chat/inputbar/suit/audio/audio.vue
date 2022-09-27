@@ -36,7 +36,10 @@ let disp = require("../../../../../utils/broadcast");
 let msgStorage = require("../../../msgstorage");
 let RunAnimation = false;
 let recordTimeInterval = null;
-const InitHeight = [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50];
+const InitHeight = [
+  50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+  50, 50, 50
+];
 
 export default {
   data() {
@@ -50,7 +53,8 @@ export default {
       recorderManager: uni.getRecorderManager(),
       recordClicked: false,
       isLongPress: false,
-      recordTime: 0
+      recordTime: 0,
+      rec: null // h5 audio record
     };
   },
 
@@ -66,27 +70,22 @@ export default {
     }
   },
 
-  // lifetimes
-  created() {},
-
-  beforeMount() {},
-
-  moved() {},
-
   destroyed() {
-    clearInterval(recordTimeInterval)
-    this.recordTime = 0
+    clearInterval(recordTimeInterval);
+    this.recordTime = 0;
   },
 
-  mounted() {},
-
   methods: {
-    toggleWithoutAction(e) {// 阻止 tap 冒泡
+    toggleWithoutAction(e) {
+      // 阻止 tap 冒泡
     },
 
     toggleRecordModal() {
-      this.recordStatus = this.recordStatus == RecordStatus.HIDE ? RecordStatus.SHOW : RecordStatus.HIDE
-      this.radomheight = InitHeight
+      this.recordStatus =
+        this.recordStatus == RecordStatus.HIDE
+          ? RecordStatus.SHOW
+          : RecordStatus.HIDE;
+      this.radomheight = InitHeight;
     },
 
     handleRecordingMove(e) {
@@ -99,48 +98,56 @@ export default {
 
       if (this.recordStatus == RecordStatus.SWIPE) {
         if (changedTouches.pageY - touches.pageY < 20) {
-          this.recordStatus = RecordStatus.HOLD
+          this.recordStatus = RecordStatus.HOLD;
         }
       }
 
       if (this.recordStatus == RecordStatus.HOLD) {
         if (changedTouches.pageY - touches.pageY > 20) {
-          this.recordStatus = RecordStatus.SWIPE
+          this.recordStatus = RecordStatus.SWIPE;
         }
       }
     },
 
-    handleRecording(e) {
-		console.log('开始点击',uni.getSystemInfoSync())
-		if(uni.getSystemInfoSync().app === "alipay"){
-			// https://forum.alipay.com/mini-app/post/7301031?ant_source=opendoc_recommend
-			uni.showModal({
-				content: '支付宝小程序不支持语音消息，请查看支付宝相关api了解详情'
-			})
-			return
-		}
+    startRecord(e) {
       let me = this;
-	  
-      me.recordClicked = true
-      setTimeout(() => {
-        if (me.recordClicked == true) {
-          executeRecord();
-        }
-      }, 350);
+      clearInterval(recordTimeInterval);
+      me.recordTime = 0;
+      me.changedTouches = e.touches[0];
+      me.recordStatus = RecordStatus.HOLD;
+      RunAnimation = true;
+      me.myradom();
+      let recorderManager = me.recorderManager || uni.getRecorderManager();
+      recorderManager.onStart(() => {
+        // console.log("开始录音...");
+        recordTimeInterval = setInterval(() => {
+          me.recordTime++;
+        }, 1000);
+      });
+      recorderManager.start({
+        format: "mp3"
+      }); // 超时
 
-      function executeRecord() {
-        if (uni.getSetting) {
+      setTimeout(function () {
+        me.handleRecordingCancel();
+        RunAnimation = false;
+      }, 100000);
+    },
+
+    executeRecord(e) {
+      let me = this;
+      if (uni.getSetting) {
         uni.getSetting({
-          success: res => {
+          success: (res) => {
             clearInterval(recordTimeInterval);
-            me.recordTime = 0
-            let recordAuth = res.authSetting['scope.record'];
+            me.recordTime = 0;
+            let recordAuth = res.authSetting["scope.record"];
 
             if (recordAuth == false) {
               //已申请过授权，但是用户拒绝
               uni.openSetting({
                 success: function (res) {
-                  let recordAuth = res.authSetting['scope.record'];
+                  let recordAuth = res.authSetting["scope.record"];
 
                   if (recordAuth == true) {
                     uni.showToast({
@@ -154,16 +161,16 @@ export default {
                     });
                   }
 
-                  me.isLongPress = false
+                  me.isLongPress = false;
                 }
               });
             } else if (recordAuth == true) {
               // 用户已经同意授权
-              startRecord();
+              me.startRecord(e);
             } else {
               // 第一次进来，未发起授权
               uni.authorize({
-                scope: 'scope.record',
+                scope: "scope.record",
                 success: () => {
                   //授权成功
                   uni.showToast({
@@ -180,76 +187,120 @@ export default {
               icon: "none"
             });
           }
-        })
-        return
-         }else{
-          startRecord()
-          return
-        }
-      }
-
-      function startRecord() {
-        clearInterval(recordTimeInterval);
-        me.recordTime = 0
-        me.changedTouches = e.touches[0];
-        me.recordStatus = RecordStatus.HOLD
-        RunAnimation = true;
-        me.myradom();
-        let recorderManager = me.recorderManager || uni.getRecorderManager();
-        recorderManager.onStart(() => {
-          // console.log("开始录音...");
-          recordTimeInterval = setInterval(()=>{
-            me.recordTime ++
-          },1000)
-          
         });
-        recorderManager.start({
-          format: "mp3"
-        }); // 超时
-
-        setTimeout(function () {
-          me.handleRecordingCancel();
-          RunAnimation = false;
-        }, 100000);
+        return;
+      } else {
+        me.startRecord(e);
+        return;
       }
     },
 
+    handleRecording(e) {
+      const sysInfo = uni.getSystemInfoSync();
+      console.log("getSystemInfoSync", sysInfo);
+      if (sysInfo.app === "alipay") {
+        // https://forum.alipay.com/mini-app/post/7301031?ant_source=opendoc_recommend
+        uni.showModal({
+          content: "支付宝小程序不支持语音消息，请查看支付宝相关api了解详情"
+        });
+        return;
+      }
+      let me = this;
+      me.recordClicked = true;
+      // h5不支持uni.getRecorderManager, 需要单独处理
+      if (sysInfo.uniPlatform === "web") {
+        import("recorder-core").then((Recorder) => {
+          require("recorder-core/src/engine/mp3");
+          require("recorder-core/src/engine/mp3-engine");
+          me.rec = new Recorder.default({
+            type: "mp3",
+            onProcess: function (buffers, powerLevel, duration, sampleRate) {
+              console.log(duration, powerLevel);
+            }
+          });
+          me.rec.open(
+            () => {
+              uni.showToast({
+                title: "开始录音",
+                icon: "none"
+              });
+              me.rec.start();
+            },
+            (msg, isUserNotAllow) => {
+              console.log(
+                (isUserNotAllow ? "UserNotAllow，" : "") + "打开失败：" + msg,
+                1
+              );
+            }
+          );
+          setTimeout(() => {
+            me.rec.stop(
+              function (blob, duration) {
+                var reader = new FileReader();
+                reader.addEventListener(
+                  "load",
+                  function () {
+                  },
+                  false
+                );
+                reader.readAsDataURL(blob);
+                let blobURL = window.URL.createObjectURL(blob);
+                console.log(blobURL)
+                me.uploadRecord(blobURL, 5000);
+              },
+              function (s) {
+                console.log("结束出错：" + s, 1);
+              },
+              true
+            ); //自动close
+          }, 5000);
+        });
+      } else {
+        setTimeout(() => {
+          if (me.recordClicked == true) {
+            me.executeRecord(e);
+          }
+        }, 350);
+      }
+    },
+
+    // 取消录音
     handleRecordingCancel() {
       RunAnimation = false;
       let recorderManager = this.recorderManager; // 向上滑动状态停止：取消录音发放
 
       if (this.recordStatus == RecordStatus.SWIPE) {
-        this.recordStatus = RecordStatus.RELEASE
+        this.recordStatus = RecordStatus.RELEASE;
       } else {
-        this.recordStatus = RecordStatus.HIDE
-        this.recordClicked = false
+        this.recordStatus = RecordStatus.HIDE;
+        this.recordClicked = false;
       }
 
-      recorderManager.onStop(res => {
-        // console.log("结束录音...", res);
-        clearInterval(recordTimeInterval);
-        let duration = this.recordTime * 1000;
-        if (this.recordStatus == RecordStatus.RELEASE) {
-          console.log("user canceled");
-          this.recordStatus = RecordStatus.HIDE
-          return;
-        }
+      // recorderManager.onStop((res) => {
+      //   // console.log("结束录音...", res);
+      //   clearInterval(recordTimeInterval);
+      //   let duration = this.recordTime * 1000;
+      //   if (this.recordStatus == RecordStatus.RELEASE) {
+      //     console.log("user canceled");
+      //     this.recordStatus = RecordStatus.HIDE;
+      //     return;
+      //   }
 
-        if (duration <= 1000) {
-          uni.showToast({
-            title: "录音时间太短",
-            icon: "none"
-          });
-        } else {
-          // 上传
-          this.uploadRecord(res.tempFilePath, duration);
-        }
-        	clearInterval(recordTimeInterval);
-					this.recordStatus = RecordStatus.HIDE
-					this.recordTime = 0;
-      }); // 停止录音
+      //   if (duration <= 1000) {
+      //     uni.showToast({
+      //       title: "录音时间太短",
+      //       icon: "none"
+      //     });
+      //   } else {
+      //     // 上传
+      //     this.uploadRecord(res.tempFilePath, duration);
+      //   }
+      //   clearInterval(recordTimeInterval);
+      //   this.recordStatus = RecordStatus.HIDE;
+      //   this.recordTime = 0;
+      // }); // 停止录音
 
-      recorderManager.stop();
+      // recorderManager.stop();
     },
 
     isGroupChat() {
@@ -261,13 +312,14 @@ export default {
     },
 
     uploadRecord(tempFilePath, dur) {
+      console.log(tempFilePath, dur);
       var str = WebIM.config.appkey.split("#");
       var me = this;
       var token = WebIM.conn.context.accessToken;
       uni.uploadFile({
         url: "https://a1.easemob.com/" + str[0] + "/" + str[1] + "/chatfiles",
         filePath: tempFilePath,
-		fileType: 'audio',
+        fileType: "audio",
         name: "file",
         header: {
           "Content-Type": "multipart/form-data",
@@ -279,40 +331,39 @@ export default {
           var msg = new WebIM.message(msgType.AUDIO, id);
           var dataObj = JSON.parse(res.data); // 接收消息对象
 
-          msg.set({
-            apiUrl: WebIM.config.apiURL,
-            accessToken: token,
-            body: {
-              type: msgType.AUDIO,
-              url: dataObj.uri + "/" + dataObj.entities[0].uuid,
-              filetype: "",
-              filename: tempFilePath,
-              accessToken: token,
-              length: Math.ceil(dur / 1000)
-            },
-            from: me.username.myName,
-            to: me.getSendToParam(),
-            roomType: false,
-            chatType: me.chatType,
-            success: function (argument) {
-              disp.fire('em.chat.sendSuccess', id);
-            }
-          });
+          // msg.set({
+          //   apiUrl: WebIM.config.apiURL,
+          //   accessToken: token,
+          //   body: {
+          //     type: msgType.AUDIO,
+          //     url: dataObj.uri + "/" + dataObj.entities[0].uuid,
+          //     filetype: "",
+          //     filename: tempFilePath,
+          //     accessToken: token,
+          //     length: Math.ceil(dur / 1000)
+          //   },
+          //   from: me.username.myName,
+          //   to: me.getSendToParam(),
+          //   roomType: false,
+          //   chatType: me.chatType,
+          //   success: function (argument) {
+          //     disp.fire("em.chat.sendSuccess", id);
+          //   }
+          // });
 
-          if (me.isGroupChat()) {
-            msg.setGroup("groupchat");
-          }
+          // if (me.isGroupChat()) {
+          //   msg.setGroup("groupchat");
+          // }
 
-          msg.body.length = Math.ceil(dur / 1000); //console.log('发送的语音消息', msg.body)
+          // msg.body.length = Math.ceil(dur / 1000); //console.log('发送的语音消息', msg.body)
 
-          WebIM.conn.send(msg.body);
-                let obj = {
-                  msg: msg,
-                  type: msgType.AUDIO
-                }
-                me.saveSendMsg(obj);
+          // WebIM.conn.send(msg.body);
+          // let obj = {
+          //   msg: msg,
+          //   type: msgType.AUDIO
+          // };
+          // me.saveSendMsg(obj);
         }
-
       });
     },
     saveSendMsg(evt) {
@@ -328,7 +379,8 @@ export default {
         _radomheight[i] = 100 * Math.random().toFixed(2) + 10;
       }
 
-      that.radomheight = _radomheight
+      that.radomheight = _radomheight;
+      console.log(RunAnimation, "RunAnimation");
 
       if (RunAnimation) {
         setTimeout(function () {
@@ -338,7 +390,6 @@ export default {
         return;
       }
     }
-
   }
 };
 </script>
