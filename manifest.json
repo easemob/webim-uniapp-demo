@@ -118,6 +118,11 @@
             "urlCheck" : false
         }
     },
+    "h5": {
+        "devServer" : {
+            "https" : true
+        }
+    },
     "quickapp-webview" : {
         "package" : "com.example.IMdemo",
         "minPlatformVersion" : 1061,

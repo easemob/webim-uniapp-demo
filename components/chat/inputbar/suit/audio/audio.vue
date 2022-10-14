@@ -7,7 +7,7 @@
     <view class="modal-body" @tap.stop="toggleWithoutAction">
       <view class="sound-waves">
         <view
-          v-for="(item, index) in radomheight"
+          v-for="(item, index) in radomHeight"
           :key="index"
           :style="'height:' + item + 'rpx;margin-top:-' + item / 2 + 'rpx'"
         ></view>
@@ -36,11 +36,11 @@ let disp = require("../../../../../utils/broadcast");
 let msgStorage = require("../../../msgstorage");
 let RunAnimation = false;
 let recordTimeInterval = null;
+let waveTimer = null;
 const InitHeight = [
   50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
   50, 50, 50
 ];
-
 export default {
   data() {
     return {
@@ -48,8 +48,7 @@ export default {
       recordStatus: RecordStatus.HIDE,
       RecordStatus,
       RecordDesc,
-      // 模板中有引用
-      radomheight: InitHeight,
+      radomHeight: InitHeight,
       recorderManager: uni.getRecorderManager(),
       recordClicked: false,
       isLongPress: false,
@@ -57,7 +56,6 @@ export default {
       rec: null // h5 audio record
     };
   },
-
   components: {},
   props: {
     username: {
@@ -72,6 +70,7 @@ export default {
 
   destroyed() {
     clearInterval(recordTimeInterval);
+    clearTimeout(waveTimer);
     this.recordTime = 0;
   },
 
@@ -81,11 +80,12 @@ export default {
     },
 
     toggleRecordModal() {
-      this.recordStatus =
-        this.recordStatus == RecordStatus.HIDE
-          ? RecordStatus.SHOW
-          : RecordStatus.HIDE;
-      this.radomheight = InitHeight;
+      if (this.recordStatus === RecordStatus.HIDE) {
+        this.recordStatus = RecordStatus.SHOW;
+      } else {
+        this.recordStatus = RecordStatus.HIDE;
+      }
+      this.radomHeight = InitHeight;
     },
 
     handleRecordingMove(e) {
@@ -108,30 +108,35 @@ export default {
         }
       }
     },
-
+    // 初始化开始录音状态
+    initStartRecord(e) {
+      clearInterval(recordTimeInterval);
+      this.recordTime = 0;
+      this.changedTouches = e.touches[0];
+      this.recordStatus = RecordStatus.HOLD;
+      RunAnimation = true;
+      this.startWave();
+    },
+    // 记录录音时长
+    saveRecordTime() {
+      recordTimeInterval = setInterval(() => {
+        this.recordTime++;
+        if (this.recordTime === 100) {
+          this.handleRecordingCancel();
+          RunAnimation = false;
+        }
+      }, 1000);
+    },
     startRecord(e) {
       let me = this;
-      clearInterval(recordTimeInterval);
-      me.recordTime = 0;
-      me.changedTouches = e.touches[0];
-      me.recordStatus = RecordStatus.HOLD;
-      RunAnimation = true;
-      me.myradom();
+      me.initStartRecord(e);
       let recorderManager = me.recorderManager || uni.getRecorderManager();
       recorderManager.onStart(() => {
-        // console.log("开始录音...");
-        recordTimeInterval = setInterval(() => {
-          me.recordTime++;
-        }, 1000);
+        this.saveRecordTime();
       });
       recorderManager.start({
         format: "mp3"
-      }); // 超时
-
-      setTimeout(function () {
-        me.handleRecordingCancel();
-        RunAnimation = false;
-      }, 100000);
+      });
     },
 
     executeRecord(e) {
@@ -144,7 +149,7 @@ export default {
             let recordAuth = res.authSetting["scope.record"];
 
             if (recordAuth == false) {
-              //已申请过授权，但是用户拒绝
+              // 已申请过授权，但是用户拒绝
               uni.openSetting({
                 success: function (res) {
                   let recordAuth = res.authSetting["scope.record"];
@@ -172,7 +177,7 @@ export default {
               uni.authorize({
                 scope: "scope.record",
                 success: () => {
-                  //授权成功
+                  // 授权成功
                   uni.showToast({
                     title: "授权成功",
                     icon: "success"
@@ -210,50 +215,34 @@ export default {
       // h5不支持uni.getRecorderManager, 需要单独处理
       if (sysInfo.uniPlatform === "web") {
         import("recorder-core").then((Recorder) => {
-          require("recorder-core/src/engine/mp3");
-          require("recorder-core/src/engine/mp3-engine");
-          me.rec = new Recorder.default({
-            type: "mp3",
-            onProcess: function (buffers, powerLevel, duration, sampleRate) {
-              console.log(duration, powerLevel);
-            }
-          });
-          me.rec.open(
-            () => {
-              uni.showToast({
-                title: "开始录音",
-                icon: "none"
-              });
-              me.rec.start();
-            },
-            (msg, isUserNotAllow) => {
-              console.log(
-                (isUserNotAllow ? "UserNotAllow，" : "") + "打开失败：" + msg,
-                1
-              );
-            }
-          );
-          setTimeout(() => {
-            me.rec.stop(
-              function (blob, duration) {
-                var reader = new FileReader();
-                reader.addEventListener(
-                  "load",
-                  function () {
-                  },
-                  false
-                );
-                reader.readAsDataURL(blob);
-                let blobURL = window.URL.createObjectURL(blob);
-                console.log(blobURL)
-                me.uploadRecord(blobURL, 5000);
+          require("../../../../../recorderCore/src/engine/mp3");
+          require("../../../../../recorderCore/src/engine/mp3-engine");
+          if (me.recordClicked == true) {
+            clearInterval(recordTimeInterval);
+            me.initStartRecord(e);
+            me.rec = new Recorder.default({
+              type: "mp3"
+            });
+            me.rec.open(
+              () => {
+                me.saveRecordTime();
+                me.rec.start();
               },
-              function (s) {
-                console.log("结束出错：" + s, 1);
-              },
-              true
-            ); //自动close
-          }, 5000);
+              (msg, isUserNotAllow) => {
+                if (isUserNotAllow) {
+                  uni.showToast({
+                    title: "鉴权失败，请重试",
+                    icon: "none"
+                  });
+                } else {
+                  uni.showToast({
+                    title: `打开失败：${msg}`,
+                    icon: "none"
+                  });
+                }
+              }
+            );
+          }
         });
       } else {
         setTimeout(() => {
@@ -268,39 +257,66 @@ export default {
     handleRecordingCancel() {
       RunAnimation = false;
       let recorderManager = this.recorderManager; // 向上滑动状态停止：取消录音发放
-
+      let me = this;
       if (this.recordStatus == RecordStatus.SWIPE) {
         this.recordStatus = RecordStatus.RELEASE;
       } else {
         this.recordStatus = RecordStatus.HIDE;
         this.recordClicked = false;
       }
+      if (uni.getSystemInfoSync().uniPlatform === "web") {
+        this.rec.stop(
+          function (blob) {
+            clearInterval(recordTimeInterval);
+            let duration = me.recordTime * 1000;
+            if (me.recordStatus == RecordStatus.RELEASE) {
+              console.log("user canceled");
+              me.recordStatus = RecordStatus.HIDE;
+              return;
+            }
+            if (duration <= 1000) {
+              uni.showToast({
+                title: "录音时间太短",
+                icon: "none"
+              });
+            } else {
+              let blobURL = window.URL.createObjectURL(blob);
+              me.uploadRecord(blobURL, duration);
+            }
+            me.recordStatus = RecordStatus.HIDE;
+            me.recordTime = 0;
+          },
+          function (s) {
+            console.log("结束出错：" + s, 1);
+          },
+          true
+        );
+      } else {
+        recorderManager.onStop((res) => {
+          clearInterval(recordTimeInterval);
+          let duration = this.recordTime * 1000;
+          if (this.recordStatus == RecordStatus.RELEASE) {
+            console.log("user canceled");
+            this.recordStatus = RecordStatus.HIDE;
+            return;
+          }
 
-      // recorderManager.onStop((res) => {
-      //   // console.log("结束录音...", res);
-      //   clearInterval(recordTimeInterval);
-      //   let duration = this.recordTime * 1000;
-      //   if (this.recordStatus == RecordStatus.RELEASE) {
-      //     console.log("user canceled");
-      //     this.recordStatus = RecordStatus.HIDE;
-      //     return;
-      //   }
+          if (duration <= 1000) {
+            uni.showToast({
+              title: "录音时间太短",
+              icon: "none"
+            });
+          } else {
+            // 上传
+            this.uploadRecord(res.tempFilePath, duration);
+          }
+          clearInterval(recordTimeInterval);
+          this.recordStatus = RecordStatus.HIDE;
+          this.recordTime = 0;
+        }); // 停止录音
 
-      //   if (duration <= 1000) {
-      //     uni.showToast({
-      //       title: "录音时间太短",
-      //       icon: "none"
-      //     });
-      //   } else {
-      //     // 上传
-      //     this.uploadRecord(res.tempFilePath, duration);
-      //   }
-      //   clearInterval(recordTimeInterval);
-      //   this.recordStatus = RecordStatus.HIDE;
-      //   this.recordTime = 0;
-      // }); // 停止录音
-
-      // recorderManager.stop();
+        recorderManager.stop();
+      }
     },
 
     isGroupChat() {
@@ -312,7 +328,6 @@ export default {
     },
 
     uploadRecord(tempFilePath, dur) {
-      console.log(tempFilePath, dur);
       var str = WebIM.config.appkey.split("#");
       var me = this;
       var token = WebIM.conn.context.accessToken;
@@ -322,7 +337,6 @@ export default {
         fileType: "audio",
         name: "file",
         header: {
-          "Content-Type": "multipart/form-data",
           Authorization: "Bearer " + token
         },
 
@@ -331,62 +345,59 @@ export default {
           var msg = new WebIM.message(msgType.AUDIO, id);
           var dataObj = JSON.parse(res.data); // 接收消息对象
 
-          // msg.set({
-          //   apiUrl: WebIM.config.apiURL,
-          //   accessToken: token,
-          //   body: {
-          //     type: msgType.AUDIO,
-          //     url: dataObj.uri + "/" + dataObj.entities[0].uuid,
-          //     filetype: "",
-          //     filename: tempFilePath,
-          //     accessToken: token,
-          //     length: Math.ceil(dur / 1000)
-          //   },
-          //   from: me.username.myName,
-          //   to: me.getSendToParam(),
-          //   roomType: false,
-          //   chatType: me.chatType,
-          //   success: function (argument) {
-          //     disp.fire("em.chat.sendSuccess", id);
-          //   }
-          // });
+          msg.set({
+            apiUrl: WebIM.config.apiURL,
+            accessToken: token,
+            body: {
+              type: msgType.AUDIO,
+              url: dataObj.uri + "/" + dataObj.entities[0].uuid,
+              filetype: "",
+              filename: tempFilePath,
+              accessToken: token,
+              length: Math.ceil(dur / 1000)
+            },
+            from: me.username.myName,
+            to: me.getSendToParam(),
+            roomType: false,
+            chatType: me.chatType,
+            success: function (argument) {
+              disp.fire("em.chat.sendSuccess", id);
+            }
+          });
 
-          // if (me.isGroupChat()) {
-          //   msg.setGroup("groupchat");
-          // }
+          if (me.isGroupChat()) {
+            msg.setGroup("groupchat");
+          }
 
-          // msg.body.length = Math.ceil(dur / 1000); //console.log('发送的语音消息', msg.body)
+          msg.body.length = Math.ceil(dur / 1000); //console.log('发送的语音消息', msg.body)
 
-          // WebIM.conn.send(msg.body);
-          // let obj = {
-          //   msg: msg,
-          //   type: msgType.AUDIO
-          // };
-          // me.saveSendMsg(obj);
+          WebIM.conn.send(msg.body);
+          let obj = {
+            msg: msg,
+            type: msgType.AUDIO
+          };
+          me.saveSendMsg(obj);
         }
       });
     },
     saveSendMsg(evt) {
       msgStorage.saveMsg(evt.msg, evt.type);
     },
-
-    myradom() {
+    // 波纹动画
+    startWave() {
       const that = this;
-      var _radomheight = that.radomheight;
-
-      for (var i = 0; i < that.radomheight.length; i++) {
+      var _radomHeight = [...that.radomHeight];
+      for (var i = 0; i < that.radomHeight.length; i++) {
         //+1是为了避免为0
-        _radomheight[i] = 100 * Math.random().toFixed(2) + 10;
+        _radomHeight[i] = 100 * Math.random().toFixed(2) + 10;
       }
-
-      that.radomheight = _radomheight;
-      console.log(RunAnimation, "RunAnimation");
-
+      that.radomHeight = _radomHeight;
       if (RunAnimation) {
-        setTimeout(function () {
-          that.myradom();
+        waveTimer = setTimeout(function () {
+          that.startWave();
         }, 500);
       } else {
+        clearInterval(waveTimer);
         return;
       }
     }
