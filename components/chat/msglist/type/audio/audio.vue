@@ -1,7 +1,7 @@
 <template>
 <view class="audio-player" @tap="audioPlay" :style="'opacity: ' + opcity">
 	<text class="time">语音消息 {{ time }}</text>
-	<view class="controls play-btn" @tap="audioPlay">
+	<view class="controls play-btn">
 		<image :src="style == 'self'? '../../../../../static/images/voicemsgmy.png' : '../../../../../static/images/voicemsg.png'"></image>
 	</view>
 </view>
