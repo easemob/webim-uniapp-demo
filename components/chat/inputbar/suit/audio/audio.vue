@@ -236,7 +236,7 @@ export default {
                   });
                 } else {
                   uni.showToast({
-                    title: `打开失败：${msg}`,
+                    title: `开启失败，请重试`,
                     icon: "none"
                   });
                 }
