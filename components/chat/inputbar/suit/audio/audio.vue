@@ -352,7 +352,7 @@ export default {
               type: msgType.AUDIO,
               url: dataObj.uri + "/" + dataObj.entities[0].uuid,
               filetype: "",
-              filename: tempFilePath,
+              filename: `${new Date().getTime()}.mp3`,
               accessToken: token,
               length: Math.ceil(dur / 1000)
             },
