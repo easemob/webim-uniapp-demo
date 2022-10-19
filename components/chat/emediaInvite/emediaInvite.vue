@@ -17,8 +17,8 @@
 					type='text'
 					bindconfirm="onSearch"
 					bindinput="onInput"
-					:value="input_code"
-					></input>
+					v-model="input_code"
+					>
 					<icon type="clear" size="13" catchtap='clearInput' v-if="show_clear"></icon>
 			</view>
 			<text bindtap="cancel">取消</text>

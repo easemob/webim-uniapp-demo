@@ -17,7 +17,7 @@
         <view>
           <icon type="search" size="12"></icon>
           <input placeholder="搜索" placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;" auto-focus
-            confirm-type="search" type="text" @confirm="onSearch" @input="onInput" :value="input_code" />
+            confirm-type="search" type="text" @confirm="onSearch" @input="onInput" v-model="input_code" />
           <icon type="clear" size="12" @tap.stop="clearInput" v-if="show_clear"></icon>
         </view>
         <text @tap="cancel">取消</text>

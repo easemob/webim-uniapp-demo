@@ -35,7 +35,7 @@
                 type="text"
                 @confirm="onSearch"
                 @input="onInput"
-                :value="input_code"
+                v-model="input_code"
               />
               <icon
                 type="clear"
