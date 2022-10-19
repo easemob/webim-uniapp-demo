@@ -112,10 +112,9 @@ export default {
     agree(event) {
       var me = this; 
       // 同意（无回调）
-      WebIM.conn.acceptContactInvite({
-        to: event.currentTarget.dataset.from,
-        message: "[resp:true]"
-      }); 
+      WebIM.conn.acceptContactInvite(
+        event.currentTarget.dataset.from,
+      ); 
       this.friendList.forEach(item => {
         if (item.from == event.currentTarget.dataset.from) {
           item.type = 'subscribed';
@@ -160,10 +159,9 @@ export default {
     reject(event) {
       var me = this; // 无回调
 
-      WebIM.conn.declineContactInvite({
-        to: event.currentTarget.dataset.from,
-        message: "rejectAddFriend"
-      });
+      WebIM.conn.declineContactInvite(
+        event.currentTarget.dataset.from,
+      );
       this.friendList.forEach(item => {
         if (item.from == event.currentTarget.dataset.from) {
           item.type = 'unsubscribed';
