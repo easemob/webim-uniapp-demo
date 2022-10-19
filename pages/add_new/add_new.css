@@ -62,7 +62,7 @@ button {
 }
 .search icon,.search_input icon {
 	display: inline-block;
-	margin: 26rpx 8rpx 0 0;
+	margin: 4rpx 12rpx 0 0;
 	height: 26px;
 	line-height: 52rpx;
 }
