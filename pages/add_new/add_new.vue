@@ -118,10 +118,10 @@ export default {
         return;
       }
 
-      WebIM.conn.addContact({
-        to: me.friend_name,
-        message: myName + '请求添加好友'
-      });
+      WebIM.conn.addContact(
+        me.friend_name,
+        myName + '请求添加好友'
+      );
 
       let rosters = {
         success: function (roster) {

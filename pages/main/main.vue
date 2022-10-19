@@ -329,15 +329,10 @@ export default {
       };
 
       if (message.type == "unsubscribe" || message.type == "unsubscribed") {
-        WebIM.conn.deleteContact({
-          to: message.from,
-          success: function () {
-            // WebIM.conn.unsubscribed({
-            //   to: message.from,
-            // });
-            WebIM.conn.getContacts(rosters);
-          },
-        });
+        WebIM.conn.deleteContact(
+          message.from,
+        );
+        WebIM.conn.getContacts(rosters);
       }
     },
     handleFriendMsg: function (message) {
@@ -376,9 +371,9 @@ export default {
 
         success(res) {
           if (res.confirm == true) {
-            WebIM.conn.removeRoster({
-              to: delName,
-            });
+            WebIM.conn.deleteContact(
+              delName,
+            );
             uni.showToast({
               title: "删除成功",
             });
