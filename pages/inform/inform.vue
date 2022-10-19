@@ -68,10 +68,10 @@ export default {
       //  message: "[resp:true]"
       // }); // 需要反向添加对方好友（无回调）
 
-      WebIM.conn.addContact({
-        to: event.currentTarget.dataset.from,
-        message: "[resp:true]"
-      }); // uni.showToast({
+      WebIM.conn.addContact(
+        event.currentTarget.dataset.from,
+        "[resp:true]"
+      ); // uni.showToast({
       // 	title: "OK",
       // 	duration: 1000
       // });
