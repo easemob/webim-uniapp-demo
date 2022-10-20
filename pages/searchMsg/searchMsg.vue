@@ -40,7 +40,7 @@
             />
             <!-- <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls style="width:300rpx;"/> -->
           </view>
-          <audio-msg v-if="item.type == 'audio'" :msg="item"></audio-msg>
+          <view v-if="item.type == 'audio'">[语音]</view>
           <view v-else-if="item.type == 'txt' || item.type == 'emoji'">
             <text class="msg-text"
               >{{ item.msg }}</text>
