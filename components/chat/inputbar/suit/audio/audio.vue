@@ -214,7 +214,7 @@ export default {
       me.recordClicked = true;
       // h5不支持uni.getRecorderManager, 需要单独处理
       if (sysInfo.uniPlatform === "web") {
-        import("../../../../../recorderCore").then((Recorder) => {
+        import("../../../../../recorderCore/src/recorder-core").then((Recorder) => {
           require("../../../../../recorderCore/src/engine/mp3");
           require("../../../../../recorderCore/src/engine/mp3-engine");
           if (me.recordClicked == true) {
