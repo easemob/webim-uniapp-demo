@@ -1,17 +1,10 @@
-
-// import websdk from "../newSDK/wxsdk3.5.1";
-// import websdk from "../sdk3.0/src/wxEntry"
-// import websdk from '../newSDK/sdk/src/wxEntry.js';
-
-// import websdk from "../newSDK/Easemob-chat-web.js";
-import websdk from "../newSDK/uniapp-sdk-4.1.1";
+import websdk from "../newSDK/uniapp-sdk-4.1.2";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
 var window = {};
 let WebIM = window.WebIM = uni.WebIM = websdk;
-window.WebIM.config = config; //var DOMParser = window.DOMParser = xmldom.DOMParser;
-//let document = window.document = new DOMParser().parseFromString("<?xml version='1.0'?>\n", "text/xml");
+window.WebIM.config = config; 
 
 WebIM.isDebug = function (option) {
   if (option) {
