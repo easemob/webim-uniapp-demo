@@ -241,7 +241,7 @@ export default {
 
       onClosed() {
         uni.showToast({
-          title: "网络已断开",
+          title: "退出登录",
           icon: "none",
           duration: 2000,
         });
