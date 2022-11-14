@@ -44,6 +44,10 @@
             <image src="/static/images/pic.png"></image>
             相册
           </view>
+          <view class="send_image" @tap="sendImage">
+            <image style="background-color: #fff" src="/static/images/file.png"></image>
+            附件
+          </view>
 
           <view
             class="send_image"
