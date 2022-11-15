@@ -65,6 +65,7 @@
             <!-- <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls style="width:300rpx;"/> -->
           </view>
           <audio-msg v-if="item.msg.type == 'audio'" :msg="item"></audio-msg>
+          <file-msg v-if="item.msg.type == 'file'" :msg="item"></file-msg>
           <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
             <view class="template" v-for="(d_item, d_index) in item.msg.data" :key="d_index">
               <text
@@ -104,6 +105,7 @@ let Index = 0;
 let curMsgMid = '';
 let isFail = false;
 import audioMsg from "./type/audio/audio";
+import fileMsg from "./type/file";
 let WebIM = require("../../../utils/WebIM")["default"];
 export default {
   data() {
@@ -147,7 +149,8 @@ export default {
   },
 
   components: {
-    audioMsg
+    audioMsg,
+    fileMsg
   },
   props: {
     username: {
