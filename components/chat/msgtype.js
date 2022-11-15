@@ -5,7 +5,7 @@ module.exports = {
   VIDEO: "video",
   AUDIO: "audio",
   EMOJI: "emoji",
-  FILE: "chat",
+  FILE: "file",
   //
   chatType: {
     SINGLE_CHAT: "singleChat",
