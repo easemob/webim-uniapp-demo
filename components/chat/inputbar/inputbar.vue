@@ -40,17 +40,21 @@
             <image src="/static/images/camora.png"></image>
             相机
           </view>
-          <view class="send_image" @tap="sendImage">
+          <view class="menu_wrap" @tap="sendImage">
             <image src="/static/images/pic.png"></image>
             相册
           </view>
-          <view class="send_image" @tap="sendImage">
-            <image style="background-color: #fff" src="/static/images/file.png"></image>
-            附件
+          <view class="menu_wrap">
+            <chatSuitAttach :username="username" :chatType="chatType">
+              <image
+                style="background-color: #fff"
+                src="/static/images/file.png"
+              ></image>
+              附件
+            </chatSuitAttach>
           </view>
-
           <view
-            class="send_image"
+            class="menu_wrap"
             @tap="edit_group"
             v-show="chatType === 'chatRoom'"
           >
@@ -58,13 +62,13 @@
             群信息
           </view>
 
-          <!-- <view class="send_image" @tap="sendVideo">
+          <!-- <view class="menu_wrap" @tap="sendVideo">
             <image
               src="/static/images/video.png"
               style="height: 20px; width: 20px"
             ></image>
           </view>
-          <view class="send_image" bind:tap="sendLocation">
+          <view class="menu_wrap" bind:tap="sendLocation">
             <image
               src="../../../static/images/iconLocation2x.png"
               style="height: 18px"
@@ -91,12 +95,13 @@ import chatSuitImage from "./suit/image/image";
 import chatSuitLocation from "./suit/location/location";
 import chatSuitMain from "./suit/main/main";
 import chatSuitPtopcall from "./suit/ptopcall/ptopcall.vue";
+import chatSuitAttach from "./suit/attach";
 
 // import chatSuitVideo from "./suit/videoComp/videoComp"
 
 let FUNMODAL_STATUS = {
   OPENED: "showFunModal",
-  CLOSED: "fun_list",
+  CLOSED: "fun_list"
 };
 
 export default {
@@ -109,10 +114,10 @@ export default {
         emoji: null,
         image: null,
         location: null,
-        video: null,
+        video: null
       },
       isIPX: "",
-      showFunModal: FUNMODAL_STATUS.CLOSED,
+      showFunModal: FUNMODAL_STATUS.CLOSED
     };
   },
 
@@ -122,17 +127,18 @@ export default {
     chatSuitLocation,
     chatSuitMain,
     chatSuitPtopcall,
+    chatSuitAttach
     // chatSuitVideo
   },
   props: {
     username: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     chatType: {
       type: String,
-      default: msgType.chatType.SINGLE_CHAT,
-    },
+      default: msgType.chatType.SINGLE_CHAT
+    }
   },
 
   // lifetimes
@@ -146,7 +152,7 @@ export default {
 
   onLoad() {
     this.setData({
-      isIPX: false, //getApp().globalData.isIPX
+      isIPX: false //getApp().globalData.isIPX
     });
     // let comps = this.$data.__comps__;
     // comps.main = this.selectComponent("#chatSuitMain");
@@ -159,7 +165,7 @@ export default {
     toggleRecordModal() {
       this.$emit("tapSendAudio", null, {
         bubbles: true,
-        composed: true,
+        composed: true
       });
     },
 
@@ -171,9 +177,9 @@ export default {
     },
 
     openEmoji() {
-        setTimeout(() => {
+      setTimeout(() => {
         this.setData({
-          showFunModal: FUNMODAL_STATUS.CLOSED,
+          showFunModal: FUNMODAL_STATUS.CLOSED
         });
       }, 100);
       this.$refs.chatSuitEmoji.openEmoji();
@@ -206,32 +212,32 @@ export default {
 
     openFunModal() {
       this.setData({
-        showFunModal: FUNMODAL_STATUS.OPENED,
+        showFunModal: FUNMODAL_STATUS.OPENED
       });
-      this.cancelEmoji()
+      this.cancelEmoji();
     },
     closeFunModal() {
       this.setData({
-        showFunModal: FUNMODAL_STATUS.CLOSED,
+        showFunModal: FUNMODAL_STATUS.CLOSED
       });
-      this.cancelEmoji()
+      this.cancelEmoji();
     },
-    closeAllModal(){
-      this.cancelEmoji()
-      this.closeFunModal()
+    closeAllModal() {
+      this.cancelEmoji();
+      this.closeFunModal();
     },
     edit_group() {
       var nameList = {
         myName: this.username.myName,
         groupName: this.username.your,
-        roomId: this.username.groupId,
+        roomId: this.username.groupId
       };
       uni.navigateTo({
         url:
-          "../groupSetting/groupSetting?groupInfo=" + JSON.stringify(nameList),
+          "../groupSetting/groupSetting?groupInfo=" + JSON.stringify(nameList)
       });
-    },
-  },
+    }
+  }
 };
 </script>
 <style>
