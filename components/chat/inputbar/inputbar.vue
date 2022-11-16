@@ -44,6 +44,7 @@
             <image src="/static/images/pic.png"></image>
             相册
           </view>
+          <!-- #ifdef APP-PLUS -->
           <view class="menu_wrap">
             <chatSuitAttach :username="username" :chatType="chatType">
               <image
@@ -53,6 +54,7 @@
               附件
             </chatSuitAttach>
           </view>
+          <!-- #endif -->
           <view
             class="menu_wrap"
             @tap="edit_group"
