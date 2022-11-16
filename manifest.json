@@ -1,6 +1,6 @@
 {
     "name" : "环信",
-    "appid" : "__UNI__F3583FD",
+    "appid" : "__UNI__8EAE1E1",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -43,7 +43,9 @@
                 ],
                 "abiFilters" : [ "armeabi-v7a", "x86" ]
             },
-            "ios" : {},
+            "ios" : {
+                "dSYMs" : false
+            },
             "sdkConfigs" : {
                 "ad" : {}
             },
@@ -118,7 +120,7 @@
             "urlCheck" : false
         }
     },
-    "h5": {
+    "h5" : {
         "devServer" : {
             "https" : true
         }
