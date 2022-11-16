@@ -9,6 +9,7 @@ let msgStorage = new Disp();
 let disp = require("../../utils/broadcast.js");
 
 msgStorage.saveReceiveMsg = function (receiveMsg, type) {
+  console.log(receiveMsg, 'receiveMsg')
   let sendableMsg;
 
   if (type == msgType.IMAGE) {
@@ -82,7 +83,7 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
           type: type,
           url: receiveMsg.url,
           filename: receiveMsg.filename,
-          msg: "当前不支持此格式消息展示"
+          file_length: receiveMsg.file_length
         }
       },
       value: receiveMsg.data

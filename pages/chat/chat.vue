@@ -74,6 +74,7 @@
                   }}</text>
                   <text class="list_word" v-if="item.msg.type == 'img'">[图片]</text>
                   <text class="list_word" v-if="item.msg.type == 'audio'">[语音]</text>
+                  <text class="list_word" v-if="item.msg.type == 'file'">[附件]</text>
                   <!-- <text class="list_word" v-if="item.msg.type == 'video'"
                     >[视频]</text
                   > -->
