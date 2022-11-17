@@ -8,11 +8,10 @@
 </template>
 
 <script>
+const ATTACH_KEY = "filePathCache";
 export default {
   data() {
-    return {
-      filePath: null
-    };
+    return {};
   },
 
   components: {},
@@ -31,6 +30,29 @@ export default {
     formatMoney(value) {
       return `（${(value / 1024 / 1024).toFixed(2)}M）`;
     },
+    storageFilePath({ id, path }) {
+      uni.getStorage({
+        key: ATTACH_KEY,
+        success: (res) => {
+          let dt = res.data || {};
+          uni.setStorage({
+            key: ATTACH_KEY,
+            data: {
+              ...dt,
+              [id]: path
+            }
+          });
+        },
+        fail: (e) => {
+          uni.setStorage({
+            key: ATTACH_KEY,
+            data: {
+              [id]: path
+            }
+          });
+        }
+      });
+    },
     downloadFile() {
       let _this = this;
       // 下载完存储filePath，下次预览直接访问
@@ -43,10 +65,17 @@ export default {
           if (platform === "ios") {
             filePath = escape(filePath);
           }
-          _this.setData({
-            filePath: filePath
+          uni.saveFile({
+            tempFilePath: filePath,
+            success: function (res) {
+              var savedFilePath = res.savedFilePath;
+              _this.storageFilePath({
+                id: _this.msg.id,
+                path: savedFilePath
+              });
+              _this.openFile(savedFilePath);
+            }
           });
-          _this.openFile(filePath);
         },
         fail: () => {
           uni.hideLoading();
@@ -64,7 +93,6 @@ export default {
           uni.hideLoading();
         },
         fail(e) {
-          console.log(e, "eeeee");
           uni.showToast({
             title: "暂不支持此类型",
             duration: 2000
@@ -84,11 +112,21 @@ export default {
         return;
       }
       uni.showLoading();
-      if (this.filePath) {
-        this.openFile(this.filePath);
-      } else {
-        this.downloadFile();
-      }
+      uni.getStorage({
+        key: ATTACH_KEY,
+        success: (res) => {
+          let dt = res.data || {};
+          let path = dt[this.msg.id];
+          if (path) {
+            this.openFile(path);
+          } else {
+            this.downloadFile();
+          }
+        },
+        fail: (e) => {
+          this.downloadFile();
+        }
+      });
     }
   }
 };
