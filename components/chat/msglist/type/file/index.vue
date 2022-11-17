@@ -60,7 +60,7 @@ export default {
         url: `${this.msg.msg?.url}`,
         success: function (res) {
           let sysInfo = uni.getSystemInfoSync();
-          var filePath = res.tempFilePath;
+          let filePath = res.tempFilePath;
           let platform = sysInfo.platform;
           if (platform === "ios") {
             filePath = escape(filePath);
@@ -68,12 +68,19 @@ export default {
           uni.saveFile({
             tempFilePath: filePath,
             success: function (res) {
-              var savedFilePath = res.savedFilePath;
+              let savedFilePath = res.savedFilePath;
               _this.storageFilePath({
                 id: _this.msg.id,
                 path: savedFilePath
               });
               _this.openFile(savedFilePath);
+            },
+            fail: function (e) {
+              uni.hideLoading();
+              uni.showToast({
+                icon: "none",
+                title: "保存失败"
+              });
             }
           });
         },
