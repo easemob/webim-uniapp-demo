@@ -37,11 +37,20 @@
 	display: inline-block;
 	flex: 1;
 }
+.login_sms{
+	position: absolute;
+	right: 56px;
+	top: 33px;
+	color: #009FFF;
+	font-size: 14px;
+	cursor: pointer;
+}
 .login_user input {
 	margin-top: 80rpx
 }
 .login_pwd input {
 	margin-top: 32rpx;
+	padding-right: 100rpx;
 }
 .login_btn button{
 	flex: 1;

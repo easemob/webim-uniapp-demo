@@ -137,7 +137,6 @@ export default {
 		})
 	},
 	getSmsCode: function(){
-		console.log(123)
 		if(this.btnText != '获取验证码') return
 		if (this.phoneNumber == "") {
 		  return uni.showToast({title: "请输入手机号！",icon:'none'});
