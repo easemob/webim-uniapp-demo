@@ -59,12 +59,7 @@ export default {
       uni.downloadFile({
         url: `${this.msg.msg?.url}`,
         success: function (res) {
-          let sysInfo = uni.getSystemInfoSync();
           let filePath = res.tempFilePath;
-          let platform = sysInfo.platform;
-          if (platform === "ios") {
-            filePath = escape(filePath);
-          }
           uni.saveFile({
             tempFilePath: filePath,
             success: function (res) {
