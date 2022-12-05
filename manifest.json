@@ -15,7 +15,9 @@
             "autoclose" : true,
             "delay" : 0
         },
-        "modules" : {},
+        "modules" : {
+            "VideoPlayer" : {}
+        },
         "distribute" : {
             "android" : {
                 "permissions" : [
