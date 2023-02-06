@@ -160,16 +160,10 @@ export default {
         uni.showToast({title: "请输入验证码！",icon:'none'});
         return;
       }
-
-      uni.setStorage({
-        key: "myUsername",
-        data: __test_account__ || this.name.toLowerCase()
-      });
-	  
 	  
 		const that = this;
 		uni.request({
-			url: 'https://a1.easemob.com/inside/app/user/login/V1',
+			url: 'https://a1.easemob.com/inside/app/user/login/V2',
 			header: {
 				'content-type': 'application/json'
 			},
@@ -180,12 +174,16 @@ export default {
 			},
 			success (res) {
 				if(res.statusCode == 200){
-					const {phoneNumber, token} = res.data
+					const {phoneNumber, token, chatUserName} = res.data
 					getApp().globalData.conn.open({
-						user: that.name,
+						user: chatUserName,
 						accessToken: token,
 					});
 					getApp().globalData.phoneNumber = phoneNumber;
+					uni.setStorage({
+						key: "myUsername",
+						data: chatUserName
+					});
 				}else if(res.statusCode == 400){
 					if(res.data.errorInfo){
 						
