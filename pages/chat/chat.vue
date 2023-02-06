@@ -415,7 +415,7 @@ export default {
       function cul(newChatMsgKeys, historyChatMsgKeys) {
         let array = [];
         let lastChatMsg;
-
+        let myName = uni.getStorageSync("myUsername");
         for (let i = historyChatMsgKeys.length; i > 0, i--;) {
           let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9));
           if (index > -1) {
@@ -424,7 +424,9 @@ export default {
             }
             if (newChatMsgs.length) {
               lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-              lastChatMsg.unReadCount = newChatMsgs.length;
+            //   lastChatMsg.unReadCount = newChatMsgs.length;
+            //过滤发送方为登录人的ID消息，并且不计入到未读数中。
+			lastChatMsg.unReadCount = newChatMsgs.filter((msg) => msg.yourname !== myName).length;
               if (lastChatMsg.unReadCount > 99) {
                 lastChatMsg.unReadCount = "99+";
               }
@@ -471,7 +473,9 @@ export default {
           let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
           if (newChatMsgs.length) {
             lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-            lastChatMsg.unReadCount = newChatMsgs.length;
+            // lastChatMsg.unReadCount = newChatMsgs.length;
+            //过滤发送方为登录人的ID消息，并且不计入到未读数中。
+			lastChatMsg.unReadCount = newChatMsgs.filter((msg) => msg.yourname !== myName).length;
             if (lastChatMsg.unReadCount > 99) {
               lastChatMsg.unReadCount = "99+";
             }
