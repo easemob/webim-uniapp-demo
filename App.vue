@@ -65,6 +65,7 @@ function getCurrentRoute() {
 // }
 
 // 包含陌生人版本
+//该方法用以计算本地存储消息的未读总数。
 function calcUnReadSpot(message) {
   let myName = uni.getStorageSync("myUsername");
   let pushObj = uni.getStorageSync("pushStorageData")
@@ -83,6 +84,8 @@ function calcUnReadSpot(message) {
         let newName = curMember.split(myName)[0]
         let chatMsgs;
         chatMsgs = uni.getStorageSync(curMember) || [];
+        //过滤消息来源与当前登录ID一致的消息，不计入总数中。
+        chatMsgs = chatMsgs.filter((msg) => msg.yourname !== myName);
         if (pushAry.includes(newName)) return result
         return result + chatMsgs.length;
       }, 0);
