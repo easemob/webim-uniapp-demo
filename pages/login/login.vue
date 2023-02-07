@@ -156,8 +156,7 @@ export default {
       runAnimation = !runAnimation;
       //! 默认手机号+验证码登录,且该形式只适用于环信uni-Demo，如有相似登录形式，请更改为自有接口！
       //更改usePwdLogin配置设置使用环信ID+密码登录，或者为手机号加验证码登录
-      //默认手机号+验证码登录
-        if(!this.usePwdLogin){
+      if(!this.usePwdLogin){
             if (!__test_account__ && this.name == "") {
                 uni.showToast({title: "请输入手机号！",icon:'none'});
                 return;
@@ -247,7 +246,6 @@ export default {
                 appKey: WebIM.config.appkey
             });
         }
-     
     }
   }
 };
