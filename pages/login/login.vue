@@ -50,7 +50,8 @@ export default {
       nameFocus: "",
       showPassword:false,
       type:'text',
-	  btnText: '获取验证码'
+	  btnText: '获取验证码',
+     
     };
   },
 
