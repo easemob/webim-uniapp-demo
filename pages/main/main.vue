@@ -388,6 +388,8 @@ export default {
       const myName = uni.getStorageSync("myUsername");
       uni.removeStorageSync(targetId + myName);
       uni.removeStorageSync("rendered_" + targetId + myName);
+      //发布删除好友事件 订阅删除事件的接口会重新拉取好友列表
+      disp.fire("em.contacts.remove");
       disp.fire("em.main.deleteFriend");
     },
     openSearch: function () {
