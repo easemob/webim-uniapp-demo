@@ -157,7 +157,13 @@ let systemReady = false;
 let canPullDownreffesh = true;
 let oHeight = [];
 import swipeDelete from "../../components/swipedelete/swipedelete";
-
+//订阅事件function name
+let onMainPageSubscribe;
+let onMainPageRemoveContacts;
+let onMainPageUnreadspot;
+let onMainPageJoingroup;
+let onMainPagesubscribed;
+let onMainPageUnsubscribed;
 export default {
   data() {
     return {
@@ -188,63 +194,66 @@ export default {
       showFixedTitile: false,
     };
   },
-
   components: {
     swipeDelete,
   },
-  props: {},
-
   onLoad(option) {
-    const me = this;
     const app = getApp().globalData;
     //监听加好友申请
-
-    disp.on("em.subscribe", function () {
-      me.setData({
+    onMainPageSubscribe = () =>{
+        this.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum:
           getApp().globalData.saveFriendList.length +
           getApp().globalData.saveGroupInvitedList.length,
       });
-    });
-    disp.on("em.contacts.remove", function (message) {
+    }
+    disp.on("em.subscribe", onMainPageSubscribe);
+    //监听联系人移除事件（主要为好友以及群组）
+    onMainPageRemoveContacts = (message) => {
       var pageStack = getCurrentPages();
 
-      if (pageStack[pageStack.length - 1].route === me.__route__) {
-        me.getRoster();
+      if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getRoster();
       }
-    }); //监听未读“聊天”
-
-    disp.on("em.unreadspot", function () {
-      me.setData({
+    }
+    disp.on("em.contacts.remove", onMainPageRemoveContacts); //监听未读“聊天”
+    //监听未读总数更新
+    onMainPageUnreadspot = () => {
+      this.setData({
         unReadSpotNum:
           getApp().globalData.unReadMessageNum > 99
             ? "99+"
             : getApp().globalData.unReadMessageNum,
       });
-    }); //监听未读加群“通知”数
-
-    disp.on("em.invite.joingroup", function () {
-      me.setData({
+    }
+    disp.on("em.unreadspot", onMainPageUnreadspot); 
+    //监听未读加群“通知”数
+    onMainPageJoingroup = () => {
+      this.setData({
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum:
           getApp().globalData.saveFriendList.length +
           getApp().globalData.saveGroupInvitedList.length,
       });
-    });
-    disp.on("em.subscribed", function () {
-      var pageStack = getCurrentPages();
-      if (pageStack[pageStack.length - 1].route === me.__route__) {
-        me.getRoster();
+    }
+    disp.on("em.invite.joingroup", onMainPageJoingroup);
+    //监听好友订阅成功
+    onMainPagesubscribed = () => {
+      const pageStack = getCurrentPages();
+      if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getRoster();
       }
-    });
+    }
+    disp.on("em.subscribed", onMainPagesubscribed);
     // 监听被解除好友
-    disp.on("em.unsubscribed", function () {
-      var pageStack = getCurrentPages();
-      if (pageStack[pageStack.length - 1].route === me.__route__) {
-        me.getRoster();
+    onMainPageUnsubscribed =  ()=> {
+      const pageStack = getCurrentPages();
+      if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getRoster();
       }
-    });
+    }
+    disp.on("em.unsubscribed",onMainPageUnsubscribed );
     this.setData({
       myName: option.myName,
     });
@@ -265,20 +274,26 @@ export default {
         getApp().globalData.saveFriendList.length +
         getApp().globalData.saveGroupInvitedList.length,
     });
-
     if (getApp().globalData.isIPX) {
       this.setData({
         isIPX: true,
       });
     }
   },
-
+  onUnload(){
+    disp.off("em.subscribe",onMainPageSubscribe)
+    disp.off("em.contacts.remove",onMainPageRemoveContacts)
+    disp.off("em.unreadspot",onMainPageUnreadspot)
+    disp.off("em.invite.joingroup",onMainPageJoingroup)
+    disp.off("em.subscribed",onMainPagesubscribed)
+    disp.off("em.unsubscribed",onMainPageUnsubscribed)
+  },
   methods: {
     getRoster() {
       let me = this;
       let rosters = {
         success(roster) {
-          var member = [];
+          let member = [];
 
           for (let i = 0; i < roster.length; i++) {
             if (roster[i].subscription == "both") {
@@ -309,12 +324,11 @@ export default {
 
       WebIM.conn.getContacts(rosters);
     },
-
     moveFriend: function (message) {
       let me = this;
       let rosters = {
         success: function (roster) {
-          var member = [];
+          let member = [];
 
           for (let i = 0; i < roster.length; i++) {
             if (roster[i].subscription == "both") {
