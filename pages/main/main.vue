@@ -377,14 +377,20 @@ export default {
             uni.showToast({
               title: "删除成功",
             });
-            // 删除好友后 同时清空会话
-            uni.setStorageSync(delName + myName, "");
-            uni.setStorageSync("rendered_" + delName + myName, "");
-            me.getRoster();
-            disp.fire("em.main.deleteFriend");
+            // 删除好友后 执行删除本地有关存储并更新好友列表
+            me.removeStoreages(delName)
           }
         },
       });
+    },
+    removeStoreages:function(targetId){
+      if(!targetId) return;
+      const myName = uni.getStorageSync("myUsername");
+      uni.removeStorageSync(targetId + myName);
+      uni.removeStorageSync("rendered_" + targetId + myName);
+      //发布删除好友事件 订阅删除事件的接口会重新拉取好友列表
+      disp.fire("em.contacts.remove");
+      disp.fire("em.main.deleteFriend");
     },
     openSearch: function () {
       this.setData({
