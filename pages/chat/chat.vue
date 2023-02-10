@@ -190,6 +190,13 @@ export default {
     //监听好友删除
     disp.on("em.contacts.remove", this.onChatPageRemoveContacts);
     // this.getRoster();
+    if(!uni.getStorageSync('listGroup')){
+        this.listGroups()
+    }
+    if(!uni.getStorageSync('member')){
+        this.getRoster()
+    }
+    this.readJoinedGroupName()
   },
 
   onShow: function () {
@@ -225,23 +232,17 @@ export default {
   },
   methods: {
     listGroups() {
+      
       var me = this;
       return WebIM.conn.getGroup({
         limit: 50,
         success: function (res) {
-          let groupName = {};
-          let listGroup = res.data || [];
-          listGroup.forEach((item) => {
-            groupName[item.groupid] = item.groupname;
-          });
-
-          me.setData({
-            groupName: groupName,
-          });
+            console.log('.>>>>获取群组列表',res.data)
           uni.setStorage({
             key: "listGroup",
             data: res.data,
           });
+          me.readJoinedGroupName()
           me.getChatList();
         },
         error: function (err) {
@@ -249,7 +250,6 @@ export default {
         },
       });
     },
-
     getRoster() {
       let me = this;
       let rosters = {
@@ -266,7 +266,6 @@ export default {
             data: member,
           });
           me.setData({ member: member });
-          me.listGroups();
           //if(!systemReady){
           disp.fire("em.main.ready");
           //systemReady = true;
@@ -285,7 +284,18 @@ export default {
       };
       WebIM.conn.getContacts(rosters);
     },
-
+    readJoinedGroupName (){
+        const joinedGroupList = uni.getStorageSync('listGroup')
+        const groupList = joinedGroupList?.data || joinedGroupList || []
+        let groupName = {};
+        groupList.forEach((item) => {
+            groupName[item.groupid] = item.groupname;
+        });
+        console.log('groupName',groupName),
+        this.setData({
+            groupName: groupName,
+        });
+    },
     // // 不包含陌生人版本
     // getChatList() {
     //   var array = [];
