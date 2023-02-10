@@ -203,7 +203,7 @@ export default {
     uni.hideHomeButton && uni.hideHomeButton();
     this.getChatList();
     this.setData({
-      //arr: this.getChatList(),
+      arr: this.getChatList(),
       unReadSpotNum:
         getApp().globalData.unReadMessageNum > 99
           ? "99+"
@@ -771,6 +771,7 @@ export default {
           getApp().globalData.saveFriendList.length +
           getApp().globalData.saveGroupInvitedList.length,
       });
+      this.getChatList();
     },
     onChatPageRemoveContacts() {
       this.getChatList();

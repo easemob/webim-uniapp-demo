@@ -333,8 +333,8 @@ export default {
               }
             }
             me.globalData.saveGroupInvitedList.push(message);
-            disp.fire("em.invite.joingroup");
             msgStorage.saveReceiveMsg(message, "INFORM"); //存添加好友消息，方便展示通知
+            disp.fire("em.invite.joingroup");
             break;
           case "unavailable":
             disp.fire("em.contacts.remove");
