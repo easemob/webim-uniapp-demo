@@ -203,7 +203,7 @@ export default {
               );
             },
           });
-          disp.fire("em.invite.deleteGroup"); //退群
+        me.removeLocalStorage(me.roomId)
         },
         error: function (err) {
           uni.showToast({
@@ -226,7 +226,7 @@ export default {
               // redirectTo = 此操作不可返回
               console.log('>>>>>解散群组且跳转至会话列表');
               //发布解散群组事件
-              disp.fire("em.invite.deleteGroup", { gid: me.roomId });
+              me.removeLocalStorage(me.roomId)
               setTimeout(
                 () =>
                   uni.redirectTo({
@@ -244,6 +244,13 @@ export default {
           });
         },
       });
+    },
+    removeLocalStorage: function (gid) {
+     if(!gid) return;
+      console.log('>>>>>>>>执行删除本地会话')
+      var myName = uni.getStorageSync("myUsername");
+      uni.removeStorageSync(gid + myName);
+      uni.removeStorageSync("rendered_" + gid + myName);
     },
      /*  disp event callback function */
      onGroupSettingPageLeaveGroup() {
