@@ -45,14 +45,7 @@ export default {
   props: {},
 
   onLoad(options) {
-    var me = this;
-
-    disp.on("em.subscribe", function () {
-      me.setData({
-        friendList: getApp().globalData.saveFriendList
-      });
-      uni.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
-    });
+    disp.on("em.subscribe", onFriendDetailPageSubscribe);
     this.setData({
       myName: uni.getStorageSync("myUsername"),
       friendList: uni.getStorageSync("friendNotiData") //getApp().globalData.saveFriendList 
@@ -87,7 +80,9 @@ export default {
   onShow(){
     uni.hideHomeButton()
   },
-
+  onUnload(){
+    disp.off("em.subscribe",this.onFriendDetailPageSubscribe)
+  },
   methods: {
     removeAndRefresh(removeId) {
       var idx;
@@ -179,8 +174,13 @@ export default {
       uni.redirectTo({
         url: "../chat/chat",
       });
-  }
-
+    },
+    onFriendDetailPageSubscribe () {
+      this.setData({
+        friendList: getApp().globalData.saveFriendList
+      });
+      uni.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
+    }
   },
   
 };

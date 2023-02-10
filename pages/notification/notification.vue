@@ -61,27 +61,9 @@ export default {
 
   },
   onLoad(option) {
-    let me = this; //监听加好友申请
-
-    disp.on("em.subscribe", function () {
-      me.setData({
-        messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-      });
-    }); //监听未读消息数
-
-    disp.on("em.unreadspot", function () {
-      me.setData({
-        unReadSpotNum: getApp().globalData.unReadMessageNum
-      });
-    }); //监听加群通知数
-
-    disp.on("em.invite.joingroup", function () {
-      me.setData({
-        groupInviteNum: getApp().globalData.saveGroupInvitedList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-      });
-    });
+    disp.on("em.subscribe", this.onNotifPageSubscribe); //监听未读消息数
+    disp.on("em.unreadspot", this.onNotifPageUnreadspot); //监听加群通知数
+    disp.on("em.invite.joingroup", this.onNotifPageJoingroup);
     uni.setStorageSync("friendNotiData", getApp().globalData.saveFriendList);
     uni.setStorageSync("groupNotiData", getApp().globalData.saveGroupInvitedList);
   },
@@ -101,7 +83,11 @@ export default {
       });
     }
   },
-
+  onUnload(){
+    disp.off("em.subscribe",this.onNotifPageSubscribe)
+    disp.off("em.unreadspot",this.onNotifPageUnreadspot)
+    disp.off("em.invite.joingroup",this.onNotifPageJoingroup)
+  },
   methods: {
     into_friendNot: function () {
       uni.redirectTo({
@@ -126,6 +112,23 @@ export default {
     tab_setting: function () {
       uni.redirectTo({
         url: "../setting/setting"
+      });
+    },
+    onNotifPageSubscribe() {
+      this.setData({
+        messageNum: getApp().globalData.saveFriendList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      });
+    },
+    onNotifPageUnreadspot() {
+      this.setData({
+        unReadSpotNum: getApp().globalData.unReadMessageNum
+      });
+    },
+    onNotifPageJoingroup() {
+      this.setData({
+        groupInviteNum: getApp().globalData.saveGroupInvitedList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     }
   }

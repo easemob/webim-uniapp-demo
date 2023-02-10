@@ -86,20 +86,13 @@ export default {
       groupName: JSON.parse(options.groupInfo).groupName,
       currentName: JSON.parse(options.groupInfo).myName,
     });
-    onGroupSettingPageLeaveGroup = () => {
-        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
-        if (pageStack[pageStack.length - 1].route === this.__route__) {
-        this.getGroupMember();
-        this.getGroupInfo();
-        }
-    }
-    disp.on("em.group.leaveGroup", onGroupSettingPageLeaveGroup); // console.log(this.data.roomId, this.data.groupName, this.data.currentName);
+    disp.on("em.group.leaveGroup", this.onGroupSettingPageLeaveGroup); // console.log(this.data.roomId, this.data.groupName, this.data.currentName);
     // 获取群成员
     this.getGroupMember(); // 获取群信息
     this.getGroupInfo();
   },
   onUnload(){
-    disp.off("em.group.leaveGroup",onGroupSettingPageLeaveGroup);
+    disp.off("em.group.leaveGroup",this.onGroupSettingPageLeaveGroup);
   },
   methods: {
     getGroupMember: function () {
@@ -252,6 +245,14 @@ export default {
         },
       });
     },
+     /*  disp event callback function */
+     onGroupSettingPageLeaveGroup() {
+        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
+        if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getGroupMember();
+        this.getGroupInfo();
+        }
+    }
   },
 };
 </script>

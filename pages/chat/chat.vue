@@ -142,12 +142,6 @@ var WebIM = require("../../utils/WebIM")["default"];
 let isfirstTime = true;
 import swipeDelete from "../../components/swipedelete/swipedelete";
 import longPressModal from "../../components/longPressModal/index";
-//订阅事件function name
-let onChatPageSubscribe;
-let onChatPageDeleteGroup;
-let onChatPageUnreadspot;
-let onChatPageJoingroup;
-let onChatPageRemoveContacts;
 export default {
   data() {
     return {
@@ -186,66 +180,15 @@ export default {
   onLoad() {
     this.getWindowSize();
     //监听加好友申请
-    onChatPageSubscribe = () => {
-      this.getChatList();
-      this.setData({
-        messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum:
-          getApp().globalData.saveFriendList.length +
-          getApp().globalData.saveGroupInvitedList.length,
-      });
-    }
-    disp.on("em.subscribe", onChatPageSubscribe);
+    disp.on("em.subscribe", this.onChatPageSubscribe);
     //监听解散群
-    onChatPageDeleteGroup = (infos) => {
-      this.listGroups();
-      this.getRoster();
-      this.getChatList();
-      this.setData({
-        // arr: me.getChatList(),
-        messageNum: getApp().globalData.saveFriendList.length,
-      });
-      //如果会话存在则执行删除会话
-      this.removeLocalStorage(infos.gid)
-    }
-    disp.on("em.invite.deleteGroup", onChatPageDeleteGroup);
-
+    disp.on("em.invite.deleteGroup", this.onChatPageDeleteGroup);
     //监听未读消息数
-    onChatPageUnreadspot =  (message) => {
-      this.getChatList();
-      let currentLoginUser = WebIM.conn.context.userId;
-      let id = message && message.chatType === 'groupchat' ? message?.to : message?.from;
-      let pushObj = uni.getStorageSync("pushStorageData");
-      let pushAry = pushObj[currentLoginUser] || []
-      this.setData({
-        pushConfigData:pushAry,
-        });
-      // if (message && pushValue.includes(id)) return
-      this.setData({
-        // arr: me.getChatList(),
-        unReadSpotNum:
-          getApp().globalData.unReadMessageNum > 99
-            ? "99+"
-            : getApp().globalData.unReadMessageNum,
-      });
-    }
-    disp.on("em.unreadspot", onChatPageUnreadspot);
+    disp.on("em.unreadspot", this.onChatPageUnreadspot);
     //监听未读加群“通知”
-    onChatPageJoingroup =  () => {
-      this.setData({
-        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-        unReadTotalNotNum:
-          getApp().globalData.saveFriendList.length +
-          getApp().globalData.saveGroupInvitedList.length,
-      });
-    }
-    disp.on("em.invite.joingroup", onChatPageJoingroup);
+    disp.on("em.invite.joingroup", this.onChatPageJoingroup);
     //监听好友删除
-    onChatPageRemoveContacts = () => {
-      this.getChatList();
-      this.getRoster();
-    }
-    disp.on("em.contacts.remove", onChatPageRemoveContacts);
+    disp.on("em.contacts.remove", this.onChatPageRemoveContacts);
     // this.getRoster();
   },
 
@@ -273,11 +216,11 @@ export default {
   },
   onUnload() {
     //页面卸载同步取消onload中的订阅，防止重复订阅事件。
-    disp.off('em.subscribe',onChatPageSubscribe)
-    disp.off("em.invite.deleteGroup",onChatPageDeleteGroup)
-    disp.off("em.unreadspot",onChatPageUnreadspot)
-    disp.off("em.invite.joingroup",onChatPageJoingroup)
-    disp.off("em.contacts.remove",onChatPageRemoveContacts)
+    disp.off('em.subscribe',this.onChatPageSubscribe)
+    disp.off("em.invite.deleteGroup",this.onChatPageDeleteGroup)
+    disp.off("em.unreadspot",this.onChatPageUnreadspot)
+    disp.off("em.invite.joingroup",this.onChatPageJoingroup)
+    disp.off("em.contacts.remove",this.onChatPageRemoveContacts)
 
   },
   methods: {
@@ -772,6 +715,57 @@ export default {
       console.log("当前选中>>", this.currentVal);
       this.del_chat(this.currentVal)
     },
+    /*  disp event callback function */
+    onChatPageSubscribe() {
+      this.getChatList();
+      this.setData({
+        messageNum: getApp().globalData.saveFriendList.length,
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
+      });
+    },
+    onChatPageDeleteGroup(infos) {
+      this.listGroups();
+      this.getRoster();
+      this.getChatList();
+      this.setData({
+        // arr: me.getChatList(),
+        messageNum: getApp().globalData.saveFriendList.length,
+      });
+      //如果会话存在则执行删除会话
+      this.removeLocalStorage(infos.gid)
+    },
+    onChatPageUnreadspot(message) {
+      this.getChatList();
+      let currentLoginUser = WebIM.conn.context.userId;
+      let id = message && message.chatType === 'groupchat' ? message?.to : message?.from;
+      let pushObj = uni.getStorageSync("pushStorageData");
+      let pushAry = pushObj[currentLoginUser] || []
+      this.setData({
+        pushConfigData:pushAry,
+        });
+      // if (message && pushValue.includes(id)) return
+      this.setData({
+        // arr: me.getChatList(),
+        unReadSpotNum:
+          getApp().globalData.unReadMessageNum > 99
+            ? "99+"
+            : getApp().globalData.unReadMessageNum,
+      });
+    },
+    onChatPageJoingroup() {
+      this.setData({
+        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
+      });
+    },
+    onChatPageRemoveContacts() {
+      this.getChatList();
+      this.getRoster();
+    }
   },
 };
 </script>

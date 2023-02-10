@@ -45,9 +45,6 @@
 <script>
 var WebIM = require("../../utils/WebIM")["default"];
 let disp = require("../../utils/broadcast");
-//event function name
-let onGroupsPageJoinGroup;
-let onGroupsPageDeleteGroup;
 export default {
   data() {
     return {
@@ -63,20 +60,8 @@ export default {
   components: {},
   props: {},
   onLoad: function (option) {
-    onGroupsPageJoinGroup = () => {
-        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
-        if (pageStack[pageStack.length - 1].route === this.__route__) {
-            this.listGroups();
-        }
-    }
-    disp.on("em.invite.joingroup", onGroupsPageJoinGroup);
-    onGroupsPageDeleteGroup = () => {
-        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
-        if (pageStack[pageStack.length - 1].route === this.__route__) {
-            this.listGroups();
-        }
-    }
-    disp.on("em.invite.deleteGroup", onGroupsPageDeleteGroup);
+    disp.on("em.invite.joingroup", this.onGroupsPageJoinGroup);
+    disp.on("em.invite.deleteGroup", this.onGroupsPageDeleteGroup);
     this.setData({
       myName: option.myName
     });
@@ -85,8 +70,8 @@ export default {
     this.listGroups();
   },
   onUnload(){
-    disp.off("em.invite.joingroup",onGroupsPageJoinGroup)
-    disp.off("em.invite.deleteGroup",onGroupsPageDeleteGroup)
+    disp.off("em.invite.joingroup",this.onGroupsPageJoinGroup)
+    disp.off("em.invite.deleteGroup",this.onGroupsPageDeleteGroup)
   },
   methods: {
     // 列出所有群组 (调用 listRooms 函数获取当前登录用户加入的群组列表)
@@ -155,6 +140,19 @@ export default {
       uni.navigateTo({
         url: "../groupSetting/groupSetting?groupInfo=" + JSON.stringify(nameList)
       });
+    },
+     /*  disp event callback function */
+    onGroupsPageJoinGroup() {
+        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
+        if (pageStack[pageStack.length - 1].route === this.__route__) {
+            this.listGroups();
+        }
+    },
+    onGroupsPageDeleteGroup() {
+        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
+        if (pageStack[pageStack.length - 1].route === this.__route__) {
+            this.listGroups();
+        }
     }
   }
 };

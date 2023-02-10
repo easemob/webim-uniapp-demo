@@ -157,13 +157,6 @@ let systemReady = false;
 let canPullDownreffesh = true;
 let oHeight = [];
 import swipeDelete from "../../components/swipedelete/swipedelete";
-//订阅事件function name
-let onMainPageSubscribe;
-let onMainPageRemoveContacts;
-let onMainPageUnreadspot;
-let onMainPageJoingroup;
-let onMainPagesubscribed;
-let onMainPageUnsubscribed;
 export default {
   data() {
     return {
@@ -200,60 +193,17 @@ export default {
   onLoad(option) {
     const app = getApp().globalData;
     //监听加好友申请
-    onMainPageSubscribe = () =>{
-        this.setData({
-        messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum:
-          getApp().globalData.saveFriendList.length +
-          getApp().globalData.saveGroupInvitedList.length,
-      });
-    }
-    disp.on("em.subscribe", onMainPageSubscribe);
+    disp.on("em.subscribe", this.onMainPageSubscribe);
     //监听联系人移除事件（主要为好友以及群组）
-    onMainPageRemoveContacts = (message) => {
-      var pageStack = getCurrentPages();
-
-      if (pageStack[pageStack.length - 1].route === this.__route__) {
-        this.getRoster();
-      }
-    }
-    disp.on("em.contacts.remove", onMainPageRemoveContacts); //监听未读“聊天”
+    disp.on("em.contacts.remove", this.onMainPageRemoveContacts); //监听未读“聊天”
     //监听未读总数更新
-    onMainPageUnreadspot = () => {
-      this.setData({
-        unReadSpotNum:
-          getApp().globalData.unReadMessageNum > 99
-            ? "99+"
-            : getApp().globalData.unReadMessageNum,
-      });
-    }
-    disp.on("em.unreadspot", onMainPageUnreadspot); 
+    disp.on("em.unreadspot", this.onMainPageUnreadspot); 
     //监听未读加群“通知”数
-    onMainPageJoingroup = () => {
-      this.setData({
-        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-        unReadTotalNotNum:
-          getApp().globalData.saveFriendList.length +
-          getApp().globalData.saveGroupInvitedList.length,
-      });
-    }
-    disp.on("em.invite.joingroup", onMainPageJoingroup);
+    disp.on("em.invite.joingroup", this.onMainPageJoingroup);
     //监听好友订阅成功
-    onMainPagesubscribed = () => {
-      const pageStack = getCurrentPages();
-      if (pageStack[pageStack.length - 1].route === this.__route__) {
-        this.getRoster();
-      }
-    }
-    disp.on("em.subscribed", onMainPagesubscribed);
+    disp.on("em.subscribed", this.onMainPagesubscribed);
     // 监听被解除好友
-    onMainPageUnsubscribed =  ()=> {
-      const pageStack = getCurrentPages();
-      if (pageStack[pageStack.length - 1].route === this.__route__) {
-        this.getRoster();
-      }
-    }
-    disp.on("em.unsubscribed",onMainPageUnsubscribed );
+    disp.on("em.unsubscribed",this.onMainPageUnsubscribed );
     this.setData({
       myName: option.myName,
     });
@@ -281,12 +231,12 @@ export default {
     }
   },
   onUnload(){
-    disp.off("em.subscribe",onMainPageSubscribe)
-    disp.off("em.contacts.remove",onMainPageRemoveContacts)
-    disp.off("em.unreadspot",onMainPageUnreadspot)
-    disp.off("em.invite.joingroup",onMainPageJoingroup)
-    disp.off("em.subscribed",onMainPagesubscribed)
-    disp.off("em.unsubscribed",onMainPageUnsubscribed)
+    disp.off("em.subscribe",this.onMainPageSubscribe)
+    disp.off("em.contacts.remove",this.onMainPageRemoveContacts)
+    disp.off("em.unreadspot",this.onMainPageUnreadspot)
+    disp.off("em.invite.joingroup",this.onMainPageJoingroup)
+    disp.off("em.subscribed",this.onMainPagesubscribed)
+    disp.off("em.unsubscribed",this.onMainPageUnsubscribed)
   },
   methods: {
     getRoster() {
@@ -601,6 +551,49 @@ export default {
           .exec();
       }
     },
+   /*  disp event callback function */
+    onMainPageSubscribe() {
+        this.setData({
+        messageNum: getApp().globalData.saveFriendList.length,
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
+      });
+    },
+    onMainPageRemoveContacts(message) {
+      const pageStack = getCurrentPages();
+      if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getRoster();
+      }
+    },
+    onMainPageUnreadspot() {
+      this.setData({
+        unReadSpotNum:
+          getApp().globalData.unReadMessageNum > 99
+            ? "99+"
+            : getApp().globalData.unReadMessageNum,
+      });
+    },
+    onMainPageJoingroup() {
+      this.setData({
+        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
+        unReadTotalNotNum:
+          getApp().globalData.saveFriendList.length +
+          getApp().globalData.saveGroupInvitedList.length,
+      });
+    },
+    onMainPagesubscribed() {
+      const pageStack = getCurrentPages();
+      if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getRoster();
+      }
+    },
+    onMainPageUnsubscribed() {
+      const pageStack = getCurrentPages();
+      if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getRoster();
+      }
+    }
   },
 };
 </script>
