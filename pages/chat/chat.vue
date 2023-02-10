@@ -205,7 +205,7 @@ export default {
     uni.hideHomeButton && uni.hideHomeButton();
     this.getChatList();
     this.setData({
-      arr: this.getChatList(),
+    //   arr: this.getChatList(),
       unReadSpotNum:
         getApp().globalData.unReadMessageNum > 99
           ? "99+"
