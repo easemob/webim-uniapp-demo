@@ -87,10 +87,10 @@ export default {
     listGroups() {
       var me = this;
       return WebIM.conn.getGroup({
-        success: function (rooms) {
+        success: function (res) {
           uni.setStorage({
             key: "listGroup",
-            data: rooms,
+            data: res.data,
           });
         },
         error: function (err) {
@@ -123,7 +123,9 @@ export default {
         }
       });
       this.removeAndRefresh(event.currentTarget.dataset.from);
-      this.listGroups();
+      setTimeout(() => {
+        this.listGroups();
+      },500)
     },
     reject(event) {
       var me = this; // 无回调

@@ -83,7 +83,6 @@ export default {
           me.setData({
             groupList: res.data
           });
-
           getApp().globalData.groupList = res.data || [];
         },
         error: function () {}
