@@ -594,10 +594,16 @@ export default {
         this.getRoster();
       }
     },
-    onMainPageUnsubscribed() {
+    onMainPageUnsubscribed(message) {
       const pageStack = getCurrentPages();
       if (pageStack[pageStack.length - 1].route === this.__route__) {
         this.getRoster();
+        uni.showToast(
+            {
+             title: `与${message.from}好友关系解除`,
+             icon: "none",
+			}
+        );
       }
     }
   },

@@ -189,6 +189,8 @@ export default {
     disp.on("em.invite.joingroup", this.onChatPageJoingroup);
     //监听好友删除
     disp.on("em.contacts.remove", this.onChatPageRemoveContacts);
+    //监听好友关系解除
+    disp.on("em.unsubscribed",this.onChatPageUnsubscribed)
     // this.getRoster();
     if(!uni.getStorageSync('listGroup')){
         this.listGroups()
@@ -228,7 +230,7 @@ export default {
     disp.off("em.unreadspot",this.onChatPageUnreadspot)
     disp.off("em.invite.joingroup",this.onChatPageJoingroup)
     disp.off("em.contacts.remove",this.onChatPageRemoveContacts)
-
+    disp.off("em.unsubscribed",this.onChatPageUnsubscribed)
   },
   methods: {
     listGroups() {
@@ -775,6 +777,14 @@ export default {
     onChatPageRemoveContacts() {
       this.getChatList();
       this.getRoster();
+    },
+    onChatPageUnsubscribed(message){
+        uni.showToast(
+            {
+             title: `与${message.from}好友关系解除`,
+             icon: "none",
+			}
+        );
     }
   },
 };

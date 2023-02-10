@@ -303,7 +303,7 @@ export default {
             break;
 
           case "unsubscribed":
-            disp.fire("em.unsubscribed");
+            disp.fire("em.unsubscribed",message);
             break;
           case "direct_joined":
             saveGroups();
