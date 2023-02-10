@@ -67,7 +67,6 @@
 <script>
 let WebIM = require("../../utils/WebIM")["default"];
 let disp = require("../../utils/broadcast");
-
 export default {
   data() {
     return {
@@ -84,31 +83,15 @@ export default {
   components: {},
   props: {},
   onLoad: function (option) {
-    let me = this;
     this.setData({
       yourname: uni.getStorageSync("myUsername")
-    }); //监听加好友申请
-
-    disp.on("em.subscribe", function () {
-      me.setData({
-        messageNum: getApp().globalData.saveFriendList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-      });
-    }); //监听未读“聊天”
-
-    disp.on("em.unreadspot", function () {
-      me.setData({
-        unReadSpotNum: getApp().globalData.unReadMessageNum
-      });
-    }); //监听未读“通知”数
-
-    disp.on("em.invite.joingroup", function (count) {
-      me.setData({
-        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
-      });
-    });
-	
+    }); 
+    //监听加好友申请
+    disp.on("em.subscribe", this.onSettingPageSubscribe);
+    //监听未读“聊天”
+    disp.on("em.unreadspot", this.onSettingPageUnreadspot); 
+    //监听加入群组事件
+    disp.on("em.invite.joingroup", this.onSettingPageJoingroup);
 	this.setData({
 		phoneNumber: getApp().globalData.phoneNumber
 	})
@@ -129,7 +112,11 @@ export default {
       });
     }
   },
-
+  onUnload(){
+    disp.off('em.subscribe',this.onSettingPageSubscribe)
+    disp.off('em.unreadspot',this.onSettingPageUnreadspot)
+    disp.off('em.invite.joingroup',this.onSettingPageJoingroup)
+  },
   methods: {
     tab_contact: function () {
       uni.redirectTo({
@@ -163,6 +150,23 @@ export default {
             });
           }
         }
+      });
+    },
+    onSettingPageSubscribe() {
+      this.setData({
+        messageNum: getApp().globalData.saveFriendList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      });
+    },
+    onSettingPageUnreadspot() {
+        this.setData({
+            unReadSpotNum: getApp().globalData.unReadMessageNum
+      });
+    },
+    onSettingPageJoingroup() {
+        this.setData({
+        unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
+        unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
     }
   }

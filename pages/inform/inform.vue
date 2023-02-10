@@ -25,19 +25,15 @@ export default {
   props: {},
 
   onLoad(options) {
-    var me = this;
-
-    disp.on("em.subscribe", function () {
-      me.setData({
-        friendList: getApp().globalData.saveFriendList
-      });
-    });
+    disp.on("em.subscribe", this.onInformPageSubscribe);
     this.setData({
       myName: options.myName,
       friendList: getApp().globalData.saveFriendList
     });
   },
-
+  onUnload(){
+    disp.off("em.subscribe", this.onInformPageSubscribe);
+  },
   methods: {
     removeAndRefresh(removeId) {
       var idx;
@@ -95,8 +91,13 @@ export default {
       setTimeout(function () {
         me.removeAndRefresh(event.currentTarget.dataset.from);
       }, 1000);
-    }
+    },
 
+    onInformPageSubscribe() {
+      this.setData({
+        friendList: getApp().globalData.saveFriendList
+      });
+    }
   }
 };
 </script>

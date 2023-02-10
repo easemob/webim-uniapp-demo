@@ -55,17 +55,7 @@ export default {
   props: {},
 
   onLoad(options) {
-    var me = this; // 不需要 object 地址更新，就能刷
-
-    disp.on("em.invite.joingroup", function () {
-      me.setData({
-        groupList: getApp().globalData.saveGroupInvitedList,
-      });
-      uni.setStorageSync(
-        "groupNotiData",
-        getApp().globalData.saveGroupInvitedList
-      );
-    });
+    disp.on("em.invite.joingroup", this.onGroupDetailJoinGroup);
     this.setData({
       groupList: uni.getStorageSync("groupNotiData"), //getApp().globalData.saveGroupInvitedList
     });
@@ -76,7 +66,9 @@ export default {
     uni.hideHomeButton()
     this.listGroups();
   },
-
+  onUnload(){
+    disp.off('em.invite.joingroup',this.onGroupDetailJoinGroup)
+  },
   methods: {
     removeAndRefresh(removeId) {
       console.log("removeId>>", removeId);
@@ -164,6 +156,16 @@ export default {
         url: "../chat/chat",
       });
     },
+
+    onGroupDetailJoinGroup () {
+      this.setData({
+        groupList: getApp().globalData.saveGroupInvitedList,
+      });
+      uni.setStorageSync(
+        "groupNotiData",
+        getApp().globalData.saveGroupInvitedList
+      );
+    }
   },
 };
 </script>

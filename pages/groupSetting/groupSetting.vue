@@ -55,7 +55,8 @@
 import Image from "../../components/chat/inputbar/suit/image/image.vue";
 var WebIM = require("../../utils/WebIM")["default"];
 let disp = require("../../utils/broadcast");
-
+//event function name
+let onGroupSettingPageLeaveGroup;
 export default {
   data() {
     return {
@@ -80,25 +81,18 @@ export default {
 
   components: {},
   onLoad: function (options) {
-    let me = this;
     this.setData({
       roomId: JSON.parse(options.groupInfo).roomId,
       groupName: JSON.parse(options.groupInfo).groupName,
       currentName: JSON.parse(options.groupInfo).myName,
     });
-    disp.on("em.group.leaveGroup", function () {
-      var pageStack = getCurrentPages(); // 判断是否当前路由是本页
-
-      if (pageStack[pageStack.length - 1].route === me.__route__) {
-        me.getGroupMember();
-        this.getGroupInfo();
-      }
-    }); // console.log(this.data.roomId, this.data.groupName, this.data.currentName);
+    disp.on("em.group.leaveGroup", this.onGroupSettingPageLeaveGroup); // console.log(this.data.roomId, this.data.groupName, this.data.currentName);
     // 获取群成员
-
     this.getGroupMember(); // 获取群信息
-
     this.getGroupInfo();
+  },
+  onUnload(){
+    disp.off("em.group.leaveGroup",this.onGroupSettingPageLeaveGroup);
   },
   methods: {
     getGroupMember: function () {
@@ -251,6 +245,14 @@ export default {
         },
       });
     },
+     /*  disp event callback function */
+     onGroupSettingPageLeaveGroup() {
+        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
+        if (pageStack[pageStack.length - 1].route === this.__route__) {
+        this.getGroupMember();
+        this.getGroupInfo();
+        }
+    }
   },
 };
 </script>
