@@ -237,7 +237,6 @@ export default {
       return WebIM.conn.getGroup({
         limit: 50,
         success: function (res) {
-            console.log('.>>>>获取群组列表',res.data)
           uni.setStorage({
             key: "listGroup",
             data: res.data,

@@ -189,7 +189,7 @@ export default {
             duration: 2000,
             success: function (res) {
               setTimeout(() => uni.redirectTo({
-                url: "../main/main?myName=" + uni.getStorageSync("myUsername")
+                url: "../groups/groups?myName=" + uni.getStorageSync("myUsername")
               }), 1000);
             }
           });
