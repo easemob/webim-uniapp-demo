@@ -189,14 +189,23 @@ export default {
     disp.on("em.invite.joingroup", this.onChatPageJoingroup);
     //监听好友删除
     disp.on("em.contacts.remove", this.onChatPageRemoveContacts);
+    //监听好友关系解除
+    disp.on("em.unsubscribed",this.onChatPageUnsubscribed)
     // this.getRoster();
+    if(!uni.getStorageSync('listGroup')){
+        this.listGroups()
+    }
+    if(!uni.getStorageSync('member')){
+        this.getRoster()
+    }
+    this.readJoinedGroupName()
   },
 
   onShow: function () {
     uni.hideHomeButton && uni.hideHomeButton();
     this.getChatList();
     this.setData({
-      //arr: this.getChatList(),
+    //   arr: this.getChatList(),
       unReadSpotNum:
         getApp().globalData.unReadMessageNum > 99
           ? "99+"
@@ -221,27 +230,20 @@ export default {
     disp.off("em.unreadspot",this.onChatPageUnreadspot)
     disp.off("em.invite.joingroup",this.onChatPageJoingroup)
     disp.off("em.contacts.remove",this.onChatPageRemoveContacts)
-
+    disp.off("em.unsubscribed",this.onChatPageUnsubscribed)
   },
   methods: {
     listGroups() {
+      
       var me = this;
       return WebIM.conn.getGroup({
         limit: 50,
         success: function (res) {
-          let groupName = {};
-          let listGroup = res.data || [];
-          listGroup.forEach((item) => {
-            groupName[item.groupid] = item.groupname;
-          });
-
-          me.setData({
-            groupName: groupName,
-          });
           uni.setStorage({
             key: "listGroup",
             data: res.data,
           });
+          me.readJoinedGroupName()
           me.getChatList();
         },
         error: function (err) {
@@ -249,7 +251,6 @@ export default {
         },
       });
     },
-
     getRoster() {
       let me = this;
       let rosters = {
@@ -266,7 +267,6 @@ export default {
             data: member,
           });
           me.setData({ member: member });
-          me.listGroups();
           //if(!systemReady){
           disp.fire("em.main.ready");
           //systemReady = true;
@@ -285,7 +285,18 @@ export default {
       };
       WebIM.conn.getContacts(rosters);
     },
-
+    readJoinedGroupName (){
+        const joinedGroupList = uni.getStorageSync('listGroup')
+        const groupList = joinedGroupList?.data || joinedGroupList || []
+        let groupName = {};
+        groupList.forEach((item) => {
+            groupName[item.groupid] = item.groupname;
+        });
+        console.log('groupName',groupName),
+        this.setData({
+            groupName: groupName,
+        });
+    },
     // // 不包含陌生人版本
     // getChatList() {
     //   var array = [];
@@ -761,10 +772,19 @@ export default {
           getApp().globalData.saveFriendList.length +
           getApp().globalData.saveGroupInvitedList.length,
       });
+      this.getChatList();
     },
     onChatPageRemoveContacts() {
       this.getChatList();
       this.getRoster();
+    },
+    onChatPageUnsubscribed(message){
+        uni.showToast(
+            {
+             title: `与${message.from}好友关系解除`,
+             icon: "none",
+			}
+        );
     }
   },
 };

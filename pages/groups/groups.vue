@@ -80,10 +80,13 @@ export default {
       WebIM.conn.getGroup({
         limit: 100,
         success: function (res) {
+          uni.setStorage({
+            key: "listGroup",
+            data: res.data,
+          });
           me.setData({
             groupList: res.data
           });
-
           getApp().globalData.groupList = res.data || [];
         },
         error: function () {}

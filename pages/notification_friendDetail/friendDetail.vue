@@ -45,7 +45,7 @@ export default {
   props: {},
 
   onLoad(options) {
-    disp.on("em.subscribe", onFriendDetailPageSubscribe);
+    disp.on("em.subscribe", this.onFriendDetailPageSubscribe);
     this.setData({
       myName: uni.getStorageSync("myUsername"),
       friendList: uni.getStorageSync("friendNotiData") //getApp().globalData.saveFriendList 
