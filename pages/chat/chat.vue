@@ -22,7 +22,7 @@
         </view>
         <text @tap="cancel">取消</text>
       </view>
-      <view v-for="(item, index) in arr" :key="index" class="chat_list" :data-item="item" @tap.stop="del_chat"
+      <view v-for="(item, index) in conversationList" :key="index" class="chat_list" :data-item="item" @tap.stop="del_chat"
         @longpress="longpress">
         <swipe-delete>
           <!-- 通知模块 -->
@@ -41,7 +41,7 @@
                 </view>
               </view>
               <view class="list_right">
-                <text :data-username="item.username">{{ item.time }}</text>
+                <text :data-username="item.username">{{ handleTime(item) }}</text>
               </view>
             </view>
           </view>
@@ -51,8 +51,8 @@
             <view class="list_box">
               <view class="list_left" :data-username="item.username">
                 <view class="list_pic">
-                  <view class="em-msgNum" v-if="(item.unReadCount > 0 || item.unReadCount == '99+') && !pushConfigData.includes(item.chatType === 'chat' ? item.username : item.info.to)">
-                  {{ item.unReadCount}}</view>
+                  <view class="em-msgNum" v-if="item.unReadCount > 0  && !pushConfigData.includes(item.chatType === 'chat' ? item.username : item.info.to)">
+                  {{ item.unReadCount > 99 ? '99+':item.unReadCount}}</view>
 
                   <image :src="
                     item.chatType == 'groupchat' ||
@@ -90,7 +90,7 @@
 
       <long-press-modal :winSize="winSize" :popButton="popButton" @change="pickerMenuChange" :showPop="showPop"
         @hidePop="hidePop" :popStyle="popStyle" />
-      <view v-if="arr && arr.length == 0" class="chat_noChat">
+      <view v-if="conversationList && conversationList.length == 0" class="chat_noChat">
         <image class="ctbg" src="/static/images/ctbg.png"></image>
         暂无聊天消息
       </view>
@@ -153,7 +153,7 @@ export default {
       unReadNoticeNum: 0,
       messageNum: 0,
       unReadTotalNotNum: 0,
-      arr: [],
+      conversationList: [],
       show_clear: false,
       member: "",
       isIPX: false,
@@ -203,9 +203,9 @@ export default {
 
   onShow: function () {
     uni.hideHomeButton && uni.hideHomeButton();
-    this.getChatList();
+    this.getLocalConversationlist();
     this.setData({
-    //   arr: this.getChatList(),
+    //   conversationList: this.getLocalConversationlist(),
       unReadSpotNum:
         getApp().globalData.unReadMessageNum > 99
           ? "99+"
@@ -242,7 +242,6 @@ export default {
   },
   methods: {
     listGroups() {
-      
       var me = this;
       return WebIM.conn.getGroup({
         limit: 50,
@@ -252,7 +251,7 @@ export default {
             data: res.data,
           });
           me.readJoinedGroupName()
-          me.getChatList();
+          me.getLocalConversationlist();
         },
         error: function (err) {
           console.log(err);
@@ -280,7 +279,7 @@ export default {
           //systemReady = true;
           //}
           me.setData({
-            arr: me.getChatList(),
+            conversationList: me.getLocalConversationlist(),
             unReadSpotNum:
               getApp().globalData.unReadMessageNum > 99
                 ? "99+"
@@ -305,65 +304,43 @@ export default {
             groupName: groupName,
         });
     },
-    // // 不包含陌生人版本
-    // getChatList() {
-    //   var array = [];
+    // 不包含陌生人版本
+    // getLocalConversationlist() {
+    //   var conversationList = [];
     //   var member = uni.getStorageSync("member");
     //   var myName = uni.getStorageSync("myUsername");
     //   var listGroups = uni.getStorageSync('listGroup') || [];
-
     //   for (let i = 0; i < member.length; i++) {
     //     let newChatMsgs = uni.getStorageSync(member[i].name + myName) || [];
     //     let historyChatMsgs = uni.getStorageSync("rendered_" + member[i].name + myName) || [];
     //     let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
-
     //     if (curChatMsgs.length) {
     //       let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
     //       lastChatMsg.unReadCount = newChatMsgs.length;
-
-    //       if (lastChatMsg.unReadCount > 99) {
-    //         lastChatMsg.unReadCount = "99+";
-    //       }
-
-    //       let dateArr = lastChatMsg.time.split(' ')[0].split('-');
-    //       let timeArr = lastChatMsg.time.split(' ')[1].split(':');
-    //       let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2];
-    //       lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-    //       lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
-    //       array.push(lastChatMsg);
+    //       conversationList.push(lastChatMsg);
     //     }
     //   }
-
     //   for(let i = 0; i < listGroups.length; i++){
-    //  let newChatMsgs = uni.getStorageSync(listGroups[i].groupid + myName) || [];
-    //  let historyChatMsgs = uni.getStorageSync("rendered_" + listGroups[i].groupid + myName) || [];
-    //  let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
-    //  if(curChatMsgs.length){
-    //    let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
-    //    lastChatMsg.unReadCount = newChatMsgs.length;
-    //    if(lastChatMsg.unReadCount > 99) {
-    //      lastChatMsg.unReadCount = "99+";
-    //    }
-    //    let dateArr = lastChatMsg.time.split(' ')[0].split('-')
-    //    let timeArr = lastChatMsg.time.split(' ')[1].split(':')
-    //    let month = dateArr[2] < 10 ? '0' + dateArr[2] : dateArr[2]
-    //    lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`
-    //    lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`
-    //    lastChatMsg.groupName = listGroups[i].groupname
-    //    array.push(lastChatMsg);
-    //  }
-    // }
-
-    //   array.sort((a, b) => {
-    //     return b.dateTimeNum - a.dateTimeNum;
+    //     let newChatMsgs = uni.getStorageSync(listGroups[i].groupid + myName) || [];
+    //     let historyChatMsgs = uni.getStorageSync("rendered_" + listGroups[i].groupid + myName) || [];
+    //     let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
+    //     if(curChatMsgs.length){
+    //     let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
+    //     lastChatMsg.unReadCount = newChatMsgs.length;
+    //     lastChatMsg.groupName = listGroups[i].groupname
+    //     conversationList.push(lastChatMsg);
+    //     }
+    //   }
+    //   conversationList.sort((a, b) => {
+    //     return b.time - a.time;
     //   });
-    //   return array;
+    //   this.setData({
+    //         conversationList: conversationList,
+    //   });
     // },
-
     // 包含陌生人版本
-    getChatList() {
-      var myName = uni.getStorageSync("myUsername");
-      var array = [];
+    getLocalConversationlist() {
+      const myName = uni.getStorageSync("myUsername");
       const me = this;
       uni.getStorageInfo({
         success: function (res) {
@@ -383,83 +360,68 @@ export default {
               newChatMsgKeys.push(item);
             }
           });
-
-          cul.call(me, newChatMsgKeys, historyChatMsgKeys);
+          me.packageConversation(newChatMsgKeys, historyChatMsgKeys);
         },
       });
-
-      function cul(newChatMsgKeys, historyChatMsgKeys) {
-        let array = [];
-        let lastChatMsg;
-        let myName = uni.getStorageSync("myUsername");
+    },
+    //组件会话列表方法
+    packageConversation(newChatMsgKeys, historyChatMsgKeys) {
+        const me = this;
+        const myName = uni.getStorageSync("myUsername");
+        let conversationList = [];
+        let lastChatMsg; //最后一条消息
         for (let i = historyChatMsgKeys.length; i > 0, i--;) {
-          let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9));
-          if (index > -1) {
-            let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
-            if (newChatMsgKeys.includes()) {
-            }
-            if (newChatMsgs.length) {
-              lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-            //   lastChatMsg.unReadCount = newChatMsgs.length;
-            //过滤发送方为登录人的ID消息，并且不计入到未读数中。
-			lastChatMsg.unReadCount = newChatMsgs.filter((msg) => msg.yourname !== myName).length;
-              if (lastChatMsg.unReadCount > 99) {
-                lastChatMsg.unReadCount = "99+";
-              }
-              newChatMsgKeys.splice(index, 1);
+            let index = newChatMsgKeys.indexOf(historyChatMsgKeys[i].slice(9));
+            if (index > -1) {
+                let newChatMsgs = uni.getStorageSync(newChatMsgKeys[index]) || [];
+                if (newChatMsgs.length) {
+                    lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
+                    lastChatMsg.unReadCount = newChatMsgs.length;
+                    newChatMsgKeys.splice(index, 1);
+                } else {
+                    let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
+                    if (historyChatMsgs.length) {
+                        lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
+                    }
+                }
             } else {
-              let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
-              if (historyChatMsgs.length) {
-                lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-              }
-            }
-          } else {
-            let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
-            if (historyChatMsgs.length) {
-              lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-            }
-          }
-          if (
-            lastChatMsg &&
-            (lastChatMsg.chatType == "groupchat" ||
-              lastChatMsg.chatType == "chatRoom")
-          ) {
-            lastChatMsg.groupName = me.groupName[lastChatMsg.info.to];
-          }
-          lastChatMsg && lastChatMsg.username != myName &&
-            array.push(lastChatMsg);
-        }
-
-        for (let i = newChatMsgKeys.length; i > 0, i--;) {
-          let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
-          if (newChatMsgs.length) {
-            lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
-            // lastChatMsg.unReadCount = newChatMsgs.length;
-            //过滤发送方为登录人的ID消息，并且不计入到未读数中。
-			lastChatMsg.unReadCount = newChatMsgs.filter((msg) => msg.yourname !== myName).length;
-            if (lastChatMsg.unReadCount > 99) {
-              lastChatMsg.unReadCount = "99+";
+                let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
+                if (historyChatMsgs.length) {
+                    lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
+                }
             }
             if (
-              lastChatMsg.chatType == "groupchat" ||
-              lastChatMsg.chatType == "chatRoom"
+                lastChatMsg &&
+                (lastChatMsg.chatType == "groupchat" ||
+                    lastChatMsg.chatType == "chatRoom")
             ) {
-              lastChatMsg.groupName = me.groupName[lastChatMsg.info.to];
+                lastChatMsg.groupName = me.groupName[lastChatMsg.info.to];
             }
-            lastChatMsg.username != myName && array.push(lastChatMsg);
-          }
+            lastChatMsg && lastChatMsg.username != myName &&
+                conversationList.push(lastChatMsg);
         }
-
-        array.sort((a, b) => {
-          return b.dateTimeNum - a.dateTimeNum;
+        for (let i = newChatMsgKeys.length; i > 0, i--;) {
+            let newChatMsgs = uni.getStorageSync(newChatMsgKeys[i]) || [];
+            if (newChatMsgs.length) {
+                lastChatMsg = newChatMsgs[newChatMsgs.length - 1];
+                lastChatMsg.unReadCount = newChatMsgs.length;
+                if (
+                    lastChatMsg.chatType == "groupchat" ||
+                    lastChatMsg.chatType == "chatRoom"
+                ) {
+                    lastChatMsg.groupName = me.groupName[lastChatMsg.info.to];
+                }
+                lastChatMsg.username != myName && conversationList.push(lastChatMsg);
+            }
+        }
+        conversationList.sort((a, b) => {
+            return b.time - a.time;
         });
-		console.log('array', array)
+        console.log('conversationList+_+_+', conversationList)
         this.setData({
-          arr: array,
+            conversationList: conversationList,
         });
-      }
     },
-
     openSearch: function () {
       this.setData({
         search_btn: false,
@@ -473,7 +435,7 @@ export default {
       var myName = uni.getStorageSync("myUsername");
       const me = this;
       let serchList = [];
-      let arr = [];
+      let conversationList = [];
       uni.getStorageInfo({
         success: function (res) {
           let storageKeys = res.keys;
@@ -494,26 +456,20 @@ export default {
             let chatMsgs = uni.getStorageSync(item) || [];
             if (chatMsgs.length) {
               lastChatMsg = chatMsgs[chatMsgs.length - 1];
-
-              let dateArr = lastChatMsg.time.split(" ")[0].split("-");
-              let timeArr = lastChatMsg.time.split(" ")[1].split(":");
-              let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
-              lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-              lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
-              arr.push(lastChatMsg);
+              conversationList.push(lastChatMsg);
             }
           });
-          me.setData({ arr });
+          me.setData({ conversationList:conversationList });
         },
       });
     },
 
     cancel: function () {
-      this.getChatList();
+      this.getLocalConversationlist();
       this.setData({
         search_btn: true,
         search_chats: false,
-        //arr: this.getChatList(),
+        //arr: this.getLocalConversationlist(),
         unReadSpotNum:
           getApp().globalData.unReadMessageNum > 99
             ? "99+"
@@ -656,7 +612,7 @@ export default {
             //   currentPage[0].onShow();
             // }
             disp.fire("em.chat.session.remove");
-            me.getChatList();
+            me.getLocalConversationlist();
           }
         },
         fail: function (err) {
@@ -716,7 +672,7 @@ export default {
     },
     /*  disp event callback function */
     onChatPageSubscribe() {
-      this.getChatList();
+      this.getLocalConversationlist();
       this.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum:
@@ -727,16 +683,16 @@ export default {
     onChatPageDeleteGroup(infos) {
       this.listGroups();
       this.getRoster();
-      this.getChatList();
+      this.getLocalConversationlist();
       this.setData({
-        // arr: me.getChatList(),
+        // conversationList: me.getLocalConversationlist(),
         messageNum: getApp().globalData.saveFriendList.length,
       });
       //如果会话存在则执行删除会话
       this.removeLocalStorage(infos.gid)
     },
     onChatPageUnreadspot(message) {
-      this.getChatList();
+      this.getLocalConversationlist();
       let currentLoginUser = WebIM.conn.context.userId;
       let id = message && message.chatType === 'groupchat' ? message?.to : message?.from;
       let pushObj = uni.getStorageSync("pushStorageData");
@@ -746,7 +702,7 @@ export default {
         });
       // if (message && pushValue.includes(id)) return
       this.setData({
-        // arr: me.getChatList(),
+        // conversationList: me.getLocalConversationlist(),
         unReadSpotNum:
           getApp().globalData.unReadMessageNum > 99
             ? "99+"
@@ -760,10 +716,10 @@ export default {
           getApp().globalData.saveFriendList.length +
           getApp().globalData.saveGroupInvitedList.length,
       });
-      this.getChatList();
+      this.getLocalConversationlist();
     },
     onChatPageRemoveContacts() {
-      this.getChatList();
+      this.getLocalConversationlist();
       this.getRoster();
     },
     onChatPageUnsubscribed(message){
