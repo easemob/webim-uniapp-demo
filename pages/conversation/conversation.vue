@@ -159,14 +159,12 @@ export default {
       isIPX: false,
       gotop: false,
       input_code: "",
-
       groupName: {},
       winSize: {},
       popButton: ["删除该聊天"],
       showPop: false,
       popStyle: "",
       currentVal: '',
-
       pushConfigData: []
     };
   },
@@ -191,7 +189,6 @@ export default {
     disp.on("em.contacts.remove", this.onChatPageRemoveContacts);
     //监听好友关系解除
     disp.on("em.unsubscribed",this.onChatPageUnsubscribed)
-    // this.getRoster();
     if(!uni.getStorageSync('listGroup')){
         this.listGroups()
     }
@@ -205,7 +202,6 @@ export default {
     uni.hideHomeButton && uni.hideHomeButton();
     this.getLocalConversationlist();
     this.setData({
-    //   conversationList: this.getLocalConversationlist(),
       unReadSpotNum:
         getApp().globalData.unReadMessageNum > 99
           ? "99+"
@@ -278,8 +274,8 @@ export default {
           disp.fire("em.main.ready");
           //systemReady = true;
           //}
+          me.getLocalConversationlist()
           me.setData({
-            conversationList: me.getLocalConversationlist(),
             unReadSpotNum:
               getApp().globalData.unReadMessageNum > 99
                 ? "99+"
@@ -468,8 +464,7 @@ export default {
       this.getLocalConversationlist();
       this.setData({
         search_btn: true,
-        search_chats: false,
-        //arr: this.getLocalConversationlist(),
+        search_chats: false,     
         unReadSpotNum:
           getApp().globalData.unReadMessageNum > 99
             ? "99+"
@@ -685,7 +680,6 @@ export default {
       this.getRoster();
       this.getLocalConversationlist();
       this.setData({
-        // conversationList: me.getLocalConversationlist(),
         messageNum: getApp().globalData.saveFriendList.length,
       });
       //如果会话存在则执行删除会话
@@ -702,7 +696,6 @@ export default {
         });
       // if (message && pushValue.includes(id)) return
       this.setData({
-        // conversationList: me.getLocalConversationlist(),
         unReadSpotNum:
           getApp().globalData.unReadMessageNum > 99
             ? "99+"
