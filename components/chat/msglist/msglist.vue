@@ -32,7 +32,7 @@
       <view class="main" :class="item.style">
         <view class="user">
           <!-- yourname：就是消息的 from -->
-          <text class="user-text">{{ item.yourname + ' ' + item.time}}</text>
+          <text class="user-text">{{ item.yourname + ' ' + handleTime(item)}}</text>
         </view>
         <image class="avatar" src="/static/images/theme2x.png" />
         <view class="msg">
@@ -217,7 +217,14 @@ export default {
     });
     msgStorage.on("newChatMsg", this.dispMsg);
   },
-
+  computed:{
+    //处理时间显示
+    handleTime() {
+        return (item) => {
+            return this.$u.timeFormat(item.time, 'mm/dd/hh:MM')
+        }
+    }
+  },
   methods: {
     normalScroll() {
       this.setData({

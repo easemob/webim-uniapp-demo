@@ -34,7 +34,8 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
             height: receiveMsg.height
           }
         }
-      }
+      },
+      time:receiveMsg.time
     };
   } else if (type == msgType.TEXT || type == msgType.EMOJI) {
     sendableMsg = {
@@ -53,7 +54,8 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
           msg: receiveMsg.data
         }
       },
-      value: receiveMsg.data
+      value: receiveMsg.data,
+      time:receiveMsg.time
     };
   } 
   else if (type == 'INFORM') { // 通知消息
@@ -86,7 +88,8 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
           file_length: receiveMsg.file_length
         }
       },
-      value: receiveMsg.data
+      value: receiveMsg.data,
+      time:receiveMsg.time
     };
   } else if (type == msgType.AUDIO) {
     sendableMsg = {
@@ -110,7 +113,8 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
           from: receiveMsg.from,
           to: receiveMsg.to
         }
-      }
+      },
+      time:receiveMsg.time
     };
   } else if (type == msgType.VIDEO) {
     sendableMsg = {
@@ -135,6 +139,7 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
           to: receiveMsg.to
         },
       },
+      time:receiveMsg.time
     };
   } else {
     return;

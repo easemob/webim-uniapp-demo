@@ -81,7 +81,7 @@
                 </view>
               </view>
               <view class="list_right">
-                <text :data-username="item.username">{{ item.time }}</text>
+                <text :data-username="item.username">{{ handleTime(item) }}</text>
               </view>
             </view>
           </view>
@@ -231,6 +231,14 @@ export default {
     disp.off("em.invite.joingroup",this.onChatPageJoingroup)
     disp.off("em.contacts.remove",this.onChatPageRemoveContacts)
     disp.off("em.unsubscribed",this.onChatPageUnsubscribed)
+  },
+  computed: {
+    //处理时间显示
+    handleTime() {
+        return (item) => {
+            return this.$u.timeFormat(item.time, 'mm/dd/hh:MM')
+        }
+    }
   },
   methods: {
     listGroups() {
@@ -398,32 +406,17 @@ export default {
               if (lastChatMsg.unReadCount > 99) {
                 lastChatMsg.unReadCount = "99+";
               }
-              let dateArr = lastChatMsg.time.split(" ")[0].split("-");
-              let timeArr = lastChatMsg.time.split(" ")[1].split(":");
-              let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
-              lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-              lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
               newChatMsgKeys.splice(index, 1);
             } else {
               let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
               if (historyChatMsgs.length) {
                 lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-                let dateArr = lastChatMsg.time.split(" ")[0].split("-");
-                let timeArr = lastChatMsg.time.split(" ")[1].split(":");
-                let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
-                lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-                lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
               }
             }
           } else {
             let historyChatMsgs = uni.getStorageSync(historyChatMsgKeys[i]);
             if (historyChatMsgs.length) {
               lastChatMsg = historyChatMsgs[historyChatMsgs.length - 1];
-              let dateArr = lastChatMsg.time.split(" ")[0].split("-");
-              let timeArr = lastChatMsg.time.split(" ")[1].split(":");
-              let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
-              lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-              lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
             }
           }
           if (
@@ -447,11 +440,6 @@ export default {
             if (lastChatMsg.unReadCount > 99) {
               lastChatMsg.unReadCount = "99+";
             }
-            let dateArr = lastChatMsg.time.split(" ")[0].split("-");
-            let timeArr = lastChatMsg.time.split(" ")[1].split(":");
-            let month = dateArr[2] < 10 ? "0" + dateArr[2] : dateArr[2];
-            lastChatMsg.dateTimeNum = `${dateArr[1]}${month}${timeArr[0]}${timeArr[1]}${timeArr[2]}`;
-            lastChatMsg.time = `${dateArr[1]}月${dateArr[2]}日 ${timeArr[0]}:${timeArr[1]}`;
             if (
               lastChatMsg.chatType == "groupchat" ||
               lastChatMsg.chatType == "chatRoom"
