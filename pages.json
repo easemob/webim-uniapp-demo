@@ -92,7 +92,7 @@
 			}
 		},
 		{
-			"path": "pages/chat/chat",
+			"path": "pages/conversation/conversation",
 			"style": {
 				"navigationBarBackgroundColor": "#f2f2f2",
 				"navigationBarTextStyle": "black",

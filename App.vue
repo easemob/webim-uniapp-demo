@@ -144,7 +144,7 @@ export default {
     onLoginSuccess: function (myName) {
       uni.hideLoading();
       uni.redirectTo({
-        url: "../chat/chat?myName=" + myName,
+        url: "../conversation/conversation?myName=" + myName,
       });
     },
 

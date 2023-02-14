@@ -230,7 +230,7 @@ export default {
               setTimeout(
                 () =>
                   uni.redirectTo({
-                    url: "../chat/chat",
+                    url: "../conversation/conversation",
                   }),
                 1000
               );
