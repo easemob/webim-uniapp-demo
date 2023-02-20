@@ -1,4 +1,4 @@
-import websdk from "../newSDK/uniapp-sdk-4.1.2";
+import websdk from "../newSDK/uniapp-sdk-4.1.3";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
