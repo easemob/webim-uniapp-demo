@@ -22,7 +22,7 @@ function getMsgData(sendableMsg, type) {
 }
 module.exports = function (sendableMsg, type, myName) {
   console.log(sendableMsg, 'sendableMsg')
-  var time = WebIM.time();
+//   var time = WebIM.time();
   var renderableMsg = {
     info: {
       from: sendableMsg.body.from,
@@ -40,7 +40,7 @@ module.exports = function (sendableMsg, type, myName) {
       ext: sendableMsg.body.ext
     },
     style: sendableMsg.body.from == myName ? "self" : "",
-    time: time,
+    time: sendableMsg.time || Date.now(),
     mid: sendableMsg.type + sendableMsg.id,
     id: sendableMsg.id,
     chatType: sendableMsg.body.chatType

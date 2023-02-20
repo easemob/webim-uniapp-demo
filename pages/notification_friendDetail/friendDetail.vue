@@ -172,7 +172,7 @@ export default {
     },
     into_chat() {
       uni.redirectTo({
-        url: "../chat/chat",
+        url: "../conversation/conversation",
       });
     },
     onFriendDetailPageSubscribe () {

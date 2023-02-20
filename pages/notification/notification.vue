@@ -106,7 +106,7 @@ export default {
     },
     tab_chat: function () {
       uni.redirectTo({
-        url: "../chat/chat"
+        url: "../conversation/conversation"
       });
     },
     tab_setting: function () {
