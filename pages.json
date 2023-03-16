@@ -116,6 +116,22 @@
 				"navigationBarTitleText": "通用设置"
 			}
 		},
+        {
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarBackgroundColor": "#f2f2f2",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "个人资料"
+			}
+		},
+        {
+            "path": "pages/profile/selectAvatar",
+            "style": {
+				"navigationBarBackgroundColor": "#f2f2f2",
+				"navigationBarTextStyle": "black",
+				"navigationBarTitleText": "选择头像"
+			}
+        },
 		{
 			"path": "pages/groups/groups",
 			"style": {

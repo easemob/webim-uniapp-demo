@@ -116,6 +116,7 @@ export default {
 	phoneNumber: '',
     unReadMessageNum: 0,
     userInfo: null,
+    userInfoFromServer: null, //用户属性从环信服务器获取
     saveFriendList: [],
     saveGroupInvitedList: [],
     isIPX: false, //是否为iphone X
@@ -167,7 +168,6 @@ export default {
         });
       }
     },
-
     checkIsIPhoneX: function () {
       const me = this;
       uni.getSystemInfo({
@@ -215,7 +215,9 @@ export default {
     disp.on("em.chat.audio.fileLoaded", function () {
       calcUnReadSpot();
     }); //
-
+    disp.on("em.mian.profile.update", function () {
+        me.fetchUserInfoWithWithLoginId()
+    });
     WebIM.conn.listen({
       onOpened(message) {
         if (
@@ -226,6 +228,7 @@ export default {
             uni.getStorageSync("myUsername").toLowerCase()
           );
         }
+        me.fetchUserInfoWithWithLoginId()
       },
 
       onReconnect() {
@@ -525,7 +528,26 @@ export default {
     this.globalData.checkIsIPhoneX();
   },
 
-  methods: {},
+  methods: {
+    async fetchUserInfoWithWithLoginId(){
+        const myName = await uni.WebIM.conn.user;
+        if(myName){
+            try {
+                const { data } =  await uni.WebIM.conn.fetchUserInfoById(myName)
+                console.log('用户属性获取成功',data)
+                this.globalData.userInfoFromServer = Object.assign({},data[myName]);
+            } catch (error) {
+                console.log(error)
+                uni.showToast({
+                    title: "用户属性获取失败",
+                    icon: "none",
+                    duration: 2000,
+                })
+            }
+          
+        }
+    }
+  },
 };
 </script>
 <style lang="scss">

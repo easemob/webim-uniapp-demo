@@ -2,8 +2,8 @@
 <view>
 
 <view class="setting_head">
-	<view class="head_pic">
-		<image src="/static/images/theme2x.png"></image>
+	<view class="head_pic" @click="to_profile_page">
+		<image :src="loginUserAvactar"></image>
 		<view>
 			<text class="setting_username">{{ yourname }}</text>
 			<text class="setting_username2">{{phoneNumber}}</text>
@@ -76,7 +76,8 @@ export default {
       unReadNoticeNum: 0,
       unReadTotalNotNum: 0,
       isIPX: false,
-	  phoneNumber: ''
+	  phoneNumber: '',
+      defaultAvatar: "/static/images/avatar.png",
     };
   },
 
@@ -96,7 +97,6 @@ export default {
 		phoneNumber: getApp().globalData.phoneNumber
 	})
   },
-
   onShow() {
     uni.hideHomeButton()
     this.setData({
@@ -116,6 +116,11 @@ export default {
     disp.off('em.subscribe',this.onSettingPageSubscribe)
     disp.off('em.unreadspot',this.onSettingPageUnreadspot)
     disp.off('em.invite.joingroup',this.onSettingPageJoingroup)
+  },
+  computed: {
+    loginUserAvactar(){
+        return getApp().globalData.userInfoFromServer?.avatarurl || this.defaultAvatar;
+    }
   },
   methods: {
     tab_contact: function () {
@@ -168,6 +173,11 @@ export default {
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
+    },
+    to_profile_page() {
+        uni.navigateTo({
+            url: "../profile/profile"
+        });
     }
   }
 };
