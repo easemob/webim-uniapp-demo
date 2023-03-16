@@ -54,21 +54,16 @@
                   <view class="em-msgNum" v-if="item.unReadCount > 0  && !pushConfigData.includes(item.chatType === 'chat' ? item.username : item.info.to)">
                   {{ item.unReadCount > 99 ? '99+':item.unReadCount}}</view>
 
-                  <image :src="
+                  <image :src="showConversationAvatar(item)"></image>
+                  <!-- <image :src="
                     item.chatType == 'groupchat' ||
                       item.chatType == 'chatRoom'
                       ? '../../static/images/groupTheme.png'
                       : '../../static/images/theme2x.png'
-                  "></image>
+                  "></image> -->
                 </view>
                 <view class="list_text">
-                  <text class="list_user">{{
-                      item.chatType == "groupchat" ||
-                        item.chatType == "chatRoom" ||
-                        item.groupName
-                        ? item.groupName
-                        : item.username
-                  }}</text>
+                  <text class="list_user">{{ showConversationName(item) }}</text>
                   <text class="list_word" v-if="item.msg.data[0].data">{{
                       item.msg.data[0].data
                   }}</text>
@@ -165,7 +160,9 @@ export default {
       showPop: false,
       popStyle: "",
       currentVal: '',
-      pushConfigData: []
+      pushConfigData: [],
+      defaultAvatar: "/static/images/theme2x.png",
+      defaultGroupAvatar: "/static/images/groupTheme.png"
     };
   },
 
@@ -229,6 +226,37 @@ export default {
     disp.off("em.unsubscribed",this.onChatPageUnsubscribed)
   },
   computed: {
+     //会话头像展示
+    showConversationAvatar() {
+      const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+      return (item)=>{
+        console.log('>>>>会话',item)
+        if(item.chatType === 'singleChat' || item.chatType === 'chat'){
+            if(friendUserInfoMap.has(item.username) && friendUserInfoMap.get(item.username)?.avatarurl){
+                return friendUserInfoMap.get(item.username).avatarurl
+            }else{
+                return this.defaultAvatar
+            }
+        }else if(item.chatType === 'groupchat' || item.chatType === 'chatRoom'){
+            return this.defaultGroupAvatar
+        }
+      }
+    },
+    //会话name展示
+    showConversationName() {
+        const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+        return (item)=>{
+            if(item.chatType ==='singleChat' || item.chatType === 'chat'){
+                if(friendUserInfoMap.has(item.username) && friendUserInfoMap.get(item.username)?.nickname){
+                    return friendUserInfoMap.get(item.username).nickname
+                }else{
+                    return item.username
+                }
+            }else if(item.chatType === 'groupchat' || item.chatType === 'chatRoom'){
+                return item.groupName
+            }
+        }
+    },
     //处理时间显示
     handleTime() {
         return (item) => {
@@ -531,6 +559,10 @@ export default {
         myName: my,
         your: detail.username,
       };
+      const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+      if(friendUserInfoMap.has(nameList.your) && friendUserInfoMap.get(nameList.your)?.nickname){
+        nameList.yourNickName = friendUserInfoMap.get(nameList.your).nickname;
+      }
       uni.navigateTo({
         url: "../chatroom/chatroom?username=" + JSON.stringify(nameList),
       });

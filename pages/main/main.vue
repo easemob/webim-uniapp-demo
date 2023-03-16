@@ -85,12 +85,12 @@
                     @tap.stop="into_room"
                   >
                     <image
-                      src="/static/images/theme2x.png"
+                      :src="showFriendAvatar(item.name) "
                       @tap.stop="into_room"
                       :data-username="item.name"
                     ></image>
                     <text @tap.stop="into_room" :data-username="item.name">{{
-                      item.name
+                        showFriendNickname(item.name)
                     }}</text>
                   </view>
                 </view>
@@ -185,6 +185,7 @@ export default {
       gotop: false,
       input_code: "",
       showFixedTitile: false,
+      defaultAvatar: "/static/images/theme2x.png",
     };
   },
   components: {
@@ -237,6 +238,30 @@ export default {
     disp.off("em.invite.joingroup",this.onMainPageJoingroup)
     disp.off("em.subscribed",this.onMainPagesubscribed)
     disp.off("em.unsubscribed",this.onMainPageUnsubscribed)
+  },
+  computed: {
+    //好友头像展示
+    showFriendAvatar() {
+      const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+      return (hxId)=>{
+        if(friendUserInfoMap.has(hxId) && friendUserInfoMap.get(hxId)?.avatarurl){
+            return friendUserInfoMap.get(hxId).avatarurl;
+        }else{
+            return this.defaultAvatar;
+        }
+      }
+    },
+    //好友昵称展示
+    showFriendNickname() {
+        const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+        return (hxId)=>{
+        if(friendUserInfoMap.has(hxId) && friendUserInfoMap.get(hxId)?.nickname){
+            return friendUserInfoMap.get(hxId).nickname;
+        }else{
+            return hxId;
+        }
+      }
+    }
   },
   methods: {
     getRoster() {
@@ -443,6 +468,10 @@ export default {
         myName: this.myName,
         your: event.target.dataset.username,
       };
+      const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+      if(friendUserInfoMap.has(nameList.your) && friendUserInfoMap.get(nameList.your)?.nickname){
+        nameList.yourNickName = friendUserInfoMap.get(nameList.your).nickname;
+      }
       uni.navigateTo({
         url: "../chatroom/chatroom?username=" + JSON.stringify(nameList),
       });

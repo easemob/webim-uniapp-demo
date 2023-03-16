@@ -1,4 +1,5 @@
 <script>
+import _chunkArr from './utils/chunkArr';
 // require("sdk/libs/strophe");
 let WebIM = (wx.WebIM = require("./utils/WebIM")["default"]);
 let msgStorage = require("./components/chat/msgstorage");
@@ -117,6 +118,7 @@ export default {
     unReadMessageNum: 0,
     userInfo: null,
     userInfoFromServer: null, //用户属性从环信服务器获取
+    friendUserInfoMap:new Map(), //好友属性
     saveFriendList: [],
     saveGroupInvitedList: [],
     isIPX: false, //是否为iphone X
@@ -229,6 +231,7 @@ export default {
           );
         }
         me.fetchUserInfoWithWithLoginId()
+        me.fetchFriendInfoWith()
       },
 
       onReconnect() {
@@ -546,6 +549,31 @@ export default {
             }
           
         }
+    },
+    async fetchFriendInfoWith(){
+       let friendList = []
+       const res = await uni.WebIM.conn.getContacts()
+       friendList = Object.assign([],res?.data)
+       if(friendList.length && friendList.length<99){
+        const { data } =  await uni.WebIM.conn.fetchUserInfoById(friendList)
+        this.setFriendUserInfotoMap(data)
+       }else{
+        let newArr = _chunkArr(friendList,99)
+        for(let i=0;i<newArr.length;i++){
+            const { data } =  await uni.WebIM.conn.fetchUserInfoById(newArr[i])
+            this.setFriendUserInfotoMap(data)
+        }
+       }
+    },
+    setFriendUserInfotoMap(data){
+        if (Object.keys(data).length) {
+            for (const key in data) {
+            if (Object.hasOwnProperty.call(data, key)) {
+                const values = data[key];
+                Object.values(values).length && this.globalData.friendUserInfoMap.set(key, values);
+            }
+        }
+      }
     }
   },
 };

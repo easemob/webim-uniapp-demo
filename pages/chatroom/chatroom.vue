@@ -28,7 +28,7 @@ export default {
 	// 生成的支付宝小程序在onLoad里获取不到，这里放到全局变量下
 	uni.username = username;
     uni.setNavigationBarTitle({
-      title: username.your
+      title: username?.yourNickName || username?.your
     });
   },
 

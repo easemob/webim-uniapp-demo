@@ -32,9 +32,9 @@
       <view class="main" :class="item.style">
         <view class="user">
           <!-- yourname：就是消息的 from -->
-          <text class="user-text">{{ item.yourname + ' ' + handleTime(item)}}</text>
+          <text v-show="!item.style" class="user-text">{{ showMessageListNickname(item.yourname) + ' ' + handleTime(item)}}</text>
         </view>
-        <image class="avatar" src="/static/images/theme2x.png" />
+        <image class="avatar" :src="showMessageListAvatar(item)" />
         <view class="msg">
           <image
             class="err"
@@ -69,8 +69,8 @@
           <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
             <view class="template" v-for="(d_item, d_index) in item.msg.data" :key="d_index">
               <text
-				        :data-msg="item"
-				        @tap="clickMsg"
+                :data-msg="item"
+                @tap="clickMsg"
                 v-if="d_item.type == 'txt'"
                 class="msg-text"
                 style="float:left;"
@@ -144,7 +144,9 @@ export default {
         {
           text: "违禁"
         }
-      ]
+      ],
+      defaultAvatar: "/static/images/theme2x.png",
+      defaultGroupAvatar: "/static/images/groupTheme.png"
     };
   },
 
@@ -218,6 +220,39 @@ export default {
     msgStorage.on("newChatMsg", this.dispMsg);
   },
   computed:{
+    //消息列表头像展示
+    showMessageListAvatar() {
+      const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+      const myUserInfos = getApp().globalData.userInfoFromServer;
+      return (item)=>{
+        if(!item.style){
+            if(friendUserInfoMap.has(item.username) && friendUserInfoMap.get(item.username)?.avatarurl){
+                return friendUserInfoMap.get(item.username).avatarurl
+            }else{
+                return this.defaultAvatar
+            }
+        }else{
+            if(myUserInfos?.avatarurl){
+                return myUserInfos.avatarurl
+            }else{
+                return this.defaultAvatar
+            }
+        }
+        
+      }
+    },
+    //消息列表昵称显示
+    showMessageListNickname(){
+        const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+        return (hxId)=>{
+            if(friendUserInfoMap.has(hxId) && friendUserInfoMap.get(hxId)?.nickname){
+                return friendUserInfoMap.get(hxId).nickname
+            }else{
+                return hxId
+            }
+            
+        }
+    },
     //处理时间显示
     handleTime() {
         return (item) => {

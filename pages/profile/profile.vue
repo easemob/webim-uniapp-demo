@@ -16,7 +16,7 @@
             <u-cell-item title="个性签名" :value="profileForm.sign || ''"></u-cell-item> -->
         </u-cell-group>
         <u-modal v-model="isShowEditModal" title='更改昵称' async-close confirm-text="保存" cancel-text="取消" show-cancel-button @confirm="saveNickname">
-            <u-input input-align="center" v-model="nickname" type="text" :border="border" maxlength="15"  />
+            <u-input input-align="center" v-model="nickname" type="text"  maxlength="15"  />
         </u-modal>
 
     </view>

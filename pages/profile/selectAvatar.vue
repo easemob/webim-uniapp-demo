@@ -1,7 +1,7 @@
 <template>
    <view class="wrap">
         <view :class="[{'check_style':index === chooseAvatarIndex},'avartar_container']" v-for="(item,index) in 9" :key="index">
-            <u-avatar :src="avatarUrl(item+1)" @click="chooseAvatar(index)"></u-avatar>
+            <u-avatar :src="avatarUrl(item)" @click="chooseAvatar(index)"></u-avatar>
         </view>
         <view class="save_btn">
             <u-button type="primary" @click="saveAvatar">确定</u-button>
