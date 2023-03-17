@@ -5,7 +5,7 @@
 	<view class="head_pic" @click="to_profile_page">
 		<image :src="loginUserAvactar"></image>
 		<view>
-			<text class="setting_username">{{ yourname }}</text>
+			<text class="setting_username">{{ loginUserNickname }}</text>
 			<text class="setting_username2">{{phoneNumber}}</text>
 		</view>
 	</view>
@@ -78,6 +78,7 @@ export default {
       isIPX: false,
 	  phoneNumber: '',
       defaultAvatar: "/static/images/avatar.png",
+      userInfoFromServer:null
     };
   },
 
@@ -103,7 +104,8 @@ export default {
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length,
+      userInfoFromServer:getApp().globalData.userInfoFromServer
     });
 
     if (getApp().globalData.isIPX) {
@@ -119,7 +121,10 @@ export default {
   },
   computed: {
     loginUserAvactar(){
-        return getApp().globalData.userInfoFromServer?.avatarurl || this.defaultAvatar;
+        return this.userInfoFromServer?.avatarurl || this.defaultAvatar;
+    },
+    loginUserNickname(){
+        return this.userInfoFromServer?.nickname || this.yourname;
     }
   },
   methods: {

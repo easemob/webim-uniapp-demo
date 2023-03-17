@@ -32,7 +32,7 @@
       <view class="main" :class="item.style">
         <view class="user">
           <!-- yourname：就是消息的 from -->
-          <text v-show="!item.style" class="user-text">{{ showMessageListNickname(item.yourname) + ' ' + handleTime(item)}}</text>
+          <text v-if="!item.style" class="user-text">{{ showMessageListNickname(item.yourname) + ' ' + handleTime(item)}}</text>
         </view>
         <image class="avatar" :src="showMessageListAvatar(item)" />
         <view class="msg">

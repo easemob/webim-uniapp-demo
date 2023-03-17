@@ -78,9 +78,9 @@ export default {
         if(!this.nickname) return
         try {
             await uni.WebIM.conn.updateUserInfo('nickname', this.nickname)
+            disp.fire('em.mian.profile.update')
             this.profileForm.nickname = this.nickname
             this.isShowEditModal = false;
-            disp.fire('em.mian.profile.update')
         } catch (error) {
             uni.showToast({
                 title: '保存失败',

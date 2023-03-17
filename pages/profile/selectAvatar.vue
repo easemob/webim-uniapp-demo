@@ -1,6 +1,6 @@
 <template>
    <view class="wrap">
-        <view :class="[{'check_style':index === chooseAvatarIndex},'avartar_container']" v-for="(item,index) in 9" :key="index">
+        <view :class="[{'check_style':index === chooseAvatarIndex},'avartar_container']" v-for="(item,index) in defaultAvatarImgNum" :key="index">
             <u-avatar :src="avatarUrl(item)" @click="chooseAvatar(index)"></u-avatar>
         </view>
         <view class="save_btn">
@@ -12,9 +12,11 @@
 <script>
 let disp = require("../../utils/broadcast");
 const avatarBaseUrl = 'https://download-sdk.oss-cn-beijing.aliyuncs.com/downloads/IMDemo/avatar/'
+const defaultAvatarImgNum = ['1', '2', '3', '4', '5', '6', '7','8','9']
     export default {
         data(){
             return {
+                defaultAvatarImgNum,
                 avatarBaseUrl: avatarBaseUrl,
                 chooseAvatarIndex: 0
             }
@@ -47,13 +49,7 @@ const avatarBaseUrl = 'https://download-sdk.oss-cn-beijing.aliyuncs.com/download
                         title: '保存失败',
                         icon: 'none'
                     })
-                } finally {
-                    setTimeout(
-                        () =>
-                        uni.redirectTo({
-                            url: "../profile/profile",
-                    }),500);
-                }
+                } 
                 
                 
 
