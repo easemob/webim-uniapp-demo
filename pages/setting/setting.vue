@@ -124,7 +124,7 @@ export default {
         return this.userInfoFromServer?.avatarurl || this.defaultAvatar;
     },
     loginUserNickname(){
-        return this.userInfoFromServer?.nickname || this.yourname;
+        return `${this.userInfoFromServer?.nickname}(${this.yourname})` || this.yourname;
     }
   },
   methods: {

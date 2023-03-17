@@ -47,7 +47,7 @@ export default {
     },
     computed: {
         loginUserAvactar(){
-            return getApp().globalData.userInfoFromServer?.avatarurl || this.defaultAvatar;
+            return this.profileForm?.avatarurl || this.defaultAvatar;
         },
         //处理性别展示
         genderDisplay(){
