@@ -132,7 +132,13 @@ export default {
           mask: true,
         });
         this.curOpenOpt = opt;
-        WebIM.conn.open(opt);
+        WebIM.conn.open(opt).then(()=>{
+            //token获取成功，即可开始请求用户属性。
+            disp.fire("em.mian.profile.update");
+            disp.fire("em.mian.friendProfile.update");
+        }).catch((err)=> {
+            console.log('>>>>>token获取失败',err)
+        });
         this.closed = false;
       },
 
@@ -220,6 +226,9 @@ export default {
     disp.on("em.mian.profile.update", function () {
         me.fetchUserInfoWithWithLoginId()
     });
+    disp.on("em.mian.friendProfile.update", function () {
+        me.fetchFriendInfoFromServer()
+    });
     WebIM.conn.listen({
       onOpened(message) {
         if (
@@ -231,7 +240,7 @@ export default {
           );
         }
         me.fetchUserInfoWithWithLoginId()
-        me.fetchFriendInfoWith()
+        me.fetchFriendInfoFromServer()
       },
 
       onReconnect() {
@@ -537,7 +546,6 @@ export default {
         if(myName){
             try {
                 const { data } =  await uni.WebIM.conn.fetchUserInfoById(myName)
-                console.log('用户属性获取成功',data)
                 this.globalData.userInfoFromServer = Object.assign({},data[myName]);
             } catch (error) {
                 console.log(error)
@@ -550,7 +558,7 @@ export default {
           
         }
     },
-    async fetchFriendInfoWith(){
+    async fetchFriendInfoFromServer(){
        let friendList = []
        const res = await uni.WebIM.conn.getContacts()
        friendList = Object.assign([],res?.data)
