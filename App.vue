@@ -224,7 +224,7 @@ export default {
       calcUnReadSpot();
     }); //
     disp.on("em.mian.profile.update", function () {
-        me.fetchUserInfoWithWithLoginId()
+        me.fetchUserInfoWithLoginId()
     });
     disp.on("em.mian.friendProfile.update", function () {
         me.fetchFriendInfoFromServer()
@@ -239,8 +239,6 @@ export default {
             uni.getStorageSync("myUsername").toLowerCase()
           );
         }
-        me.fetchUserInfoWithWithLoginId()
-        me.fetchFriendInfoFromServer()
       },
 
       onReconnect() {
@@ -541,12 +539,12 @@ export default {
   },
 
   methods: {
-    async fetchUserInfoWithWithLoginId(){
-        const myName = await uni.WebIM.conn.user;
-        if(myName){
+    async fetchUserInfoWithLoginId(){
+        const userId = await uni.WebIM.conn.user;
+        if(userId){
             try {
-                const { data } =  await uni.WebIM.conn.fetchUserInfoById(myName)
-                this.globalData.userInfoFromServer = Object.assign({},data[myName]);
+                const { data } =  await uni.WebIM.conn.fetchUserInfoById(userId)
+                this.globalData.userInfoFromServer = Object.assign({},data[userId]);
             } catch (error) {
                 console.log(error)
                 uni.showToast({
