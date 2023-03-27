@@ -44,6 +44,12 @@ const defaultAvatarImgNum = ['1', '2', '3', '4', '5', '6', '7','8','9']
                         icon:'success',
                     })
                     disp.fire('em.mian.profile.update')
+					setTimeout(()=>{
+						uni.redirectTo({
+						  url: "../setting/setting",
+						});
+					},300)
+					
                 } catch (e) {
                     uni.showToast({
                         title: '保存失败',

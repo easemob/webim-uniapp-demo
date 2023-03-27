@@ -197,7 +197,9 @@ export default {
 
   onShow: function () {
     uni.hideHomeButton && uni.hideHomeButton();
-    this.getLocalConversationlist();
+    setTimeout(()=>{
+		this.getLocalConversationlist();
+	},100)
     this.setData({
       unReadSpotNum:
         getApp().globalData.unReadMessageNum > 99

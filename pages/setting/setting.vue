@@ -97,6 +97,9 @@ export default {
 	this.setData({
 		phoneNumber: getApp().globalData.phoneNumber
 	})
+	this.setData({
+		userInfoFromServer:getApp().globalData.userInfoFromServer
+	})
   },
   onShow() {
     uni.hideHomeButton()
@@ -105,7 +108,6 @@ export default {
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
       unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length,
-      userInfoFromServer:getApp().globalData.userInfoFromServer
     });
 
     if (getApp().globalData.isIPX) {
@@ -121,10 +123,20 @@ export default {
   },
   computed: {
     loginUserAvactar(){
-        return this.userInfoFromServer?.avatarurl || this.defaultAvatar;
+		if(this.userInfoFromServer){
+		   return this.userInfoFromServer.avatarurl;
+		}else{
+			return this.defaultAvatar
+		}
+       
     },
     loginUserNickname(){
-        return `${this.userInfoFromServer?.nickname}(${this.yourname})` || this.yourname;
+		if(this.userInfoFromServer){
+			return `${this.userInfoFromServer?.nickname}(${this.yourname})`
+		}else{
+			return this.yourname
+		}
+       
     }
   },
   methods: {
