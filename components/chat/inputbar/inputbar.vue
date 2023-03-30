@@ -63,7 +63,9 @@
             <image src="/static/images/pic.png"></image>
             群信息
           </view>
-
+          <view class="menu_wrap">
+            <u-icon name="account" color="#2979ff" size="28"></u-icon>
+          </view>
           <!-- <view class="menu_wrap" @tap="sendVideo">
             <image
               src="/static/images/video.png"
