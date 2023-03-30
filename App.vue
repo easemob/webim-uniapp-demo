@@ -1,4 +1,5 @@
 <script>
+import _chunkArr from './utils/chunkArr';
 // require("sdk/libs/strophe");
 let WebIM = (wx.WebIM = require("./utils/WebIM")["default"]);
 let msgStorage = require("./components/chat/msgstorage");
@@ -116,6 +117,8 @@ export default {
 	phoneNumber: '',
     unReadMessageNum: 0,
     userInfo: null,
+    userInfoFromServer: null, //用户属性从环信服务器获取
+    friendUserInfoMap:new Map(), //好友属性
     saveFriendList: [],
     saveGroupInvitedList: [],
     isIPX: false, //是否为iphone X
@@ -129,7 +132,13 @@ export default {
           mask: true,
         });
         this.curOpenOpt = opt;
-        WebIM.conn.open(opt);
+        WebIM.conn.open(opt).then(()=>{
+            //token获取成功，即可开始请求用户属性。
+            disp.fire("em.mian.profile.update");
+            disp.fire("em.mian.friendProfile.update");
+        }).catch((err)=> {
+            console.log('>>>>>token获取失败',err)
+        });
         this.closed = false;
       },
 
@@ -167,7 +176,6 @@ export default {
         });
       }
     },
-
     checkIsIPhoneX: function () {
       const me = this;
       uni.getSystemInfo({
@@ -215,7 +223,12 @@ export default {
     disp.on("em.chat.audio.fileLoaded", function () {
       calcUnReadSpot();
     }); //
-
+    disp.on("em.mian.profile.update", function () {
+        me.fetchUserInfoWithLoginId()
+    });
+    disp.on("em.mian.friendProfile.update", function () {
+        me.fetchFriendInfoFromServer()
+    });
     WebIM.conn.listen({
       onOpened(message) {
         if (
@@ -525,7 +538,59 @@ export default {
     this.globalData.checkIsIPhoneX();
   },
 
-  methods: {},
+  methods: {
+    async fetchUserInfoWithLoginId(){
+        const userId = await uni.WebIM.conn.user;
+        if(userId){
+            try {
+                const { data } =  await uni.WebIM.conn.fetchUserInfoById(userId)
+                this.globalData.userInfoFromServer = Object.assign({},data[userId]);
+            } catch (error) {
+                console.log(error)
+                uni.showToast({
+                    title: "用户属性获取失败",
+                    icon: "none",
+                    duration: 2000,
+                })
+            }
+          
+        }
+    },
+    async fetchFriendInfoFromServer(){
+       let friendList = []
+       try {
+            const res = await uni.WebIM.conn.getContacts()
+            friendList = Object.assign([],res?.data)
+            if(friendList.length && friendList.length<99){
+                const { data } =  await uni.WebIM.conn.fetchUserInfoById(friendList)
+                this.setFriendUserInfotoMap(data)
+            }else{
+                let newArr = _chunkArr(friendList,99)
+                for(let i=0;i<newArr.length;i++){
+                    const { data } =  await uni.WebIM.conn.fetchUserInfoById(newArr[i])
+                    this.setFriendUserInfotoMap(data)
+                }
+            }
+       } catch (error) {
+            console.log(error)
+            uni.showToast({
+                title: "用户属性获取失败",
+                icon: "none"
+            })
+       }
+       
+    },
+    setFriendUserInfotoMap(data){
+        if (Object.keys(data).length) {
+            for (const key in data) {
+            if (Object.hasOwnProperty.call(data, key)) {
+                const values = data[key];
+                Object.values(values).length && this.globalData.friendUserInfoMap.set(key, values);
+            }
+        }
+      }
+    }
+  },
 };
 </script>
 <style lang="scss">

@@ -1,0 +1,23 @@
+page {
+	background-color: #F5F5F5;
+}
+.head_pic {
+	height: 100%;
+	margin: 0 32rpx;
+	/* width: 112rpx; */
+	height: 112rpx;
+	border-bottom: 0.5px #E5E5E5 solid;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+.head_pic view{
+	margin-left: 20rpx;
+}
+.head_pic image {
+	width: 112rpx;
+	height: 112rpx;
+	border-radius: 56rpx;
+	display: block;
+}

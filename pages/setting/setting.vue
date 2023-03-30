@@ -2,10 +2,10 @@
 <view>
 
 <view class="setting_head">
-	<view class="head_pic">
-		<image src="/static/images/theme2x.png"></image>
+	<view class="head_pic" @click="to_profile_page">
+		<image :src="loginUserAvactar"></image>
 		<view>
-			<text class="setting_username">{{ yourname }}</text>
+			<text class="setting_username">{{ loginUserNickname }}</text>
 			<text class="setting_username2">{{phoneNumber}}</text>
 		</view>
 	</view>
@@ -76,7 +76,9 @@ export default {
       unReadNoticeNum: 0,
       unReadTotalNotNum: 0,
       isIPX: false,
-	  phoneNumber: ''
+	  phoneNumber: '',
+      defaultAvatar: "/static/images/avatar.png",
+      userInfoFromServer:null
     };
   },
 
@@ -95,15 +97,17 @@ export default {
 	this.setData({
 		phoneNumber: getApp().globalData.phoneNumber
 	})
+	this.setData({
+		userInfoFromServer:getApp().globalData.userInfoFromServer
+	})
   },
-
   onShow() {
     uni.hideHomeButton()
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum: getApp().globalData.unReadMessageNum > 99 ? '99+' : getApp().globalData.unReadMessageNum,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
-      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
+      unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length,
     });
 
     if (getApp().globalData.isIPX) {
@@ -116,6 +120,24 @@ export default {
     disp.off('em.subscribe',this.onSettingPageSubscribe)
     disp.off('em.unreadspot',this.onSettingPageUnreadspot)
     disp.off('em.invite.joingroup',this.onSettingPageJoingroup)
+  },
+  computed: {
+    loginUserAvactar(){
+		if(this.userInfoFromServer){
+		   return this.userInfoFromServer.avatarurl;
+		}else{
+			return this.defaultAvatar
+		}
+       
+    },
+    loginUserNickname(){
+		if(this.userInfoFromServer){
+			return `${this.userInfoFromServer?.nickname}(${this.yourname})`
+		}else{
+			return this.yourname
+		}
+       
+    }
   },
   methods: {
     tab_contact: function () {
@@ -168,6 +190,11 @@ export default {
         unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
         unReadTotalNotNum: getApp().globalData.saveFriendList.length + getApp().globalData.saveGroupInvitedList.length
       });
+    },
+    to_profile_page() {
+        uni.navigateTo({
+            url: "../profile/profile"
+        });
     }
   }
 };
