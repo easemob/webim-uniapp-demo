@@ -25,7 +25,15 @@
 	display: block;
 	margin-bottom: 5px;
 }
-
+.account_box{
+	width: 54px;
+	height: 54px;
+	margin-bottom: 4px;
+	background-color: #FFFFFF;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 .open_emoji,
 .menu_wrap,
 .open_camera,

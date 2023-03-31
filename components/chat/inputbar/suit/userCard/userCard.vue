@@ -1,16 +1,83 @@
 <template>
     <div>
-
+		<SelectUserCard :show-modal="showModal" @sendUserCardMessage="sendUserCardMessage"/>
     </div>
 </template>
 
 <script>
+	import SelectUserCard from './selectUserCard.vue';
+	let msgType = require("../../../msgtype");
+	let disp = require("../../../../../utils/broadcast");
+	let msgStorage = require("../../../msgstorage");
     export default {
+		components:{
+			SelectUserCard
+		},
+		props: {
+		  username: {
+		    type: Object,
+		    default: () => ({}),
+		  },
+		  chatType: {
+		    type: String,
+		    default: msgType.chatType.SINGLE_CHAT,
+		  },
+		},
         data() {
             return {
-                
+                showModal:false
             }
-        }
+        },
+		methods:{
+            isGroupChat() {
+              return this.chatType == msgType.chatType.CHAT_ROOM;
+            },
+			getSendToParam() {
+			  return this.isGroupChat() ? this.username.groupId : this.username.your;
+			},
+			async sendUserCardMessage(targetId,cb){
+				const customEvent = "userCard";
+				const friendInfosMap = getApp().globalData.friendUserInfoMap
+				this.showModal = false
+				cb()
+				if(targetId){
+                    console.log('>>>发送消息',targetId)
+					const customExtParams = {
+						uid:targetId 
+					}
+					if(friendInfosMap.has(targetId)){
+						friendInfosMap.get(targetId).nickname ? (customExtParams.nickname =  friendInfosMap.get(targetId).nickname) :''
+						friendInfosMap.get(targetId).avatarurl ? (customExtParams.avatarurl =  friendInfosMap.get(targetId).avatarurl) :''
+					}
+					console.log('customExtParams',customExtParams)
+					let option = {
+					    // 设置消息类型。
+					    type: msgType.CUSTOM,
+					    // 设置消息接收方。
+					    to: this.getSendToParam(),
+					    // 设置消息事件。
+					    customEvent,
+					    // 设置消息内容。
+					    customExts:Object.assign({},customExtParams),
+					    chatType: this.isGroupChat()? msgType.chatType.GROUP_CHAT : msgType.chatType.SINGLE_
+					}
+					// 创建自定义消息。
+					let msg = uni.WebIM.message.create(option);
+                    try {
+                        const res =  await uni.WebIM.conn.send(msg)
+                        console.log('>>>>消息发送成功',msg,res)
+                        uni.WebIM.conn.send(msg.body);
+                        //发送成功存储消息
+                        //msg 消息源数据，msgtype 类型
+                        msgStorage.saveMsg(msg,msgType.CUSTOM)
+                    } catch (error) {   
+                        console.log('>>>>发送自定义消息失败',error)
+                    }
+					
+				}
+				
+			}
+		}
     }
 </script>
 
