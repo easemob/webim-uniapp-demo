@@ -141,7 +141,24 @@ msgStorage.saveReceiveMsg = function (receiveMsg, type) {
       },
       time:receiveMsg.time
     };
-  } else {
+  } else if(type == msgType.CUSTOM) {
+    sendableMsg = {
+        id: receiveMsg.id,
+        type: type,
+        body: {
+            id: receiveMsg.id,
+            from: receiveMsg.from,
+            to: receiveMsg.to,
+            type: receiveMsg.type,
+            ext: receiveMsg.ext,
+            chatType: receiveMsg.type,
+            customEvent:receiveMsg.customEvent,
+            customExts:receiveMsg.customExts
+        },
+        time:receiveMsg.time
+    }
+  } 
+  else {
     return;
   }
 

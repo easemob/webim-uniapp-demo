@@ -54,6 +54,7 @@
 					    // 设置消息类型。
 					    type: msgType.CUSTOM,
 					    // 设置消息接收方。
+                        from:uni.WebIM.conn.user,
 					    to: this.getSendToParam(),
 					    // 设置消息事件。
 					    customEvent,
@@ -66,10 +67,13 @@
                     try {
                         const res =  await uni.WebIM.conn.send(msg)
                         console.log('>>>>消息发送成功',msg,res)
-                        uni.WebIM.conn.send(msg.body);
                         //发送成功存储消息
-                        //msg 消息源数据，msgtype 类型
-                        msgStorage.saveMsg(msg,msgType.CUSTOM)
+                        //msgBody 消息源数据，msgtype 类型
+                        //为兼容老的消息体处理，因此将msg嵌套一层放置在body当中。
+                        let msgBody = {
+                            body:Object.assign({},msg)
+                        }
+                        msgStorage.saveMsg(msgBody,msgType.CUSTOM)
                     } catch (error) {   
                         console.log('>>>>发送自定义消息失败',error)
                     }
