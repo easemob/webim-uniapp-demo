@@ -85,6 +85,15 @@
               />
             </view>
           </view>
+          <!-- 个人名片 -->
+          <view v-else-if="item.msg.type == msgtype.CUSTOM && item.customEvent=== 'userCard'">
+            <view class="usercard_mian">
+                <image :src="item.msg.data.avatarurl || item.msg.data.avatar || defaultAvatar" />
+                <text class="name">{{ item.msg.data.nickname || item.msg.data.uid }}</text>
+            </view>
+            <u-divider :use-slot="false" />
+            <text>[个人名片]</text>
+          </view>
         </view>
       </view>
     </view>
@@ -104,12 +113,14 @@ let page = 0;
 let Index = 0;
 let curMsgMid = '';
 let isFail = false;
+import msgtype from "@/components/chat/msgtype";
 import audioMsg from "./type/audio/audio";
 import fileMsg from "./type/file";
 let WebIM = require("../../../utils/WebIM")["default"];
 export default {
   data() {
     return {
+      msgtype,
       view: LIST_STATUS.NORMAL,
       toView: "",
       chatMsg: [],
