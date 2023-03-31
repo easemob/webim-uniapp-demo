@@ -52,9 +52,9 @@
             src="/static/images/popleftarrow2x.png"
             class="msg_popleftarrow"
           />
-          <view v-if="item.msg.type == 'img' || item.msg.type == 'video'">
+          <view v-if="item.msg.type == msgtype.IMAGE || item.msg.type == msgtype.VIDEO">
             <image
-              v-if="item.msg.type == 'img'"
+              v-if="item.msg.type == msgtype.IMAGE"
               class="avatar"
               :src="item.msg.data"
               style="width:90px; height:120px; margin:2px auto;"
@@ -62,11 +62,11 @@
               @tap="previewImage"
               :data-url="item.msg.data"
             />
-            <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls style="width:300rpx;"/>
+            <video v-if="item.msg.type == msgtype.VIDEO" :src="item.msg.data" controls style="width:300rpx;"/>
           </view>
-          <audio-msg v-if="item.msg.type == 'audio'" :msg="item"></audio-msg>
-          <file-msg v-if="item.msg.type == 'file'" :msg="item"></file-msg>
-          <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
+          <audio-msg v-if="item.msg.type == msgtype.AUDIO" :msg="item"></audio-msg>
+          <file-msg v-if="item.msg.type == msgtype.FILE" :msg="item"></file-msg>
+          <view v-else-if="item.msg.type == msgtype.TEXT || item.msg.type == msgtype.EMOJI">
             <view class="template" v-for="(d_item, d_index) in item.msg.data" :key="d_index">
               <text
                 :data-msg="item"
