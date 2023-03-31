@@ -1,5 +1,19 @@
 <template>
-    <view>
+    <view v-if="otherProfile">
+        <view class="head_pic">
+			<text>头像</text>
+		    <image :src="otherProfile.avatarurl || otherProfile.avatar || defaultAvatar"></image>
+		</view>
+        <view class="head_pic">
+			<text>id</text>
+			<text>{{otherProfile.uid || ''}}</text>
+		</view>
+		<view class="head_pic">
+			<text>昵称</text>
+			<text>{{otherProfile.nickname || '暂无昵称'}}</text>
+		</view>
+    </view>
+    <view v-else>
 		<view class="head_pic" @click="to_select_avatar">
 			<text>头像</text>
 		    <image :src="loginUserAvactar"></image>
@@ -31,12 +45,21 @@ export default {
             },
 			loginUserInfos:null,
 			defaultAvatar: "/static/images/theme2x.png",
+            otherProfile:null
         }
     },
-	onLoad() {
-		this.setData({
-			loginUserInfos:getApp().globalData.userInfoFromServer
-		})
+	onLoad(option) {
+        //如果存在otherProfile 参数则表示从消息卡片打开
+        if(option.otherProfile){
+            uni.setNavigationBarTitle({
+                title: '个人名片'
+            });
+            this.otherProfile = JSON.parse(option.otherProfile);
+        }else{
+            this.setData({
+                loginUserInfos:getApp().globalData.userInfoFromServer
+            })
+        }
 	},
     onShow(){
         const loginUserInfos = getApp().globalData.userInfoFromServer;

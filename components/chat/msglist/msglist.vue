@@ -86,7 +86,7 @@
             </view>
           </view>
           <!-- 个人名片 -->
-          <view v-else-if="item.msg.type == msgtype.CUSTOM && item.customEvent=== 'userCard'">
+          <view v-else-if="item.msg.type == msgtype.CUSTOM && item.customEvent=== 'userCard'" @click="to_profile_page(item.msg.data)">
             <view class="usercard_mian">
                 <image :src="item.msg.data.avatarurl || item.msg.data.avatar || defaultAvatar" />
                 <text class="name">{{ item.msg.data.nickname || item.msg.data.uid }}</text>
@@ -479,8 +479,15 @@ export default {
 			event.target.dataset.msg.msg.ext.msg_extension){
 			this.$emit("clickMsg", event.target.dataset.msg.msg.ext)
 		}
-	}
-
+	},
+    to_profile_page(userInfo) {
+        if(userInfo) {
+            uni.navigateTo({
+                url: `../profile/profile?otherProfile=${JSON.stringify(userInfo)}`
+            });
+        }
+       
+    }
   }
 };
 </script>
