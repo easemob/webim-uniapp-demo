@@ -71,14 +71,14 @@
               <text
                 :data-msg="item"
                 @tap="clickMsg"
-                v-if="d_item.type == 'txt'"
+                v-if="d_item.type == msgtype.TEXT"
                 class="msg-text"
                 style="float:left;"
                 selectable="true"
               >{{ d_item.data }}</text>
 
               <image
-                v-if="d_item.type == 'emoji'"
+                v-if="d_item.type == msgtype.EMOJI"
                 class="avatar"
                 :src="'/static/images/faces/' + d_item.data"
                 style="width:25px; height:25px; margin:0 0 2px 0; float:left;"
