@@ -91,12 +91,12 @@
         </view>
       </swiper-item>
     </swiper>
-	<chatUserCard ref="chatUserCard" :username="username" :chatType="chatType" />
+	<chatUserCard ref="chatUserCard" :username="username" :chatType="chatType" @closeFunModal="closeFunModal" />
   </view>
 </template>
 
 <script>
-// let RecordStatus = require("./suit/audio/record_status").RecordStatus;
+let RecordStatus = require("./suit/audio/record_status").RecordStatus;
 let msgType = require("../msgtype");
 import chatSuitEmoji from "./suit/emoji/emoji";
 import chatSuitImage from "./suit/image/image";
@@ -115,8 +115,8 @@ let FUNMODAL_STATUS = {
 export default {
   data() {
     return {
-      // recordStatus: RecordStatus.HIDE,
-      // RecordStatus,
+      recordStatus: RecordStatus.HIDE,
+      RecordStatus,
       __comps__: {
         main: null,
         emoji: null,

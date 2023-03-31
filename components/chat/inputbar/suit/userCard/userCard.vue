@@ -38,8 +38,6 @@
 			async sendUserCardMessage(targetId,cb){
 				const customEvent = "userCard";
 				const friendInfosMap = getApp().globalData.friendUserInfoMap
-				this.showModal = false
-				cb()
 				if(targetId){
                     console.log('>>>发送消息',targetId)
 					const customExtParams = {
@@ -74,8 +72,12 @@
                             body:Object.assign({},msg)
                         }
                         msgStorage.saveMsg(msgBody,msgType.CUSTOM)
+                        this.$emit('closeFunModal')
                     } catch (error) {   
                         console.log('>>>>发送自定义消息失败',error)
+                    } finally {
+                        this.showModal = false
+                        cb()
                     }
 					
 				}
