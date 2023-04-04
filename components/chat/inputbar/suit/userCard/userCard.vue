@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <view>
 		<SelectUserCard :show-modal="showModal" @sendUserCardMessage="sendUserCardMessage"/>
-    </div>
+    </view>
 </template>
 
 <script>
@@ -58,7 +58,7 @@
 					    customEvent,
 					    // 设置消息内容。
 					    customExts:Object.assign({},customExtParams),
-					    chatType: this.isGroupChat()? msgType.chatType.GROUP_CHAT : msgType.chatType.SINGLE_
+					    chatType: this.isGroupChat()? msgType.chatType.GROUP_CHAT : msgType.chatType.SINGLE_CHAT
 					}
 					// 创建自定义消息。
 					let msg = uni.WebIM.message.create(option);
