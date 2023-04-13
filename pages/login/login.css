@@ -1,0 +1,99 @@
+.login {
+	width: 100%;
+	height: 100%;
+	background-color: #ffffff;
+	position: fixed;
+	background-size: contain;
+}
+.bg-img{
+	position: absolute;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+}
+.login_title {
+	text-align: center;
+	margin-top: 60rpx;
+}
+.login_title text{
+	font-size: 64rpx;
+	font-weight: 400;
+	line-height: 96rpx;
+}
+.login_user, .login_pwd, .login_btn {
+	display: flex;
+	position: relative;
+}
+.login_user input, .login_pwd input {
+	height: 96rpx;
+	background-color: #ffffff;
+	border: 2rpx solid #999999;
+	border-radius: 57px;
+	box-sizing: border-box;
+	padding: 0 32rpx;
+	font-size: 34rpx;
+	color: #000;
+	margin: 0 64rpx;
+	display: inline-block;
+	flex: 1;
+}
+.login_sms{
+	position: absolute;
+	right: 112rpx;
+	top: 32rpx;
+	color: #009FFF;
+	font-size: 14px;
+	cursor: pointer;
+	height: 96rpx;
+	line-height: 96rpx;
+	z-index: 9;
+	user-select: none;
+}
+.login_user input {
+	margin-top: 80rpx
+}
+.login_pwd input {
+	margin-top: 32rpx;
+	padding-right: 100rpx;
+}
+.login_btn button{
+	flex: 1;
+	height: 96rpx;
+	margin: 100rpx 64rpx 0;
+	border-radius: 57px;
+	line-height: 96rpx;
+	color: rgb(255,255,255);
+	background: linear-gradient(90deg, #04AEF0 0%, #5A5DD0 100%);
+	font-size: 34rpx;
+}
+.login_text {
+	display: flex;
+	justify-content: space-between;
+	text-align: center;
+  position: relative;
+	padding: 0 50rpx;
+  top: 300rpx;
+}
+
+.login_text navigator {
+	font-size: 24rpx;
+	color: #ffffff;
+	display: inline-block;
+}
+
+.btn_hover {
+	background-color: #94999c;
+}
+.nameFocus input, .psdFocus input{
+	border: 3rpx solid #0873DE;
+	box-sizing: border-box;
+}
+.psdIcon{
+	position: absolute;
+    width: 24px;
+    height: 24px;
+	right: 90rpx;
+	top: 58rpx;
+	z-index: 2;
+}
+

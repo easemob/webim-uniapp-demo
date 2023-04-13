@@ -1,0 +1,10 @@
+.attach-msg {
+  display: flex;
+  align-items: center;
+}
+
+.fileIcon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 8rpx;
+}

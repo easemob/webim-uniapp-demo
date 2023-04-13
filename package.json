@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "easemob-websdk": "^4.1.4"
+  }
+}
