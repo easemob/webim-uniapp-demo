@@ -101,7 +101,20 @@
 	font-size: 32rpx;
 	margin: 0;
 }
-
+.usercard_mian {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+.usercard_mian {
+    margin-bottom: 10rpx;
+}
+.usercard_mian image {
+    width: 60rpx;
+    height: 60rpx;
+    margin-right: 10rpx;
+}
 /*.msg:before {
 	content: " ";
 	position: absolute;

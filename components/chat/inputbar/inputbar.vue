@@ -63,7 +63,12 @@
             <image src="/static/images/pic.png"></image>
             群信息
           </view>
-
+          <view class="menu_wrap">
+			  <view class="account_box" @tap="openUserCardModal">
+				     <u-icon name="account" color="#2D2D2D" size="44"></u-icon>
+			  </view>
+			用户名片
+          </view>
           <!-- <view class="menu_wrap" @tap="sendVideo">
             <image
               src="/static/images/video.png"
@@ -86,6 +91,7 @@
         </view>
       </swiper-item>
     </swiper>
+	<chatUserCard ref="chatUserCard" :username="username" :chatType="chatType" @closeFunModal="closeFunModal" />
   </view>
 </template>
 
@@ -98,7 +104,7 @@ import chatSuitLocation from "./suit/location/location";
 import chatSuitMain from "./suit/main/main";
 import chatSuitPtopcall from "./suit/ptopcall/ptopcall.vue";
 import chatSuitAttach from "./suit/attach";
-
+import chatUserCard from "./suit/userCard/userCard"
 // import chatSuitVideo from "./suit/videoComp/videoComp"
 
 let FUNMODAL_STATUS = {
@@ -129,7 +135,8 @@ export default {
     chatSuitLocation,
     chatSuitMain,
     chatSuitPtopcall,
-    chatSuitAttach
+    chatSuitAttach,
+	chatUserCard
     // chatSuitVideo
   },
   props: {
@@ -238,7 +245,11 @@ export default {
         url:
           "../groupSetting/groupSetting?groupInfo=" + JSON.stringify(nameList)
       });
-    }
+    },
+	//打开用户卡片选择
+	openUserCardModal(){
+		this.$refs['chatUserCard'].showModal = true
+	}
   }
 };
 </script>

@@ -64,15 +64,16 @@
                 </view>
                 <view class="list_text">
                   <text class="list_user">{{ showConversationName(item) }}</text>
-                  <text class="list_word" v-if="item.msg.data[0].data">{{
+                  <text class="list_word" v-if="item.msg.type == msgtype.TEXT">{{
                       item.msg.data[0].data
                   }}</text>
-                  <text class="list_word" v-if="item.msg.type == 'img'">[图片]</text>
-                  <text class="list_word" v-if="item.msg.type == 'audio'">[语音]</text>
-                  <text class="list_word" v-if="item.msg.type == 'file'">[附件]</text>
-                  <text class="list_word" v-if="item.msg.type == 'video'"
-                    >[视频]</text
-                  >
+                  <text class="list_word" v-if="item.msg.type == msgtype.IMAGE">[图片]</text>
+                  <text class="list_word" v-if="item.msg.type == msgtype.AUDIO">[语音]</text>
+                  <text class="list_word" v-if="item.msg.type == msgtype.FILE">[附件]</text>
+                  <text class="list_word" v-if="item.msg.type == msgtype.VIDEO">[视频]</text>
+                  <text class="list_word" v-if="item.msg.type == msgtype.CUSTOM">
+                    <text v-if="item.customEvent=== 'userCard'">[个人名片]</text>
+                  </text>
                 </view>
               </view>
               <view class="list_right">
@@ -137,9 +138,11 @@ var WebIM = require("../../utils/WebIM")["default"];
 let isfirstTime = true;
 import swipeDelete from "../../components/swipedelete/swipedelete";
 import longPressModal from "../../components/longPressModal/index";
+import msgtype from "../../components/chat/msgtype";
 export default {
   data() {
     return {
+      msgtype,
       search_btn: true,
       search_chats: false,
       show_mask: false,

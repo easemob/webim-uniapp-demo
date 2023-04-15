@@ -417,7 +417,18 @@ export default {
           onGetSilentConfig(message);
         }
       },
+      onCustomMessage(message) {
+        console.log('>>>>>自定义消息接收',message)
+        if (message) {
+          if (onMessageError(message)) {
+            msgStorage.saveReceiveMsg(message, msgType.CUSTOM);
+          }
 
+          calcUnReadSpot(message);
+          ack(message);
+          onGetSilentConfig(message);
+        }
+      },
       // onLocationMessage(message){
       // 	console.log("Location message: ", message);
       // 	if(message){

@@ -16,6 +16,8 @@ function getMsgData(sendableMsg, type) {
     return sendableMsg.body.body.url;
   } else if (type == msgType.FILE) {
     return sendableMsg.body.body.url;
+  } else if (type == msgType.CUSTOM) {
+    return sendableMsg.body.customExts;
   }
 
   return "";
@@ -45,7 +47,7 @@ module.exports = function (sendableMsg, type, myName) {
     id: sendableMsg.id,
     chatType: sendableMsg.body.chatType
   };
-
+  console.log('>>>>>>renderableMsg',renderableMsg)
   if (type == msgType.IMAGE) {
     renderableMsg.msg.size = {
       width: sendableMsg.body.body.size.width,
@@ -57,6 +59,12 @@ module.exports = function (sendableMsg, type, myName) {
     renderableMsg.msg.url = sendableMsg?.body?.body.url || "";
     renderableMsg.msg.filename = sendableMsg?.body?.body.filename || "";
     renderableMsg.msg.size = sendableMsg?.body?.body.file_length || 0;
+  } else if (type == msgType.CUSTOM){
+    //由于自定义消息属于特殊消息结构因此单独进一步进行处理。
+    renderableMsg.customEvent = sendableMsg.body.customEvent;
+    renderableMsg.time = sendableMsg.body.time || Date.now();
+    renderableMsg.mid = sendableMsg.body.type + sendableMsg.body.id;
+    renderableMsg.id = sendableMsg.body.id;
   }
 
   return renderableMsg;

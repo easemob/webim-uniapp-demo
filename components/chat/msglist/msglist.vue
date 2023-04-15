@@ -52,9 +52,9 @@
             src="/static/images/popleftarrow2x.png"
             class="msg_popleftarrow"
           />
-          <view v-if="item.msg.type == 'img' || item.msg.type == 'video'">
+          <view v-if="item.msg.type == msgtype.IMAGE || item.msg.type == msgtype.VIDEO">
             <image
-              v-if="item.msg.type == 'img'"
+              v-if="item.msg.type == msgtype.IMAGE"
               class="avatar"
               :src="item.msg.data"
               style="width:90px; height:120px; margin:2px auto;"
@@ -62,28 +62,37 @@
               @tap="previewImage"
               :data-url="item.msg.data"
             />
-            <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls style="width:300rpx;"/>
+            <video v-if="item.msg.type == msgtype.VIDEO" :src="item.msg.data" controls style="width:300rpx;"/>
           </view>
-          <audio-msg v-if="item.msg.type == 'audio'" :msg="item"></audio-msg>
-          <file-msg v-if="item.msg.type == 'file'" :msg="item"></file-msg>
-          <view v-else-if="item.msg.type == 'txt' || item.msg.type == 'emoji'">
+          <audio-msg v-if="item.msg.type == msgtype.AUDIO" :msg="item"></audio-msg>
+          <file-msg v-if="item.msg.type == msgtype.FILE" :msg="item"></file-msg>
+          <view v-else-if="item.msg.type == msgtype.TEXT || item.msg.type == msgtype.EMOJI">
             <view class="template" v-for="(d_item, d_index) in item.msg.data" :key="d_index">
               <text
                 :data-msg="item"
                 @tap="clickMsg"
-                v-if="d_item.type == 'txt'"
+                v-if="d_item.type == msgtype.TEXT"
                 class="msg-text"
                 style="float:left;"
                 selectable="true"
               >{{ d_item.data }}</text>
 
               <image
-                v-if="d_item.type == 'emoji'"
+                v-if="d_item.type == msgtype.EMOJI"
                 class="avatar"
                 :src="'/static/images/faces/' + d_item.data"
                 style="width:25px; height:25px; margin:0 0 2px 0; float:left;"
               />
             </view>
+          </view>
+          <!-- 个人名片 -->
+          <view v-else-if="item.msg.type == msgtype.CUSTOM && item.customEvent=== 'userCard'" @click="to_profile_page(item.msg.data)">
+            <view class="usercard_mian">
+                <image :src="item.msg.data.avatarurl || item.msg.data.avatar || defaultAvatar" />
+                <text class="name">{{ item.msg.data.nickname || item.msg.data.uid }}</text>
+            </view>
+            <u-divider :use-slot="false" />
+            <text>[个人名片]</text>
           </view>
         </view>
       </view>
@@ -104,12 +113,14 @@ let page = 0;
 let Index = 0;
 let curMsgMid = '';
 let isFail = false;
+import msgtype from "@/components/chat/msgtype";
 import audioMsg from "./type/audio/audio";
 import fileMsg from "./type/file";
 let WebIM = require("../../../utils/WebIM")["default"];
 export default {
   data() {
     return {
+      msgtype,
       view: LIST_STATUS.NORMAL,
       toView: "",
       chatMsg: [],
@@ -468,8 +479,15 @@ export default {
 			event.target.dataset.msg.msg.ext.msg_extension){
 			this.$emit("clickMsg", event.target.dataset.msg.msg.ext)
 		}
-	}
-
+	},
+    to_profile_page(userInfo) {
+        if(userInfo) {
+            uni.navigateTo({
+                url: `../profile/profile?otherProfile=${JSON.stringify(userInfo)}`
+            });
+        }
+       
+    }
   }
 };
 </script>
