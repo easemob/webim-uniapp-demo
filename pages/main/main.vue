@@ -238,7 +238,6 @@ const getRoster = async (fetchType) => {
   if (fetchType === 'local') {
     const localRosterList = uni.getStorageSync('member');
     contactsState.member = localRosterList;
-    console.log('>>>>>>>localRosterList', localRosterList);
     getBrands(localRosterList);
   } else if (fetchType === 'server') {
     try {
