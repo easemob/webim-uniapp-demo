@@ -8,7 +8,28 @@
         </view>
       </view>
     </view>
-
+    <view class="search_input" v-if="conversationState.search_chats">
+      <view>
+        <icon type="search" size="12"></icon>
+        <input
+          placeholder="搜索"
+          placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;"
+          auto-focus
+          confirm-type="search"
+          type="text"
+          @confirm="onSearch"
+          @input="onInput"
+          v-model="conversationState.input_code"
+        />
+        <icon
+          type="clear"
+          size="12"
+          @tap.stop="clearInput"
+          v-if="conversationState.show_clear"
+        ></icon>
+      </view>
+      <text @tap="cancel">取消</text>
+    </view>
     <!-- <view class="chat_list_wraper" > -->
     <scroll-view
       scroll-y="true"
@@ -24,28 +45,6 @@
         'padding-bottom: ' + (conversationState.isIPX ? '270rpx' : '226rpx')
       "
     >
-      <view class="search_input" v-if="conversationState.search_chats">
-        <view>
-          <icon type="search" size="12"></icon>
-          <input
-            placeholder="搜索"
-            placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;"
-            auto-focus
-            confirm-type="search"
-            type="text"
-            @confirm="onSearch"
-            @input="onInput"
-            v-model="conversationState.input_code"
-          />
-          <icon
-            type="clear"
-            size="12"
-            @tap.stop="clearInput"
-            v-if="conversationState.show_clear"
-          ></icon>
-        </view>
-        <text @tap="cancel">取消</text>
-      </view>
       <view
         v-for="(item, index) in conversationState.conversationList"
         :key="index"
@@ -114,12 +113,6 @@
                   >
 
                   <image :src="showConversationAvatar(item)"></image>
-                  <!-- <image :src="
-                    item.chatType == 'groupchat' ||
-                      item.chatType == 'chatRoom'
-                      ? '../../static/images/groupTheme.png'
-                      : '../../static/images/theme2x.png'
-                  "></image> -->
                 </view>
                 <view class="list_text">
                   <text class="list_user">{{
@@ -239,14 +232,12 @@
 </template>
 
 <script setup>
-import { reactive, computed, nextTick } from 'vue';
+import { reactive, computed } from 'vue';
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app';
 import swipeDelete from '@/components/swipedelete/swipedelete';
 import msgtype from '@/components/chat/msgtype';
 import dateFormater from '@/utils/dateFormater';
-// let disp = require('../../utils/broadcast');
 import disp from '@/utils/broadcast';
-// var WebIM = require('../../utils/WebIM')['default'];
 const WebIM = uni.WebIM;
 let isfirstTime = true;
 const conversationState = reactive({
@@ -407,41 +398,6 @@ const readJoinedGroupName = () => {
   });
   conversationState.groupName = groupName;
 };
-// 不包含陌生人版本
-// getLocalConversationlist() {
-//   var conversationList = [];
-//   var member = uni.getStorageSync("member");
-//   var myName = uni.getStorageSync("myUsername");
-//   var listGroups = uni.getStorageSync('listGroup') || [];
-//   for (let i = 0; i < member.length; i++) {
-//     let newChatMsgs = uni.getStorageSync(member[i].name + myName) || [];
-//     let historyChatMsgs = uni.getStorageSync("rendered_" + member[i].name + myName) || [];
-//     let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
-//     if (curChatMsgs.length) {
-//       let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
-//       lastChatMsg.unReadCount = newChatMsgs.length;
-//       conversationList.push(lastChatMsg);
-//     }
-//   }
-//   for(let i = 0; i < listGroups.length; i++){
-//     let newChatMsgs = uni.getStorageSync(listGroups[i].groupid + myName) || [];
-//     let historyChatMsgs = uni.getStorageSync("rendered_" + listGroups[i].groupid + myName) || [];
-//     let curChatMsgs = historyChatMsgs.concat(newChatMsgs);
-//     if(curChatMsgs.length){
-//     let lastChatMsg = curChatMsgs[curChatMsgs.length - 1];
-//     lastChatMsg.unReadCount = newChatMsgs.length;
-//     lastChatMsg.groupName = listGroups[i].groupname
-//     conversationList.push(lastChatMsg);
-//     }
-//   }
-//   conversationList.sort((a, b) => {
-//     return b.time - a.time;
-//   });
-//   conversationState.setData({
-//         conversationList: conversationList,
-//   });
-// },
-
 // 包含陌生人版本
 const getLocalConversationlist = () => {
   const myName = uni.getStorageSync('myUsername');
