@@ -357,11 +357,14 @@ const onSearch = (val) => {
   let searchValue = val.detail.value;
   let member = contactsState.member;
   let serchList = [];
-  member.forEach((item, index) => {
-    if (String(item.name).indexOf(searchValue) != -1) {
-      serchList.push(item);
+  console.log('>>>>member', member);
+  member.forEach((userId, index) => {
+    console.log(userId);
+    if (String(userId).indexOf(searchValue) != -1) {
+      serchList.push(userId);
     }
   });
+  console.log('serchList', serchList);
   getBrands(serchList);
 };
 const add_new = () => {
