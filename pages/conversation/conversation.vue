@@ -339,7 +339,8 @@ const showConversationName = computed(() => {
       }
     } else if (
       item.chatType === msgtype.chatType.GROUP_CHAT ||
-      item.chatType === msgtype.chatType.CHAT_ROOM
+      item.chatType === msgtype.chatType.CHAT_ROOM ||
+      item.chatType === 'groupchat'
     ) {
       return item.groupName;
     }
@@ -450,7 +451,8 @@ const packageConversation = (newChatMsgKeys, historyChatMsgKeys) => {
     }
     if (
       lastChatMsg.chatType == msgtype.chatType.GROUP_CHAT ||
-      lastChatMsg.chatType == msgtype.chatType.CHAT_ROOM
+      lastChatMsg.chatType == msgtype.chatType.CHAT_ROOM ||
+      lastChatMsg.chatType == 'groupchat'
     ) {
       lastChatMsg.groupName = conversationState.groupName[lastChatMsg.info.to];
     }
@@ -465,7 +467,8 @@ const packageConversation = (newChatMsgKeys, historyChatMsgKeys) => {
       lastChatMsg.unReadCount = newChatMsgs.length;
       if (
         lastChatMsg.chatType == msgtype.chatType.GROUP_CHAT ||
-        lastChatMsg.chatType == msgtype.chatType.CHAT_ROOM
+        lastChatMsg.chatType == msgtype.chatType.CHAT_ROOM ||
+        lastChatMsg.chatType == 'groupchat'
       ) {
         lastChatMsg.groupName =
           conversationState.groupName[lastChatMsg.info.to];
@@ -476,6 +479,7 @@ const packageConversation = (newChatMsgKeys, historyChatMsgKeys) => {
   conversationList.sort((a, b) => {
     return b.time - a.time;
   });
+  console.log('>>>>>>conversationList', conversationList);
   conversationState.conversationList = conversationList;
 };
 const openSearch = () => {
