@@ -140,7 +140,6 @@ export default {
               //token获取成功，即可开始请求用户属性。
               disp.fire('em.mian.profile.update');
               disp.fire('em.mian.friendProfile.update');
-              disp.fire('em.init.friendList');
             })
             .catch((err) => {
               console.log('>>>>>token获取失败', err);
@@ -244,9 +243,7 @@ export default {
     disp.on('em.mian.friendProfile.update', function () {
       me.fetchFriendInfoFromServer();
     });
-    disp.on('em.init.friendList', () => {
-      me.fetchFriendListFromServer();
-    });
+
     uni.WebIM.conn.listen({
       onOpened(message) {
         if (
@@ -256,6 +253,7 @@ export default {
           me.globalData.onLoginSuccess(
             uni.getStorageSync('myUsername').toLowerCase()
           );
+          me.fetchFriendListFromServer();
         }
       },
 
@@ -619,6 +617,7 @@ export default {
       }
     },
     async fetchFriendListFromServer() {
+      uni.removeStorageSync('member');
       try {
         const { data } = await WebIM.conn.getContacts();
         console.log('>>>>>>App.vue 拉取好友列表');

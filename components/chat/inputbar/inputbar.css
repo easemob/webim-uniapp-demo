@@ -42,7 +42,13 @@
 .menu_wrap,
 .open_camera,
 .v-record {
-    padding: 20rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 140rpx;
+    min-height: 140rpx;
+    margin: 20rpx;
 	text-align: center;
 	color: #b7b7b7;
     font-size: 13px;

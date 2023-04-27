@@ -18,7 +18,8 @@
         },
         /* 模块配置 */
         "modules" : {
-            "Record" : {}
+            "Record" : {},
+            "Camera" : {}
         },
         /* 应用发布信息 */
         "distribute" : {
@@ -74,5 +75,12 @@
     "uniStatistics" : {
         "enable" : false
     },
-    "vueVersion" : "3"
+    "vueVersion" : "3",
+    "h5" : {
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : false
+            }
+        }
+    }
 }
