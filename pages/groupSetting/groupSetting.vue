@@ -31,8 +31,8 @@
         <!-- <text class="pd-10 invite-title">邀请群成员</text> -->
         <view class="invite-wrap">
           <input
+            v-model.trim="groupSettingState.addFriendName"
             placeholder="请输入用户名"
-            @input="addFriendNameFun"
             placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;"
             auto-focus
           />
@@ -58,7 +58,7 @@
           <button type="warn" @tap="dissolveGroup">解散群组</button>
         </view>
         <view class="exit-group" v-if="!groupSettingState.isOwner">
-          <button type="warn" @tap="leaveGroup">退出群组</button>
+          <button type="warn" @tap="leaveTheGroup">退出群组</button>
         </view>
       </view>
     </view>
@@ -67,12 +67,16 @@
 
 <script setup>
 import { reactive } from 'vue';
-import { onLoad, onShow, onUnload } from '@dcloudio/uni-app';
-import disp from '@/utils/broadcast';
-import Image from '../../components/chat/inputbar/suit/image/image.vue';
-const WebIM = uni.WebIM;
+import { onLoad } from '@dcloudio/uni-app';
+/* stores */
+import { useLoginStore } from '@/stores/login';
+import { useGroupStore } from '@/stores/group';
+import { useConversationStore } from '@/stores/conversation';
+/* im apis */
+import { emGroups } from '@/EaseIM/imApis';
+import Image from '@/components/emChat/inputBar/suit/image';
 const groupSettingState = reactive({
-  roomId: '',
+  groupid: '',
   // 群id
   groupName: '',
   // 群名称
@@ -86,173 +90,149 @@ const groupSettingState = reactive({
   // 群描述
   groupCount: '',
   //群人数
-  addFriendName: [],
+  addFriendName: '',
   isOwner: false,
 });
+const loginStore = useLoginStore();
 onLoad((options) => {
-  console.log('JSON.parse(options.groupInfo)', JSON.parse(options.groupInfo));
-  groupSettingState.roomId = JSON.parse(options.groupInfo).roomId;
-  groupSettingState.groupName = JSON.parse(options.groupInfo).groupName;
-  groupSettingState.currentName = JSON.parse(options.groupInfo).myName;
-  disp.on('em.group.leaveGroup', onGroupSettingPageLeaveGroup);
-  // 获取群成员
+  console.log('>>>>触发onLoad');
+  const groupid = JSON.parse(options.groupInfo).groupid;
+  groupSettingState.groupid = groupid;
+  groupSettingState.currentName = loginStore.loginUserBaseInfos.loginUserId;
+  getGroupName(groupid);
   getGroupMember();
-  // 获取群信息
   getGroupInfo();
 });
-const getGroupMember = () => {
-  let pageNum = 1,
-    pageSize = 1000;
-  const options = {
-    pageNum: pageNum,
-    pageSize: pageSize,
-    groupId: groupSettingState.roomId,
-    success: function (resp) {
-      if (resp && resp.data) {
-        groupSettingState.groupMember = resp.data;
-        groupSettingState.groupCount = resp.count;
-      }
-    },
-    error: function (err) {},
-  };
-  WebIM.conn.listGroupMember(options);
-};
-const getGroupInfo = () => {
-  // 获取群信息
-  const options = {
-    groupId: groupSettingState.roomId,
-    success: function (resp) {
-      if (resp && resp.data) {
-        groupSettingState.curOwner = resp.data[0].owner;
-        groupSettingState.groupDec = resp.data[0].description;
-
-        if (groupSettingState.currentName == resp.data[0].owner) {
-          groupSettingState.isOwner = true;
-        }
-      }
-    },
-    error: function () {},
-  };
-  WebIM.conn.getGroupInfo(options);
-};
-const addFriendNameFun = (e) => {
-  let firendArr = [];
-  firendArr.push(e.detail.value);
-  groupSettingState.addFriendName = firendArr;
-};
-// 加好友入群
-const addGroupMembers = () => {
-  var option = {
-    users: groupSettingState.addFriendName,
-    groupId: groupSettingState.roomId,
-    success: function () {
-      if (
-        isExistGroup(
-          groupSettingState.addFriendName,
-          groupSettingState.groupMember
-        )
-      ) {
-        uni.showToast({
-          title: '已在群中',
-          duration: 2000,
-        });
-      } else {
-        uni.showToast({
-          title: '邀请已发出',
-          duration: 2000,
-        });
-      }
-      getGroupMember();
-    },
-    error: function (err) {
-      uni.showToast({
-        title: err.data.error_description,
-        icon: 'none',
-      });
-    },
-  };
-  WebIM.conn.inviteToGroup(option);
-};
-const isExistGroup = (name, list) => {
-  for (let index = 0; index < list.length; index++) {
-    if (name == list[index].member || name == list[index].owner) {
-      return true;
+const groupStore = useGroupStore();
+const {
+  getGroupInfosFromServer,
+  getGroupMembersFromServer,
+  inviteUsersToGroup,
+  leaveGroupFromServer,
+  destroyGroupFromServer,
+} = emGroups();
+const getGroupMember = async () => {
+  if (groupSettingState.groupid) {
+    try {
+      const res = await getGroupMembersFromServer(groupSettingState.groupid);
+      groupSettingState.groupMember = res;
+    } catch (error) {
+      console.log('>>>>>群组接口请求失败', error);
     }
   }
-  return false;
 };
-const leaveGroup = () => {
-  WebIM.conn.quitGroup({
-    groupId: groupSettingState.roomId,
-    success: function () {
+const getGroupInfo = async () => {
+  try {
+    const res = await getGroupInfosFromServer(groupSettingState.groupid);
+    if (res.length) {
+      const { affiliations_count, owner, description } = res[0];
+      groupSettingState.curOwner = owner;
+      groupSettingState.groupDec = description;
+      groupSettingState.groupCount = affiliations_count;
+      if (groupSettingState.currentName === owner) {
+        groupSettingState.isOwner = true;
+      }
+    }
+  } catch (error) {
+    console.log('>>>>群组详情获取失败', error);
+  }
+};
+//获取群id对应的群组名
+const getGroupName = (groupid) => {
+  if (groupStore.joinedGroupList.length) {
+    groupStore.joinedGroupList.forEach((group) => {
+      if (group.groupid == groupid) {
+        groupSettingState.groupName = group.groupname;
+      }
+    });
+  }
+};
+// 加好友入群
+const addGroupMembers = async () => {
+  try {
+    await inviteUsersToGroup(groupSettingState.groupid, [
+      groupSettingState.addFriendName,
+    ]);
+    uni.showToast({
+      title: '邀请已发出',
+      duration: 2000,
+    });
+  } catch (error) {
+    console.log('>>>>>邀请失败', error);
+    if (
+      error.data.error_description &&
+      error.data.error_description.includes("doesn't exist!")
+    ) {
       uni.showToast({
-        title: '已退群',
+        title: '该用户不存在',
         duration: 2000,
-        success: function (res) {
-          // redirectTo = 此操作不可返回
-          setTimeout(
-            () =>
-              uni.navigateBack({
-                url: '../groups/groups?myName=' + groupSettingState.currentName,
-              }),
-            2000
-          );
-        },
       });
-      removeLocalStorage(groupSettingState.roomId);
-    },
-    error: function (err) {
+    } else if (
+      error.data.error_description &&
+      error.data.error_description.includes('already in group')
+    ) {
       uni.showToast({
-        title: err.data.error_description,
+        title: '该用户已在群组中',
+        duration: 2000,
+      });
+    } else {
+      uni.showToast({
+        title: '邀请失败',
+        duration: 2000,
+      });
+    }
+  }
+};
+/* 退群解散群逻辑 */
+//会话列表
+const conversationStore = useConversationStore();
+//主动退出群组
+const leaveTheGroup = async () => {
+  console.log('>>>>>触发了退出群组');
+  if (!groupSettingState.groupid) return;
+  try {
+    await leaveGroupFromServer(groupSettingState.groupid);
+    uni.showToast({
+      title: '退出群组成功',
+      duration: 2000,
+    });
+    await groupStore.removeGroup(groupSettingState.groupid);
+    //删除该群相关会话
+    await conversationStore.deleteConversation(groupSettingState.groupid);
+    uni.reLaunch({
+      url: '../home/index',
+    });
+  } catch (error) {
+    console.log('>>>>>退出群组失败', error);
+    uni.showToast({
+      title: '退出群组失败',
+      duration: 2000,
+    });
+  }
+};
+//解散群组
+const dissolveGroup = async () => {
+  if (groupSettingState.isOwner && groupSettingState.groupid) {
+    try {
+      await destroyGroupFromServer(groupSettingState.groupid);
+      await groupStore.removeGroup(groupSettingState.groupid);
+      //删除该群相关会话
+      await conversationStore.deleteConversation(groupSettingState.groupid);
+      uni.showToast({
+        title: '解散群组成功',
+        duration: 2000,
+      });
+      uni.reLaunch({
+        url: '../groups/groups',
+      });
+    } catch (error) {
+      uni.showToast({
+        title: '群组解散失败',
         icon: 'none',
       });
-    },
-  });
+    }
+  }
 };
-const dissolveGroup = () => {
-  WebIM.conn.dissolveGroup({
-    groupId: groupSettingState.roomId,
-    success: function () {
-      uni.showToast({
-        title: '已解散',
-        duration: 2000,
-        success: function (res) {
-          // redirectTo = 此操作不可返回
-          console.log('>>>>>解散群组且跳转至会话列表');
-          //发布解散群组事件
-          removeLocalStorage(groupSettingState.roomId);
-          setTimeout(
-            () =>
-              uni.redirectTo({
-                url: '../conversation/conversation',
-              }),
-            1000
-          );
-        },
-      });
-    },
-    error: function (err) {
-      uni.showToast({
-        title: err.data.error_description,
-        icon: 'none',
-      });
-    },
-  });
-};
-const removeLocalStorage = (gid) => {
-  if (!gid) return;
-  var myName = uni.getStorageSync('myUsername');
-  uni.removeStorageSync(gid + myName);
-  uni.removeStorageSync('rendered_' + gid + myName);
-};
-/*  disp event callback function */
-const onGroupSettingPageLeaveGroup = () => {
-  getGroupMember();
-  getGroupInfo();
-};
-onUnload(() => {
-  disp.off('em.group.leaveGroup', onGroupSettingPageLeaveGroup);
-});
 </script>
 <style>
 @import './groupSetting.css';

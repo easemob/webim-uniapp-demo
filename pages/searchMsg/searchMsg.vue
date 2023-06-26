@@ -45,23 +45,27 @@
         class="message"
         v-for="item in searchMsgState.searchValue
           ? searchMsgState.searchMsgList
-          : searchMsgState.messageList"
-        :key="item.mid"
-        :id="item.mid"
+          : messageList"
+        :key="item.id"
+        :id="item.id"
       >
-        <!-- <view class="time">
-				<text class="time-text">{{ item.time }}</text>
-      </view>-->
         <view class="main" :class="item.style">
           <view class="user">
             <!-- yourname：就是消息的 from -->
-            <text class="user-text">{{ item.from }}</text>
+            <text class="user-text">{{
+              showMessageListNickname(item.from)
+            }}</text>
           </view>
-          <image class="avatar" src="/static/images/theme2x.png" />
+          <image class="avatar" :src="showMessageListAvatar(item)" />
           <view class="msg">
-            <view v-if="item.type == 'img' || item.type == 'video'">
+            <view
+              v-if="
+                item.type == MESSAGE_TYPE.IMAGE ||
+                item.type == MESSAGE_TYPE.VIDEO
+              "
+            >
               <image
-                v-if="item.type == 'img'"
+                v-if="item.type == MESSAGE_TYPE.IMAGE"
                 class="avatar"
                 :src="item.url"
                 style="width: 90px; height: 120px; margin: 2px auto"
@@ -71,9 +75,23 @@
               />
               <!-- <video v-if="item.msg.type == 'video'" :src="item.msg.data" controls style="width:300rpx;"/> -->
             </view>
-            <view v-if="item.type == 'audio'">[语音]</view>
-            <view v-else-if="item.type == 'txt' || item.type == 'emoji'">
+            <view v-if="item.type == MESSAGE_TYPE.AUDIO">[语音]</view>
+            <view v-if="item.type == MESSAGE_TYPE.FILE">[文件]</view>
+            <view
+              v-else-if="
+                item.type == MESSAGE_TYPE.TEXT ||
+                item.type == MESSAGE_TYPE.EMOJI
+              "
+            >
               <text class="msg-text">{{ item.msg }}</text>
+            </view>
+            <view
+              v-if="
+                item.type == MESSAGE_TYPE.CUSTOM &&
+                item.customEvent === 'userCard'
+              "
+            >
+              <text>[个人名片]</text>
             </view>
           </view>
         </view>
@@ -82,11 +100,14 @@
   </view>
 </template>
 <script setup>
-import { reactive, onMounted } from 'vue';
-import { onLoad, onShow, onUnload } from '@dcloudio/uni-app';
-import msgType from '@/components/chat/msgtype';
-import swipeDelete from '@/components/swipedelete/swipedelete';
-const WebIM = uni.WebIM;
+import { reactive, computed } from 'vue';
+/* EaseIM */
+import { MESSAGE_TYPE } from '@/EaseIM/constant';
+/* stores */
+import { useLoginStore } from '@/stores/login';
+import { useMessageStore } from '@/stores/message';
+import { useContactsStore } from '@/stores/contacts';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 const searchMsgState = reactive({
   currentUser: '',
   type: '',
@@ -100,9 +121,9 @@ const searchMsgState = reactive({
   pushConfigData: [],
   searchValue: '',
   searchMsgList: [],
+  defaultAvatar: '/static/images/theme2x.png',
 });
 onLoad((options) => {
-  console.log('options', options);
   searchMsgState.currentUser = options.username;
   searchMsgState.type = options.type;
 });
@@ -111,31 +132,47 @@ onShow(() => {
     searchMsgState.isIPX = true;
   }
 });
-const fetchHistoryMessageFromServer = () => {
-  console.log('>>>>>拉取历史消息');
-  // 拉取当前会话 历史记录
-  WebIM.conn.mr_cache = [];
-  let options = {
-    queue: searchMsgState.currentUser, //需特别注意：如果 queue 属性值为大小写字母混合输入或全部大写会导致拉取漫游为空数组，因此需将属性值转换为全部小写。
-    isGroup: searchMsgState.type === 'singleChat' ? false : true,
-    format: true,
-    count: 200,
-  };
-  WebIM.conn
-    .fetchHistoryMessages(options)
-    .then((res) => {
-      // 成功获取的历史消息。
-      console.log('res>>>', res);
-      searchMsgState.messageList = res.reverse();
-    })
-    .catch((e) => {
-      console.log('>>>>>>拉取失败', e);
-      // 拉取失败。
-    });
-};
-onMounted(() => {
-  fetchHistoryMessageFromServer();
+const messageStore = useMessageStore();
+const messageList = computed(() => {
+  return messageStore.messageCollection[searchMsgState.currentUser] || [];
 });
+
+//消息列表头像展示
+const loginStore = useLoginStore();
+const contactsStore = useContactsStore();
+//登录用户属性
+const myUserInfos = computed(() => {
+  return loginStore.loginUserProfiles;
+});
+//好友属性
+const friendUserInfoMap = computed(() => {
+  return contactsStore.friendUserInfoMap;
+});
+
+const showMessageListAvatar = computed(() => {
+  const friendMap = friendUserInfoMap.value;
+  return (item) => {
+    if (item.from !== loginStore.loginUserBaseInfos.loginUserId) {
+      return (
+        friendMap.get(item.from)?.avatarurl || searchMsgState.defaultAvatar
+      );
+    } else {
+      return myUserInfos.value?.avatarurl || searchMsgState.defaultAvatar;
+    }
+  };
+});
+//消息列表昵称显示
+const showMessageListNickname = computed(() => {
+  const friendMap = friendUserInfoMap.value;
+  return (hxId) => {
+    if (hxId !== loginStore.loginUserBaseInfos.loginUserId) {
+      return friendMap.get(hxId)?.nickname || hxId;
+    } else {
+      return '我';
+    }
+  };
+});
+/* 搜索消息逻辑 */
 const openSearch = () => {
   searchMsgState.searchBtn = false;
   searchMsgState.searchChats = true;
@@ -144,7 +181,7 @@ const openSearch = () => {
 const onSearch = (e) => {
   const { value } = e.detail;
   if (value) {
-    let newMsgList = searchMsgState.messageList.filter(
+    let newMsgList = messageList.value.filter(
       (item) => item.type === 'txt' && item.msg.includes(value)
     );
     searchMsgState.searchValue = value;
@@ -175,38 +212,6 @@ const onInput = (e) => {
   } else {
     searchMsgState.showClear = false;
     searchMsgState.searchValue = '';
-  }
-};
-
-const tab_contacts = () => {
-  uni.redirectTo({
-    url: '../main/main?myName=' + uni.getStorageSync('myUsername'),
-  });
-};
-const close_mask = () => {
-  searchMsgState.searchBtn = true;
-  searchMsgState.searchChats = false;
-};
-const tab_setting = () => {
-  uni.redirectTo({
-    url: '../setting/setting',
-  });
-};
-const tab_notification = () => {
-  uni.redirectTo({
-    url: '../notification/notification',
-  });
-};
-const into_chatRoom = (event) => {
-  let detail = event.currentTarget.dataset.item;
-  if (
-    detail.chatType == 'groupchat' ||
-    detail.chatType == 'chatRoom' ||
-    detail.groupName
-  ) {
-    into_groupChatRoom(detail);
-  } else {
-    into_singleChatRoom(detail);
   }
 };
 </script>

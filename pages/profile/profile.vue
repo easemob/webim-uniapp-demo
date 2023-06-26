@@ -1,4 +1,5 @@
 <template>
+  <!-- 他人个人信息 -->
   <view v-if="profileState.otherProfile">
     <view class="head_pic">
       <text>头像</text>
@@ -19,6 +20,7 @@
       <text>{{ profileState.otherProfile.nickname || '暂无昵称' }}</text>
     </view>
   </view>
+  <!-- 个人用户信息 -->
   <view v-else>
     <view class="head_pic" @click="to_select_avatar">
       <text>头像</text>
@@ -46,10 +48,12 @@
   </view>
 </template>
 <script setup>
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref, computed, watchEffect } from 'vue';
 import { onLoad, onShow } from '@dcloudio/uni-app';
-import disp from '@/utils/broadcast';
-const WebIM = uni.WebIM;
+/* im api */
+import { emUserInfos } from '@/EaseIM/imApis';
+/* stores */
+import { useLoginStore } from '@/stores/login';
 const profileState = reactive({
   isShowEditModal: false,
   nickname: '',
@@ -66,6 +70,7 @@ let profileForm = reactive({
   birth: '',
   sign: '',
 });
+const loginStore = useLoginStore();
 onLoad((options) => {
   if (options.otherProfile) {
     uni.setNavigationBarTitle({
@@ -73,16 +78,17 @@ onLoad((options) => {
     });
     profileState.otherProfile = JSON.parse(options.otherProfile);
   } else {
-    profileState.loginUserInfos = getApp().globalData.userInfoFromServer;
+    profileState.loginUserInfos = loginStore.loginUserProfiles;
   }
 });
-onShow(() => {
-  const loginUserInfos = getApp().globalData.userInfoFromServer;
-  profileForm = Object.assign(profileForm, loginUserInfos);
+/* login profile */
+watchEffect(() => {
+  profileForm = Object.assign(profileForm, loginStore.loginUserProfiles);
 });
 const loginUserAvactar = computed(() => {
   return profileState.loginUserInfos?.avatarurl || profileState.defaultAvatar;
 });
+//跳转至头像选择页面
 const to_select_avatar = () => {
   uni.navigateTo({
     url: '../profile/selectAvatar',
@@ -96,14 +102,18 @@ const hideChangeNickNameModal = () => {
   changeNicknameModal.value.close();
 };
 //保存更改的用户昵称
-const saveNickname = async (e) => {
+const { updateUserInfosFromServer } = emUserInfos();
+const saveNickname = async () => {
   if (!profileForm.nickname) return;
   try {
-    await WebIM.conn.updateUserInfo('nickname', profileForm.nickname);
-    disp.fire('em.mian.profile.update');
-    uni.showToast({ title: '更新成功', icon: 'none' });
-    hideChangeNickNameModal();
+    let res = await updateUserInfosFromServer({
+      nickname: profileForm.nickname,
+    });
+    loginStore.setLoginUserProfiles({ ...res });
+    console.log('>>>>>昵称更新', res);
+    uni.showToast({ title: '昵称更新成功', icon: 'none' });
   } catch (error) {
+    console.log('>>>>>保存失败', error);
     uni.showToast({
       title: '保存失败',
       icon: 'none',

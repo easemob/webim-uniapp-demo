@@ -21,18 +21,19 @@
 
 <script setup>
 import { reactive, toRefs, onMounted } from 'vue';
-import msgType from '@/components/chat/msgtype';
+/* EaseIM */
+import { emSilent } from '@/EaseIM/imApis';
+/* pinia */
+import { useLoginStore } from '@/stores/login';
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app';
-import { pushStorageSave } from '../../components/chat/pushStorage';
-const WebIM = uni.WebIM;
 /* props */
-const props = defineProps({
-  chatType: {
-    type: String,
-    default: msgType.chatType.SINGLE_CHAT,
-  },
-});
-const { chatType } = toRefs(props);
+// const props = defineProps({
+//   chatType: {
+//     type: String,
+//     default: msgType.chatType.SINGLE_CHAT,
+//   },
+// });
+// const { chatType } = toRefs(props);
 
 const moreMenuState = reactive({
   currentUser: '',
@@ -43,34 +44,26 @@ onLoad((options) => {
   moreMenuState.currentUser = options.username;
   moreMenuState.type = options.type;
 });
-
+/* 免打扰静默设置 */
+const {
+  getSilentModeForConversation,
+  setSilentModeForConversation,
+  clearRemindTypeForConversation,
+} = emSilent();
+const loginStore = useLoginStore();
 onMounted(() => {
-  let currentLoginUser = WebIM.conn.context.userId;
-  let newObj = uni.getStorageSync('pushStorageData') || {};
-  let newAry = newObj[currentLoginUser] || [];
-  // 当前会话是否被禁言
-  const option = {
-    conversationId: moreMenuState.currentUser,
-    type: moreMenuState.type,
-  };
-  WebIM.conn.getSilentModeForConversation(option).then((res) => {
-    if (res.data.type === 'NONE') {
+  getSilentModeForConversation(
+    moreMenuState.currentUser,
+    moreMenuState.type
+  ).then((res) => {
+    console.log('>>>>>>调用当前id的静默设置', res);
+    if (res?.data?.type === 'NONE') {
       moreMenuState.switchStatus = true;
-      newAry = newAry.concat(this.currentUser);
     }
   });
-  newObj[currentLoginUser] = newAry;
-  uni.setStorage({
-    key: 'pushStorageData',
-    data: newObj,
-    success: function (params) {
-      console.log('>>>>>>', uni.getStorageSync('pushStorageData'));
-    },
-  });
 });
-
 const onSwitchChange = (event) => {
-  if (event.target.value) {
+  if (event.detail.value) {
     onSetSilent();
   } else {
     onClearSilent();
@@ -82,32 +75,40 @@ const onToHistoryPage = () => {
   });
 };
 // 开启推送免打扰
-const onSetSilent = () => {
-  const option = {
+const onSetSilent = async () => {
+  const paramType = 0;
+  const remindType = 'NONE';
+  console.log('setSilentModeForConversation');
+  const params = {
     conversationId: moreMenuState.currentUser,
     type: moreMenuState.type,
     options: {
-      paramType: 0,
-      remindType: 'NONE',
+      paramType,
+      remindType,
     },
   };
-  WebIM.conn.setSilentModeForConversation(option).then((res) => {
-    if (res.data.type === 'NONE') {
-      pushStorageSave({ userId: moreMenuState.currentUser, type: 'add' });
-    }
-  });
+  try {
+    await setSilentModeForConversation({ ...params });
+    uni.showToast({ title: '免打扰已开启', icon: 'none' });
+  } catch (error) {
+    console.log('error', error);
+    uni.showToast({ title: '免打扰开启失败', icon: 'none' });
+  }
 };
 // 清除推送免打扰
-const onClearSilent = () => {
-  const option = {
-    conversationId: moreMenuState.currentUser,
-    type: moreMenuState.type,
-  };
-  WebIM.conn.clearRemindTypeForConversation(option).then((res) => {
-    pushStorageSave({ userId: moreMenuState.currentUser, type: 'remove' });
-  });
+const onClearSilent = async () => {
+  console.log('clearRemindTypeForConversation');
+  try {
+    await clearRemindTypeForConversation(
+      moreMenuState.currentUser,
+      moreMenuState.type
+    );
+    uni.showToast({ title: '免打扰已关闭', icon: 'none' });
+  } catch (error) {
+    uni.showToast({ title: '免打扰关闭失败', icon: 'none' });
+  }
 };
 </script>
 <style>
-@import '../setting_general/setting_general.css';
+@import '../settingGeneral/settingGeneral.css';
 </style>

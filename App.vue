@@ -1,277 +1,55 @@
 <script>
-import WebIM from '@/utils/WebIM.js';
-import msgStorage from '@/components/chat/msgstorage';
-import _chunkArr from './utils/chunkArr';
-// let msgStorage = require("./components/chat/msgstorage");
-import msgType from '@/components/chat/msgtype';
-// let msgType = require("./components/chat/msgtype");
-// let disp = require("./utils/broadcast");
-import disp from '@/utils/broadcast';
-import { onGetSilentConfig } from './components/chat/pushStorage';
-let logout = false;
-
-function ack(receiveMsg) {
-  // 处理未读消息回执
-  var bodyId = receiveMsg.id; // 需要发送已读回执的消息id
-
-  var ackMsg = new WebIM.message('read', WebIM.conn.getUniqueId());
-  ackMsg.set({
-    id: bodyId,
-    to: receiveMsg.from,
-  });
-  WebIM.conn.send(ackMsg.body);
-}
-
-function onMessageError(err) {
-  if (err.type === 'error') {
-    uni.showToast({
-      title: err.errorText,
-    });
-    return false;
-  }
-
-  return true;
-}
-
-function getCurrentRoute() {
-  let pages = getCurrentPages();
-  if (pages.length > 0) {
-    let currentPage = pages[pages.length - 1];
-    return currentPage.route;
-  }
-  return '/';
-}
-
-// // 不包含陌生人版本(不接收陌生人消息)
-// function calcUnReadSpot(message) {
-//   let myName = uni.getStorageSync("myUsername");
-//   let members = uni.getStorageSync("member") || []; //好友
-
-//   var listGroups = uni.getStorageSync("listGroup") || []; //群组
-//   let allMembers = members.concat(listGroups);
-//   let count = allMembers.reduce(function(result, curMember, idx) {
-//     let chatMsgs;
-//     if (curMember.groupid) {
-//       chatMsgs =
-//         uni.getStorageSync(curMember.groupid + myName.toLowerCase()) || [];
-//     } else {
-//       chatMsgs =
-//         uni.getStorageSync(
-//           curMember.name && curMember.name.toLowerCase() + myName.toLowerCase()
-//         ) || [];
-//     }
-//     return result + chatMsgs.length;
-//   }, 0);
-//   getApp().globalData.unReadMessageNum = count;
-//   disp.fire("em.unreadspot", message);
-// }
-
-// 包含陌生人版本
-//该方法用以计算本地存储消息的未读总数。
-function calcUnReadSpot(message) {
-  let myName = uni.getStorageSync('myUsername');
-  let pushObj = uni.getStorageSync('pushStorageData');
-  let pushAry = pushObj[myName] || [];
-  uni.getStorageInfo({
-    success: function (res) {
-      let storageKeys = res.keys;
-      let newChatMsgKeys = [];
-      let historyChatMsgKeys = [];
-      storageKeys.forEach((item) => {
-        if (item.indexOf(myName) > -1 && item.indexOf('rendered_') == -1) {
-          newChatMsgKeys.push(item);
-        }
-      });
-      let count = newChatMsgKeys.reduce(function (result, curMember, idx) {
-        let newName = curMember.split(myName)[0];
-        let chatMsgs;
-        chatMsgs = uni.getStorageSync(curMember) || [];
-        //过滤消息来源与当前登录ID一致的消息，不计入总数中。
-        chatMsgs = chatMsgs.filter((msg) => msg.yourname !== myName);
-        if (pushAry.includes(newName)) return result;
-        return result + chatMsgs.length;
-      }, 0);
-      getApp().globalData.unReadMessageNum = count;
-      disp.fire('em.unreadspot', message);
-    },
-  });
-}
-
-function saveGroups() {
-  var me = this;
-  return WebIM.conn.getGroup({
-    limit: 50,
-    success: function (res) {
-      uni.setStorage({
-        key: 'listGroup',
-        data: res.data,
-      });
-    },
-    error: function (err) {
-      console.log(err);
-    },
-  });
-}
+/* EaseIM */
+import '@/EaseIM';
+import { emConnectListener, emMountGlobalListener } from '@/EaseIM/listener';
+import { emConnect, emUserInfos, emGroups, emContacts } from '@/EaseIM/imApis';
+import emHandleReconnect from '@/EaseIM/utils/emHandleReconnect';
+import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
+import { useLoginStore } from '@/stores/login';
+import { useGroupStore } from '@/stores/group';
+import { useConversationStore } from '@/stores/conversation';
+import { useContactsStore } from '@/stores/contacts';
+import { EMClient, EaseSDK } from './EaseIM';
 
 export default {
-  globalData: {
-    phoneNumber: '',
-    unReadMessageNum: 0,
-    userInfo: null,
-    userInfoFromServer: null, //用户属性从环信服务器获取
-    friendUserInfoMap: new Map(), //好友属性
-    saveFriendList: [],
-    saveGroupInvitedList: [],
-    isIPX: false, //是否为iphone X
-    conn: {
-      closed: false,
-      curOpenOpt: {},
-
-      open(opt) {
-        uni.showLoading({
-          title: '正在初始化客户端..',
-          mask: true,
-        });
-        const actionOpen = () => {
-          this.curOpenOpt = opt;
-          WebIM.conn
-            .open(opt)
-            .then(() => {
-              //token获取成功，即可开始请求用户属性。
-              disp.fire('em.mian.profile.update');
-              disp.fire('em.mian.friendProfile.update');
-            })
-            .catch((err) => {
-              console.log('>>>>>token获取失败', err);
-            });
-          this.closed = false;
-        };
-        if (WebIM.conn.isOpened()) {
-          WebIM.conn.close();
-          setTimeout(() => {
-            actionOpen();
-          }, 300);
-        } else {
-          actionOpen();
-        }
-      },
-
-      reopen() {
-        if (this.closed) {
-          //this.open(this.curOpenOpt);
-          WebIM.conn.open(this.curOpenOpt);
-          this.closed = false;
-        }
-      },
-    },
-    onLoginSuccess: function (myName) {
+  setup() {
+    const loginStore = useLoginStore();
+    const groupStore = useGroupStore();
+    const contactsStore = useContactsStore();
+    /* 链接所需监听回调 */
+    //传给监听callback回调
+    const connectedCallback = (type) => {
+      console.log('>>>>>连接成功回调', type);
+      if (type === CONNECT_CALLBACK_TYPE.CONNECT_CALLBACK) {
+        onConnectedSuccess();
+      }
+      if (type === CONNECT_CALLBACK_TYPE.DISCONNECT_CALLBACK) {
+        onDisconnect();
+      }
+      if (type === CONNECT_CALLBACK_TYPE.RECONNECTING_CALLBACK) {
+        onReconnecting();
+      }
+    };
+    //IM连接成功
+    const { closeEaseIM } = emConnect();
+    const onConnectedSuccess = () => {
+      const { loginUserId } = loginStore.loginUserBaseInfos || {};
+      const finalLoginUserId = loginUserId || EMClient.user;
+      if (!loginStore.loginStatus) {
+        fetchLoginUserNeedData();
+      }
+      loginStore.setLoginUserBaseInfos({ loginUserId: finalLoginUserId });
+      loginStore.setLoginStatus(true);
       uni.hideLoading();
       uni.redirectTo({
-        url: '../conversation/conversation?myName=' + myName,
+        url: '../home/index?myName=' + finalLoginUserId,
       });
-    },
-
-    getUserInfo(cb) {
-      var me = this;
-
-      if (this.userInfo) {
-        typeof cb == 'function' && cb(this.userInfo);
-      } else {
-        // 调用登录接口
-        uni.login({
-          success() {
-            uni.getUserInfo({
-              success(res) {
-                me.userInfo = res.userInfo;
-                typeof cb == 'function' && cb(me.userInfo);
-              },
-            });
-          },
-        });
-      }
-    },
-    checkIsIPhoneX: function () {
-      const me = this;
-      uni.getSystemInfo({
-        success: function (res) {
-          // 根据 model 进行判断
-          if (res.model && res.model.search('iPhone X') != -1) {
-            me.isIPX = true;
-          }
-        },
-      });
-    },
-  },
-
-  // getPage(pageName){
-  // 	var pages = getCurrentPages();
-  // 	return pages.find(function(page){
-  // 		return page.__route__ == pageName;
-  // 	});
-  // },
-  onLaunch() {
-    // 调用 API 从本地缓存中获取数据
-    // uni.setInnerAudioOption({
-    //   obeyMuteSwitch: false
-    // });
-    var me = this;
-    var logs = uni.getStorageSync('logs') || [];
-    logs.unshift(Date.now());
-    uni.setStorageSync('logs', logs);
-
-    disp.on('em.main.ready', function () {
-      calcUnReadSpot();
-    });
-    disp.on('em.chatroom.leave', function () {
-      calcUnReadSpot();
-    });
-    disp.on('em.chat.session.remove', function () {
-      calcUnReadSpot();
-    });
-    disp.on('em.chat.audio.fileLoaded', function () {
-      calcUnReadSpot();
-    });
-    disp.on('em.main.deleteFriend', function () {
-      calcUnReadSpot();
-    });
-    disp.on('em.chat.audio.fileLoaded', function () {
-      calcUnReadSpot();
-    }); //
-    disp.on('em.mian.profile.update', function () {
-      me.fetchUserInfoWithLoginId();
-    });
-    disp.on('em.mian.friendProfile.update', function () {
-      me.fetchFriendInfoFromServer();
-    });
-
-    uni.WebIM.conn.listen({
-      onOpened(message) {
-        if (
-          getCurrentRoute() == 'pages/login/login' ||
-          getCurrentRoute() == 'pages/login_token/login_token'
-        ) {
-          me.globalData.onLoginSuccess(
-            uni.getStorageSync('myUsername').toLowerCase()
-          );
-          me.fetchFriendListFromServer();
-        }
-      },
-
-      onReconnect() {
-        uni.showToast({
-          title: '重连中...',
-          duration: 2000,
-        });
-      },
-
-      onSocketConnected() {
-        uni.showToast({
-          title: 'socket连接成功',
-          duration: 2000,
-        });
-      },
-
-      onClosed() {
+    };
+    //IM断开连接
+    const { actionEMReconnect } = emHandleReconnect();
+    const onDisconnect = () => {
+      //断开回调触发后，如果业务登录状态为true则说明异常断开需要重新登录
+      if (!loginStore.loginStatus) {
         uni.showToast({
           title: '退出登录',
           icon: 'none',
@@ -280,357 +58,112 @@ export default {
         uni.redirectTo({
           url: '../login/login',
         });
-        me.globalData.conn.closed = true;
-        WebIM.conn.close();
-        // uni.removeStorageSync('pushStorageData');
-        // uni.clearStorageSync();
-      },
-
-      onInviteMessage(message) {
-        me.globalData.saveGroupInvitedList.push(message);
-        disp.fire('em.invite.joingroup', message); // uni.showModal({
-        // 	title: message.from + " 已邀你入群 " + message.roomid,
-        // 	success(){
-        // 		disp.fire("em.invite.joingroup", message);
-        // 	},
-        // 	error(){
-        // 		disp.fire("em.invite.joingroup", message);
-        // 	}
-        // });
-      },
-
-      onReadMessage(message) {
-        //console.log('已读', message)
-      },
-
-      //onPresence为旧版 ，建议参考最新增删好友api文档 ：http://docs-im.easemob.com/im/web/basics/buddy
-      onPresence(message) {
-        switch (message.type) {
-          case 'unsubscribe':
+        closeEaseIM();
+      } else {
+        //执行通过token进行重新登录
+        actionEMReconnect();
+      }
+    };
+    //IM重连中
+    const onReconnecting = () => {
+      uni.showToast({
+        title: 'IM 重连中...',
+        icon: 'none',
+      });
+    };
+    //挂载IM websocket连接成功监听
+    emConnectListener(connectedCallback);
+    const { fetchUserInfoWithLoginId, fetchOtherInfoFromServer } =
+      emUserInfos();
+    const { fetchJoinedGroupListFromServer } = emGroups();
+    const { fetchContactsListFromServer } = emContacts();
+    //获取登录所需基础参数
+    const fetchLoginUserNeedData = async () => {
+      //获取好友列表
+      const friendList = await fetchContactsListFromServer();
+      await contactsStore.setFriendList(friendList);
+      fetchJoinedGroupList();
+      if (friendList.length) {
+        //获取好友用户属性
+        const friendProfiles = await fetchOtherInfoFromServer(friendList);
+        contactsStore.setFriendUserInfotoMap(friendProfiles);
+      }
+      //获取当前登录用户好友信息
+      const profiles = await fetchUserInfoWithLoginId();
+      await loginStore.setLoginUserProfiles(profiles[EMClient.user]);
+    };
+    //获取加入的群组列表
+    const fetchJoinedGroupList = async () => {
+      //获取群组列表
+      const joinedGroupList = await fetchJoinedGroupListFromServer();
+      console.log('>>>>>>>>>joinedGroupList', joinedGroupList);
+      await groupStore.setJoinedGroupList(joinedGroupList);
+    };
+    //挂载全局所需监听回调【好友关系、消息监听、群组监听】
+    /* 退群解散群逻辑 */
+    const conversationStore = useConversationStore();
+    const globaleventcallback = (listenerType, event) => {
+      //群组事件监听
+      if (listenerType === HANDLER_EVENT_NAME.GROUP_EVENT) {
+        const { operation, id } = event;
+        console.log('>>>>>触发群组事件回调。');
+        switch (operation) {
+          case 'directJoined':
+            {
+              uni.showToast({ icon: 'none', title: `被拉入群组${id}` });
+              fetchJoinedGroupList();
+            }
             break;
-          // 好友邀请列表
-          case 'subscribe':
-            for (let i = 0; i < me.globalData.saveFriendList.length; i++) {
-              if (me.globalData.saveFriendList[i].from === message.from) {
-                me.globalData.saveFriendList[i] = message;
-                disp.fire('em.subscribe');
-                return;
+          case 'removeMember':
+            {
+              uni.showToast({ icon: 'none', title: `从${id}群中被移出` });
+              fetchJoinedGroupList();
+              //删除该群相关会话
+              conversationStore.deleteConversation(id);
+              //如果在该群会话中则退出会话
+              if (conversationStore.chattingId === id) {
+                uni.reLaunch({
+                  url: '../home/index',
+                });
               }
             }
-            msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
-            me.globalData.saveFriendList.push(message);
-            disp.fire('em.subscribe');
-
             break;
-
-          case 'subscribed':
-            uni.showToast({
-              title: '添加成功',
-              duration: 1000,
-            });
-            disp.fire('em.subscribed');
-            break;
-
-          case 'unsubscribed':
-            disp.fire('em.unsubscribed', message);
-            break;
-          case 'direct_joined':
-            saveGroups();
-            uni.showToast({
-              title: '已进群',
-              duration: 1000,
-            });
-            break;
-          case 'memberJoinPublicGroupSuccess':
-            saveGroups();
-            uni.showToast({
-              title: '已进群',
-              duration: 1000,
-            });
-            break;
-          case 'invite':
-            // 防止重复添加
-            for (
-              let i = 0;
-              i < me.globalData.saveGroupInvitedList.length;
-              i++
-            ) {
-              if (me.globalData.saveGroupInvitedList[i].from === message.from) {
-                me.globalData.saveGroupInvitedList[i] = message;
-                disp.fire('em.invite.joingroup');
-                return;
+          case 'destroy':
+            {
+              uni.showToast({ icon: 'none', title: `${id}已解散` });
+              fetchJoinedGroupList();
+              conversationStore.deleteConversation(id);
+              //如果在该群会话中则退出会话
+              if (conversationStore.chattingId === id) {
+                console.log('>>>>会话中退出聊天页面');
+                uni.reLaunch({
+                  url: '../home/index',
+                });
               }
             }
-            me.globalData.saveGroupInvitedList.push(message);
-            msgStorage.saveReceiveMsg(message, 'INFORM'); //存添加好友消息，方便展示通知
-            disp.fire('em.invite.joingroup');
             break;
-          case 'unavailable':
-            disp.fire('em.contacts.remove');
-            disp.fire('em.group.leaveGroup', message);
-            break;
-
-          case 'deleteGroupChat':
-            disp.fire('em.invite.deleteGroup', message);
-            break;
-
-          case 'leaveGroup':
-            disp.fire('em.group.leaveGroup', message);
-            break;
-
-          case 'removedFromGroup':
-            disp.fire('em.group.leaveGroup', message);
-            break;
-
           default:
             break;
         }
-      },
-
-      onRoster(message) {
-        // let pages = getCurrentPages();
-        // if(pages[0]){
-        // 	pages[0].onShow();
-        // }
-      },
-
-      onVideoMessage(message) {
-        console.log('onVideoMessage: ', message);
-
-        if (message) {
-          msgStorage.saveReceiveMsg(message, msgType.VIDEO);
-        }
-
-        calcUnReadSpot(message);
-        ack(message);
-        onGetSilentConfig(message);
-      },
-
-      onAudioMessage(message) {
-        console.log('onAudioMessage', message);
-
-        if (message) {
-          if (onMessageError(message)) {
-            msgStorage.saveReceiveMsg(message, msgType.AUDIO);
-          }
-
-          calcUnReadSpot(message);
-          ack(message);
-          onGetSilentConfig(message);
-        }
-      },
-
-      onCmdMessage(message) {
-        console.log('onCmdMessage', message);
-
-        if (message) {
-          if (onMessageError(message)) {
-            msgStorage.saveReceiveMsg(message, msgType.CMD);
-          }
-
-          calcUnReadSpot(message);
-          ack(message);
-          onGetSilentConfig(message);
-        }
-      },
-      onCustomMessage(message) {
-        console.log('>>>>>自定义消息接收', message);
-        if (message) {
-          if (onMessageError(message)) {
-            msgStorage.saveReceiveMsg(message, msgType.CUSTOM);
-          }
-
-          calcUnReadSpot(message);
-          ack(message);
-          onGetSilentConfig(message);
-        }
-      },
-      // onLocationMessage(message){
-      // 	console.log("Location message: ", message);
-      // 	if(message){
-      // 		msgStorage.saveReceiveMsg(message, msgType.LOCATION);
-      // 	}
-      // },
-      onTextMessage(message) {
-        console.log('onTextMessage', message);
-
-        if (message) {
-          if (onMessageError(message)) {
-            msgStorage.saveReceiveMsg(message, msgType.TEXT);
-          }
-
-          calcUnReadSpot(message);
-          ack(message);
-          onGetSilentConfig(message);
-        }
-      },
-
-      onEmojiMessage(message) {
-        console.log('onEmojiMessage', message);
-
-        if (message) {
-          if (onMessageError(message)) {
-            msgStorage.saveReceiveMsg(message, msgType.EMOJI);
-          }
-
-          calcUnReadSpot(message);
-          ack(message);
-          onGetSilentConfig(message);
-        }
-      },
-
-      onPictureMessage(message) {
-        console.log('onPictureMessage', message);
-
-        if (message) {
-          if (onMessageError(message)) {
-            msgStorage.saveReceiveMsg(message, msgType.IMAGE);
-          }
-
-          calcUnReadSpot(message);
-          ack(message);
-          onGetSilentConfig(message);
-        }
-      },
-
-      onFileMessage(message) {
-        console.log('onFileMessage', message);
-
-        if (message) {
-          if (onMessageError(message)) {
-            msgStorage.saveReceiveMsg(message, msgType.FILE);
-          }
-
-          calcUnReadSpot(message);
-          ack(message);
-          onGetSilentConfig(message);
-        }
-      },
-
-      // 各种异常
-      onError(error) {
-        console.log(error); // 16: server-side close the websocket connection
-        // if (error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED) {
-        //   // if(error.type == WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED && !logout){
-        //   // if(WebIM.conn.autoReconnectNumTotal < WebIM.conn.autoReconnectNumMax){
-        //   // 	return;
-        //   // }
-        //   uni.showToast({
-        //     title: "websocket 断开",
-        //     duration: 1000
-        //   });
-        //   uni.redirectTo({
-        //     url: "../login/login"
-        //   });
-        //   logout = true;
-        //   return;
-        // } // 8: offline by multi login
-
-        // if (error.type == WebIM.statusCode.WEBIM_CONNCTION_SERVER_ERROR) {
-        //   uni.showToast({
-        //     title: "offline by multi login",
-        //     duration: 1000
-        //   });
-        //   uni.redirectTo({
-        //     url: "../login/login"
-        //   });
-        // }
-
-        if (error.type == WebIM.statusCode.WEBIM_CONNCTION_OPEN_ERROR) {
-          uni.hideLoading();
-          disp.fire('em.error.passwordErr'); // uni.showModal({
-          // 	title: "用户名或密码错误",
-          // 	confirmText: "OK",
-          // 	showCancel: false
-          // });
-        }
-
-        if (error.type == WebIM.statusCode.WEBIM_CONNCTION_AUTH_ERROR) {
-          uni.hideLoading();
-          disp.fire('em.error.tokenErr');
-        }
-
-        if (error.type == 'socket_error') {
-          ///sendMsgError
-          console.log('socket_errorsocket_error', error);
-          uni.showToast({
-            title: '网络已断开',
-            icon: 'none',
-            duration: 2000,
-          });
-          disp.fire('em.error.sendMsgErr', error);
-        }
-      },
-    });
-    this.globalData.checkIsIPhoneX();
-  },
-
-  methods: {
-    async fetchUserInfoWithLoginId() {
-      const userId = await uni.WebIM.conn.user;
-      if (userId) {
-        try {
-          const { data } = await uni.WebIM.conn.fetchUserInfoById(userId);
-          this.globalData.userInfoFromServer = Object.assign({}, data[userId]);
-        } catch (error) {
-          console.log(error);
-          uni.showToast({
-            title: '用户属性获取失败',
-            icon: 'none',
-            duration: 2000,
-          });
+      }
+      if (listenerType === HANDLER_EVENT_NAME.ERROR_EVENT) {
+        const { type } = event;
+        switch (type) {
+          case 206:
+            {
+              uni.showToast({
+                icon: 'none',
+                title: '有其他用户登录，断开连接！',
+              });
+              loginStore.setLoginStatus(false);
+            }
+            break;
+          default:
+            break;
         }
       }
-    },
-    async fetchFriendInfoFromServer() {
-      let friendList = [];
-      try {
-        const res = await uni.WebIM.conn.getContacts();
-        friendList = Object.assign([], res?.data);
-        if (friendList.length && friendList.length < 99) {
-          const { data } = await uni.WebIM.conn.fetchUserInfoById(friendList);
-          this.setFriendUserInfotoMap(data);
-        } else {
-          let newArr = _chunkArr(friendList, 99);
-          for (let i = 0; i < newArr.length; i++) {
-            const { data } = await uni.WebIM.conn.fetchUserInfoById(newArr[i]);
-            this.setFriendUserInfotoMap(data);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        uni.showToast({
-          title: '用户属性获取失败',
-          icon: 'none',
-        });
-      }
-    },
-    setFriendUserInfotoMap(data) {
-      if (Object.keys(data).length) {
-        for (const key in data) {
-          if (Object.hasOwnProperty.call(data, key)) {
-            const values = data[key];
-            Object.values(values).length &&
-              this.globalData.friendUserInfoMap.set(key, values);
-          }
-        }
-      }
-    },
-    async fetchFriendListFromServer() {
-      uni.removeStorageSync('member');
-      try {
-        const { data } = await WebIM.conn.getContacts();
-        console.log('>>>>>>App.vue 拉取好友列表');
-        if (data.length) {
-          uni.setStorage({
-            key: 'member',
-            data: [...data],
-          });
-        }
-      } catch (error) {
-        console.log('>>>>>好友列表获取失败', error);
-      }
-    },
+    };
+    emMountGlobalListener(globaleventcallback);
   },
 };
 </script>

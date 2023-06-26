@@ -23,7 +23,10 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
-import disp from '@/utils/broadcast';
+/* im apis */
+import { emUserInfos } from '@/EaseIM/imApis';
+/* stores */
+import { useLoginStore } from '@/stores/login';
 const avatarBaseUrl =
   'https://download-sdk.oss-cn-beijing.aliyuncs.com/downloads/IMDemo/avatar/';
 //此处是H5与小程序for循环其实num不同，所以定义了一个数组。
@@ -37,28 +40,30 @@ const avatarUrl = computed(() => {
 const chooseAvatar = (avatarNum) => {
   chooseAvatarIndex.value = avatarNum;
 };
+//保存所选头像
+const loginStore = useLoginStore();
+const { updateUserInfosFromServer } = emUserInfos();
 const saveAvatar = async () => {
-  console.log('>>>>>保存URI');
   //待更新的url
   let avatarUrl =
     avatarBaseUrl + 'Image' + (chooseAvatarIndex.value + 1) + '.png';
-  console.log(avatarUrl);
   try {
-    await uni.WebIM.conn.updateUserInfo('avatarurl', avatarUrl);
+    const res = await updateUserInfosFromServer({ avatarurl: avatarUrl });
+    await loginStore.setLoginUserProfiles({ ...res });
     uni.showToast({
       title: '保存成功',
-      icon: 'success',
+      icon: 'none',
+      duration: 2000,
     });
-    disp.fire('em.mian.profile.update');
-    setTimeout(() => {
-      uni.redirectTo({
-        url: '../setting/setting',
-      });
-    }, 300);
-  } catch (e) {
+    uni.redirectTo({
+      url: '../home/index?page=me',
+    });
+  } catch (error) {
+    console.log('>>>>>保存失败', error);
     uni.showToast({
       title: '保存失败',
       icon: 'none',
+      duration: 2000,
     });
   }
 };

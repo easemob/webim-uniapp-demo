@@ -1,18 +1,17 @@
 .search,.search_input {
 	width: 100%;
-	height: 40px;
-	background-color: #CFCFCF;
+	height: 88rpx;
+	background-color: #f2f2f2;
 	display: flex;
 	align-items: center;
-	position: fixed;
-	top:0;
-	left:0;
+	top: 0;
+	left: 0;
 }
 .search {
-	justify-content:space-around;
+	justify-content: space-around;
 }
 .search_input {
-	justify-content:space-around;
+	justify-content: space-around;
 }
 .search view, .search_input view {
 	height: 28px;
@@ -57,7 +56,7 @@
 	height: 30px;
 	line-height: 30px;
 	font-size: 16px;
-	color:#7B68EE;
+    color: #0873DE;
 	text-align: right;
 }
 .search_input input {
