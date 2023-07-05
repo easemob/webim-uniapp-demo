@@ -1,0 +1,20 @@
+{
+  "id": "Agora-RTC-JS",
+  "name": "Agora音视频插件（JS）",
+  "version": "3.7.2",
+  "description": "Agora音视频插件的JS包装，便于开发者调用Native",
+  "keywords": [
+    "Agora",
+    "声网",
+    "音频",
+    "视频",
+    "直播"
+  ],
+  "dcloudext": {
+    "category": [
+      "前端组件",
+      "通用组件"
+    ]
+  },
+  "displayName": "Agora音视频插件（JS）"
+}
