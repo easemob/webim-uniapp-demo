@@ -10,7 +10,8 @@ import { useGroupStore } from '@/stores/group';
 import { useConversationStore } from '@/stores/conversation';
 import { useContactsStore } from '@/stores/contacts';
 import { EMClient, EaseSDK } from './EaseIM';
-
+/* Agora */
+import { useInitCallKit } from '@/components/emCallKit';
 export default {
   setup() {
     const loginStore = useLoginStore();
@@ -164,6 +165,9 @@ export default {
       }
     };
     emMountGlobalListener(globaleventcallback);
+    /* Agora */
+    const { setCallKitClient } = useInitCallKit();
+    setCallKitClient(EMClient, EaseSDK.message);
   },
 };
 </script>
