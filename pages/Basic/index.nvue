@@ -1,0 +1,158 @@
+<template>
+	<div class="container">
+		<view class="top">
+			<input class="input" placeholder="Channel ID" @input="replaceInput" v-model="channelId" />
+			<button type="primary" @click="isJoined ? leaveChannel() : joinChannel()">{{`${isJoined ? 'Leave' : 'Join'} channel`}}</button>
+		</view>
+		<view class="container">
+			<rtc-surface-view v-if="engine" class="local" :uid="0"></rtc-surface-view>
+			<scroll-view class="remoteContainer" scroll-x="true">
+				<view class="remote" v-for="(item, index) in remoteUid" :key="index">
+					<rtc-surface-view class="remote" :uid="item" :zOrderMediaOverlay="true"></rtc-surface-view>
+				</view>
+			</scroll-view>
+		</view>
+		<view class="float">
+			<button type="primary" @click="switchCamera">{{`Camera ${isSwitchCamera ? 'front' : 'rear'}`}}</button>
+		</view>
+	</div>
+</template>
+
+<script>
+	import config from '@/common/agora.config';
+	import permision from "@/js_sdk/wa-permission/permission";
+
+	import RtcEngine, {
+		RtcChannel
+	} from '../../components/Agora-RTC-JS/index';
+	import {
+		ClientRole,
+		ChannelProfile
+	} from '../../components/Agora-RTC-JS/common/Enums';
+	import RtcSurfaceView from '../../components/Agora-RTC-JS/RtcSurfaceView';
+
+	export default {
+		components: {
+			RtcSurfaceView: RtcSurfaceView
+		},
+		data() {
+			return {
+				engine: undefined,
+				channelId: config.channelId,
+				isJoined: false,
+				remoteUid: [],
+				isSwitchCamera: true,
+				isSwitchRender: true
+			}
+		},
+		onLoad() {
+			console.log('onLoad');
+			this.initEngine();
+		},
+		onBackPress() {
+			console.log('onBackPress');
+			this.engine && this.engine.destroy();
+		},
+		methods: {
+			async initEngine() {
+				this.engine = await RtcEngine.create(config.appId);
+				this.addListeners();
+
+				await this.engine.enableVideo();
+				await this.engine.startPreview();
+				await this.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+				await this.engine.setClientRole(ClientRole.Broadcaster);
+			},
+			addListeners() {
+				this.engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
+					console.info('JoinChannelSuccess', channel, uid, elapsed);
+					this.isJoined = true;
+				});
+				this.engine.addListener('UserJoined', (uid, elapsed) => {
+					console.info('UserJoined', uid, elapsed);
+					this.remoteUid = [...this.remoteUid, uid];
+				});
+				this.engine.addListener('UserOffline', (uid, reason) => {
+					console.info('UserOffline', uid, reason);
+					this.remoteUid = this.remoteUid.filter((value) => value !== uid);
+				});
+				this.engine.addListener('LeaveChannel', (stats) => {
+					console.info('LeaveChannel', stats);
+					this.isJoined = false;
+					this.remoteUid = [];
+				});
+			},
+			async joinChannel() {
+				if (uni.getSystemInfoSync().platform === 'android') {
+					await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
+					await permision.requestAndroidPermission('android.permission.CAMERA');
+				}
+
+				await this.engine &&
+					this.engine.joinChannel(
+						config.token,
+						this.channelId,
+						null,
+						config.uid
+					);
+			},
+			async leaveChannel() {
+				await this.engine && this.engine.leaveChannel();
+			},
+			switchCamera() {
+				this.engine &&
+					this.engine.switchCamera()
+					.then(() => {
+						this.isSwitchCamera = !this.isSwitchCamera;
+					})
+					.catch((err) => {
+						console.warn('switchCamera', err);
+					});
+			},
+			switchRender() {
+				this.isSwitchRender = !this.isSwitchRender;
+				this.remoteUid = this.remoteUid.reverse();
+			},
+			replaceInput(event) {
+				this.channelId = event.detail.value;
+			}
+		}
+	}
+</script>
+
+<style>
+	.container {
+		flex: 1;
+	}
+
+	.float {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+	}
+
+	.top {
+		/* width: 100%; */
+	}
+
+	.input {
+		borderColor: gray;
+		borderWidth: 1;
+	}
+
+	.local {
+		flex: 1;
+	}
+
+	.remoteContainer {
+		position: absolute;
+		left: 0;
+		top: 0;
+		flex-direction: row;
+	}
+
+	.remote {
+		width: 120;
+		height: 120;
+	}
+</style>

@@ -1,0 +1,112 @@
+<template>
+	<view class="container">
+		<view class="top">
+			<input id="channelId" class="input" placeholder="Channel ID" @input="replaceInput" v-model="channelId" />
+			<input id="uid" class="input" placeholder="String User ID" @input="replaceInput" v-model="stringUid" />
+			<button type="primary" @click="isJoined ? leaveChannel() : joinChannel()">{{`${isJoined ? 'Leave' : 'Join'} channel`}}</button>
+		</view>
+		<view class="float">
+			<button type="primary" @click="getUserInfo">{{'Get userInfo'}}</button>
+		</view>
+	</view>
+</template>
+
+<script>
+	import config from '@/common/agora.config.js';
+	import RtcEngine, {
+		RtcChannel
+	} from '../../components/Agora-RTC-JS/index';
+	import {
+		ClientRole,
+		ChannelProfile
+	} from '../../components/Agora-RTC-JS/common/Enums';
+
+	export default {
+		data() {
+			return {
+				engine: undefined,
+				channelId: config.channelId,
+				stringUid: config.stringUid,
+				isJoined: false
+			}
+		},
+		onLoad() {
+			console.log('onLoad');
+			this.initEngine();
+		},
+		onBackPress() {
+			console.log('onBackPress');
+			this.engine && this.engine.destroy();
+		},
+		methods: {
+			async initEngine() {
+				this.engine = await RtcEngine.create(config.appId);
+				this.addListeners();
+
+				await this.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+				await this.engine.setClientRole(ClientRole.Broadcaster);
+			},
+			addListeners() {
+				this.engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
+					console.info('JoinChannelSuccess', channel, uid, elapsed);
+					this.isJoined = true;
+				});
+				this.engine.addListener('LeaveChannel', (stats) => {
+					console.info('LeaveChannel', stats);
+					this.isJoined = false;
+				});
+			},
+			async joinChannel() {
+				await this.engine.joinChannelWithUserAccount(
+					config.token,
+					this.channelId,
+					this.stringUid
+				);
+			},
+			async leaveChannel() {
+				await this.engine && this.engine.leaveChannel();
+			},
+			getUserInfo() {
+				this.engine &&
+					this.engine.getUserInfoByUserAccount(this.stringUid)
+					.then((userInfo) => {
+						console.debug('getUserInfoByUserAccount', userInfo);
+						uni.showModal({
+							title: JSON.stringify(userInfo)
+						});
+					})
+					.catch((err) => {
+						console.error('getUserInfoByUserAccount', err);
+					});
+			},
+			replaceInput(event) {
+				if (event.target.id === 'channelId') {
+					this.channelId = event.detail.value;
+				} else if (event.target.id === 'uid') {
+					this.stringUid = event.detail.value;
+				}
+			}
+		}
+	}
+</script>
+
+<style>
+	.container {
+		flex: 1;
+	}
+
+	.float {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+	}
+
+	.top {
+		/* width: 100%; */
+	}
+
+	.input {
+		borderColor: gray;
+		borderWidth: 1;
+	}
+</style>

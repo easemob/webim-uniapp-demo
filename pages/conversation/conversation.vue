@@ -69,6 +69,7 @@
         </view>
       </view>
       <!-- 普通会话 -->
+	  <button @click="enteryRtc">进入音视频页面</button>
       <view
         v-for="(item, index) in conversationState.conversationList"
         :key="index"
@@ -320,7 +321,11 @@ const deleteConversation = async (eventItem) => {
     console.log('删除失败', error);
   }
 };
-
+const enteryRtc = ()=>{
+	uni.navigateTo({
+		url:"/pages/Basic/JoinChannelVideo"
+	})
+}
 /* 搜索会话相关逻辑 */
 //开启搜索模式
 const openSearch = () => {

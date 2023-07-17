@@ -1,0 +1,124 @@
+<template>
+	<view class="container">
+		<view class="top">
+			<input class="input" placeholder="Channel ID" @input="replaceInput" v-model="channelId" />
+			<button type="primary" @click="isJoined ? leaveChannel() : joinChannel()">{{`${isJoined ? 'Leave' : 'Join'} channel`}}</button>
+		</view>
+		<view class="float">
+			<button type="primary" @click="switchMicrophone">{{`Microphone ${openMicrophone ? 'on' : 'off'}`}}</button>
+			<button type="primary" @click="switchSpeakerphone">{{enableSpeakerphone ? 'Speakerphone' : 'Earpiece'}}</button>
+		</view>
+	</view>
+</template>
+
+<script>
+	import config from '@/common/agora.config';
+	import permision from "@/js_sdk/wa-permission/permission";
+
+	import RtcEngine, {
+		RtcChannel
+	} from '../../components/Agora-RTC-JS/index';
+	import {
+		ClientRole,
+		ChannelProfile
+	} from '../../components/Agora-RTC-JS/common/Enums';
+
+	export default {
+		data() {
+			return {
+				engine: undefined,
+				channelId: config.channelId,
+				isJoined: false,
+				openMicrophone: true,
+				enableSpeakerphone: true
+			}
+		},
+		onLoad() {
+			console.log('onLoad');
+			this.initEngine();
+		},
+		onBackPress() {
+			console.log('onBackPress');
+			this.engine && this.engine.destroy();
+		},
+		methods: {
+			async initEngine() {
+				this.engine = await RtcEngine.create(config.appId);
+				this.addListeners();
+
+				await this.engine.enableAudio();
+				await this.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+				await this.engine.setClientRole(ClientRole.Broadcaster);
+			},
+			addListeners() {
+				this.engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
+					console.info('JoinChannelSuccess', channel, uid, elapsed);
+					this.isJoined = true;
+				});
+				this.engine.addListener('LeaveChannel', (stats) => {
+					console.info('LeaveChannel', stats);
+					this.isJoined = false;
+				});
+			},
+			async joinChannel() {
+				if (uni.getSystemInfoSync().platform === 'android') {
+					await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
+				}
+
+				await this.engine.joinChannel(
+					config.token,
+					this.channelId,
+					null,
+					config.uid
+				);
+			},
+			async leaveChannel() {
+				await this.engine && this.engine.leaveChannel();
+			},
+			switchMicrophone() {
+				this.engine &&
+					this.engine.enableLocalAudio(!this.openMicrophone)
+					.then(() => {
+						this.openMicrophone = !this.openMicrophone;
+					})
+					.catch((err) => {
+						console.warn('enableLocalAudio', err);
+					});
+			},
+			switchSpeakerphone() {
+				this.engine &&
+					this.engine.setEnableSpeakerphone(!this.enableSpeakerphone)
+					.then(() => {
+						this.enableSpeakerphone = !this.enableSpeakerphone;
+					})
+					.catch((err) => {
+						console.warn('setEnableSpeakerphone', err);
+					});
+			},
+			replaceInput(event) {
+				this.channelId = event.detail.value;
+			}
+		}
+	}
+</script>
+
+<style>
+	.container {
+		flex: 1;
+	}
+
+	.float {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+	}
+
+	.top {
+		/* width: 100%; */
+	}
+
+	.input {
+		borderColor: gray;
+		borderWidth: 1;
+	}
+</style>

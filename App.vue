@@ -42,11 +42,8 @@ export default {
       loginStore.setLoginUserBaseInfos({ loginUserId: finalLoginUserId });
       loginStore.setLoginStatus(true);
       uni.hideLoading();
-      //   uni.redirectTo({
-      //     url: '../home/index?myName=' + finalLoginUserId,
-      //   });
       uni.redirectTo({
-        url: '../testNvue/JoinChannelVideo',
+        url: '../home/index?myName=' + finalLoginUserId,
       });
     };
     //IM断开连接

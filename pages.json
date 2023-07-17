@@ -137,7 +137,7 @@
       }
     },
 	{
-		"path": "pages/testNvue/JoinChannelVideo",
+		"path": "pages/Basic/JoinChannelVideo",
 		"style": {
 			"navigationBarTitleText": "JoinChannelVideo"
 		}
