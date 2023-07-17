@@ -19,7 +19,6 @@ export const useInitCallKit = () => {
   const setCallKitClient = (EMClient, CreateMsgFun) => {
     CallKitEMClient = EMClient;
     CallKitCreateMsgFun = CreateMsgFun;
-    console.log('setCallKitClient', CallKitEMClient, CallKitCreateMsgFun);
     mountSignallingListener();
   };
   //挂载Callkit信令相关监听

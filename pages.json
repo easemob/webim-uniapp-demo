@@ -135,7 +135,13 @@
           }
         }
       }
-    }
+    },
+	{
+		"path": "pages/testNvue/JoinChannelVideo",
+		"style": {
+			"navigationBarTitleText": "JoinChannelVideo"
+		}
+	}
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

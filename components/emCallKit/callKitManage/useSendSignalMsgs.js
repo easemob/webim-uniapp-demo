@@ -2,7 +2,6 @@
 import { CALL_ACTIONS_TYPE, MSG_TYPE } from '../contants';
 const action = 'rtcCall';
 const useSendSignalMsgs = (EMClient, EMCreateMsg) => {
-  console.log('useSendSignalMsgs', EMClient, EMCreateMsg);
   //发送通知弹出待接听窗口信令
   const sendAlertMsg = (payload) => {
     const { from, ext } = payload;

@@ -22,6 +22,8 @@ const callKitStatus = reactive({
   //被邀请对象 单人为string 多人为array
   inviteTarget: null,
 });
+//CallKit timer
+const callKitTimer = ref(null);
 const useManageChannle = () => {
   /* localClientStatus 监听处理 */
   watch(
@@ -126,6 +128,31 @@ const useManageChannle = () => {
     };
     console.log('%c将要更新的信息内容为', 'color:red', params);
     Object.assign(callKitStatus.channelInfos, params);
+  };
+  /* CallKit Timer */
+  //用作邀请信息发送之后发起计时30s。
+  const startCallKitTimer = () => {
+    if (callKitTimer.value) {
+      clearTimeout(callKitTimer.value);
+      callKitTimer.value = null;
+    }
+    //对外发布应答事件
+    callKitTimer.value = setTimeout(() => {
+      const targetId = callKitStatus.inviteTarget;
+      //发送cannel信令
+      SignalMsgs.sendCannelMsg({
+        targetId,
+        callId: callKitStatus.channelInfos.callId,
+      });
+      const eventParams = {
+        type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.TIMEOUT],
+        ext: { message: '通话超时未接听' },
+        callType: callKitStatus.channelInfos.callType,
+        eventHxId: targetId,
+      };
+      PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+      updateLocalStatus(CALLSTATUS.idle); //更改状态为闲置
+    }, 30000);
   };
   return {
     callKitStatus,

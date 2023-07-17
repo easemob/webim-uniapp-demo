@@ -1,0 +1,87 @@
+<template>
+	<view class="single_rtc_container">
+		<view class="container">
+			<rtc-surface-view class="local" :uid="0"></rtc-surface-view>
+
+		</view>
+	</view>
+</template>
+
+<script setup>
+	import {
+		onMounted
+	} from 'vue'
+	import RtcSurfaceView from '../../Agora-RTC-JS/RtcSurfaceView';
+	import useBasicAgoraRtc from '../callKitManage/useBasicAgoraRtc.js';
+	import {
+		requestRtcChannelToken
+	} from '../utils/request.js'
+	import {
+		useInitCallKit
+	} from '../index.js'
+	const {
+		initRtcClient,
+		joinRtcChannel
+	} = useBasicAgoraRtc();
+	const {
+		CallKitEMClient
+	} = useInitCallKit()
+	initRtcClient();
+	const join = async () => {
+		const {
+			accessToken,
+			agoraUserId
+		} = await requestRtcChannelToken(CallKitEMClient, {
+			channelName: '2_7c82f6a9-b807-433c-930f-7f7c2ea4afc3'
+		})
+		joinRtcChannel(accessToken, '2_7c82f6a9-b807-433c-930f-7f7c2ea4afc3', agoraUserId);
+	}
+	setTimeout((
+
+	) => {
+		console.log('>>>>>执行测试加入频道')
+		join()
+	}, 1000)
+</script>
+
+<style>
+	.single_rtc_container{
+		width: 100vw;
+		height: 100vh;
+		background-color: aqua;
+	}
+	.container {
+		flex: 1;
+	}
+
+	.float {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+	}
+
+	.top {
+		/* width: 100%; */
+	}
+
+	.input {
+		borderColor: gray;
+		borderWidth: 1;
+	}
+
+	.local {
+		flex: 1;
+	}
+
+	.remoteContainer {
+		position: absolute;
+		left: 0;
+		top: 0;
+		flex-direction: row;
+	}
+
+	.remote {
+		width: 120;
+		height: 120;
+	}
+</style>
