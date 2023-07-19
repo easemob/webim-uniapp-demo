@@ -137,10 +137,10 @@
       }
     },
 	{
-		"path": "pages/Basic/JoinChannelVideo",
-		"style": {
-			"navigationBarTitleText": "JoinChannelVideo"
-		}
+		"path": "pages/emCallKitPages/alertScreen"
+	},
+	{
+		"path": "pages/emCallKitPages/singleCall"
 	}
   ],
   "globalStyle": {

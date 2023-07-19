@@ -13,7 +13,6 @@
       :tab-type="isActiveComps"
       @switchHomeComponent="switchHomeComponent"
     />
-    <em-call-kit />
   </view>
 </template>
 
@@ -26,8 +25,7 @@ import Tabbar from '@/layout/tabbar';
 import Conversation from '@/pages/conversation/conversation.vue';
 import Contacts from '@/pages/contacts/contacts.vue';
 import Me from '@/pages/me/me.vue';
-/* Agora */
-import EmCallKit from '@/components/emCallKit/index.vue';
+
 const isActiveComps = ref('conversation');
 
 const switchHomeComponent = (type) => {
@@ -51,7 +49,6 @@ onLoad((options) => {
     switchHomeComponent(options.page);
   }
   //根据当前SDK状态判断是否需要重连
-
   if (!getEMClientSocketState()) {
     actionEMReconnect();
   }

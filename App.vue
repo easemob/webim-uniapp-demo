@@ -12,6 +12,7 @@ import { useContactsStore } from '@/stores/contacts';
 import { EMClient, EaseSDK } from './EaseIM';
 /* Agora */
 import { useInitCallKit } from '@/components/emCallKit';
+import useCallKitEvent from '@/components/emCallKit/callKitManage/useCallKitEvent';
 export default {
   setup() {
     const loginStore = useLoginStore();
@@ -168,6 +169,20 @@ export default {
     /* Agora */
     const { setCallKitClient } = useInitCallKit();
     setCallKitClient(EMClient, EaseSDK.message);
+    //监听callkit状态变化展示对应的页面
+    const { EVENT_NAME, CALLKIT_EVENT_CODE, SUB_CHANNEL_EVENT } =
+      useCallKitEvent();
+    SUB_CHANNEL_EVENT(EVENT_NAME, (params) => {
+      const { type, ext, callType, eventHxId } = params;
+      console.log('>>>>>>订阅到callkit事件发布', params);
+      //弹出待接听事件
+      if (type.code === CALLKIT_EVENT_CODE.ALERT_SCREEN) {
+        console.log('>>>>>>监听到对应code', type.code);
+        uni.navigateTo({
+          url: '../emCallKitPages/alertScreen',
+        });
+      }
+    });
   },
 };
 </script>

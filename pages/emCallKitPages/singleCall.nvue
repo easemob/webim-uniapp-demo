@@ -19,35 +19,33 @@
 </template>
 
 <script>
-	// import config from '@/common/agora.config';
-	import permision from "@/js_sdk/wa-permission/permission";
+	import { AGORA_APP_ID } from '@/components/emCallKit/contants/index.js';
+	import {requestAndroidPermission} from "@/components/emCallKit/utils/permision.js";
 
 	import RtcEngine, {
 		RtcChannel
-	} from '../../components/Agora-RTC-JS/index';
+	} from '@/components/Agora-RTC-JS/index';
 	import {
 		ClientRole,
 		ChannelProfile
-	} from '../../components/Agora-RTC-JS/common/Enums';
-	import RtcSurfaceView from '../../components/Agora-RTC-JS/RtcSurfaceView';
-	const config =  {
-	// Get your own App ID at https://dashboard.agora.io/
-	"appId": '15cb0d28b87b425ea613fc46f7c9f974',
-	// Please refer to https://docs.agora.io/en/Agora%20Platform/token
-	"token": '00615cb0d28b87b425ea613fc46f7c9f974IABq9SfxC7Ie2oALcPUMnsecTVJomKuNGB4u3jrgxVXlWdk7TSf5UE7pIgBfzKCGwUC2ZAQAAQDBQLZkAgDBQLZkAwDBQLZkBADBQLZk',
-	"channelId": '2_8878613a-fc82-4998-a83b-a5973f1a8530',
-	"uid": 1521452460,
-	"stringUid": '1521452460'
-}
+	} from '@/components/Agora-RTC-JS/common/Enums';
+	import RtcSurfaceView from '@/components/Agora-RTC-JS/RtcSurfaceView';
 
 	export default {
 		components: {
 			RtcSurfaceView: RtcSurfaceView
 		},
+		props:{
+			config:{
+				type:Object,
+				required:true,
+				default:()=>({})
+			}
+		},
 		data() {
 			return {
 				engine: undefined,
-				channelId: config.channelId,
+				channelId: '',
 				isJoined: false,
 				remoteUid: [],
 				isSwitchCamera: true,
@@ -64,7 +62,7 @@
 		},
 		methods: {
 			async initEngine() {
-				this.engine = await RtcEngine.create(config.appId);
+				this.engine = await RtcEngine.create(AGORA_APP_ID);
 				this.addListeners();
 				if (uni.getSystemInfoSync().platform === 'android') {
 					await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');

@@ -1,6 +1,12 @@
 /* 用来管理频道内所有的状态或参数 */
 import { ref, reactive, watch } from 'vue';
 import { CALLSTATUS, CALL_TYPES, CALL_TYPE } from '../contants';
+import useCallKitEvent from './useCallKitEvent.js';
+import {
+  CALLKIT_EVENT_CODE,
+  CALLKIT_EVENT_TYPE,
+} from '../contants/callKitEvent';
+const { EVENT_NAME, PUB_CHANNEL_EVENT } = useCallKitEvent();
 //弹出组件类型
 const callComponents = ref('');
 //频道基础信息
@@ -81,6 +87,13 @@ const useManageChannle = () => {
         break;
       case CALLSTATUS.receivedConfirmRing:
         console.log('>>>>新状态为弹出框，执行弹出待确认框');
+        const eventParams = {
+          type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.ALERT_SCREEN],
+          ext: { message: '可以弹出通话接听UI组件' },
+          callType: callKitStatus.channelInfos.callType,
+          eventHxId: '',
+        };
+        PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
         break;
       case CALLSTATUS.answerCall:
         console.log('>>>>>可以弹出通话接听UI组件');

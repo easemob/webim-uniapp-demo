@@ -255,10 +255,62 @@ export const useInitCallKit = () => {
           break;
       }
     };
+    //处理接听挂断
+  };
+  //发送接听或者拒接信令
+  const handleSendAnswerMsg = (sendType) => {
+    const { sendAnswerMsg } = useSendSignalMsgs(
+      CallKitEMClient,
+      CallKitCreateMsgFun
+    );
+    const channelInfos = callKitStatus.channelInfos;
+    const payload = {
+      targetId: channelInfos.callerIMName,
+      sendBody: {
+        callerDevId: channelInfos.callerDevId,
+        callId: channelInfos.callId,
+      },
+    };
+    console.log('?????????开始发送应答信令');
+    if (sendType === ANSWER_TYPE.ACCPET) {
+      sendAnswerMsg(payload, ANSWER_TYPE.ACCPET);
+      updateLocalStatus(CALLSTATUS.answerCall); //更改状态为已应答
+      console.log('>>>>开始发送接听信令', payload);
+      //对外频道接听事件发布事件
+      const eventParams = {
+        type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLEE_ACCPET],
+        ext: { message: '通话已接听' },
+        callType: callKitStatus.channelInfos.callType,
+        eventHxId: channelInfos.callerIMName,
+      };
+      //如果是多人就取对应群组ID
+      if (callKitStatus.channelInfos.callType === 2) {
+        eventParams.eventHxId = callKitStatus.channelInfos.groupId;
+      }
+      PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+    }
+    if (sendType === ANSWER_TYPE.REFUSE) {
+      sendAnswerMsg(payload, ANSWER_TYPE.REFUSE);
+      updateLocalStatus(CALLSTATUS.idle); //更改状态为闲置
+      console.log('>>>>开始发送挂断信令');
+      //对外频道接听事件发布事件
+      const eventParams = {
+        type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLEE_REFUSE],
+        ext: { message: '已拒绝通话邀请' },
+        callType: callKitStatus.channelInfos.callType,
+        eventHxId: channelInfos.callerIMName,
+      };
+      //如果是多人就取对应群组ID
+      if (callKitStatus.channelInfos.callType === 2) {
+        eventParams.eventHxId = callKitStatus.channelInfos.groupId;
+      }
+      PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+    }
   };
   return {
     CallKitEMClient,
     CallKitCreateMsgFun,
     setCallKitClient,
+    handleSendAnswerMsg,
   };
 };
