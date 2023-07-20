@@ -1,12 +1,11 @@
-import useManageChannel from './callKitManage/useManageChannel';
+import { watch, computed } from 'vue';
+import useAgoraChannelStore from './stores/channelManger';
 import { CALLSTATUS, ANSWER_TYPE, CALL_ACTIONS_TYPE } from './contants';
 import useCallKitEvent from './callKitManage/useCallKitEvent';
 /* 频道信令发送 */
 import useSendSignalMsgs from './callKitManage/useSendSignalMsgs';
 let CallKitEMClient = null;
 let CallKitCreateMsgFun = null;
-const { callKitStatus, updateChannelInfos, updateLocalStatus } =
-  useManageChannel();
 const {
   EVENT_NAME,
   EVENT_LEVEL,
@@ -14,7 +13,75 @@ const {
   CALLKIT_EVENT_CODE,
   PUB_CHANNEL_EVENT,
 } = useCallKitEvent();
+//监听本地状态改变做出不同的状态处理。
 export const useInitCallKit = () => {
+  const agoraChannelStore = useAgoraChannelStore();
+  const { updateChannelInfos, updateLocalStatus } = agoraChannelStore;
+  const callKitStatus = computed(() => agoraChannelStore.callKitStatus);
+  //监听频道状态变更做出对应操作。
+  watch(
+    () => callKitStatus.value.localClientStatus,
+    (newClientStatus, oldClientStatus) => {
+      handleClientStatusForAction(newClientStatus);
+    }
+  );
+  //处理不同clientstatus执行不同的操作
+  const handleClientStatusForAction = (clientStatus) => {
+    switch (clientStatus) {
+      case CALLSTATUS.idle:
+        console.log('%c >>>监听新状态为空闲处理，执行初始化', 'color:red');
+        //   initChannelInfos();
+        agoraChannelStore.initChannelInfos();
+        break;
+      case CALLSTATUS.inviting:
+        if (callKitStatus.value.channelInfos.callType <= 1) {
+          console.log('>>>>>>>展示单人音视频组件');
+          //   callComponents.value = 'singleCall';
+        }
+        if (callKitStatus.value.channelInfos.callType === 2) {
+          console.log('》》》》》展示多人音视频组件');
+          //   callComponents.value = 'multiCall';
+        }
+        console.log('>>>>>可以展开邀请窗口');
+        break;
+      case CALLSTATUS.receivedConfirmRing:
+        console.log('>>>>新状态为弹出框，执行弹出待确认框');
+        const eventParams = {
+          type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.ALERT_SCREEN],
+          ext: { message: '可以弹出通话接听UI组件' },
+          callType: callKitStatus.value.channelInfos.callType,
+          eventHxId: '',
+        };
+        PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+        break;
+      case CALLSTATUS.answerCall:
+        console.log('>>>>>可以弹出通话接听UI组件');
+        if (callKitStatus.value.channelInfos.callType <= 1) {
+          console.log('>>>>>>>展示单人音视频组件');
+          //   callComponents.value = 'singleCall';
+        }
+        if (callKitStatus.value.channelInfos.callType === 2) {
+          console.log('》》》》》展示多人音视频组件');
+          //   callComponents.value = 'multiCall';
+        }
+        break;
+      case CALLSTATUS.confirmCallee:
+        {
+          console.log('%c >>>>>可以加入房间了', 'color:green;');
+          console.log(
+            '++++++将入的频道类型是',
+            callKitStatus.value.channelInfos.callType
+          );
+          console.log(
+            '++++++频道名是',
+            callKitStatus.value.channelInfos.channelName
+          );
+        }
+        break;
+      default:
+        break;
+    }
+  };
   //初始化EMClient之Callkit内
   const setCallKitClient = (EMClient, CreateMsgFun) => {
     CallKitEMClient = EMClient;
@@ -24,10 +91,13 @@ export const useInitCallKit = () => {
   //挂载Callkit信令相关监听
   const mountSignallingListener = () => {
     console.log('>>>>>>>callkit 监听已挂载');
-    const { sendAnswerMsg, sendAlertMsg } = useSendSignalMsgs(
-      CallKitEMClient,
-      CallKitCreateMsgFun
-    );
+    const { sendAnswerMsg, sendAlertMsg } = useSendSignalMsgs();
+    CallKitEMClient.addEventHandler('callkitConnected', {
+      onConnected: () => {
+        //连接成功初始化emClient信息
+        agoraChannelStore.initEmClientInfos(CallKitEMClient);
+      },
+    });
     CallKitEMClient.addEventHandler('callkitSignal', {
       onTextMessage: (message) => {
         const { ext } = message;
@@ -50,7 +120,7 @@ export const useInitCallKit = () => {
       //非空闲回复busy
       console.log('>>>>>>>收到邀请信息');
       //非空闲回复busy
-      if (callKitStatus.localClientStatus > CALLSTATUS.idle) {
+      if (callKitStatus.value.localClientStatus > CALLSTATUS.idle) {
         console.log('>>>>>回复忙碌');
         const payload = {
           targetId: from,
@@ -76,9 +146,9 @@ export const useInitCallKit = () => {
       const { calleeDevId, callerDevId } = cmdMsgBody;
       const clientResource = CallKitEMClient.context.jid.clientResource;
       const { action } = cmdMsgBody;
-      const { localClientStatus, channelInfos } = callKitStatus;
+      const { localClientStatus, channelInfos } = callKitStatus.value;
       //当前有效会议ID
-      const currentCallKitCallId = callKitStatus.channelInfos.callId;
+      const currentCallKitCallId = callKitStatus.value.channelInfos.callId;
       //返回给对方的confirmRing状态
       let status = true;
       const params = {
@@ -134,7 +204,8 @@ export const useInitCallKit = () => {
             if (calleeDevId !== clientResource) return; //【多端情况】被叫方设备id 如果不为当前用户登陆设备ID，则不处理。
             if (
               !cmdMsgBody.status &&
-              callKitStatus.localClientStatus < CALLSTATUS.receivedConfirmRing
+              callKitStatus.value.localClientStatus <
+                CALLSTATUS.receivedConfirmRing
             ) {
               updateLocalStatus(CALLSTATUS.idle); //重置为闲置状态
               //todo 设置为初始化状态
@@ -155,22 +226,22 @@ export const useInitCallKit = () => {
               sendBody: cmdMsgBody,
             };
             if (
-              !callKitStatus.channelInfos.calleeDevId &&
-              callKitStatus.channelInfos.callType !== 2
+              !callKitStatus.value.channelInfos.calleeDevId &&
+              callKitStatus.value.channelInfos.callType !== 2
             ) {
               //如果calleeDevId不存在，并且非多人音视频模式，主动更新频道信息
               if (cmdMsgBody.videoToVoice) {
-                callKitStatus.channelInfos.callType = 0;
+                callKitStatus.value.channelInfos.callType = 0;
               }
               updateChannelInfos(msgBody);
             } else if (
-              callKitStatus.channelInfos.calleeDevId !==
+              callKitStatus.value.channelInfos.calleeDevId !==
                 cmdMsgBody.calleeDevId &&
-              callKitStatus.channelInfos.callType !== 2
+              callKitStatus.value.channelInfos.callType !== 2
             ) {
               console.log(
-                'callKitStatus.channelInfos.calleeDevId',
-                callKitStatus.channelInfos.calleeDevId
+                'callKitStatus.value.channelInfos.calleeDevId',
+                callKitStatus.value.channelInfos.calleeDevId
               );
               //如果存在频道信息，但是与待呼叫确认的calleeDevId不一致直接发送拒绝应答。
               params.sendBody.result = ANSWER_TYPE.REFUSE;
@@ -179,10 +250,10 @@ export const useInitCallKit = () => {
             updateLocalStatus(CALLSTATUS.confirmCallee);
             if (cmdMsgBody.result !== ANSWER_TYPE.ACCPET) {
               console.log(
-                'callKitStatus.channelInfos.callType ',
-                callKitStatus.channelInfos.callType
+                'callKitStatus.value.channelInfos.callType ',
+                callKitStatus.value.channelInfos.callType
               );
-              if (callKitStatus.channelInfos.callType !== 2) {
+              if (callKitStatus.value.channelInfos.callType !== 2) {
                 //无论对方是忙碌还是拒接都讲通话状态更改为闲置。
                 if (cmdMsgBody.result === ANSWER_TYPE.BUSY) {
                   eventParams.type =
@@ -194,7 +265,8 @@ export const useInitCallKit = () => {
                     CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLEE_REFUSE];
                   eventParams.ext = { message: '对方拒绝接听' };
                 }
-                eventParams.callType = callKitStatus.channelInfos.callType;
+                eventParams.callType =
+                  callKitStatus.value.channelInfos.callType;
                 eventParams.eventHxId = msgBody.from || '';
                 PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
                 //修改当前状态为空闲
@@ -213,7 +285,8 @@ export const useInitCallKit = () => {
                 eventParams.type =
                   CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.OTHER_HANDLE];
                 eventParams.ext = { message: '已在其他设备处理' };
-                eventParams.callType = callKitStatus.channelInfos.callType;
+                eventParams.callType =
+                  callKitStatus.value.channelInfos.callType;
                 eventParams.eventHxId = msgBody.from || '';
                 PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
                 return;
@@ -223,7 +296,7 @@ export const useInitCallKit = () => {
             // 防止通话中收到 busy refuse时挂断
             if (
               cmdMsgBody.result !== ANSWER_TYPE.ACCPET &&
-              callKitStatus.localClientStatus !== CALLSTATUS.confirmCallee
+              callKitStatus.value.localClientStatus !== CALLSTATUS.confirmCallee
             ) {
               return updateLocalStatus(CALLSTATUS.idle); //更改状态为闲置
             }
@@ -233,20 +306,21 @@ export const useInitCallKit = () => {
           break;
         case CALL_ACTIONS_TYPE.CANCEL: {
           if (msgBody.from === CallKitEMClient.user) return; //【多端情况】被叫方设备id 如果不为当前用户登陆设备ID，则不处理。
-          if (msgBody.from === callKitStatus.channelInfos.callerIMName)
+          if (msgBody.from === callKitStatus.value.channelInfos.callerIMName)
             return updateLocalStatus(CALLSTATUS.idle);
           eventParams.type =
             CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLER_CANCEL];
           eventParams.ext = { message: '对方取消呼叫' };
-          eventParams.callType = callKitStatus.channelInfos.callType;
+          eventParams.callType = callKitStatus.value.channelInfos.callType;
           eventParams.eventHxId = msgBody.from || '';
           PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
           break;
         }
         case CALL_ACTIONS_TYPE.VIDEO_TO_VOICE: {
           console.log('视频转语音通知');
-          if (cmdMsgBody.callId !== callKitStatus.channelInfos.callType) return;
-          callKitStatus.channelInfos.callType = CALL_TYPES.SINGLE_VOICE;
+          if (cmdMsgBody.callId !== callKitStatus.value.channelInfos.callType)
+            return;
+          callKitStatus.value.channelInfos.callType = CALL_TYPES.SINGLE_VOICE;
           break;
         }
 
@@ -259,11 +333,8 @@ export const useInitCallKit = () => {
   };
   //发送接听或者拒接信令
   const handleSendAnswerMsg = (sendType) => {
-    const { sendAnswerMsg } = useSendSignalMsgs(
-      CallKitEMClient,
-      CallKitCreateMsgFun
-    );
-    const channelInfos = callKitStatus.channelInfos;
+    const { sendAnswerMsg } = useSendSignalMsgs();
+    const channelInfos = callKitStatus.value.channelInfos;
     const payload = {
       targetId: channelInfos.callerIMName,
       sendBody: {
@@ -280,12 +351,12 @@ export const useInitCallKit = () => {
       const eventParams = {
         type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLEE_ACCPET],
         ext: { message: '通话已接听' },
-        callType: callKitStatus.channelInfos.callType,
+        callType: callKitStatus.value.channelInfos.callType,
         eventHxId: channelInfos.callerIMName,
       };
       //如果是多人就取对应群组ID
-      if (callKitStatus.channelInfos.callType === 2) {
-        eventParams.eventHxId = callKitStatus.channelInfos.groupId;
+      if (callKitStatus.value.channelInfos.callType === 2) {
+        eventParams.eventHxId = callKitStatus.value.channelInfos.groupId;
       }
       PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
     }
@@ -297,12 +368,12 @@ export const useInitCallKit = () => {
       const eventParams = {
         type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLEE_REFUSE],
         ext: { message: '已拒绝通话邀请' },
-        callType: callKitStatus.channelInfos.callType,
+        callType: callKitStatus.value.channelInfos.callType,
         eventHxId: channelInfos.callerIMName,
       };
       //如果是多人就取对应群组ID
-      if (callKitStatus.channelInfos.callType === 2) {
-        eventParams.eventHxId = callKitStatus.channelInfos.groupId;
+      if (callKitStatus.value.channelInfos.callType === 2) {
+        eventParams.eventHxId = callKitStatus.value.channelInfos.groupId;
       }
       PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
     }

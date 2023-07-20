@@ -1,163 +1,186 @@
 <template>
-	<div class="container">
-		<view class="top">
-			<input class="input" placeholder="Channel ID" @input="replaceInput" v-model="channelId" />
-			<button type="primary" @click="isJoined ? leaveChannel() : joinChannel()">{{`${isJoined ? 'Leave' : 'Join'} channel`}}</button>
-		</view>
-		<view class="container">
-			<rtc-surface-view v-if="engine" class="local" :uid="0"></rtc-surface-view>
-			<scroll-view class="remoteContainer" scroll-x="true">
-				<view class="remote" v-for="(item, index) in remoteUid" :key="index">
-					<rtc-surface-view class="remote" :uid="item" :zOrderMediaOverlay="true"></rtc-surface-view>
-				</view>
-			</scroll-view>
-		</view>
-		<view class="float">
-			<button type="primary" @click="switchCamera">{{`Camera ${isSwitchCamera ? 'front' : 'rear'}`}}</button>
-		</view>
-	</div>
+  <div class="container">
+    <view class="top">
+      <input
+        class="input"
+        placeholder="Channel ID"
+        @input="replaceInput"
+        v-model="state.channelId"
+      />
+      <button type="primary" @click="joinChannel">加入频道</button>
+    </view>
+    <view class="container">
+      <rtc-surface-view
+        v-if="state.engine"
+        class="local"
+        :uid="0"
+      ></rtc-surface-view>
+      <scroll-view class="remoteContainer" scroll-x="true">
+        <view
+          class="remote"
+          v-for="(item, index) in state.remoteUid"
+          :key="index"
+        >
+          <rtc-surface-view
+            class="remote"
+            :uid="item"
+            :zOrderMediaOverlay="true"
+          ></rtc-surface-view>
+        </view>
+      </scroll-view>
+    </view>
+    <view class="float">
+      <button type="primary" @click="switchCamera">
+        {{ `Camera ${state.isSwitchCamera ? 'front' : 'rear'}` }}
+      </button>
+    </view>
+  </div>
 </template>
 
-<script>
-	import { AGORA_APP_ID } from '@/components/emCallKit/contants/index.js';
-	import {requestAndroidPermission} from "@/components/emCallKit/utils/permision.js";
+<script setup>
+import { reactive, computed } from 'vue';
+import { onLoad, onUnload } from '@dcloudio/uni-app';
+import { AGORA_APP_ID } from '@/components/emCallKit/contants/index.js';
 
-	import RtcEngine, {
-		RtcChannel
-	} from '@/components/Agora-RTC-JS/index';
-	import {
-		ClientRole,
-		ChannelProfile
-	} from '@/components/Agora-RTC-JS/common/Enums';
-	import RtcSurfaceView from '@/components/Agora-RTC-JS/RtcSurfaceView';
+import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
+import {
+  ClientRole,
+  ChannelProfile,
+} from '@/components/Agora-RTC-JS/common/Enums';
+import RtcSurfaceView from '@/components/Agora-RTC-JS/RtcSurfaceView';
+import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
 
-	export default {
-		components: {
-			RtcSurfaceView: RtcSurfaceView
-		},
-		props:{
-			config:{
-				type:Object,
-				required:true,
-				default:()=>({})
-			}
-		},
-		data() {
-			return {
-				engine: undefined,
-				channelId: '',
-				isJoined: false,
-				remoteUid: [],
-				isSwitchCamera: true,
-				isSwitchRender: true
-			}
-		},
-		onLoad() {
-			console.log('onLoad');
-			this.initEngine();
-		},
-		onBackPress() {
-			console.log('onBackPress');
-			this.engine && this.engine.destroy();
-		},
-		methods: {
-			async initEngine() {
-				this.engine = await RtcEngine.create(AGORA_APP_ID);
-				this.addListeners();
-				if (uni.getSystemInfoSync().platform === 'android') {
-					await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
-					await permision.requestAndroidPermission('android.permission.CAMERA');
-				}
-				await this.engine.enableVideo();
-				await this.engine.startPreview();
-				await this.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
-				await this.engine.setClientRole(ClientRole.Broadcaster);
-			},
-			addListeners() {
-				this.engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
-					console.info('JoinChannelSuccess', channel, uid, elapsed);
-					this.isJoined = true;
-				});
-				this.engine.addListener('UserJoined', (uid, elapsed) => {
-					console.info('UserJoined', uid, elapsed);
-					this.remoteUid = [...this.remoteUid, uid];
-				});
-				this.engine.addListener('UserOffline', (uid, reason) => {
-					console.info('UserOffline', uid, reason);
-					this.remoteUid = this.remoteUid.filter((value) => value !== uid);
-				});
-				this.engine.addListener('LeaveChannel', (stats) => {
-					console.info('LeaveChannel', stats);
-					this.isJoined = false;
-					this.remoteUid = [];
-				});
-			},
-			async joinChannel() {
-				await this.engine &&
-					this.engine.joinChannel(
-						config.token,
-						this.channelId,
-						null,
-						config.uid
-					);
-			},
-			async leaveChannel() {
-				await this.engine && this.engine.leaveChannel();
-			},
-			switchCamera() {
-				this.engine &&
-					this.engine.switchCamera()
-					.then(() => {
-						this.isSwitchCamera = !this.isSwitchCamera;
-					})
-					.catch((err) => {
-						console.warn('switchCamera', err);
-					});
-			},
-			switchRender() {
-				this.isSwitchRender = !this.isSwitchRender;
-				this.remoteUid = this.remoteUid.reverse();
-			},
-			replaceInput(event) {
-				this.channelId = event.detail.value;
-			}
-		}
-	}
+//获取移动端授权权限
+import permision from '@/js_sdk/wa-permission/permission';
+import { requestAndroidPermission } from '@/components/emCallKit/utils/permision.js';
+//store
+const agoraChannelStore = useAgoraChannelStore();
+//channelName
+const channelName = computed(
+  () => agoraChannelStore.callKitStatus.channelInfos?.channelName
+);
+const state = reactive({
+  engine: undefined,
+  channelId: '',
+  isJoined: false,
+  remoteUid: [],
+  isSwitchCamera: true,
+  isSwitchRender: true,
+});
+const addListeners = () => {
+  state.engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
+    console.info('JoinChannelSuccess', channel, uid, elapsed);
+    state.isJoined = true;
+  });
+  state.engine.addListener('UserJoined', (uid, elapsed) => {
+    console.info('UserJoined', uid, elapsed);
+    state.remoteUid = [...state.remoteUid, uid];
+  });
+  state.engine.addListener('UserOffline', (uid, reason) => {
+    console.info('UserOffline', uid, reason);
+    state.remoteUid = state.remoteUid.filter((value) => value !== uid);
+  });
+  state.engine.addListener('LeaveChannel', (stats) => {
+    console.info('LeaveChannel', stats);
+    state.isJoined = false;
+    state.remoteUid = [];
+  });
+};
+const initEngine = async () => {
+  console.log('>>>>>>>初始化声网RTC');
+  state.engine = await RtcEngine.create(AGORA_APP_ID);
+  addListeners();
+  if (uni.getSystemInfoSync().platform === 'android') {
+    await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
+    await permision.requestAndroidPermission('android.permission.CAMERA');
+  }
+  await state.engine.enableVideo();
+  await state.engine.startPreview();
+  await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+  await state.engine.setClientRole(ClientRole.Broadcaster);
+};
+const onBackPress = () => {
+  console.log('onBackPress');
+  state.engine && state.engine.destroy();
+};
+
+const joinChannel = async () => {
+  let { accessToken, agoraUserId } =
+    await agoraChannelStore.requestRtcChannelToken();
+
+  console.log(
+    '>>>>>>频道token请求完成',
+    accessToken,
+    agoraUserId,
+    channelName.value
+  );
+  (await state.engine) &&
+    state.engine.joinChannel(accessToken, channelName.value, null, agoraUserId);
+};
+const leaveChannel = async () => {
+  (await state.engine) && state.engine.leaveChannel();
+};
+const switchCamera = () => {
+  state.engine &&
+    state.engine
+      .switchCamera()
+      .then(() => {
+        state.isSwitchCamera = !state.isSwitchCamera;
+      })
+      .catch((err) => {
+        console.warn('switchCamera', err);
+      });
+};
+const switchRender = () => {
+  state.isSwitchRender = !state.isSwitchRender;
+  state.remoteUid = state.remoteUid.reverse();
+};
+const replaceInput = (event) => {
+  state.channelId = event.detail.value;
+};
+onLoad(() => {
+  console.log('+++++++singleCall onLoad');
+  initEngine();
+});
+onUnload(() => {
+  state.engine && state.engine.destroy();
+  state.isJoined = false;
+});
 </script>
 
 <style>
-	.container {
-		flex: 1;
-	}
+.container {
+  flex: 1;
+}
 
-	.float {
-		position: absolute;
-		right: 0;
-		bottom: 0;
-	}
+.float {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
 
-	.top {
-		/* width: 100%; */
-	}
+.top {
+  /* width: 100%; */
+}
 
-	.input {
-		borderColor: gray;
-		borderWidth: 1;
-	}
+.input {
+  border-color: gray;
+  border-width: 1;
+}
 
-	.local {
-		flex: 1;
-	}
+.local {
+  flex: 1;
+}
 
-	.remoteContainer {
-		position: absolute;
-		left: 0;
-		top: 0;
-		flex-direction: row;
-	}
+.remoteContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  flex-direction: row;
+}
 
-	.remote {
-		width: 120;
-		height: 120;
-	}
+.remote {
+  width: 120;
+  height: 120;
+}
 </style>

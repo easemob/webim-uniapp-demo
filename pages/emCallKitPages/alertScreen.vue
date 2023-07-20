@@ -18,20 +18,24 @@
 <script setup>
 import { computed } from 'vue';
 import { useInitCallKit } from '@/components/emCallKit';
-import useManageChannle from '@/components/emCallKit/callKitManage/useManageChannel';
+import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
 import { ANSWER_TYPE, CALL_INVITE_TEXT } from '@/components/emCallKit/contants';
 const { handleSendAnswerMsg } = useInitCallKit();
-const { callKitStatus } = useManageChannle();
+const agoraChannelStore = useAgoraChannelStore();
 const channelInfos = computed(() => {
-  return callKitStatus.channelInfos ?? {};
+  return agoraChannelStore.callKitStatus.channelInfos ?? {};
 });
 const agreeJoinChannel = () => {
   console.log('>>>>>接听通话');
   handleSendAnswerMsg(ANSWER_TYPE.ACCPET);
+  uni.redirectTo({
+    url: '/pages/emCallKitPages/singleCall',
+  });
 };
 const refuseJoinChannel = () => {
   console.log('>>>>>拒绝接听');
   handleSendAnswerMsg(ANSWER_TYPE.REFUSE);
+  uni.navigateBack({ delta: 1 });
 };
 </script>
 

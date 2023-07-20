@@ -1,7 +1,5 @@
 // Android权限查询
-const requestAndroidPermission = function requestAndroidPermission(
-  permissionID
-) {
+const requestAndroidPermission = (permissionID) => {
   return new Promise((resolve, reject) => {
     plus.android.requestPermissions(
       [permissionID], // 理论上支持多个权限同时查询，但实际上本函数封装只处理了一个权限的情况。有需要的可自行扩展封装

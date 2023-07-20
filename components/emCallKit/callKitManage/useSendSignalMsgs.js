@@ -1,7 +1,10 @@
 /* 用来发送所有频道内信令使用 */
 import { CALL_ACTIONS_TYPE, MSG_TYPE } from '../contants';
+import { useInitCallKit } from '../index.js';
+
 const action = 'rtcCall';
-const useSendSignalMsgs = (EMClient, EMCreateMsg) => {
+const useSendSignalMsgs = () => {
+  const { CallKitEMClient, CallKitCreateMsgFun } = useInitCallKit();
   //发送通知弹出待接听窗口信令
   const sendAlertMsg = (payload) => {
     const { from, ext } = payload;
@@ -12,7 +15,7 @@ const useSendSignalMsgs = (EMClient, EMCreateMsg) => {
       action: action,
       ext: {
         action: CALL_ACTIONS_TYPE.ALERT,
-        calleeDevId: EMClient.context.jid.clientResource,
+        calleeDevId: CallKitEMClient.context.jid.clientResource,
         callerDevId: ext.callerDevId,
         callId: ext.callId,
         ts: Date.now(),
@@ -20,9 +23,9 @@ const useSendSignalMsgs = (EMClient, EMCreateMsg) => {
       },
     };
     console.log('>>>>>>>option', option);
-    const msg = EMCreateMsg.create(option);
+    const msg = CallKitCreateMsgFun.create(option);
     // 调用 `send` 方法发送该透传消息。
-    EMClient.send(msg)
+    CallKitEMClient.send(msg)
       .then((res) => {
         // 消息成功发送回调。
         console.log('answer Success', res);
@@ -47,15 +50,15 @@ const useSendSignalMsgs = (EMClient, EMCreateMsg) => {
         action: CALL_ACTIONS_TYPE.ANSWER,
         result: answerType,
         callerDevId: sendBody.callerDevId,
-        calleeDevId: EMClient.context.jid.clientResource,
+        calleeDevId: CallKitEMClient.context.jid.clientResource,
         callId: sendBody.callId,
         ts: Date.now(),
         msgType: MSG_TYPE,
       },
     };
-    const msg = EMCreateMsg.create(option);
+    const msg = CallKitCreateMsgFun.create(option);
     // 调用 `send` 方法发送该透传消息。
-    EMClient.send(msg)
+    CallKitEMClient.send(msg)
       .then((res) => {
         // 消息成功发送回调。
         console.log('answer Success', res);
