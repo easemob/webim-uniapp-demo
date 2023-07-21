@@ -1,15 +1,6 @@
 <template>
-  <div class="container">
-    <view class="top">
-      <input
-        class="input"
-        placeholder="Channel ID"
-        @input="replaceInput"
-        v-model="state.channelId"
-      />
-      <button type="primary" @click="joinChannel">加入频道</button>
-    </view>
-    <view class="container">
+  <div class="single_call_container">
+    <view class="rtc_view_container">
       <rtc-surface-view
         v-if="state.engine"
         class="local"
@@ -29,10 +20,56 @@
         </view>
       </scroll-view>
     </view>
-    <view class="float">
-      <button type="primary" @click="switchCamera">
-        {{ `Camera ${state.isSwitchCamera ? 'front' : 'rear'}` }}
-      </button>
+    <view class="rtc_control">
+      <view class="circleBoxView">
+        <view class="circleBox" @click="onSwitchLocalMicPhone">
+          <image
+            class="circleImg"
+            :src="
+              state.isSwitchLocalMicPhone
+                ? '/static/emCallKit/icon_video_microphone.png'
+                : '/static/emCallKit/icon_video_quiet.png'
+            "
+          ></image>
+          <text class="hint">麦克风</text>
+        </view>
+        <view class="circleBox" @click="onSwitchSperkerPhone">
+          <image
+            class="circleImg"
+            :src="
+              state.isSwitchSperkerPhone
+                ? '/static/emCallKit/icon_video_speaker.png'
+                : '/static/emCallKit/icon_video_speakerno.png'
+            "
+          ></image>
+          <text class="hint">扬声器</text>
+        </view>
+        <view class="circleBox" @click="onSwitchLocalCameraOpened">
+          <image
+            class="circleImg"
+            :src="
+              state.isSwitchLocalCameraOpened
+                ? '/static/emCallKit/icon_video_speaker.png'
+                : '/static/emCallKit/icon_video_speakerno.png'
+            "
+          ></image>
+          <text class="hint">摄像头</text>
+        </view>
+      </view>
+      <view class="circleBoxView">
+        <view class="circleBox" @click="onHangup">
+          <image
+            class="circleImg"
+            src="/static/emCallKit/icon_video_cancel.png"
+          ></image>
+          <text class="hint">挂断</text>
+        </view>
+      </view>
+      <image
+        class="switchCamera"
+        @click="onSwitchCamera"
+        src="/static/emCallKit/iconxiangjifanzhuan.png"
+      ></image>
     </view>
   </div>
 </template>
@@ -52,7 +89,6 @@ import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
 
 //获取移动端授权权限
 import permision from '@/js_sdk/wa-permission/permission';
-import { requestAndroidPermission } from '@/components/emCallKit/utils/permision.js';
 //store
 const agoraChannelStore = useAgoraChannelStore();
 //channelName
@@ -65,8 +101,11 @@ const state = reactive({
   isJoined: false,
   remoteUid: [],
   isSwitchCamera: true,
-  isSwitchRender: true,
+  isSwitchSperkerPhone: true,
+  isSwitchLocalMicPhone: true,
+  isSwitchLocalCameraOpened: true,
 });
+//频道监听
 const addListeners = () => {
   state.engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
     console.info('JoinChannelSuccess', channel, uid, elapsed);
@@ -86,6 +125,7 @@ const addListeners = () => {
     state.remoteUid = [];
   });
 };
+//初始化频道实例
 const initEngine = async () => {
   console.log('>>>>>>>初始化声网RTC');
   state.engine = await RtcEngine.create(AGORA_APP_ID);
@@ -98,12 +138,11 @@ const initEngine = async () => {
   await state.engine.startPreview();
   await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
   await state.engine.setClientRole(ClientRole.Broadcaster);
-};
-const onBackPress = () => {
-  console.log('onBackPress');
-  state.engine && state.engine.destroy();
+  //设置频道麦克风为扬声器模式
+  await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
 };
 
+//加入频道
 const joinChannel = async () => {
   let { accessToken, agoraUserId } =
     await agoraChannelStore.requestRtcChannelToken();
@@ -117,10 +156,12 @@ const joinChannel = async () => {
   (await state.engine) &&
     state.engine.joinChannel(accessToken, channelName.value, null, agoraUserId);
 };
-const leaveChannel = async () => {
+//挂断
+const onHangup = async () => {
   (await state.engine) && state.engine.leaveChannel();
 };
-const switchCamera = () => {
+//切换摄像头
+const onSwitchCamera = () => {
   state.engine &&
     state.engine
       .switchCamera()
@@ -131,12 +172,35 @@ const switchCamera = () => {
         console.warn('switchCamera', err);
       });
 };
-const switchRender = () => {
-  state.isSwitchRender = !state.isSwitchRender;
-  state.remoteUid = state.remoteUid.reverse();
+//切换扬声器
+const onSwitchSperkerPhone = async () => {
+  try {
+    (await state.engine) &&
+      state.engine.setEnableSpeakerphone(!state.isSwitchSperkerPhone);
+    state.isSwitchSperkerPhone = !state.isSwitchSperkerPhone;
+  } catch (error) {
+    uni.showToast({ icon: 'none', title: '扬声器切换失败！' });
+  }
 };
-const replaceInput = (event) => {
-  state.channelId = event.detail.value;
+//开启关闭本地麦克风采集
+const onSwitchLocalMicPhone = async () => {
+  try {
+    (await state.engine) &&
+      state.engine.muteLocalAudioStream(!state.isSwitchLocalMicPhone);
+    state.isSwitchLocalMicPhone = !state.isSwitchLocalMicPhone;
+  } catch (error) {
+    uni.showToast({ icon: 'none', title: '开关本地麦克风采集失败！' });
+  }
+};
+//开启关闭本地视频流采集
+const onSwitchLocalCameraOpened = async () => {
+  try {
+    (await state.engine) &&
+      state.engine.enableLocalVideo(!state.isSwitchLocalCameraOpened);
+    state.isSwitchLocalCameraOpened = !state.isSwitchLocalCameraOpened;
+  } catch (error) {
+    uni.showToast({ icon: 'none', title: '开关本地摄像头采集失败！' });
+  }
 };
 onLoad(() => {
   console.log('+++++++singleCall onLoad');
@@ -149,23 +213,13 @@ onUnload(() => {
 </script>
 
 <style>
-.container {
+.single_call_container {
   flex: 1;
+  background-color: #6f6b69;
 }
 
-.float {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
-.top {
-  /* width: 100%; */
-}
-
-.input {
-  border-color: gray;
-  border-width: 1;
+.rtc_view_container {
+  flex: 1;
 }
 
 .local {
@@ -174,13 +228,58 @@ onUnload(() => {
 
 .remoteContainer {
   position: absolute;
-  left: 0;
+  right: 0;
   top: 0;
   flex-direction: row;
 }
 
 .remote {
   width: 120;
-  height: 120;
+  height: 240;
+}
+.rtc_control {
+  width: 92%;
+  position: fixed;
+  bottom: 48rpx;
+  margin: 2% 4%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  /* #ifdef APP-PLUS-NVUE */
+  width: 680rpx;
+  margin: 36rpx;
+  /* #endif */
+}
+
+.circleBoxView {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.circleBox {
+  width: 200rpx;
+  padding: 30rpx 0;
+  margin: 10rpx;
+  align-items: center;
+  flex-direction: column;
+}
+
+.circleImg {
+  width: 128rpx;
+  height: 128rpx;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: #ffffff;
+  padding-top: 36rpx;
+}
+.switchCamera {
+  position: fixed;
+  bottom: 120rpx;
+  right: 100rpx;
+  width: 90rpx;
+  height: 90rpx;
 }
 </style>
