@@ -19,69 +19,73 @@ export const useInitCallKit = () => {
   const { updateChannelInfos, updateLocalStatus } = agoraChannelStore;
   const callKitStatus = computed(() => agoraChannelStore.callKitStatus);
   //监听频道状态变更做出对应操作。
-  watch(
-    () => callKitStatus.value.localClientStatus,
-    (newClientStatus, oldClientStatus) => {
-      handleClientStatusForAction(newClientStatus);
-    }
-  );
-  //处理不同clientstatus执行不同的操作
-  const handleClientStatusForAction = (clientStatus) => {
-    switch (clientStatus) {
-      case CALLSTATUS.idle:
-        console.log('%c >>>监听新状态为空闲处理，执行初始化', 'color:red');
-        //   initChannelInfos();
-        agoraChannelStore.initChannelInfos();
-        break;
-      case CALLSTATUS.inviting:
-        if (callKitStatus.value.channelInfos.callType <= 1) {
-          console.log('>>>>>>>展示单人音视频组件');
-          //   callComponents.value = 'singleCall';
-        }
-        if (callKitStatus.value.channelInfos.callType === 2) {
-          console.log('》》》》》展示多人音视频组件');
-          //   callComponents.value = 'multiCall';
-        }
-        console.log('>>>>>可以展开邀请窗口');
-        break;
-      case CALLSTATUS.receivedConfirmRing:
-        console.log('>>>>新状态为弹出框，执行弹出待确认框');
-        const eventParams = {
-          type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.ALERT_SCREEN],
-          ext: { message: '可以弹出通话接听UI组件' },
-          callType: callKitStatus.value.channelInfos.callType,
-          eventHxId: '',
-        };
-        PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
-        break;
-      case CALLSTATUS.answerCall:
-        console.log('>>>>>可以弹出通话接听UI组件');
-        if (callKitStatus.value.channelInfos.callType <= 1) {
-          console.log('>>>>>>>展示单人音视频组件');
-          //   callComponents.value = 'singleCall';
-        }
-        if (callKitStatus.value.channelInfos.callType === 2) {
-          console.log('》》》》》展示多人音视频组件');
-          //   callComponents.value = 'multiCall';
-        }
-        break;
-      case CALLSTATUS.confirmCallee:
-        {
-          console.log('%c >>>>>可以加入房间了', 'color:green;');
-          console.log(
-            '++++++将入的频道类型是',
-            callKitStatus.value.channelInfos.callType
-          );
-          console.log(
-            '++++++频道名是',
-            callKitStatus.value.channelInfos.channelName
-          );
-        }
-        break;
-      default:
-        break;
-    }
+  const onCallKitStatusChangeListener = () => {
+    console.log('>>>>>频道状态监听已挂载');
+    watch(
+      () => callKitStatus.value.localClientStatus,
+      (newClientStatus, oldClientStatus) => {
+        handleClientStatusForAction(newClientStatus);
+      }
+    );
+    //处理不同clientstatus执行不同的操作
+    const handleClientStatusForAction = (clientStatus) => {
+      switch (clientStatus) {
+        case CALLSTATUS.idle:
+          console.log('%c >>>监听新状态为空闲处理，执行初始化', 'color:red');
+          //   initChannelInfos();
+          agoraChannelStore.initChannelInfos();
+          break;
+        case CALLSTATUS.inviting:
+          if (callKitStatus.value.channelInfos.callType <= 1) {
+            console.log('>>>>>>>展示单人音视频组件');
+            //   callComponents.value = 'singleCall';
+          }
+          if (callKitStatus.value.channelInfos.callType === 2) {
+            console.log('》》》》》展示多人音视频组件');
+            //   callComponents.value = 'multiCall';
+          }
+          console.log('>>>>>可以展开邀请窗口');
+          break;
+        case CALLSTATUS.receivedConfirmRing:
+          console.log('>>>>新状态为弹出框，执行弹出待确认框');
+          const eventParams = {
+            type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.ALERT_SCREEN],
+            ext: { message: '可以弹出通话接听UI组件' },
+            callType: callKitStatus.value.channelInfos.callType,
+            eventHxId: '',
+          };
+          PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+          break;
+        case CALLSTATUS.answerCall:
+          console.log('>>>>>可以弹出通话接听UI组件');
+          if (callKitStatus.value.channelInfos.callType <= 1) {
+            console.log('>>>>>>>展示单人音视频组件');
+            //   callComponents.value = 'singleCall';
+          }
+          if (callKitStatus.value.channelInfos.callType === 2) {
+            console.log('》》》》》展示多人音视频组件');
+            //   callComponents.value = 'multiCall';
+          }
+          break;
+        case CALLSTATUS.confirmCallee:
+          {
+            console.log('%c >>>>>可以加入房间了', 'color:green;');
+            console.log(
+              '++++++将入的频道类型是',
+              callKitStatus.value.channelInfos.callType
+            );
+            console.log(
+              '++++++频道名是',
+              callKitStatus.value.channelInfos.channelName
+            );
+          }
+          break;
+        default:
+          break;
+      }
+    };
   };
+
   //初始化EMClient之Callkit内
   const setCallKitClient = (EMClient, CreateMsgFun) => {
     CallKitEMClient = EMClient;
@@ -92,6 +96,7 @@ export const useInitCallKit = () => {
   const mountSignallingListener = () => {
     console.log('>>>>>>>callkit 监听已挂载');
     const { sendAnswerMsg, sendAlertMsg } = useSendSignalMsgs();
+    onCallKitStatusChangeListener();
     CallKitEMClient.addEventHandler('callkitConnected', {
       onConnected: () => {
         //连接成功初始化emClient信息

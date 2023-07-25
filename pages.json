@@ -2,14 +2,6 @@
   "pages": [
     //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
     {
-      "path": "pages/emCallKitPages/singleCall",
-      "style": {
-        "app-plus": {
-          "titleNView": false
-        }
-      }
-    },
-    {
       "path": "pages/login/login",
       "style": {
         "navigationBarBackgroundColor": "#3E4091",
@@ -146,6 +138,14 @@
     },
     {
       "path": "pages/emCallKitPages/alertScreen"
+    },
+    {
+      "path": "pages/emCallKitPages/singleCall",
+      "style": {
+        "app-plus": {
+          "titleNView": false
+        }
+      }
     }
   ],
   "globalStyle": {

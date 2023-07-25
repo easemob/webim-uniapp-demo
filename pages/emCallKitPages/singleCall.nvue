@@ -1,26 +1,25 @@
 <template>
   <div class="single_call_container">
+    <!-- 视频视图 -->
     <view class="rtc_view_container">
+      <view class="local_container">
+        <rtc-surface-view
+          v-if="state.engine"
+          class="local_view_stream"
+          :uid="0"
+        ></rtc-surface-view>
+      </view>
       <rtc-surface-view
-        v-if="state.engine"
-        class="local"
-        :uid="0"
+        class="remote_view_stream"
+        :uid="state.remoteUid"
+        :zOrderMediaOverlay="true"
       ></rtc-surface-view>
-      <scroll-view class="remoteContainer" scroll-x="true">
-        <view
-          class="remote"
-          v-for="(item, index) in state.remoteUid"
-          :key="index"
-        >
-          <rtc-surface-view
-            class="remote"
-            :uid="item"
-            :zOrderMediaOverlay="true"
-          ></rtc-surface-view>
-        </view>
-      </scroll-view>
     </view>
+    <!-- 页面控制 -->
     <view class="rtc_control">
+      <view class="circleBoxView">
+        <text class="hint">{{ formatTime }}</text>
+      </view>
       <view class="circleBoxView">
         <view class="circleBox" @click="onSwitchLocalMicPhone">
           <image
@@ -75,10 +74,10 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { onLoad, onUnload } from '@dcloudio/uni-app';
 import { AGORA_APP_ID } from '@/components/emCallKit/contants/index.js';
-
+import { CALLSTATUS } from '@/components/emCallKit/contants';
 import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
 import {
   ClientRole,
@@ -99,11 +98,31 @@ const state = reactive({
   engine: undefined,
   channelId: '',
   isJoined: false,
-  remoteUid: [],
+  remoteUid: '',
   isSwitchCamera: true,
   isSwitchSperkerPhone: true,
   isSwitchLocalMicPhone: true,
   isSwitchLocalCameraOpened: true,
+});
+//开启通话计时
+const inChannelTimer = ref(null);
+const timeCount = ref(0);
+const startInChannelTimer = () => {
+  inChannelTimer.value && clearInterval(inChannelTimer.value);
+  inChannelTimer.value = setInterval(() => {
+    timeCount.value++;
+    // console.log('%c通话计时开启中...', 'color:green', timeCount);
+  }, 1000);
+};
+//转换为可直接渲染的时间
+const formatTime = computed(() => {
+  const m = Math.floor(timeCount.value / 60);
+  const s = timeCount.value % 60;
+  const h = Math.floor(m / 60);
+  const remMin = m % 60;
+  return `${h > 0 ? h + ':' : ''}${remMin < 10 ? '0' + remMin : remMin}:${
+    s < 10 ? '0' + s : s
+  }`;
 });
 //频道监听
 const addListeners = () => {
@@ -113,16 +132,16 @@ const addListeners = () => {
   });
   state.engine.addListener('UserJoined', (uid, elapsed) => {
     console.info('UserJoined', uid, elapsed);
-    state.remoteUid = [...state.remoteUid, uid];
+    state.remoteUid = uid;
   });
   state.engine.addListener('UserOffline', (uid, reason) => {
     console.info('UserOffline', uid, reason);
-    state.remoteUid = state.remoteUid.filter((value) => value !== uid);
+    state.remoteUid = '';
   });
   state.engine.addListener('LeaveChannel', (stats) => {
     console.info('LeaveChannel', stats);
     state.isJoined = false;
-    state.remoteUid = [];
+    state.remoteUid = '';
   });
 };
 //初始化频道实例
@@ -140,13 +159,13 @@ const initEngine = async () => {
   await state.engine.setClientRole(ClientRole.Broadcaster);
   //设置频道麦克风为扬声器模式
   await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
+  await joinChannel();
 };
 
 //加入频道
 const joinChannel = async () => {
   let { accessToken, agoraUserId } =
     await agoraChannelStore.requestRtcChannelToken();
-
   console.log(
     '>>>>>>频道token请求完成',
     accessToken,
@@ -155,10 +174,14 @@ const joinChannel = async () => {
   );
   (await state.engine) &&
     state.engine.joinChannel(accessToken, channelName.value, null, agoraUserId);
+  startInChannelTimer();
 };
 //挂断
 const onHangup = async () => {
   (await state.engine) && state.engine.leaveChannel();
+  uni.navigateBack({ delta: 1 });
+  //设置本地状态为闲置
+  agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
 };
 //切换摄像头
 const onSwitchCamera = () => {
@@ -202,6 +225,7 @@ const onSwitchLocalCameraOpened = async () => {
     uni.showToast({ icon: 'none', title: '开关本地摄像头采集失败！' });
   }
 };
+
 onLoad(() => {
   console.log('+++++++singleCall onLoad');
   initEngine();
@@ -209,6 +233,9 @@ onLoad(() => {
 onUnload(() => {
   state.engine && state.engine.destroy();
   state.isJoined = false;
+  //卸载组件清除通话计时
+  //清除通话计时
+  inChannelTimer.value && clearInterval(inChannelTimer.value);
 });
 </script>
 
@@ -217,25 +244,32 @@ onUnload(() => {
   flex: 1;
   background-color: #6f6b69;
 }
-
+.rtc_inchannel_time {
+  width: 100%;
+  height: 50rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 18rpx;
+}
 .rtc_view_container {
   flex: 1;
 }
 
-.local {
+.remote_view_stream {
   flex: 1;
 }
-
-.remoteContainer {
-  position: absolute;
-  right: 0;
-  top: 0;
+.local_container {
+  position: fixed;
+  right: 48rpx;
+  margin-top: 120rpx;
   flex-direction: row;
+  background-color: #ffeedd;
 }
-
-.remote {
-  width: 120;
-  height: 240;
+.local_view_stream {
+  width: 240rpx;
+  height: 360rpx;
 }
 .rtc_control {
   width: 92%;
