@@ -1,7 +1,10 @@
 <template>
   <div class="single_call_container">
     <!-- 视频视图 -->
-    <view class="rtc_view_container">
+    <view
+      class="rtc_view_container"
+      v-if="callKitStatus.channelInfos.callType === CALL_TYPES.SINGLE_VIDEO"
+    >
       <view class="local_container">
         <rtc-surface-view
           v-if="state.engine"
@@ -14,6 +17,25 @@
         :uid="state.remoteUid"
         :zOrderMediaOverlay="true"
       ></rtc-surface-view>
+    </view>
+    <!-- 语音视图 -->
+    <view
+      class="rtc_voice_container"
+      v-if="callKitStatus.channelInfos.callType === CALL_TYPES.SINGLE_VOICE"
+    >
+      <view class="circleBodyView">
+        <image
+          class="circleItemAvatar"
+          src="/static/emCallKit/theme2x.png"
+        ></image>
+        <view class="circleCenter"
+          ><text class="cenametext">{{
+            callKitStatus.inviteTarget ||
+            callKitStatus.channelInfos.callerIMName
+          }}</text>
+          <text class="centertext">正在语音通话…</text>
+        </view>
+      </view>
     </view>
     <!-- 页面控制 -->
     <view class="rtc_control">
@@ -43,7 +65,11 @@
           ></image>
           <text class="hint">扬声器</text>
         </view>
-        <view class="circleBox" @click="onSwitchLocalCameraOpened">
+        <view
+          v-if="callKitStatus.channelInfos.callType === CALL_TYPES.SINGLE_VIDEO"
+          class="circleBox"
+          @click="onSwitchLocalCameraOpened"
+        >
           <image
             class="circleImg"
             :src="
@@ -56,7 +82,7 @@
         </view>
       </view>
       <view class="circleBoxView">
-        <view class="circleBox" @click="onHangup">
+        <view class="circleBox" @click="leaveChannel">
           <image
             class="circleImg"
             src="/static/emCallKit/icon_video_cancel.png"
@@ -65,6 +91,7 @@
         </view>
       </view>
       <image
+        v-if="callKitStatus.channelInfos.callType === CALL_TYPES.SINGLE_VIDEO"
         class="switchCamera"
         @click="onSwitchCamera"
         src="/static/emCallKit/iconxiangjifanzhuan.png"
@@ -77,7 +104,7 @@
 import { ref, reactive, computed } from 'vue';
 import { onLoad, onUnload } from '@dcloudio/uni-app';
 import { AGORA_APP_ID } from '@/components/emCallKit/contants/index.js';
-import { CALLSTATUS } from '@/components/emCallKit/contants';
+import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
 import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
 import {
   ClientRole,
@@ -90,6 +117,10 @@ import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
 import permision from '@/js_sdk/wa-permission/permission';
 //store
 const agoraChannelStore = useAgoraChannelStore();
+//channelInfos
+const callKitStatus = computed(() => {
+  return agoraChannelStore.callKitStatus;
+});
 //channelName
 const channelName = computed(
   () => agoraChannelStore.callKitStatus.channelInfos?.channelName
@@ -137,6 +168,8 @@ const addListeners = () => {
   state.engine.addListener('UserOffline', (uid, reason) => {
     console.info('UserOffline', uid, reason);
     state.remoteUid = '';
+    state.isJoined = false;
+    leaveChannel();
   });
   state.engine.addListener('LeaveChannel', (stats) => {
     console.info('LeaveChannel', stats);
@@ -177,11 +210,15 @@ const joinChannel = async () => {
   startInChannelTimer();
 };
 //挂断
-const onHangup = async () => {
+const leaveChannel = async () => {
   (await state.engine) && state.engine.leaveChannel();
   uni.navigateBack({ delta: 1 });
   //设置本地状态为闲置
   agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
+  uni.showToast({
+    icon: 'none',
+    title: `通话结束【${formatTime.value}】`,
+  });
 };
 //切换摄像头
 const onSwitchCamera = () => {
@@ -315,5 +352,41 @@ onUnload(() => {
   right: 100rpx;
   width: 90rpx;
   height: 90rpx;
+}
+/* 语音通话样式 */
+.rtc_voice_container {
+  flex: 1;
+  width: 92%;
+  position: fixed;
+  margin: 4%;
+  /* #ifdef APP-PLUS-NVUE */
+  width: 680rpx;
+  margin: 96rpx 36rpx;
+  /* #endif */
+}
+.circleBodyView {
+  margin-top: 248rpx;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.circleItemAvatar {
+  margin: 16rpx;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 80rpx;
+}
+.cenametext {
+  color: #ffffff;
+  font-size: 36rpx;
+  line-height: 48rpx;
+  margin: 8rpx;
+  text-align: center;
+}
+.centertext {
+  color: #ffffff;
+  font-size: 24rpx;
+  line-height: 40rpx;
 }
 </style>

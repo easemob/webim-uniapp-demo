@@ -322,7 +322,7 @@ export const useInitCallKit = () => {
           break;
         }
         case CALL_ACTIONS_TYPE.VIDEO_TO_VOICE: {
-          console.log('视频转语音通知');
+          console.log('++++++++++++++++视频转语音通知');
           if (cmdMsgBody.callId !== callKitStatus.value.channelInfos.callType)
             return;
           callKitStatus.value.channelInfos.callType = CALL_TYPES.SINGLE_VOICE;
