@@ -177,9 +177,14 @@ const addListeners = () => {
     state.remoteUid = '';
   });
 };
+//保持屏幕常亮
+uni.setKeepScreenOn({
+  keepScreenOn: true,
+});
 //初始化频道实例
 const initEngine = async () => {
   console.log('>>>>>>>初始化声网RTC');
+
   state.engine = await RtcEngine.create(AGORA_APP_ID);
   addListeners();
   if (uni.getSystemInfoSync().platform === 'android') {
