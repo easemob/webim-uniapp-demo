@@ -26,7 +26,11 @@
 import { computed } from 'vue';
 import { useInitCallKit } from '@/components/emCallKit';
 import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
-import { ANSWER_TYPE, CALL_INVITE_TEXT } from '@/components/emCallKit/contants';
+import {
+  ANSWER_TYPE,
+  CALL_INVITE_TEXT,
+  CALL_TYPES,
+} from '@/components/emCallKit/contants';
 const { handleSendAnswerMsg } = useInitCallKit();
 const agoraChannelStore = useAgoraChannelStore();
 const channelInfos = computed(() => {
@@ -39,9 +43,15 @@ uni.setKeepScreenOn({
 const agreeJoinChannel = () => {
   console.log('>>>>>接听通话');
   handleSendAnswerMsg(ANSWER_TYPE.ACCPET);
-  uni.redirectTo({
-    url: '/pages/emCallKitPages/singleCall',
-  });
+  if (channelInfos.value.callType === CALL_TYPES.MULTI_VIDEO) {
+    uni.redirectTo({
+      url: '/pages/emCallKitPages/multiCall',
+    });
+  } else {
+    uni.redirectTo({
+      url: '/pages/emCallKitPages/singleCall',
+    });
+  }
 };
 const refuseJoinChannel = () => {
   console.log('>>>>>拒绝接听');

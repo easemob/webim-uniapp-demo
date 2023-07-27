@@ -139,6 +139,32 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
         });
       });
     },
+    //请求频道内uid映射的环信id
+    requestInChannelMapHxId() {
+      const { channelName } = this.callKitStatus.channelInfos;
+      const { apiUrl, appKey, loginUserId, accessToken } = this.emClientInfos;
+      const requestUrl = `${apiUrl}/channel/mapper?userAccount=${loginUserId}&channelName=${channelName}&appkey=${encodeURIComponent(
+        appKey
+      )}`;
+      console.log('>>>>requestUrl', `Bearer ${accessToken}`);
+      return new Promise((resolve, reject) => {
+        uni.request({
+          url: requestUrl,
+          header: {
+            Authorization: `Bearer ${accessToken}`, //自定义请求头信息
+          },
+          success: (result) => {
+            console.log('result', result?.data);
+            resolve(result?.data);
+          },
+          fail: (e) => {
+            console.error('>>>>rtc token 获取失败', e);
+            uni.showToast({ icon: 'none', title: 'rtc token 请求失败' });
+            reject(e);
+          },
+        });
+      });
+    },
   },
 });
 export default useAgoraChannelStore;

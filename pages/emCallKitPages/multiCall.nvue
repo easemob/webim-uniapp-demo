@@ -1,0 +1,339 @@
+<template>
+  <div class="multi_call_container">
+    <waterfall class="rtc_view_container" column-count="2" column-width="auto">
+      <cell>
+        <view>
+          <rtc-surface-view
+            v-if="state.engine"
+            class="local_view"
+            :uid="0"
+          ></rtc-surface-view>
+          <text class="rtc_in_channel_name">{{
+            agoraChannelStore.emClientInfos.loginUserId
+          }}</text>
+        </view>
+      </cell>
+      <cell v-for="uid in state.remoteUids">
+        <view>
+          <rtc-surface-view
+            class="remote_view"
+            :uid="uid"
+            :channelId="state.channelId"
+            :zOrderMediaOverlay="true"
+          ></rtc-surface-view>
+          <text class="rtc_in_channel_name">{{
+            state.inChannelMapHxId[uid] || uid
+          }}</text>
+        </view>
+      </cell>
+    </waterfall>
+    <!-- 页面控制 -->
+    <view class="rtc_control">
+      <view class="circleBoxView">
+        <text class="hint">{{ formatTime }}</text>
+      </view>
+      <view class="circleBoxView">
+        <view class="circleBox" @click="onSwitchLocalMicPhone">
+          <image
+            class="circleImg"
+            :src="
+              state.isSwitchLocalMicPhone
+                ? '/static/emCallKit/icon_video_microphone.png'
+                : '/static/emCallKit/icon_video_quiet.png'
+            "
+          ></image>
+          <text class="hint">麦克风</text>
+        </view>
+        <view class="circleBox" @click="onSwitchSperkerPhone">
+          <image
+            class="circleImg"
+            :src="
+              state.isSwitchSperkerPhone
+                ? '/static/emCallKit/icon_video_speaker.png'
+                : '/static/emCallKit/icon_video_speakerno.png'
+            "
+          ></image>
+          <text class="hint">扬声器</text>
+        </view>
+        <view class="circleBox" @click="onSwitchLocalCameraOpened">
+          <image
+            class="circleImg"
+            :src="
+              state.isSwitchLocalCameraOpened
+                ? '/static/emCallKit/icon_video_speaker.png'
+                : '/static/emCallKit/icon_video_speakerno.png'
+            "
+          ></image>
+          <text class="hint">摄像头</text>
+        </view>
+      </view>
+      <view class="circleBoxView">
+        <view class="circleBox" @click="leaveChannel">
+          <image
+            class="circleImg"
+            src="/static/emCallKit/icon_video_cancel.png"
+          ></image>
+          <text class="hint">挂断</text>
+        </view>
+      </view>
+      <image
+        class="switchCamera"
+        @click="onSwitchCamera"
+        src="/static/emCallKit/iconxiangjifanzhuan.png"
+      ></image>
+    </view>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, computed } from 'vue';
+import { onLoad, onUnload } from '@dcloudio/uni-app';
+import { AGORA_APP_ID } from '@/components/emCallKit/contants/index.js';
+import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
+import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
+import {
+  ClientRole,
+  ChannelProfile,
+} from '@/components/Agora-RTC-JS/common/Enums';
+import RtcSurfaceView from '@/components/Agora-RTC-JS/RtcSurfaceView';
+import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
+//保持屏幕常亮
+uni.setKeepScreenOn({
+  keepScreenOn: true,
+});
+//获取移动端授权权限
+import permision from '@/js_sdk/wa-permission/permission';
+//store
+const agoraChannelStore = useAgoraChannelStore();
+//channelInfos
+const callKitStatus = computed(() => {
+  return agoraChannelStore.callKitStatus;
+});
+//channelName
+const channelName = computed(
+  () => agoraChannelStore.callKitStatus.channelInfos?.channelName
+);
+const state = reactive({
+  engine: undefined,
+  channelId: '',
+  isJoined: false,
+  remoteUids: [],
+  inChannelMapHxId: {},
+  isSwitchCamera: true,
+  isSwitchSperkerPhone: true,
+  isSwitchLocalMicPhone: true,
+  isSwitchLocalCameraOpened: true,
+});
+//开启通话计时
+const inChannelTimer = ref(null);
+const timeCount = ref(0);
+const startInChannelTimer = () => {
+  inChannelTimer.value && clearInterval(inChannelTimer.value);
+  inChannelTimer.value = setInterval(() => {
+    timeCount.value++;
+    // console.log('%c通话计时开启中...', 'color:green', timeCount);
+  }, 1000);
+};
+//转换为可直接渲染的时间
+const formatTime = computed(() => {
+  const m = Math.floor(timeCount.value / 60);
+  const s = timeCount.value % 60;
+  const h = Math.floor(m / 60);
+  const remMin = m % 60;
+  return `${h > 0 ? h + ':' : ''}${remMin < 10 ? '0' + remMin : remMin}:${
+    s < 10 ? '0' + s : s
+  }`;
+});
+//频道监听
+const addListeners = () => {
+  state.engine.addListener('JoinChannelSuccess', (channel, uid, elapsed) => {
+    console.info('JoinChannelSuccess', channel, uid, elapsed);
+    state.isJoined = true;
+  });
+  state.engine.addListener('UserJoined', async (uid, elapsed) => {
+    console.info('UserJoined', uid, elapsed);
+    state.remoteUids = [...state.remoteUids, uid];
+    const { result } = await agoraChannelStore.requestInChannelMapHxId();
+    console.log('>>>>>>频道内环信ID获取完毕', result);
+    state.inChannelMapHxId = { ...result };
+  });
+  state.engine.addListener('UserOffline', (uid, reason) => {
+    console.info('UserOffline', uid, reason);
+    state.remoteUids = state.remoteUids.filter((item) => uid != item);
+  });
+  state.engine.addListener('LeaveChannel', (stats) => {
+    console.info('LeaveChannel', stats);
+    state.isJoined = false;
+    // state.remoteUid = '';
+  });
+};
+//初始化频道实例
+const initEngine = async () => {
+  console.log('>>>>>>>初始化声网RTC');
+  state.engine = await RtcEngine.create(AGORA_APP_ID);
+  addListeners();
+  if (uni.getSystemInfoSync().platform === 'android') {
+    await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
+    await permision.requestAndroidPermission('android.permission.CAMERA');
+  }
+  await state.engine.enableVideo();
+  await state.engine.startPreview();
+  await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+  await state.engine.setClientRole(ClientRole.Broadcaster);
+  //设置频道麦克风为扬声器模式
+  await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
+  await joinChannel();
+};
+//加入频道
+const joinChannel = async () => {
+  let { accessToken, agoraUserId } =
+    await agoraChannelStore.requestRtcChannelToken();
+  console.log(
+    '>>>>>>频道token请求完成',
+    accessToken,
+    agoraUserId,
+    channelName.value
+  );
+  (await state.engine) &&
+    state.engine.joinChannel(accessToken, channelName.value, null, agoraUserId);
+  startInChannelTimer();
+};
+//挂断
+const leaveChannel = async () => {
+  (await state.engine) && state.engine.leaveChannel();
+  uni.navigateBack({ delta: 1 });
+  //设置本地状态为闲置
+  agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
+  uni.showToast({
+    icon: 'none',
+    title: `通话结束【${formatTime.value}】`,
+  });
+};
+//切换摄像头
+const onSwitchCamera = () => {
+  state.engine &&
+    state.engine
+      .switchCamera()
+      .then(() => {
+        state.isSwitchCamera = !state.isSwitchCamera;
+      })
+      .catch((err) => {
+        console.warn('switchCamera', err);
+      });
+};
+//切换扬声器
+const onSwitchSperkerPhone = async () => {
+  try {
+    (await state.engine) &&
+      state.engine.setEnableSpeakerphone(!state.isSwitchSperkerPhone);
+    state.isSwitchSperkerPhone = !state.isSwitchSperkerPhone;
+  } catch (error) {
+    uni.showToast({ icon: 'none', title: '扬声器切换失败！' });
+  }
+};
+//开启关闭本地麦克风采集
+const onSwitchLocalMicPhone = async () => {
+  try {
+    (await state.engine) &&
+      state.engine.muteLocalAudioStream(!state.isSwitchLocalMicPhone);
+    state.isSwitchLocalMicPhone = !state.isSwitchLocalMicPhone;
+  } catch (error) {
+    uni.showToast({ icon: 'none', title: '开关本地麦克风采集失败！' });
+  }
+};
+//开启关闭本地视频流采集
+const onSwitchLocalCameraOpened = async () => {
+  try {
+    (await state.engine) &&
+      state.engine.enableLocalVideo(!state.isSwitchLocalCameraOpened);
+    state.isSwitchLocalCameraOpened = !state.isSwitchLocalCameraOpened;
+  } catch (error) {
+    uni.showToast({ icon: 'none', title: '开关本地摄像头采集失败！' });
+  }
+};
+onLoad(() => {
+  console.log('+++++++multiCall onLoad');
+  initEngine();
+});
+onUnload(() => {
+  state.engine && state.engine.destroy();
+  state.isJoined = false;
+  //卸载组件清除通话计时
+  //清除通话计时
+  //   inChannelTimer.value && clearInterval(inChannelTimer.value);
+});
+</script>
+
+<style>
+.multi_call_container {
+  flex: 1;
+  background-color: #6f6b69;
+  padding: 150rpx 0;
+}
+.rtc_view_container {
+  flex: 1;
+}
+.local_view {
+  width: 350rpx;
+  height: 350rpx;
+  margin: 25rpx 0;
+  background: green;
+}
+.remote_view {
+  width: 350rpx;
+  height: 350rpx;
+  margin: 25rpx 0;
+  /* margin: 5%; */
+  background: pink;
+}
+.rtc_in_channel_name {
+  text-align: center;
+  color: #fff;
+}
+/* 频道控制 */
+.rtc_control {
+  width: 92%;
+  position: fixed;
+  bottom: 48rpx;
+  margin: 2% 4%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  /* #ifdef APP-PLUS-NVUE */
+  width: 680rpx;
+  margin: 36rpx;
+  /* #endif */
+}
+
+.circleBoxView {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.circleBox {
+  width: 200rpx;
+  padding: 30rpx 0;
+  margin: 10rpx;
+  align-items: center;
+  flex-direction: column;
+}
+
+.circleImg {
+  width: 128rpx;
+  height: 128rpx;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: #ffffff;
+  padding-top: 36rpx;
+}
+.switchCamera {
+  position: fixed;
+  bottom: 120rpx;
+  right: 100rpx;
+  width: 90rpx;
+  height: 90rpx;
+}
+</style>

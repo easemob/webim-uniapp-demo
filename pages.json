@@ -152,6 +152,14 @@
           "titleNView": false
         }
       }
+    },
+    {
+      "path": "pages/emCallKitPages/multiCall",
+      "style": {
+        "app-plus": {
+          "titleNView": false
+        }
+      }
     }
   ],
   "globalStyle": {
