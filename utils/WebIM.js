@@ -1,10 +1,10 @@
-import websdk from "../newSDK/Easemob-chat-4.1.7";
+import websdk from "../newSDK/Easemob-chat-4.2.0";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
 var window = {};
 let WebIM = window.WebIM = uni.WebIM = websdk;
-window.WebIM.config = config; 
+window.WebIM.config = config;
 
 WebIM.isDebug = function (option) {
   if (option) {
@@ -37,7 +37,7 @@ WebIM.parseEmoji = function (msg) {
   }
 
   var emoji = WebIM.Emoji,
-      reg = null;
+    reg = null;
   var msgList = [];
   var objList = [];
 
@@ -177,7 +177,7 @@ WebIM.EmojiObj = {
   map6: {
     "[del]": "del.png"
   }
-}; 
+};
 // uni.connectSocket({url: WebIM.config.xmppURL, method: "GET"})
 
 
