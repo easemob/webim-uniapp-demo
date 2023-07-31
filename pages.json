@@ -160,6 +160,15 @@
           "titleNView": false
         }
       }
+    },
+    {
+      "path": "pages/emCallKitPages/inviteMembers",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black",
+        "backgroundTextStyle": "light",
+        "navigationBarTitleText": "邀请更多"
+      }
     }
   ],
   "globalStyle": {

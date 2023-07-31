@@ -1,5 +1,13 @@
 <template>
   <div class="multi_call_container">
+    <!-- 频道内邀请按钮 -->
+    <image
+      class="invite_btn"
+      @click="entryInviteMoreMembers"
+      src="/static/emCallKit/group2x.png"
+    ></image>
+
+    <!-- 流展示容器 -->
     <waterfall class="rtc_view_container" column-count="2" column-width="auto">
       <cell>
         <view>
@@ -186,17 +194,27 @@ const initEngine = async () => {
 };
 //加入频道
 const joinChannel = async () => {
-  let { accessToken, agoraUserId } =
-    await agoraChannelStore.requestRtcChannelToken();
-  console.log(
-    '>>>>>>频道token请求完成',
-    accessToken,
-    agoraUserId,
-    channelName.value
-  );
-  (await state.engine) &&
-    state.engine.joinChannel(accessToken, channelName.value, null, agoraUserId);
-  startInChannelTimer();
+  try {
+    let { accessToken, agoraUserId } =
+      await agoraChannelStore.requestRtcChannelToken();
+    console.log(
+      '>>>>>>频道token请求完成',
+      accessToken,
+      agoraUserId,
+      channelName.value
+    );
+    (await state.engine) &&
+      state.engine.joinChannel(
+        accessToken,
+        channelName.value,
+        null,
+        agoraUserId
+      );
+    startInChannelTimer();
+  } catch (error) {
+    console.log('>>>>>>频道加入失败', error);
+    uni.showToast({ icon: 'none', title: '多人会议加入失败，请稍后重试！' });
+  }
 };
 //挂断
 const leaveChannel = async () => {
@@ -251,6 +269,12 @@ const onSwitchLocalCameraOpened = async () => {
     uni.showToast({ icon: 'none', title: '开关本地摄像头采集失败！' });
   }
 };
+//发起频道中邀请
+const entryInviteMoreMembers = () => {
+  uni.navigateTo({
+    url: '/pages/emCallKitPages/inviteMembers',
+  });
+};
 onLoad(() => {
   console.log('+++++++multiCall onLoad');
   initEngine();
@@ -260,7 +284,7 @@ onUnload(() => {
   state.isJoined = false;
   //卸载组件清除通话计时
   //清除通话计时
-  //   inChannelTimer.value && clearInterval(inChannelTimer.value);
+  inChannelTimer.value && clearInterval(inChannelTimer.value);
 });
 </script>
 
@@ -335,5 +359,12 @@ onUnload(() => {
   right: 100rpx;
   width: 90rpx;
   height: 90rpx;
+}
+.invite_btn {
+  position: fixed;
+  right: 50rpx;
+  top: 80rpx;
+  width: 75rpx;
+  height: 75rpx;
 }
 </style>

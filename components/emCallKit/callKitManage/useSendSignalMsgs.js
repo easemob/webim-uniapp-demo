@@ -68,9 +68,118 @@ const useSendSignalMsgs = () => {
         console.log('anser Fail', e);
       });
   };
+  //发送告知主叫方confim确认中
+  const sendConfirmRing = (payload) => {
+    const { status, targetId, sendBody } = payload;
+    console.log('>>>>>告知对方确认响铃', payload);
+    const option = {
+      type: 'cmd',
+      chatType: 'singleChat',
+      to: targetId,
+      action: action,
+      ext: {
+        action: CALL_ACTIONS_TYPE.CONFIRM_RING,
+        status: status,
+        callerDevId: sendBody.callerDevId,
+        calleeDevId: sendBody.calleeDevId,
+        callId: sendBody.callId,
+        ts: Date.now(),
+        msgType: MSG_TYPE,
+      },
+    };
+    const msg = CallKitCreateMsgFun.create(option);
+    // 调用 `send` 方法发送该透传消息。
+    CallKitEMClient.send(msg)
+      .then((res) => {
+        // 消息成功发送回调。
+        console.log('ConfirmRing Success', res);
+      })
+      .catch((e) => {
+        // 消息发送失败回调。
+        console.log('ConfirmRing Fail', e);
+      });
+  };
+  //发送给对方确认后的结果
+  const sendConfirmCallee = (payload) => {
+    const { targetId, sendBody } = payload;
+    console.log('sendConfirmCalllee', payload);
+    try {
+      const option = {
+        type: 'cmd',
+        chatType: 'singleChat',
+        to: targetId,
+        action: action,
+        ext: {
+          action: CALL_ACTIONS_TYPE.CONFIRM_CALLEE,
+          result: sendBody.result,
+          callerDevId: CallKitEMClient.context.jid.clientResource,
+          calleeDevId: sendBody.calleeDevId,
+          callId: sendBody.callId,
+          ts: Date.now(),
+          msgType: MSG_TYPE,
+        },
+      };
+      const msg = CallKitCreateMsgFun.create(option);
+      console.log('%ccallee msg', 'color:purple', msg);
+      // 调用 `send` 方法发送该透传消息。
+      CallKitEMClient.send(msg)
+        .then((res) => {
+          // 消息成功发送回调。
+          console.log('Calllee Success', res);
+        })
+        .catch((e) => {
+          // 消息发送失败回调。
+          console.log('Calllee Fail', e);
+        });
+    } catch (error) {
+      console.log('>>>>>失败', error);
+    }
+  };
+  //发送邀请信令
+  const sendInviteMsg = (targetId, callType, channelInfors) => {
+    const { channelName, callId, inviteMsgContent } = channelInfors;
+    const option = {
+      type: 'txt',
+      chatType: 'singleChat',
+      msg: inviteMsgContent,
+      to: targetId,
+      ext: {
+        action: CALL_ACTIONS_TYPE.INVITE,
+        channelName: channelName,
+        type: callType, // 0为1v1音频，1为1v1视频，2为多人通话
+        callerDevId: CallKitEMClient.context.jid.clientResource, // 主叫方设备Id
+        callId: callId, // 随机uuid，每次呼叫都不同，代表一次呼叫
+        ts: Date.now(),
+        msgType: MSG_TYPE,
+        callerIMName: CallKitEMClient.context.jid.name,
+      },
+    };
+    //如果是多人邀请并且groupId有参数时，在ext扩展字段中再增加一个ext并传入groupId
+    if (callType === 2 && channelInfors.groupId) {
+      option.ext.ext = { groupId: channelInfors.groupId };
+    }
+    return new Promise((resolve, reject) => {
+      const msg = CallKitCreateMsgFun.create(option);
+      // 调用 `send` 方法发送该透传消息。
+      CallKitEMClient.send(msg)
+        .then((res) => {
+          // 消息成功发送回调。
+          console.log('invite Success', res);
+          resolve(res);
+        })
+        .catch((e) => {
+          // 消息发送失败回调。
+          console.log('invite Fail', e);
+          reject(e);
+        });
+    });
+  };
   return {
     sendAlertMsg,
     sendAnswerMsg,
+    sendInviteMsg,
+    sendConfirmRing,
+    sendConfirmCallee,
   };
 };
 

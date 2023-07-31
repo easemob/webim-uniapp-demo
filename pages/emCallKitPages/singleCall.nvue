@@ -10,13 +10,15 @@
           v-if="state.engine"
           class="local_view_stream"
           :uid="0"
+          :zOrderMediaOverlay="true"
         ></rtc-surface-view>
       </view>
-      <rtc-surface-view
-        class="remote_view_stream"
-        :uid="state.remoteUid"
-        :zOrderMediaOverlay="true"
-      ></rtc-surface-view>
+      <view class="remote_container">
+        <rtc-surface-view
+          class="remote_view_stream"
+          :uid="state.remoteUid"
+        ></rtc-surface-view>
+      </view>
     </view>
     <!-- 语音视图 -->
     <view
@@ -299,9 +301,6 @@ onUnload(() => {
   flex: 1;
 }
 
-.remote_view_stream {
-  flex: 1;
-}
 .local_container {
   position: fixed;
   right: 48rpx;
@@ -312,6 +311,12 @@ onUnload(() => {
 .local_view_stream {
   width: 240rpx;
   height: 360rpx;
+}
+.remote_container {
+  flex: 1;
+}
+.remote_view_stream {
+  flex: 1;
 }
 .rtc_control {
   width: 92%;

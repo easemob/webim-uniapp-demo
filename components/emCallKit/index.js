@@ -18,6 +18,7 @@ export const useInitCallKit = () => {
   const agoraChannelStore = useAgoraChannelStore();
   const { updateChannelInfos, updateLocalStatus } = agoraChannelStore;
   const callKitStatus = computed(() => agoraChannelStore.callKitStatus);
+  const callKitTimer = computed(() => agoraChannelStore.callKitTimer);
   //监听频道状态变更做出对应操作。
   const onCallKitStatusChangeListener = () => {
     console.log('>>>>>频道状态监听已挂载');
@@ -95,7 +96,8 @@ export const useInitCallKit = () => {
   //挂载Callkit信令相关监听
   const mountSignallingListener = () => {
     console.log('>>>>>>>callkit 监听已挂载');
-    const { sendAnswerMsg, sendAlertMsg } = useSendSignalMsgs();
+    const { sendAnswerMsg, sendAlertMsg, sendConfirmRing, sendConfirmCallee } =
+      useSendSignalMsgs();
     onCallKitStatusChangeListener();
     CallKitEMClient.addEventHandler('callkitConnected', {
       onConnected: () => {
@@ -195,10 +197,10 @@ export const useInitCallKit = () => {
           }
           //如果status为true表明为有效的邀请，再更改为inviting,false表示无效邀请则更改为空闲状态。
           if (status) {
-            SignalMsgs.sendConfirmRing(params);
+            sendConfirmRing(params);
             updateLocalStatus(CALLSTATUS.inviting);
           } else {
-            SignalMsgs.sendConfirmRing(params);
+            sendConfirmRing(params);
             updateLocalStatus(CALLSTATUS.idle);
           }
 
@@ -230,6 +232,7 @@ export const useInitCallKit = () => {
               targetId: msgBody.from,
               sendBody: cmdMsgBody,
             };
+            console.log('>>>>>>>>>收到answer信令', params);
             if (
               !callKitStatus.value.channelInfos.calleeDevId &&
               callKitStatus.value.channelInfos.callType !== 2
@@ -244,14 +247,10 @@ export const useInitCallKit = () => {
                 cmdMsgBody.calleeDevId &&
               callKitStatus.value.channelInfos.callType !== 2
             ) {
-              console.log(
-                'callKitStatus.value.channelInfos.calleeDevId',
-                callKitStatus.value.channelInfos.calleeDevId
-              );
               //如果存在频道信息，但是与待呼叫确认的calleeDevId不一致直接发送拒绝应答。
               params.sendBody.result = ANSWER_TYPE.REFUSE;
             }
-            SignalMsgs.sendConfirmCallee(params);
+            sendConfirmCallee(params);
             updateLocalStatus(CALLSTATUS.confirmCallee);
             if (cmdMsgBody.result !== ANSWER_TYPE.ACCPET) {
               console.log(
@@ -328,7 +327,6 @@ export const useInitCallKit = () => {
           callKitStatus.value.channelInfos.callType = CALL_TYPES.SINGLE_VOICE;
           break;
         }
-
         default:
           console.log('>>>其他未知状态');
           break;
