@@ -197,7 +197,6 @@ const getGroupName = (groupid) => {
   if (joinedGroupList.length) {
     joinedGroupList.forEach((item) => {
       if (item.groupid === groupid) {
-        console.log(item.groupname);
         return (groupName = item.groupname);
       }
     });

@@ -42,7 +42,6 @@ export const useConversationStore = defineStore('conversation', {
           const chatType =
             (regexp.test(channel_id) && CHAT_TYPE.SINGLE_CHAT) ||
             CHAT_TYPE.GROUP_CHAT; //判断是单聊会话还是群组或聊天室会话
-          console.log('chatType+++++++', chatType);
           conversationBody.channel_id = getEMKey(
             EMClient.user,
             from,
