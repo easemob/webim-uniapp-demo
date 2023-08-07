@@ -8,8 +8,13 @@
   z-index: 1;
   background-color: #ffffff;
   /* transform: translateZ(1000px); */
+  transform: translateZ(0);
 }
 
+.placeholder_container {
+  width: 100%;
+  background-color: #000;
+}
 .other_func {
   width: 100%;
   /* height: 60rpx; */

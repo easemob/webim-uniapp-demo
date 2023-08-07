@@ -10,7 +10,7 @@
         class="f news"
         type="text"
         cursor-spacing="65"
-        confirm-type="send"
+        confirm-type="none"
         v-model.trim="inputContent"
         @focus="inputFocus"
         @confirm="sendTextMessage"
@@ -18,6 +18,8 @@
         auto-height
         :show-confirm-bar="false"
         maxlength="300"
+        :adjust-position="false"
+        @keyboardheightchange="onKeyboardheightchange"
       />
       <view @click="emits('openEmojiModal')">
         <image class="icon-mic" src="/static/images/Emoji.png"></image>
@@ -46,6 +48,7 @@ const emits = defineEmits([
   'openEmojiModal',
   'openFunModal',
   'closeAllModal',
+  'handlePlaceholderContainerHeight',
 ]);
 const inputContent = ref('');
 //删除输入内容中的emojiMapStr
@@ -92,8 +95,13 @@ const sendTextMessage = async () => {
     });
   } finally {
     inputContent.value = '';
-    uni.hideKeyboard();
+    // uni.hideKeyboard();
   }
+};
+const onKeyboardheightchange = (e) => {
+  const keyboardheight = e.detail.height;
+  emits('handlePlaceholderContainerHeight', keyboardheight);
+  //   uni.showToast({ title: e.detail.height + 'px', icon: 'none' });
 };
 const inputFocus = () => {
   console.log('>>>>输入框聚焦');

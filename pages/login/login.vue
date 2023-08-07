@@ -74,7 +74,7 @@ import { useLoginStore } from '@/stores/login';
 let times = 60;
 let timer;
 const loginState = reactive({
-  usePwdLogin: false, //是否用户名+密码方式登录
+  usePwdLogin: true, //是否用户名+密码方式登录
   name: '',
   psd: '',
   grant_type: 'password',

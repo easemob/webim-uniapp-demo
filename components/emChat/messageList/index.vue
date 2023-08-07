@@ -6,6 +6,7 @@
     "
     upper-threshold="-50"
     :scroll-into-view="msglistState.toView"
+    @click="closeModal"
   >
     <view>
       <!-- 弹出举报入口 -->
@@ -187,6 +188,8 @@ import { emMessages } from '@/EaseIM/imApis';
 /* components */
 import FileMsg from './type/file';
 import AudioMsg from './type/audio/audio';
+/* emit */
+const $emits = defineEmits(['closeAllModal']);
 const msglistState = reactive({
   isIPX: false,
   toView: 0,
@@ -349,7 +352,10 @@ const entryProfilePage = (userInfo) => {
     });
   }
 };
-
+const closeModal = () => {
+  console.log('>>>>>1111111111');
+  $emits('closeAllModal');
+};
 /* 举报消息 */
 //弹出举报
 const alertReport = ref(null);

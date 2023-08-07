@@ -8,6 +8,7 @@
       @closeEmojiModal="closeEmojiModal"
       @openFunModal="openFunModal"
       @closeAllModal="closeAllModal"
+      @handlePlaceholderContainerHeight="handlePlaceholderContainerHeight"
     />
     <input-emoji
       ref="inputEmojiComp"
@@ -58,6 +59,12 @@
       </view>
     </view>
     <input-user-card ref="inputUserCardComp" @closeAllModal="closeAllModal" />
+    <!-- 占位空白容器主要作用为软键盘弹起顶起输入框 -->
+    <view
+      class="placeholder_container"
+      :style="'height: ' + placeholderContainerHeight + 'px'"
+    >
+    </view>
   </view>
 </template>
 
@@ -141,6 +148,17 @@ const edit_group = () => {
     url: '../groupSetting/groupSetting?groupInfo=' + JSON.stringify(nameList),
   });
 };
+
+//处理软键盘变化调整占位容器高度
+const placeholderContainerHeight = ref(0);
+const handlePlaceholderContainerHeight = (keyboardheight) => {
+  console.log('first placeholder', keyboardheight);
+  placeholderContainerHeight.value = keyboardheight;
+};
+
+defineExpose({
+  closeAllModal,
+});
 </script>
 
 <style scoped>
