@@ -16,7 +16,6 @@ import InputBar from './components/inputBar';
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background: pink;
-  overflow: hidden;
+  background: #ededed;
 }
 </style>

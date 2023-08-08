@@ -204,13 +204,12 @@ import AudioMsg from './type/audio/audio';
 //视图高
 let msgWindowHeight = ref(0);
 //输入框高度
-const inputBarHeight = 100;
+const inputBarHeight = 80;
 //存储键盘高度
 let keyboardHeight = ref(0);
 onLoad(async () => {
   const { windowHeight } = await uni.getSystemInfo();
   msgWindowHeight.value = windowHeight;
-  console.log('windowHeightwindowHeightwindowHeight', windowHeight);
   //监听键盘抬起事件
   uni.onKeyboardHeightChange((e) => {
     if (e.height > 0) {

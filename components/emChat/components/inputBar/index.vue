@@ -4,35 +4,32 @@
     :style="{ bottom: `${keyboardHeight}px` }"
     @touchmove.stop.prevent="moveStop"
   >
-    <!-- <textarea></textarea> -->
-    111111
-    <textarea
-      type="text"
-      cursor-spacing="65"
-      confirm-type="none"
-      :confirm-hold="true"
-      auto-height
-      :show-confirm-bar="false"
-      maxlength="300"
-      :adjust-position="false"
-      @keyboardheightchange="listenerKeyboardHeight"
-    />
+    <input-main />
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onUnload } from '@dcloudio/uni-app';
+import InputMain from './suit/main';
 //存储键盘高度
 let keyboardHeight = ref(0);
 const listenerKeyboardHeight = (e) => {
-  //   console.log('>>>>>监听到键盘高度变化', e);
-  keyboardHeight.value = e.detail.height;
+  keyboardHeight.value = e.height;
 };
 const moveStop = () => {
   return;
 };
-onLoad(() => {});
+//核心文本输入相关
+const inputMainComp = ref(null);
+onLoad(() => {
+  //监听键盘抬起事件
+  uni.onKeyboardHeightChange(listenerKeyboardHeight);
+});
+onUnload(() => {
+  //卸载监听键盘事件
+  uni.offKeyboardHeightChange(listenerKeyboardHeight);
+});
 </script>
 
 <style>
