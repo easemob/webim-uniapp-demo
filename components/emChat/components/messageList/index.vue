@@ -207,32 +207,26 @@ let msgWindowHeight = ref(0);
 const inputBarHeight = 80;
 //存储键盘高度
 let keyboardHeight = ref(0);
+const listenerKeyboardHeight = (e) => {
+  if (e.height > 0) {
+    keyboardHeight.value = e.height;
+
+    nextTick(() => {
+      scrollToBottom();
+    });
+  } else {
+    keyboardHeight.value = 0;
+    commentScrollTop.value = 0;
+  }
+};
 onLoad(async () => {
   const { windowHeight } = await uni.getSystemInfo();
   msgWindowHeight.value = windowHeight;
   //监听键盘抬起事件
-  uni.onKeyboardHeightChange((e) => {
-    if (e.height > 0) {
-      keyboardHeight.value = e.height;
-      console.log(
-        '>>>>>>>调整软键盘高度',
-        msgWindowHeight.value - keyboardHeight.value
-      );
-      nextTick(() => {
-        scrollToBottom();
-      });
-    } else {
-      keyboardHeight.value = 0;
-      commentScrollTop.value = 0;
-      console.log(
-        '>>>>>>>调整软键盘高度2',
-        msgWindowHeight.value - keyboardHeight.value
-      );
-    }
-  });
+  uni.onKeyboardHeightChange(listenerKeyboardHeight);
 });
 onUnload(() => {
-  uni.offKeyboardHeightChange();
+  uni.offKeyboardHeightChange(listenerKeyboardHeight);
 });
 const commentScrollTop = ref(0);
 //滚动到底部
