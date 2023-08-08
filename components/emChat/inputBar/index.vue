@@ -1,5 +1,5 @@
 <template>
-  <view class="input_bar_container">
+  <view class="input_bar_container" :style="{ bottom: `${keyboardHeight}px` }">
     <input-audio ref="inputAudioComp" />
     <input-main
       ref="inputMainComp"
@@ -63,6 +63,7 @@
 
 <script setup>
 import { ref, inject } from 'vue';
+import { onLoad, onUnload } from '@dcloudio/uni-app';
 /* components */
 import InputAudio from './suit/audio';
 import InputMain from './suit/main';
@@ -74,6 +75,19 @@ import InputUserCard from './suit/userCard';
 /* inject */
 const injectTargetId = inject('targetId');
 const injectChatType = inject('chatType');
+//控制输入框根据软键盘弹起从而调整高度
+const keyboardHeight = ref(0);
+const listenerKeyboardHeight = (event) => {
+  const { height } = event;
+  keyboardHeight.value = height;
+  console.log('keyboardHeight++++++', height);
+};
+onLoad(() => {
+  uni.onKeyboardHeightChange(listenerKeyboardHeight);
+});
+onUnload(() => {
+  uni.offKeyboardHeightChange(listenerKeyboardHeight);
+});
 //核心文本输入相关
 const inputMainComp = ref(null);
 

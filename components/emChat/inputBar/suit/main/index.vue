@@ -18,7 +18,6 @@
         auto-height
         :show-confirm-bar="false"
         maxlength="300"
-        :adjust-position="false"
       />
       <view @click="emits('openEmojiModal')">
         <image class="icon-mic" src="/static/images/Emoji.png"></image>

@@ -13,7 +13,7 @@ import {
   computed,
   onUnmounted,
 } from 'vue';
-import EmChat from '@/components/emChat';
+import EmChat from '@/components/emChat/emChat';
 import { onNavigationBarButtonTap } from '@dcloudio/uni-app';
 import { useContactsStore } from '@/stores/contacts';
 import { useGroupStore } from '@/stores/group';

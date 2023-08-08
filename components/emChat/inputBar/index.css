@@ -1,6 +1,7 @@
 .input_bar_container {
   width: 100%;
-  height: auto;
+  height: 200rpx;
+  background-color: green;
   border-top: 1px solid rgba(0 0 0 0.5);
   position: fixed;
   bottom: 0;
