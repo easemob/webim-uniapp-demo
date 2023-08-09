@@ -114,50 +114,6 @@ const appendEmojiMapString = (emoji) => {
 const deleteEmojiMapString = () => {
   inputMainComp.value.delEmojiMapString();
 };
-
-/* 更多功能相关 */
-const isShowFunModal = ref(false);
-const openFunModal = () => {
-  console.log('>>>>打开更多功能');
-  isShowFunModal.value = true;
-  closeEmojiModal();
-};
-const closeFunModal = () => {
-  isShowFunModal.value = false;
-  //   closeEmojiModal();
-};
-const closeAllModal = () => {
-  closeEmojiModal();
-  closeFunModal();
-};
-//点击拍照
-const inputImageComp = ref(null);
-const openCamera = () => {
-  inputImageComp.value.openCamera();
-};
-//从相册选择
-const openPhotoAlbum = () => {
-  inputImageComp.value.openPhotoAlbum();
-};
-
-//用户卡片相关
-const inputUserCardComp = ref(null);
-const openUserCardModal = () => {
-  console.log('>>>>执行打开好友卡片');
-  inputUserCardComp.value.alertUserCardModal();
-};
-//编辑群组相关信息
-const edit_group = () => {
-  const nameList = {
-    groupid: injectTargetId.value,
-  };
-  uni.navigateTo({
-    url: '../groupSetting/groupSetting?groupInfo=' + JSON.stringify(nameList),
-  });
-};
-defineExpose({
-  closeAllModal,
-});
 </script>
 
 <style scoped>

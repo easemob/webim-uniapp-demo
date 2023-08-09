@@ -52,6 +52,7 @@
       }"
       :scroll-with-animation="true"
       :scroll-top="commentScrollTop"
+      @click="closeModal"
     >
       <view id="commentContent">
         <view

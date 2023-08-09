@@ -1,13 +1,16 @@
 <template>
   <view class="em_chat_container">
-    <message-list />
-    <input-bar />
+    <message-list @closeAllModal="closeAllModal" />
+    <input-bar ref="inputRef" />
   </view>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import MessageList from './components/messageList';
 import InputBar from './components/inputBar';
+const inputRef = ref(null);
+const closeAllModal = () => inputRef.value?.closeAllModal();
 </script>
 
 <style>
