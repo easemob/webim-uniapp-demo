@@ -11,8 +11,11 @@ import { useConversationStore } from '@/stores/conversation';
 import { useContactsStore } from '@/stores/contacts';
 import { EMClient, EaseSDK } from './EaseIM';
 /* Agora */
+// #ifdef APP-PLUS
 import { useInitCallKit } from '@/components/emCallKit';
 import useCallKitEvent from '@/components/emCallKit/callKitManage/useCallKitEvent';
+// #endif
+
 export default {
   setup() {
     const loginStore = useLoginStore();
@@ -166,7 +169,9 @@ export default {
       }
     };
     emMountGlobalListener(globaleventcallback);
-    /* Agora */
+
+    /* Agora 音视频仅支持原生端使用 */
+    // #ifdef APP-PLUS
     const { setCallKitClient } = useInitCallKit();
     setCallKitClient(EMClient, EaseSDK.message);
     //监听callkit状态变化展示对应的页面
@@ -183,6 +188,7 @@ export default {
         });
       }
     });
+    // #endif
   },
 };
 </script>

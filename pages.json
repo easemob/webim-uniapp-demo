@@ -137,6 +137,7 @@
         }
       }
     },
+    // #ifdef APP-PLUS
     {
       "path": "pages/emCallKitPages/alertScreen",
       "style": {
@@ -170,6 +171,7 @@
         "navigationBarTitleText": "邀请更多"
       }
     }
+    // #endif
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

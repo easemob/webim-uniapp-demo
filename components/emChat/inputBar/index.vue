@@ -69,7 +69,9 @@ import InputAudio from './suit/audio';
 import InputMain from './suit/main';
 import InputEmoji from './suit/emoji';
 //附件
+// #ifdef APP-PLUS
 import InputAttach from './suit/attach';
+// #endif
 import InputImage from './suit/image';
 import InputUserCard from './suit/userCard';
 /* inject */
