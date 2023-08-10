@@ -19,6 +19,7 @@
         :show-confirm-bar="false"
         maxlength="300"
         :adjust-position="false"
+        @keyboardheightchange="onKeyboardheightchange"
       />
       <view @click="emits('openEmojiModal')">
         <image class="icon-mic" src="/static/images/Emoji.png"></image>
@@ -47,6 +48,7 @@ const emits = defineEmits([
   'openEmojiModal',
   'openFunModal',
   'closeAllModal',
+  'changeKeyboardHeight',
 ]);
 const inputContent = ref('');
 //删除输入内容中的emojiMapStr
@@ -99,6 +101,12 @@ const sendTextMessage = async () => {
 const inputFocus = () => {
   console.log('>>>>输入框聚焦');
   emits('closeAllModal');
+};
+const onKeyboardheightchange = (e) => {
+  const {
+    detail: { height },
+  } = e;
+  emits('changeKeyboardHeight', height);
 };
 defineExpose({
   inputContent,

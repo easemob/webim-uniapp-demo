@@ -185,6 +185,7 @@ import {
   onMounted,
   inject,
   nextTick,
+  getCurrentInstance,
 } from 'vue';
 import { onLoad, onUnload } from '@dcloudio/uni-app';
 import { onPullDownRefresh, onNavigationBarButtonTap } from '@dcloudio/uni-app';
@@ -228,9 +229,11 @@ onUnload(() => {
 });
 const commentScrollTop = ref(0);
 //滚动到底部
+const instance = getCurrentInstance();
 const scrollToBottom = () => {
+  console.log('>>>>>>开始滚动');
   nextTick(() => {
-    let query = uni.createSelectorQuery().in(this);
+    let query = uni.createSelectorQuery().in(instance);
     query.select('#commentContainer').boundingClientRect();
     query.select('#commentContent').boundingClientRect();
     query.exec((res) => {

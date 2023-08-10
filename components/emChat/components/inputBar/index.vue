@@ -12,6 +12,7 @@
       @closeEmojiModal="closeEmojiModal"
       @openFunModal="openFunModal"
       @closeAllModal="closeAllModal"
+      @changeKeyboardHeight="changeKeyboardHeight"
     />
     <!-- 更多功能 -->
     <input-emoji
@@ -82,20 +83,12 @@ import InputUserCard from './suit/userCard';
 /* 动态调整输入框位置，防止输入框遮挡现象 */
 //存储键盘高度
 let keyboardHeight = ref(0);
-const listenerKeyboardHeight = (e) => {
-  keyboardHeight.value = e.height;
+const changeKeyboardHeight = (height) => {
+  keyboardHeight.value = height;
 };
 const moveStop = () => {
   return;
 };
-onLoad(() => {
-  //监听键盘抬起事件
-  uni.onKeyboardHeightChange(listenerKeyboardHeight);
-});
-onUnload(() => {
-  //卸载监听键盘事件
-  uni.offKeyboardHeightChange(listenerKeyboardHeight);
-});
 /* inject */
 const injectTargetId = inject('targetId');
 const injectChatType = inject('chatType');
