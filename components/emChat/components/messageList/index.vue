@@ -40,9 +40,10 @@
       class="message_list_container"
       scroll-y="true"
       refresher-enabled="true"
-      :refresher-triggered="triggered"
+      :refresher-triggered="isRefresher"
       :refresher-threshold="100"
-      refresher-background="lightgreen"
+      :scroll-top="commentScrollTop"
+      refresher-background="#fafafa"
       @refresherpulling="onPulling"
       @refresherrefresh="onRefresh"
       @refresherrestore="onRestore"
@@ -51,7 +52,6 @@
         height: `${msgWindowHeight - inputBarHeight - keyboardHeight}px`,
       }"
       :scroll-with-animation="true"
-      :scroll-top="commentScrollTop"
       @click="closeModal"
     >
       <view id="commentContent">
@@ -211,13 +211,10 @@ let keyboardHeight = ref(0);
 const listenerKeyboardHeight = (e) => {
   if (e.height > 0) {
     keyboardHeight.value = e.height;
-
-    nextTick(() => {
-      scrollToBottom();
-    });
+    scrollToBottom();
   } else {
     keyboardHeight.value = 0;
-    commentScrollTop.value = 0;
+    scrollToBottom();
   }
 };
 onLoad(async () => {
@@ -232,42 +229,50 @@ onUnload(() => {
 const commentScrollTop = ref(0);
 //滚动到底部
 const scrollToBottom = () => {
-  console.log('>>>>>执行滚动置底');
-  let query = uni.createSelectorQuery().in(this);
-  query.select('#commentContainer').boundingClientRect();
-  query.select('#commentContent').boundingClientRect();
-  query.exec((res) => {
-    console.log(res);
-    //如果子元素高度大于父元素高度(显示高度)
-    if (res[1].height > res[0].height) {
-      //计算出二者差值就是需要滚动的距离
-
-      commentScrollTop.value = res[1].height - res[0].height;
-    }
+  nextTick(() => {
+    let query = uni.createSelectorQuery().in(this);
+    query.select('#commentContainer').boundingClientRect();
+    query.select('#commentContent').boundingClientRect();
+    query.exec((res) => {
+      //如果子元素高度大于父元素高度(显示高度)
+      if (res[1].height > res[0].height) {
+        //计算出二者差值就是需要滚动的距离
+        commentScrollTop.value = res[1].height - res[0].height;
+      } else if (res[1].height == res[0].height) {
+        commentScrollTop.value = res[1].height + 500;
+      }
+    });
   });
 };
+/*
+ * 如果你也遇到了scroll-view 下拉不能重置状态推荐看下这个文章
+ * https://ask.dcloud.net.cn/article/id-37181
+ */
 /* 下拉刷新逻辑 */
-const triggered = ref(false);
+let isRefresher = ref(false);
+let _freshing = ref(false); //刷新中状态
 const onPulling = (e) => {
   console.log('onpulling', e);
 };
 const onRefresh = () => {
-  if (this._freshing) return;
-  this._freshing = true;
+  if (_freshing.value) return;
+  _freshing.value = true;
+  if (!isRefresher.value) isRefresher.value = true;
   setTimeout(() => {
-    this.triggered = false;
-    this._freshing = false;
+    getMoreHistoryMessages();
+    isRefresher.value = false;
+    _freshing.value = false;
   }, 3000);
 };
 const onRestore = () => {
-  this.triggered = 'restore'; // 需要重置
   console.log('onRestore');
 };
 const onAbort = () => {
   console.log('onAbort');
+  isRefresher.value = false;
+  _freshing.value = false;
 };
 
-/* -------------------------原始MSG逻辑-------------------------- */
 /* emit */
 const $emits = defineEmits(['closeAllModal']);
 const msglistState = reactive({
@@ -348,23 +353,13 @@ const getMoreHistoryMessages = async () => {
   }
 };
 onMounted(() => {
-  nextTick(() => {
-    uni.pageScrollTo({
-      scrollTop: 100000,
-      duration: 50,
-    });
-  });
+  scrollToBottom();
 });
 //监听消息内容改变，滚动列表
 watch(
   messageList,
   () => {
-    nextTick(() => {
-      uni.pageScrollTo({
-        scrollTop: 100000,
-        duration: 100,
-      });
-    });
+    scrollToBottom();
   },
   {
     deep: true,
@@ -433,7 +428,6 @@ const entryProfilePage = (userInfo) => {
   }
 };
 const closeModal = () => {
-  console.log('>>>>>1111111111');
   $emits('closeAllModal');
 };
 /* 举报消息 */
@@ -494,10 +488,6 @@ const reportMsg = async () => {
     msglistState.rptMsgId = '';
   }
 };
-onPullDownRefresh(() => {
-  getMoreHistoryMessages();
-  console.log('>>>>>开始了下拉页面');
-});
 </script>
 
 <style>
