@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view @touchmove.stop.prevent="moveStop">
     <view>
       <!-- 弹出举报入口 -->
       <uni-popup ref="alertReport">
@@ -188,7 +188,6 @@ import {
   getCurrentInstance,
 } from 'vue';
 import { onLoad, onUnload } from '@dcloudio/uni-app';
-import { onPullDownRefresh, onNavigationBarButtonTap } from '@dcloudio/uni-app';
 /* EaseIM */
 import parseEmoji from '@/EaseIM/utils/paseEmoji';
 import { CHAT_TYPE, MESSAGE_TYPE } from '@/EaseIM/constant';
@@ -492,6 +491,10 @@ const reportMsg = async () => {
     msglistState.rptType = '';
     msglistState.rptMsgId = '';
   }
+};
+//iOS端会出现弹起软键盘后，整个页面变为可滚动，增加此代码阻止其异常滚动
+const moveStop = () => {
+  return;
 };
 </script>
 
