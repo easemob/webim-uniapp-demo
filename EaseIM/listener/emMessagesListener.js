@@ -59,7 +59,8 @@ export const emMessagesListener = (callback, listenerEventName) => {
     },
     // 当前用户收到透传消息。
     onCmdMessage: function (message) {
-      handleReciveDisPlayMessages({ ...message });
+      //cmd消息暂不处理
+      //   handleReciveDisPlayMessages({ ...message });
     },
     // 当前用户收到语音消息。
     onAudioMessage: function (message) {
