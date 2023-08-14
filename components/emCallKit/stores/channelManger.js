@@ -21,6 +21,7 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
       apiUrl: '',
       appKey: '',
       loginUserId: '',
+      clientResource: '',
       accessToken: '',
     },
     callKitStatus: {
@@ -52,6 +53,7 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
       this.emClientInfos.appKey = emClient.appKey;
       this.emClientInfos.loginUserId = emClient.user;
       this.emClientInfos.accessToken = emClient.token;
+      this.emClientInfos.clientResource = emClient.clientResource;
     },
     /* CallKit status 管理 */
     //初始化频道信息
@@ -142,6 +144,7 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
     },
     //发起音视频邀请
     async sendInviteMessage(targetId, callType, groupId) {
+      console.log('>>>>>>>>>', targetId, callType, groupId);
       const { sendInviteMsg } = useSendSignalMsgs();
       //非空闲状态直接拒绝发送邀请信息[除了多人，因为涉及到多人通话中需要邀请他人入会]
       if (
@@ -155,6 +158,7 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
         inviteMsgContent: CALL_INVITE_TEXT[callType],
         groupId: groupId, //只有为群聊多人邀请时这个参数才有用
       };
+
       this.callKitStatus.inviteTarget = targetId;
       try {
         //如果为数组就遍历发送
@@ -174,13 +178,13 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
       }
       //更改部分ChannelInfos
       const params = {
-        from: IMClient.user,
+        from: this.emClientInfos.loginUserId,
         to: callType === CALL_TYPES.MULTI_VIDEO ? '' : targetId,
         ext: {
           channelName: channelInfors.channelName,
           callId: channelInfors.callId,
           type: callType,
-          callerDevId: IMClient.context.jid.clientResource,
+          callerDevId: this.emClientInfos.clientResource,
         },
       };
       //如果存在群组ID则增加ext字段进入到groupId

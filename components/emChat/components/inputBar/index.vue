@@ -24,6 +24,8 @@
     <input-image ref="inputImageComp" @closeAllModal="closeAllModal" />
     <!-- 用户卡片组件 -->
     <input-user-card ref="inputUserCardComp" @closeAllModal="closeAllModal" />
+    <!-- 视频邀请组件 -->
+    <invite-avcall ref="inviteAvcallComp" />
     <view v-if="isShowFunModal" :class="'showFunModal'">
       <view :class="'other_func'">
         <view> </view>
@@ -34,6 +36,12 @@
         <view class="other_func_item menu_wrap" @click="openPhotoAlbum">
           <image src="/static/images/pic.png"></image>
           相册
+        </view>
+        <view class="other_func_item menu_wrap">
+          <view class="account_box" @click="selectAvcallType">
+            <image src="/static/images/pic.png"></image>
+          </view>
+          视频通话
         </view>
         <view
           class="other_func_item menu_wrap"
@@ -76,8 +84,14 @@ import { onLoad, onUnload } from '@dcloudio/uni-app';
 import InputMain from './suit/main';
 import InputAudio from './suit/audio';
 import InputEmoji from './suit/emoji';
+
+//#ifdef APP-PLUS
 //附件
 import InputAttach from './suit/attach';
+// #endif
+
+//emCallKit 视频邀请组件
+import InviteAvcall from './suit/inviteAvcall';
 import InputImage from './suit/image';
 import InputUserCard from './suit/userCard';
 /* 动态调整输入框位置，防止输入框遮挡现象 */
@@ -156,6 +170,18 @@ const edit_group = () => {
   uni.navigateTo({
     url: '../groupSetting/groupSetting?groupInfo=' + JSON.stringify(nameList),
   });
+};
+/* emCallKit */
+const inviteAvcallComp = ref(null);
+const selectAvcallType = () => {
+  closeAllModal();
+  if (injectChatType.value === 'groupChat') {
+    uni.navigateTo({
+      url: `/pages/emCallKitPages/inviteMembers?groupId=${injectTargetId.value}`,
+    });
+  } else {
+    inviteAvcallComp.value && inviteAvcallComp.value.openInvitePopup();
+  }
 };
 defineExpose({
   closeAllModal,

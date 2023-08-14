@@ -22,6 +22,7 @@
 import { ref, toRefs, computed, onMounted } from 'vue';
 import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
 import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
+import { onLoad } from '@dcloudio/uni-app';
 /* props */
 const props = defineProps({
   groupId: {
@@ -37,13 +38,18 @@ const emClientInfos = computed(() => {
 const channelInfos = computed(
   () => agoraChannelStore.callKitStatus.channelInfos
 );
-onMounted(() => {
-  packageMembers();
+// onMounted(() => {
+//   console.log('>>>>>onMounted>>>', channelInfos.value);
+//   packageMembers();
+// });
+onLoad((option) => {
+  console.log('?????????option', option);
+  packageMembers(option?.groupId);
 });
 let memberList = ref([]);
-const packageMembers = async () => {
+const packageMembers = async (groupId) => {
   const resGroupMembers = await agoraChannelStore.getTheGroupMembers(
-    channelInfos.value.groupId
+    groupId || channelInfos.value.groupId
   );
   resGroupMembers.length > 0 &&
     resGroupMembers.map((memberData) => {
@@ -79,9 +85,13 @@ const sendMultiInviteChannelMsg = async () => {
       );
     }
     uni.showToast({ icon: 'none', title: '邀请已发出正在等待对方加入！' });
+    uni.redirectTo({
+      url: '/pages/emCallKitPages/multiCall',
+    });
   } catch (error) {
     console.log('error', error);
     uni.showToast({ icon: 'none', title: '会议邀请发送失败，请稍后重试！' });
+    // uni.navigateBack();
   } finally {
     checkedMember.value = [];
   }

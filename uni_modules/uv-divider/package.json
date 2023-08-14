@@ -1,14 +1,14 @@
 {
-  "id": "uv-popup",
-  "displayName": "uv-popup 弹出层 全面兼容vue3+2、app、h5、小程序等多端",
-  "version": "1.0.4",
-  "description": "uv-popup 弹出层容器，用于展示弹窗、信息提示等内容，支持上、下、左、右和中部弹出。组件只提供容器，内部内容由用户自定义。",
+  "id": "uv-divider",
+  "displayName": "uv-divider 分割线 全面兼容小程序、nvue、vue2、vue3等多端",
+  "version": "1.0.2",
+  "description": "区隔内容的分割线，一般用于页面底部没有更多的提示。",
   "keywords": [
-    "uv-popup",
+    "divider",
     "uvui",
     "uv-ui",
-    "popup",
-    "弹出层"
+    "分割线",
+    "没有更多"
 ],
   "repository": "",
   "engines": {
@@ -37,11 +37,7 @@
   "uni_modules": {
     "dependencies": [
 			"uv-ui-tools",
-			"uv-overlay",
-			"uv-transition",
-			"uv-icon",
-			"uv-status-bar",
-			"uv-safe-bottom"
+			"uv-line"
 		],
     "encrypt": [],
     "platforms": {
