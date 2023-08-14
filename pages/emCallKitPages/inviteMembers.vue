@@ -38,12 +38,7 @@ const emClientInfos = computed(() => {
 const channelInfos = computed(
   () => agoraChannelStore.callKitStatus.channelInfos
 );
-// onMounted(() => {
-//   console.log('>>>>>onMounted>>>', channelInfos.value);
-//   packageMembers();
-// });
 onLoad((option) => {
-  console.log('?????????option', option);
   packageMembers(option?.groupId);
 });
 let memberList = ref([]);

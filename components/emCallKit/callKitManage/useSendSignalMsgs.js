@@ -174,12 +174,45 @@ const useSendSignalMsgs = () => {
         });
     });
   };
+  //发送取消呼叫消息
+  const sendCannelMsg = (payload) => {
+    console.log('>>>>>>>发送取消通话信令', payload);
+    const { targetId, callId } = payload;
+    const option = {
+      type: 'cmd',
+      chatType: 'singleChat',
+      // 设置消息接收方的用户 ID。
+      to: targetId,
+      // 设置自定义动作。对于透传消息，该字段必填。
+      action: action,
+      // 设置消息扩展信息。
+      ext: {
+        action: CALL_ACTIONS_TYPE.CANCEL,
+        callerDevId: CallKitEMClient.clientResource,
+        callId: callId || '',
+        ts: Date.now(),
+        msgType: MSG_TYPE,
+      },
+    };
+    const msg = CallKitCreateMsgFun.create(option);
+    // 调用 `send` 方法发送该透传消息。
+    CallKitEMClient.send(msg)
+      .then((res) => {
+        // 消息成功发送回调。
+        console.log('Cannel Success', res);
+      })
+      .catch((e) => {
+        // 消息发送失败回调。
+        console.log('Cannel Fail', e, option);
+      });
+  };
   return {
     sendAlertMsg,
     sendAnswerMsg,
     sendInviteMsg,
     sendConfirmRing,
     sendConfirmCallee,
+    sendCannelMsg,
   };
 };
 

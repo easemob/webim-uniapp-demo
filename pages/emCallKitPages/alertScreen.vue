@@ -2,43 +2,74 @@
   <view class="alert_screen_container">
     <view class="alert_header">
       <image class="avatar" src="/static/emCallKit/loginIcon.png" />
-      <view class="name">{{ channelInfos.callerIMName || '未知呼叫' }}</view>
-      <text>{{
-        CALL_INVITE_TEXT[channelInfos.callType] + '...' || '未知类型呼叫'
-      }}</text>
+      <template v-if="localClientStatus === CALLSTATUS.inviting">
+        <view class="name">{{
+          agoraChannelStore.callKitStatus.inviteTarget
+        }}</view>
+        <text>等待接听中...</text>
+      </template>
+      <template v-else>
+        <view class="name">{{ channelInfos.callerIMName || '未知呼叫' }}</view>
+        <text>{{
+          CALL_INVITE_TEXT[channelInfos.callType] + '...' || '未知类型呼叫'
+        }}</text>
+      </template>
     </view>
     <view class="alert_footer">
-      <view class="alert_btns">
-        <view class="alert_btns_circle" @click="agreeJoinChannel">
-          <image src="/static/emCallKit/icon_docdet02.png"></image>
-          <text>接听</text>
+      <template v-if="localClientStatus === CALLSTATUS.inviting">
+        <view class="alert_btns">
+          <view class="alert_btns_circle" @click="cannelCall">
+            <image src="/static/emCallKit/icon_video_cancel.png"></image>
+            <text>取消</text>
+          </view>
         </view>
-        <view class="alert_btns_circle" @click="refuseJoinChannel">
-          <image src="/static/emCallKit/icon_video_cancel.png"></image>
-          <text>拒接</text>
+      </template>
+      <template v-else>
+        <view class="alert_btns">
+          <view class="alert_btns_circle" @click="agreeJoinChannel">
+            <image src="/static/emCallKit/icon_docdet02.png"></image>
+            <text>接听</text>
+          </view>
+          <view class="alert_btns_circle" @click="refuseJoinChannel">
+            <image src="/static/emCallKit/icon_video_cancel.png"></image>
+            <text>拒接</text>
+          </view>
         </view>
-      </view>
+      </template>
     </view>
   </view>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useInitCallKit } from '@/components/emCallKit';
 import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
 import {
   ANSWER_TYPE,
   CALL_INVITE_TEXT,
   CALL_TYPES,
+  CALLSTATUS,
 } from '@/components/emCallKit/contants';
 const { handleSendAnswerMsg } = useInitCallKit();
 const agoraChannelStore = useAgoraChannelStore();
 const channelInfos = computed(() => {
   return agoraChannelStore.callKitStatus.channelInfos ?? {};
 });
+const localClientStatus = computed(() => {
+  return agoraChannelStore.callKitStatus.localClientStatus;
+});
 //保持屏幕常亮
 uni.setKeepScreenOn({
   keepScreenOn: true,
+});
+watch(localClientStatus, (newVal, oldVal) => {
+  console.log('>>>>>>>待接听页面参数状态变化', newVal, oldVal);
+  if (newVal === CALLSTATUS.confirmCallee) {
+    enterSingleCallPage();
+  }
+  if (newVal === CALLSTATUS.idle) {
+    uni.navigateBack({ delta: 1 });
+  }
 });
 const agreeJoinChannel = () => {
   console.log('>>>>>接听通话');
@@ -48,15 +79,21 @@ const agreeJoinChannel = () => {
       url: '/pages/emCallKitPages/multiCall',
     });
   } else {
-    uni.redirectTo({
-      url: '/pages/emCallKitPages/singleCall',
-    });
+    enterSingleCallPage();
   }
 };
 const refuseJoinChannel = () => {
   console.log('>>>>>拒绝接听');
   handleSendAnswerMsg(ANSWER_TYPE.REFUSE);
   uni.navigateBack({ delta: 1 });
+};
+const enterSingleCallPage = () => {
+  uni.redirectTo({
+    url: '/pages/emCallKitPages/singleCall',
+  });
+};
+const cannelCall = () => {
+  agoraChannelStore.handleCancelCall();
 };
 </script>
 

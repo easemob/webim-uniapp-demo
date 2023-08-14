@@ -218,14 +218,24 @@ const joinChannel = async () => {
 };
 //挂断
 const leaveChannel = async () => {
-  (await state.engine) && state.engine.leaveChannel();
-  uni.navigateBack({ delta: 1 });
-  //设置本地状态为闲置
-  agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
-  uni.showToast({
-    icon: 'none',
-    title: `通话结束【${formatTime.value}】`,
-  });
+  if (
+    [CALLSTATUS.inviting, CALLSTATUS.confirmRing].includes(
+      agoraChannelStore.callKitStatus.localClientStatus
+    )
+  ) {
+    (await state.engine) && state.engine.leaveChannel();
+    agoraChannelStore.handleCancelCall();
+    uni.navigateBack({ delta: 1 });
+  } else {
+    (await state.engine) && state.engine.leaveChannel();
+    uni.navigateBack({ delta: 1 });
+    //设置本地状态为闲置
+    agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
+    uni.showToast({
+      icon: 'none',
+      title: `通话结束【${formatTime.value}】`,
+    });
+  }
 };
 //切换摄像头
 const onSwitchCamera = () => {

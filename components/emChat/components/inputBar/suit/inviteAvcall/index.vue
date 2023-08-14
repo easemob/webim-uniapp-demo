@@ -2,11 +2,18 @@
   <view>
     <uv-popup ref="invitePopup" mode="bottom" round="10">
       <view class="invite_btn_box">
-        <text class="invite_func_btn">视频通话</text>
-        <text class="invite_func_btn">语音通话</text>
         <text
-          class="invite_func_btn invite_func_btn_cannel"
-          @click="closeInvitePopup"
+          class="invite_func_btn"
+          @click="sendAvCallMessage(CALL_TYPES.SINGLE_VIDEO)"
+          >视频通话</text
+        >
+        <text
+          class="invite_func_btn"
+          @click="sendAvCallMessage(CALL_TYPES.SINGLE_VOICE)"
+          >语音通话</text
+        >
+
+        <text class="invite_func_btn invite_func_btn_cannel" @click="onCannel"
           >取消</text
         >
       </view>
@@ -15,13 +22,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
+import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
+import { CALL_TYPES } from '@/components/emCallKit/contants';
+import onFeedTap from '@/utils/feedTap';
+const agoraChannelStore = useAgoraChannelStore();
+const injectTargetId = inject('targetId');
 const invitePopup = ref(null);
 const openInvitePopup = () => {
   invitePopup.value.open();
 };
 const closeInvitePopup = () => {
   invitePopup.value.close();
+};
+const onCannel = () => {
+  onFeedTap();
+  closeInvitePopup();
+};
+const sendAvCallMessage = async (callType) => {
+  try {
+    await agoraChannelStore.sendInviteMessage(injectTargetId.value, callType);
+    uni.navigateTo({
+      url: '/pages/emCallKitPages/alertScreen',
+    });
+  } catch (error) {
+    console.log('>>>>通话邀请发起失败', error);
+    uni.showToast({
+      icon: 'none',
+      title: '通话发起失败',
+    });
+  } finally {
+    onFeedTap();
+    closeInvitePopup();
+  }
 };
 
 defineExpose({
@@ -45,5 +78,6 @@ defineExpose({
 }
 .invite_func_btn_cannel {
   color: red;
+  margin-top: 10px;
 }
 </style>

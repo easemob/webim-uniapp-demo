@@ -74,7 +74,7 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
         groupId: '', //群组ID
       };
       this.callKitStatus.inviteTarget = null;
-      this.callKitTimer && clearTimeout(callKitTimer.value);
+      this.callKitTimer && clearTimeout(this.callKitTimer);
     },
     //更新localStatus
     updateLocalStatus(typeCode) {
@@ -103,15 +103,16 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
     /* CallKit Timer */
     //用作邀请信息发送之后发起计时30s。
     startCallKitTimer() {
-      if (callKitTimer.value) {
-        clearTimeout(callKitTimer.value);
-        callKitTimer.value = null;
+      const { sendCannelMsg } = useSendSignalMsgs();
+      if (this.callKitTimer) {
+        clearTimeout(this.callKitTimer);
+        this.callKitTimer = null;
       }
       //对外发布应答事件
-      callKitTimer.value = setTimeout(() => {
+      this.callKitTimer = setTimeout(() => {
         const targetId = this.callKitStatus.inviteTarget;
         //发送cannel信令
-        SignalMsgs.sendCannelMsg({
+        sendCannelMsg({
           targetId,
           callId: this.callKitStatus.channelInfos.callId,
         });
@@ -194,7 +195,7 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
       this.updateChannelInfos(params);
       //单人邀请开启超时挂断，多人则忽略
       if (callType !== CALL_TYPES.MULTI_VIDEO) {
-        startCallKitTimer();
+        this.startCallKitTimer();
       }
     },
     //【多人】在会议中邀请邀请--会议中邀请不生成新的频道信息
@@ -226,6 +227,45 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
         }
       } catch (error) {
         console.log('%c邀请信息发送失败', 'color:red', error);
+      }
+    },
+    //发送挂断信令
+    handleCancelCall() {
+      const { sendCannelMsg } = useSendSignalMsgs();
+      const targetId = this.callKitStatus.inviteTarget;
+      if (!targetId) return console.log('>>>挂断目标ID为空', targetId);
+      //多人遍历发送取消
+      if (this.callKitStatus.channelInfos.callType === CALL_TYPES.MULTI_VIDEO) {
+        targetId.length &&
+          targetId.forEach((userHxId) => {
+            sendCannelMsg({
+              targetId: userHxId,
+              callId: this.callKitStatus.channelInfos.callId,
+            });
+          });
+        //对外频道接听事件发布事件
+        const eventParams = {
+          type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CANCEL],
+          ext: { message: '多人音视频通话已取消' },
+          callType: CALL_TYPES.MULTI_VIDEO,
+          eventHxId: this.callKitStatus.channelInfos.groupId,
+        };
+        PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+        this.updateLocalStatus(CALLSTATUS.idle);
+      } else {
+        sendCannelMsg({
+          targetId,
+          callId: this.callKitStatus.channelInfos.callId,
+        });
+        //对外频道接听事件发布事件
+        const eventParams = {
+          type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CANCEL],
+          ext: { message: '通话已取消' },
+          callType: this.callKitStatus.channelInfos.callType,
+          eventHxId: targetId,
+        };
+        PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+        this.updateLocalStatus(CALLSTATUS.idle);
       }
     },
     //请求频道Token
