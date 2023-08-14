@@ -222,10 +222,12 @@ onLoad(async () => {
   const { windowHeight } = await uni.getSystemInfo();
   msgWindowHeight.value = windowHeight;
   //监听键盘抬起事件
-  uni.onKeyboardHeightChange(listenerKeyboardHeight);
+  uni.onKeyboardHeightChange &&
+    uni.onKeyboardHeightChange(listenerKeyboardHeight);
 });
 onUnload(() => {
-  uni.offKeyboardHeightChange(listenerKeyboardHeight);
+  uni.offKeyboardHeightChange &&
+    uni.offKeyboardHeightChange(listenerKeyboardHeight);
 });
 const commentScrollTop = ref(0);
 //滚动到底部
