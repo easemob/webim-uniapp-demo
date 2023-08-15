@@ -306,7 +306,7 @@ onUnload(() => {
   right: 48rpx;
   margin-top: 120rpx;
   flex-direction: row;
-  background-color: #ffeedd;
+  background-color: #000;
 }
 .local_view_stream {
   width: 240rpx;

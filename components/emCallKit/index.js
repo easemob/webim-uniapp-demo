@@ -308,7 +308,6 @@ export const useInitCallKit = () => {
           break;
       }
     };
-    //处理接听挂断
   };
   //发送接听或者拒接信令
   const handleSendAnswerMsg = (sendType) => {

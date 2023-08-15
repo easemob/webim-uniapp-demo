@@ -311,7 +311,7 @@ onUnload(() => {
   width: 350rpx;
   height: 350rpx;
   margin: 25rpx 0;
-  background: green;
+  background: #000;
 }
 .remote_view {
   width: 350rpx;
