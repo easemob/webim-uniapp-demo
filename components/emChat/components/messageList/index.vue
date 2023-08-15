@@ -56,7 +56,7 @@
     >
       <view id="commentContent">
         <view
-          @longtap="actionAleartReportMsg(msgBody)"
+          @longpress="actionAleartReportMsg(msgBody)"
           class="message"
           v-for="(msgBody, index) in messageList"
           :key="msgBody.id + index + ''"
