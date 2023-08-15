@@ -96,7 +96,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import { onLoad, onUnload } from '@dcloudio/uni-app';
-import { AGORA_APP_ID } from '@/components/emCallKit/contants/index.js';
+import { AGORA_APP_ID } from '@/components/emCallKit/config/index.js';
 import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
 import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
 import {

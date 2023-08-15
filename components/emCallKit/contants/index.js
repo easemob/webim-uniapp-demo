@@ -1,5 +1,3 @@
-const AGORA_APP_ID = '15cb0d28b87b425ea613fc46f7c9f974';
-
 const MSG_TYPE = 'rtcCallWithAgora';
 const CALL_INVITE_TEXT = {
   0: '邀请您进行语音通话',
@@ -44,7 +42,6 @@ const ANSWER_TYPE = {
   REFUSE: 'refuse', //拒绝
 };
 export {
-  AGORA_APP_ID,
   MSG_TYPE,
   CALL_TYPES,
   CALL_TYPE,
