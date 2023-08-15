@@ -63,7 +63,6 @@ uni.setKeepScreenOn({
   keepScreenOn: true,
 });
 watch(localClientStatus, (newVal, oldVal) => {
-  console.log('>>>>>>>待接听页面参数状态变化', newVal, oldVal);
   if (newVal === CALLSTATUS.confirmCallee) {
     enterSingleCallPage();
   }
@@ -72,7 +71,6 @@ watch(localClientStatus, (newVal, oldVal) => {
   }
 });
 const agreeJoinChannel = () => {
-  console.log('>>>>>接听通话');
   handleSendAnswerMsg(ANSWER_TYPE.ACCPET);
   if (channelInfos.value.callType === CALL_TYPES.MULTI_VIDEO) {
     uni.redirectTo({
@@ -83,7 +81,6 @@ const agreeJoinChannel = () => {
   }
 };
 const refuseJoinChannel = () => {
-  console.log('>>>>>拒绝接听');
   handleSendAnswerMsg(ANSWER_TYPE.REFUSE);
   uni.navigateBack({ delta: 1 });
 };

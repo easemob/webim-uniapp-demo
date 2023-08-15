@@ -37,18 +37,13 @@ export const useInitCallKit = () => {
           agoraChannelStore.initChannelInfos();
           break;
         case CALLSTATUS.inviting:
-          if (callKitStatus.value.channelInfos.callType <= 1) {
-            console.log('>>>>>>>展示单人音视频组件');
-            //   callComponents.value = 'singleCall';
-          }
-          if (callKitStatus.value.channelInfos.callType === 2) {
-            console.log('》》》》》展示多人音视频组件');
-            //   callComponents.value = 'multiCall';
-          }
-          console.log('>>>>>可以展开邀请窗口');
+          //   if (callKitStatus.value.channelInfos.callType <= 1) {
+          //   }
+          //   if (callKitStatus.value.channelInfos.callType === 2) {
+          //   }
+          //   console.log('>>>>>可以展开邀请窗口');
           break;
         case CALLSTATUS.receivedConfirmRing:
-          console.log('>>>>新状态为弹出框，执行弹出待确认框');
           const eventParams = {
             type: CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.ALERT_SCREEN],
             ext: { message: '可以弹出通话接听UI组件' },
@@ -59,26 +54,26 @@ export const useInitCallKit = () => {
           break;
         case CALLSTATUS.answerCall:
           console.log('>>>>>可以弹出通话接听UI组件');
-          if (callKitStatus.value.channelInfos.callType <= 1) {
-            console.log('>>>>>>>展示单人音视频组件');
-            //   callComponents.value = 'singleCall';
-          }
-          if (callKitStatus.value.channelInfos.callType === 2) {
-            console.log('》》》》》展示多人音视频组件');
-            //   callComponents.value = 'multiCall';
-          }
+          //   if (callKitStatus.value.channelInfos.callType <= 1) {
+          //     console.log('>>>>>>>展示单人音视频组件');
+          //     //   callComponents.value = 'singleCall';
+          //   }
+          //   if (callKitStatus.value.channelInfos.callType === 2) {
+          //     console.log('》》》》》展示多人音视频组件');
+          //     //   callComponents.value = 'multiCall';
+          //   }
           break;
         case CALLSTATUS.confirmCallee:
           {
-            console.log('%c >>>>>可以加入房间了', 'color:green;');
-            console.log(
-              '++++++将入的频道类型是',
-              callKitStatus.value.channelInfos.callType
-            );
-            console.log(
-              '++++++频道名是',
-              callKitStatus.value.channelInfos.channelName
-            );
+            // console.log('%c >>>>>可以加入房间了', 'color:green;');
+            // console.log(
+            //   '++++++将入的频道类型是',
+            //   callKitStatus.value.channelInfos.callType
+            // );
+            // console.log(
+            //   '++++++频道名是',
+            //   callKitStatus.value.channelInfos.channelName
+            // );
           }
           break;
         default:
@@ -125,10 +120,7 @@ export const useInitCallKit = () => {
       //邀请消息发送者为自己则忽略
       if (from === CallKitEMClient.user) return;
       //非空闲回复busy
-      console.log('>>>>>>>收到邀请信息');
-      //非空闲回复busy
       if (callKitStatus.value.localClientStatus > CALLSTATUS.idle) {
-        console.log('>>>>>回复忙碌');
         const payload = {
           targetId: from,
           sendBody: ext,
@@ -140,7 +132,6 @@ export const useInitCallKit = () => {
         //更新呼叫状态为alerting
         updateLocalStatus(CALLSTATUS.alerting);
         //通知呼叫方可以调起通话窗口
-        console.log('>>>>>>向对方发送弹窗消息');
         sendAlertMsg(msgBody);
       }
     };
@@ -148,7 +139,6 @@ export const useInitCallKit = () => {
     const handleCallKitCommand = (msgBody) => {
       //多端状态下信令消息发送者为自己则忽略
       if (msgBody.from === CallKitEMClient.user) return;
-      console.log('>>>>开始处理command命令消息', msgBody);
       const cmdMsgBody = Object.assign({}, msgBody.ext) || {};
       const { calleeDevId, callerDevId } = cmdMsgBody;
       const clientResource = CallKitEMClient.context.jid.clientResource;
@@ -173,13 +163,7 @@ export const useInitCallKit = () => {
       switch (action) {
         case CALL_ACTIONS_TYPE.ALERT: //回复confirmring
           updateLocalStatus(CALLSTATUS.alerting);
-          console.log(
-            '%c>>>>>收到alert信令',
-            'color:blue',
-            currentCallKitCallId,
-            status
-          );
-          // console.log('>>>>>收到alert信令', currentCallKitCallId)
+
           if (cmdMsgBody.callId !== currentCallKitCallId) {
             status = false;
             console.warn('callId 于当前呼叫端callId 不一致');
@@ -215,16 +199,13 @@ export const useInitCallKit = () => {
                 CALLSTATUS.receivedConfirmRing
             ) {
               updateLocalStatus(CALLSTATUS.idle); //重置为闲置状态
-              //todo 设置为初始化状态
             } //邀请失效，不弹出接听确认框
             //有效邀请则设置状态为收到confirmRing
-            console.log('%chandle confimring', 'color:blue;');
             updateLocalStatus(CALLSTATUS.receivedConfirmRing);
           }
           break;
         case CALL_ACTIONS_TYPE.ANSWER:
           {
-            console.log('>>>>>cmdMsgBody', cmdMsgBody);
             if (callerDevId !== clientResource) return; //【多端情况】被叫方设备id 如果不为当前用户登陆设备ID，则不处理。
             updateLocalStatus(CALLSTATUS.receivedAnswerCall);
             callKitTimer.value && clearTimeout(callKitTimer.value);
@@ -253,10 +234,6 @@ export const useInitCallKit = () => {
             sendConfirmCallee(params);
             updateLocalStatus(CALLSTATUS.confirmCallee);
             if (cmdMsgBody.result !== ANSWER_TYPE.ACCPET) {
-              console.log(
-                'callKitStatus.value.channelInfos.callType ',
-                callKitStatus.value.channelInfos.callType
-              );
               if (callKitStatus.value.channelInfos.callType !== 2) {
                 //无论对方是忙碌还是拒接都讲通话状态更改为闲置。
                 if (cmdMsgBody.result === ANSWER_TYPE.BUSY) {
@@ -321,7 +298,6 @@ export const useInitCallKit = () => {
           break;
         }
         case CALL_ACTIONS_TYPE.VIDEO_TO_VOICE: {
-          console.log('++++++++++++++++视频转语音通知');
           if (cmdMsgBody.callId !== callKitStatus.value.channelInfos.callType)
             return;
           callKitStatus.value.channelInfos.callType = CALL_TYPES.SINGLE_VOICE;
@@ -345,7 +321,6 @@ export const useInitCallKit = () => {
         callId: channelInfos.callId,
       },
     };
-    console.log('?????????开始发送应答信令');
     if (sendType === ANSWER_TYPE.ACCPET) {
       sendAnswerMsg(payload, ANSWER_TYPE.ACCPET);
       updateLocalStatus(CALLSTATUS.answerCall); //更改状态为已应答

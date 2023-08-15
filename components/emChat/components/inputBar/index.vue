@@ -25,7 +25,9 @@
     <!-- 用户卡片组件 -->
     <input-user-card ref="inputUserCardComp" @closeAllModal="closeAllModal" />
     <!-- 视频邀请组件 -->
+    <!-- #ifdef APP-PLUS -->
     <invite-avcall ref="inviteAvcallComp" />
+    <!-- #endif -->
     <view v-if="isShowFunModal" :class="'showFunModal'">
       <view :class="'other_func'">
         <view> </view>
@@ -37,12 +39,14 @@
           <image src="/static/images/pic.png"></image>
           相册
         </view>
+        <!-- #ifdef APP-PLUS -->
         <view class="other_func_item menu_wrap">
           <view class="account_box" @click="selectAvcallType">
             <image src="/static/images/pic.png"></image>
           </view>
           视频通话
         </view>
+        <!-- #endif -->
         <view
           class="other_func_item menu_wrap"
           @tap="edit_group"
@@ -88,10 +92,9 @@ import InputEmoji from './suit/emoji';
 //#ifdef APP-PLUS
 //附件
 import InputAttach from './suit/attach';
-// #endif
-
 //emCallKit 视频邀请组件
 import InviteAvcall from './suit/inviteAvcall';
+// #endif
 import InputImage from './suit/image';
 import InputUserCard from './suit/userCard';
 /* 动态调整输入框位置，防止输入框遮挡现象 */
@@ -172,6 +175,7 @@ const edit_group = () => {
   });
 };
 /* emCallKit */
+//#ifdef APP-PLUS
 const inviteAvcallComp = ref(null);
 const selectAvcallType = () => {
   closeAllModal();
@@ -183,6 +187,7 @@ const selectAvcallType = () => {
     inviteAvcallComp.value && inviteAvcallComp.value.openInvitePopup();
   }
 };
+// #endif
 defineExpose({
   closeAllModal,
 });

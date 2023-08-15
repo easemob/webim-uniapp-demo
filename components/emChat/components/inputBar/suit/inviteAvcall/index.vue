@@ -36,10 +36,11 @@ const closeInvitePopup = () => {
   invitePopup.value.close();
 };
 const onCannel = () => {
-  onFeedTap();
+  onFeedTap && onFeedTap();
   closeInvitePopup();
 };
 const sendAvCallMessage = async (callType) => {
+  onFeedTap && onFeedTap();
   try {
     await agoraChannelStore.sendInviteMessage(injectTargetId.value, callType);
     uni.navigateTo({
@@ -52,7 +53,6 @@ const sendAvCallMessage = async (callType) => {
       title: '通话发起失败',
     });
   } finally {
-    onFeedTap();
     closeInvitePopup();
   }
 };

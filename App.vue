@@ -10,8 +10,8 @@ import { useGroupStore } from '@/stores/group';
 import { useConversationStore } from '@/stores/conversation';
 import { useContactsStore } from '@/stores/contacts';
 import { EMClient, EaseSDK } from './EaseIM';
-/* Agora */
 // #ifdef APP-PLUS
+/* callKit */
 import { useInitCallKit } from '@/components/emCallKit';
 import useCallKitEvent from '@/components/emCallKit/callKitManage/useCallKitEvent';
 // #endif
@@ -170,7 +170,7 @@ export default {
     };
     emMountGlobalListener(globaleventcallback);
 
-    /* Agora 音视频仅支持原生端使用 */
+    /* callKit仅支持原生端使用 */
     // #ifdef APP-PLUS
     const { setCallKitClient } = useInitCallKit();
     setCallKitClient(EMClient, EaseSDK.message);

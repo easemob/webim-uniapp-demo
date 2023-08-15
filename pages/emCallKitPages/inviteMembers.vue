@@ -61,10 +61,7 @@ let checkedMember = ref([]);
 const sendMultiInviteChannelMsg = async () => {
   if (!checkedMember.value.length) return;
   const localClientStatus = agoraChannelStore.callKitStatus.localClientStatus;
-  console.log(
-    '>>>>>开始准备发送邀请',
-    agoraChannelStore.callKitStatus.localClientStatus
-  );
+
   //多人会议邀请分两种模式，一种为会中邀请一种为首次发起邀请。
   try {
     if (localClientStatus !== CALLSTATUS.idle) {
@@ -86,7 +83,6 @@ const sendMultiInviteChannelMsg = async () => {
   } catch (error) {
     console.log('error', error);
     uni.showToast({ icon: 'none', title: '会议邀请发送失败，请稍后重试！' });
-    // uni.navigateBack();
   } finally {
     checkedMember.value = [];
   }
