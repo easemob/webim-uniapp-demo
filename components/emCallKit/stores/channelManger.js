@@ -123,7 +123,7 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
           eventHxId: targetId,
         };
         PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
-        updateLocalStatus(CALLSTATUS.idle); //更改状态为闲置
+        this.updateLocalStatus(CALLSTATUS.idle); //更改状态为闲置
       }, 30000);
     },
     /* 多人会议使用 获取群组内的成员 */

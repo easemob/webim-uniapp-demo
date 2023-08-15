@@ -181,11 +181,22 @@ export default {
       const { type, ext, callType, eventHxId } = params;
       console.log('>>>>>>订阅到callkit事件发布', params);
       //弹出待接听事件
-      if (type.code === CALLKIT_EVENT_CODE.ALERT_SCREEN) {
-        console.log('>>>>>>监听到对应code', type.code);
-        uni.navigateTo({
-          url: '../emCallKitPages/alertScreen',
-        });
+      switch (type.code) {
+        case CALLKIT_EVENT_CODE.ALERT_SCREEN:
+          {
+            console.log('>>>>>>监听到对应code', type.code);
+            uni.navigateTo({
+              url: '../emCallKitPages/alertScreen',
+            });
+          }
+          break;
+        case CALLKIT_EVENT_CODE.TIMEOUT:
+          {
+            console.log('>>>>>通话超时未接听');
+          }
+          break;
+        default:
+          break;
       }
     });
     // #endif
