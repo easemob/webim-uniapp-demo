@@ -49,9 +49,9 @@
           <image
             class="circleImg"
             :src="
-              state.isSwitchLocalMicPhone
-                ? '/static/emCallKit/icon_video_microphone.png'
-                : '/static/emCallKit/icon_video_quiet.png'
+              state.isMuteLocalAudioStream
+                ? '/static/emCallKit/icon_video_quiet.png'
+                : '/static/emCallKit/icon_video_microphone.png'
             "
           ></image>
           <text class="hint">麦克风</text>
@@ -134,7 +134,7 @@ const state = reactive({
   remoteUid: '',
   isSwitchCamera: true,
   isSwitchSperkerPhone: true,
-  isSwitchLocalMicPhone: true,
+  isMuteLocalAudioStream: false,
   isSwitchLocalCameraOpened: true,
 });
 //开启通话计时
@@ -253,8 +253,8 @@ const onSwitchSperkerPhone = async () => {
 const onSwitchLocalMicPhone = async () => {
   try {
     (await state.engine) &&
-      state.engine.muteLocalAudioStream(!state.isSwitchLocalMicPhone);
-    state.isSwitchLocalMicPhone = !state.isSwitchLocalMicPhone;
+      state.engine.muteLocalAudioStream(!state.isMuteLocalAudioStream);
+    state.isMuteLocalAudioStream = !state.isMuteLocalAudioStream;
   } catch (error) {
     uni.showToast({ icon: 'none', title: '开关本地麦克风采集失败！' });
   }
