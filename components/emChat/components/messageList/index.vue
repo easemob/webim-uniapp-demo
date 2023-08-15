@@ -35,6 +35,9 @@
         </uni-popup-dialog>
       </uni-popup>
     </view>
+    <view class="tips"
+      >本应用仅用于环信产品功能开发测试，请勿用于非法用途。任何涉及转账、汇款、裸聊、网恋、网购退款、投资理财等统统都是诈骗，请勿相信！</view
+    >
     <scroll-view
       id="commentContainer"
       class="message_list_container"
