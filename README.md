@@ -85,6 +85,7 @@ demo 包含以下核心功能
 
 - 集成环信 uni-app 相关 SDK，按文档进行相关初始化配置并登录。
 - 复制本 Demo 中的`emCallKit`、pages 下`emCallKitPages`至自己的项目文件目录中（不要忘记参考本 Demo 配置 `pages.json` 中相关页面路由地址）。
+- 将注册好的 appid 在`emCallKit`下的`config`中进行配置。
 - 在需要使用 Agora 音视频功能时需要将 IM 的实例传入到 callKit 组件内，参考代码如下。
 
 ```js
