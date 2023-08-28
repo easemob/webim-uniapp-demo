@@ -7,6 +7,7 @@ let msgType = require("./msgtype.js");
 let msgStorage = new Disp();
 
 let disp = require("../../utils/broadcast.js");
+const sessionMsgMap = {}
 
 msgStorage.saveReceiveMsg = function (receiveMsg, type) {
   console.log(receiveMsg, 'receiveMsg')
@@ -164,7 +165,10 @@ msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
     sessionKey = sendableMsg.body.from == myName ? sendableMsg.body.to + myName : sendableMsg.body.from + myName;
   }
 
-  let curChatMsg = uni.getStorageSync(sessionKey) || [];
+  let curChatMsg = sessionMsgMap?.[sessionKey] || uni.getStorageSync(sessionKey) || [];
+  if(!sessionMsgMap?.[sessionKey]){
+    sessionMsgMap[sessionKey] = curChatMsg
+  }
   let renderableMsg = msgPackager(sendableMsg, type, myName);
 
   if (type == msgType.AUDIO) {
@@ -187,11 +191,12 @@ msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
       data: curChatMsg,
 
       success() {
+        sessionMsgMap[sessionKey] = null
         if (type == msgType.AUDIO || type == msgType.VIDEO) {
           disp.fire('em.chat.audio.fileLoaded');
         }
-
         me.fire("newChatMsg", renderableMsg, type, curChatMsg, sessionKey);
+        
       }
 
     });
