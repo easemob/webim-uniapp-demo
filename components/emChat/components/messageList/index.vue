@@ -208,7 +208,7 @@ import AudioMsg from './type/audio/audio';
 //视图高
 let msgWindowHeight = ref(0);
 //输入框高度
-const inputBarHeight = 80;
+const inputBarHeight = 140;
 //存储键盘高度
 let keyboardHeight = ref(0);
 const listenerKeyboardHeight = (e) => {

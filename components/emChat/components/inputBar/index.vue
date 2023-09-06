@@ -14,6 +14,34 @@
       @closeAllModal="closeAllModal"
       @changeKeyboardHeight="changeKeyboardHeight"
     />
+    <view class="func_bottom_bar">
+      <!-- 发送语音 -->
+      <view class="func_icon" @click="toggleRecordModal">
+        <image src="/static/fpicons/mic_on@3x.png"></image>
+      </view>
+      <!-- 拍照发送 -->
+      <view class="func_icon" @click="openCamera">
+        <image src="/static/fpicons/camera_fill@3x.png"></image>
+      </view>
+      <!-- 发送图片 -->
+      <view class="func_icon" @click="openPhotoAlbum">
+        <image src="/static/fpicons/img@3x.png"></image>
+      </view>
+      <!-- 发送附件 -->
+      <!-- #ifdef APP-PLUS -->
+      <view class="func_icon">
+        <input-attach
+          :chatParams="chatParams"
+          :chatType="chatType"
+          @closeAllModal="closeAllModal"
+        >
+          <view class="func_file_box">
+            <image src="/static/fpicons/folder@3x.png"></image>
+          </view>
+        </input-attach>
+      </view>
+      <!-- #endif -->
+    </view>
     <!-- 更多功能 -->
     <input-emoji
       ref="inputEmojiComp"
@@ -30,15 +58,14 @@
     <!-- #endif -->
     <view v-if="isShowFunModal" :class="'showFunModal'">
       <view :class="'other_func'">
-        <view> </view>
-        <view class="other_func_item open_camera" @click="openCamera">
+        <!-- <view class="other_func_item open_camera" @click="openCamera">
           <image src="/static/images/camora.png"></image>
           相机
         </view>
         <view class="other_func_item menu_wrap" @click="openPhotoAlbum">
           <image src="/static/images/pic.png"></image>
           相册
-        </view>
+        </view> -->
         <!-- #ifdef APP-PLUS -->
         <view class="other_func_item menu_wrap">
           <view class="account_box" @click="selectAvcallType">
@@ -62,7 +89,7 @@
           用户名片
         </view>
         <!-- #ifdef APP-PLUS -->
-        <view class="other_func_item menu_wrap">
+        <!-- <view class="other_func_item menu_wrap">
           <input-attach
             :chatParams="chatParams"
             :chatType="chatType"
@@ -74,7 +101,7 @@
             ></image>
             附件
           </input-attach>
-        </view>
+        </view> -->
         <!-- #endif -->
       </view>
     </view>

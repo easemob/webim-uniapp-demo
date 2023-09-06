@@ -2,8 +2,12 @@
   <form class="text-input">
     <view class="f-row">
       <!-- 发送语音 -->
-      <view @click="emits('toggleRecordModal')">
+      <!-- <view @click="emits('toggleRecordModal')">
         <image class="icon-mic" src="/static/images/voice.png"></image>
+      </view> -->
+      <!-- 发送表情 -->
+      <view @click="emits('openEmojiModal')">
+        <image class="icon-mic" src="/static/images/Emoji.png"></image>
       </view>
       <!-- 输入框 -->
       <textarea
@@ -21,9 +25,9 @@
         :adjust-position="false"
         @keyboardheightchange="onKeyboardheightchange"
       />
-      <view @click="emits('openEmojiModal')">
+      <!-- <view @click="emits('openEmojiModal')">
         <image class="icon-mic" src="/static/images/Emoji.png"></image>
-      </view>
+      </view> -->
       <view v-show="!inputContent" @click="emits('openFunModal')">
         <image class="icon-mic" src="/static/images/ad.png"></image>
       </view>

@@ -47,8 +47,8 @@ const options = reactive({
 const attachState = reactive({
   instantly: true,
   // 必传宽高且宽高应与slot宽高保持一致
-  width: '108rpx',
-  height: '155rpx',
+  width: '40px',
+  height: '35px',
   // 限制允许选择的格式，空串=不限制，默认为空
   formats: '',
   // 文件上传大小限制
