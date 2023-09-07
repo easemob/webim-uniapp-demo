@@ -269,6 +269,11 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
       }
     },
     //请求频道Token
+    /**
+     * @function requestRtcChannelToken
+     * 该方法主要作用为请求Agora Rtc频道对应的token，其积极可抽象理解为拿到某频道对应的门钥匙。
+     * !但此方法所请求的接口为环信内部Demo演示接口，仅供环信内部自己使用如自己项目使用。请找后端协助部署一个类似的接口服务。
+     */
     requestRtcChannelToken() {
       const { channelName } = this.callKitStatus.channelInfos;
       const { apiUrl, appKey, loginUserId, accessToken } = this.emClientInfos;
@@ -293,6 +298,13 @@ const useAgoraChannelStore = defineStore('agoraChannelStore', {
         });
       });
     },
+
+    /**
+     * @function requestInChannelMapHxId
+     * 该方法作用为拿到频道内uid与环信id的映射关系，例如在频道内展示uid与之对应的环信ID，因此需要该接口取到uid的映射关系，非必须接口，
+     * 但此Demo多人音视频通话中有用到。
+     * !同样此方法如果项目中需要类似的需求，也请后端协助搭建类型功能接口，供项目中使用。
+     */
     //请求频道内uid映射的环信id
     requestInChannelMapHxId() {
       const { channelName } = this.callKitStatus.channelInfos;
