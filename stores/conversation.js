@@ -27,6 +27,7 @@ export const useConversationStore = defineStore('conversation', {
       this.chattingId = channel_id;
     },
     setConversationList(conversationList) {
+      const rePackageConversationList = [];
       conversationList?.length &&
         conversationList.map((channel) => {
           const conversationBody = {
@@ -52,8 +53,9 @@ export const useConversationStore = defineStore('conversation', {
           conversationBody.lastMessage = channel.lastMessage;
           conversationBody.unread_num = unread_num;
           conversationBody.time = time;
-          return this.conversationList.push(conversationBody);
+          return rePackageConversationList.push(conversationBody);
         });
+      this.conversationList = rePackageConversationList;
     },
     async deleteConversation(channel_id) {
       this.conversationList.length &&
