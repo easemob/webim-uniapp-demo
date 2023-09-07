@@ -6,7 +6,7 @@
   min-height: 80px;
   background-color: #f2f2f2;
   border-top: 1px solid rgba(0 0 0 0.5);
-  z-index: 9999;
+  z-index: 99;
 }
 .func_bottom_bar {
   width: 100%;

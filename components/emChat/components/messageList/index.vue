@@ -1,40 +1,5 @@
 <template>
-  <view @touchmove.stop.prevent="moveStop">
-    <view>
-      <!-- 弹出举报入口 -->
-      <uni-popup ref="alertReport">
-        <button @click="showSelectReportType">举报</button>
-        <button @click="cannelReport">取消</button>
-      </uni-popup>
-      <!-- 展示举报选项 -->
-      <uni-popup ref="selectReportType">
-        <button
-          v-for="(item, index) in msglistState.typeList"
-          :key="index"
-          @click="pickReportType(item)"
-        >
-          {{ item.text }}
-        </button>
-        <button type="warn" @click="hideSelectReportType">取消</button>
-      </uni-popup>
-      <!-- 填写举报原因 -->
-      <uni-popup ref="inputReportReason" type="dialog">
-        <uni-popup-dialog
-          mode="input"
-          title="举报原因"
-          placeholder="请输入举报原因"
-          @confirm="reportMsg"
-          @cancel="msglistState.reason = ''"
-        >
-          <uni-easyinput
-            type="textarea"
-            v-model="msglistState.reason"
-            placeholder="请填写举报内容"
-            :maxlength="300"
-          ></uni-easyinput>
-        </uni-popup-dialog>
-      </uni-popup>
-    </view>
+  <view>
     <view class="tips"
       >本应用仅用于环信产品功能开发测试，请勿用于非法用途。任何涉及转账、汇款、裸聊、网恋、网购退款、投资理财等统统都是诈骗，请勿相信！</view
     >
@@ -59,7 +24,7 @@
     >
       <view id="commentContent">
         <view
-          @longpress="actionAleartReportMsg(msgBody)"
+          @longpress="aleartReportMsg(msgBody)"
           class="message"
           v-for="(msgBody, index) in messageList"
           :key="msgBody.id + index + ''"
@@ -177,6 +142,7 @@
       </view>
     </scroll-view>
   </view>
+  <ReportMessage ref="reportMsgComp" />
 </template>
 
 <script setup>
@@ -205,6 +171,7 @@ import { emMessages } from '@/EaseIM/imApis';
 /* components */
 import FileMsg from './type/file';
 import AudioMsg from './type/audio/audio';
+import ReportMessage from './type/reportMessage';
 //视图高
 let msgWindowHeight = ref(0);
 //输入框高度
@@ -287,42 +254,14 @@ const msglistState = reactive({
   toView: 0,
   //漫游当前游标
   view: 'wrap',
-  title: '消息举报',
-  list: [
-    {
-      text: '举报',
-    },
-  ],
-  rptMsgId: '', // 举报消息id
-  rptType: '', // 举报类型
-  reason: '',
-  typeList: [
-    {
-      text: '涉政',
-    },
-    {
-      text: '涉黄',
-    },
-    {
-      text: '广告',
-    },
-    {
-      text: '辱骂',
-    },
-    {
-      text: '暴恐',
-    },
-    {
-      text: '违禁',
-    },
-  ],
+
   defaultAvatar: '/static/images/theme2x.png',
   defaultGroupAvatar: '/static/images/groupTheme.png',
 });
 const injectTargetId = inject('targetId');
 const injectChatType = inject('chatType');
 /* 消息相关逻辑处理 */
-const { reportMessages, fetchHistoryMessagesFromServer } = emMessages();
+const { fetchHistoryMessagesFromServer } = emMessages();
 //该用户当前的聊天记录
 const messageStore = useMessageStore();
 const messageList = computed(() => {
@@ -434,70 +373,12 @@ const entryProfilePage = (userInfo) => {
     });
   }
 };
+const reportMsgComp = ref(null);
+const aleartReportMsg = (msgBody) => {
+  reportMsgComp.value.actionAleartReportMsg({ ...msgBody });
+};
 const closeModal = () => {
   $emits('closeAllModal');
-};
-/* 举报消息 */
-//弹出举报
-const alertReport = ref(null);
-const actionAleartReportMsg = (item) => {
-  if (item.style !== 'self') {
-    alertReport.value.open('bottom');
-    msglistState.showRpt = true;
-    msglistState.rptMsgId = item.id;
-  }
-};
-//取消举报
-const cannelReport = () => {
-  alertReport.value.close();
-};
-
-//选择举报类型
-const selectReportType = ref(null);
-//展示举报类型面板
-const showSelectReportType = () => {
-  alertReport.value.close();
-  selectReportType.value.open('bottom');
-};
-const pickReportType = (item) => {
-  msglistState.rptType = item.text;
-  hideSelectReportType();
-  actionAleartReportReason(item);
-};
-const hideSelectReportType = () => {
-  selectReportType.value.close();
-};
-//填写举报原因
-const inputReportReason = ref(null);
-const actionAleartReportReason = (item) => {
-  inputReportReason.value.open();
-};
-
-const reportMsg = async () => {
-  if (msglistState.reason === '') {
-    uni.showToast({ title: '请填写举报原因', icon: 'none' });
-    return;
-  }
-  const reportParams = {
-    reportType: msglistState.rptType,
-    reportReason: msglistState.reason,
-    messageId: msglistState.rptMsgId,
-  };
-  try {
-    await reportMessages({ ...reportParams });
-    uni.showToast({ title: '举报成功', icon: 'none' });
-  } catch (error) {
-    console.log('>>>>举报失败', error);
-    uni.showToast({ title: '举报失败', icon: 'none' });
-  } finally {
-    msglistState.reason = '';
-    msglistState.rptType = '';
-    msglistState.rptMsgId = '';
-  }
-};
-//iOS端会出现弹起软键盘后，整个页面变为可滚动，增加此代码阻止其异常滚动
-const moveStop = () => {
-  return;
 };
 </script>
 
