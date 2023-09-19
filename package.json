@@ -1,0 +1,29 @@
+{
+  "name": "webim-uniapp-demo",
+  "version": "1.2.0",
+  "description": "为环信websdk提供uni-app集成示例demo",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easemob/webim-uniapp-demo.git"
+  },
+  "keywords": [
+    "webim",
+    "easemob",
+    "环信",
+    "uni-app",
+    "即时通讯"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/easemob/webim-uniapp-demo/issues"
+  },
+  "homepage": "https://github.com/easemob/webim-uniapp-demo#readme",
+  "dependencies": {
+    "easemob-websdk": "^4.2.0"
+  }
+}
