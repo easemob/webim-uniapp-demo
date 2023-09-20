@@ -1,10 +1,10 @@
 import { EaseSDK, EMClient } from '../index';
-import { useMessageStore } from '@/stores/message';
-import { useConversationStore } from '@/stores/conversation';
+// import { useMessageStore } from '@/stores/message';
+// import { useConversationStore } from '@/stores/conversation';
 import { getEMKey } from '@/EaseIM/utils';
 const emMessages = () => {
-  const messageStore = useMessageStore();
-  const conversationStore = useConversationStore();
+  //   const messageStore = useMessageStore();
+  //   const conversationStore = useConversationStore();
 
   const reportMessages = (params) => {
     const { reportType, reportReason, messageId } = params;
@@ -63,8 +63,8 @@ const emMessages = () => {
         .then((res) => {
           resolve(res);
           msg.id = res.serverMsgId;
-          messageStore.updateMessageCollection(key, msg);
-          conversationStore.updateConversationLastMessage(key, msg);
+          //   messageStore.updateMessageCollection(key, msg);
+          //   conversationStore.updateConversationLastMessage(key, msg);
         })
         .catch((err) => {
           reject(err);

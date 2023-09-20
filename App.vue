@@ -3,7 +3,7 @@ import _chunkArr from './utils/chunkArr';
 import { EMClient } from '@/EaseIM';
 import { emConnectListener } from '@/EaseIM/emListener';
 import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
-import { onGetSilentConfig } from './components/chat/pushStorage';
+
 // require("sdk/libs/strophe");
 console.log('EMClient', EMClient);
 export default {
@@ -86,38 +86,62 @@ export default {
     },
   },
   onLaunch() {
-    // 调用 API 从本地缓存中获取数据
-    emConnectListener(connectedCallback);
-    // emMountGlobalListener();
-    /* 链接所需监听回调 */
     //传给监听callback回调
     const connectedCallback = (type) => {
       console.log('>>>>>连接成功回调', type);
       if (type === CONNECT_CALLBACK_TYPE.CONNECT_CALLBACK) {
-        onConnectedSuccess();
+        this.onConnectedSuccess();
       }
       if (type === CONNECT_CALLBACK_TYPE.DISCONNECT_CALLBACK) {
-        onDisconnect();
+        this.onDisconnect();
       }
       if (type === CONNECT_CALLBACK_TYPE.RECONNECTING_CALLBACK) {
-        onReconnecting();
+        this.onReconnecting();
       }
     };
+    /* 链接所需监听回调 */
+    emConnectListener(connectedCallback);
+    // emMountGlobalListener();
   },
-
+  computed: {
+    loginStoreStatus() {
+      return this.$store.state.loginStore.loginStatus;
+    },
+    loginStoreUserBaseInfos() {
+      return this.$store.state.loginStore.loginUserBaseInfos;
+    },
+  },
   methods: {
     onConnectedSuccess() {
-      const { loginUserId } = loginStore.loginUserBaseInfos || {};
+      const { loginUserId } = this.loginStoreUserBaseInfos || {};
       const finalLoginUserId = loginUserId || EMClient.user;
-      if (!loginStore.loginStatus) {
-        fetchLoginUserNeedData();
+      if (!this.loginStoreStatus) {
+        this.fetchLoginUserNeedData();
       }
-      loginStore.setLoginUserBaseInfos({ loginUserId: finalLoginUserId });
-      loginStore.setLoginStatus(true);
-      uni.hideLoading();
-      uni.redirectTo({
-        url: '../home/index?myName=' + finalLoginUserId,
+      this.$store.commit('SET_LOGIN_USER_BASE_INFOS', {
+        loginUserId: finalLoginUserId,
       });
+      this.$store.commit('SET_LOGIN_STATUS', true);
+      uni.hideLoading();
+      console.log('>>>>>>开始跳转至会话列表页面');
+      uni.redirectTo({
+        url: '../conversation/conversation?myName=' + finalLoginUserId,
+      });
+    },
+    //获取登录所需基础参数
+    async fetchLoginUserNeedData() {
+      await this.$store.dispatch('fetchFriendList');
+      //获取好友用户属性
+      await this.$store.dispatch('setFriendUserInfotoMap');
+      //获取当前登录用户好友信息
+      await this.$store.dispatch('fetchLoginUserProfile');
+      //获取好友列表
+      this.fetchJoinedGroupList();
+    },
+    //获取加入的群组列表
+    async fetchJoinedGroupList() {
+      //获取群组列表
+      await this.$store.dispatch('fetchJoinedGroupList');
     },
     async fetchUserInfoWithLoginId() {
       const userId = await uni.WebIM.conn.user;
