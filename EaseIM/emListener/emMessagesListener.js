@@ -1,12 +1,12 @@
 import { EMClient } from '../index';
-import { useMessageStore } from '@/stores/message';
-import { useConversationStore } from '@/stores/conversation';
+// import { useMessageStore } from '@/stores/message';
+// import { useConversationStore } from '@/stores/conversation';
 import { CHAT_TYPE, HANDLER_EVENT_NAME } from '../constant';
 import { getEMKey } from '@/EaseIM/utils';
 export const emMessagesListener = (callback, listenerEventName) => {
   console.log('消息监听已挂载');
-  const messageStore = useMessageStore();
-  const conversationStore = useConversationStore();
+  //   const messageStore = useMessageStore();
+  //   const conversationStore = useConversationStore();
   //处理展示类型消息（txt、image、file...）
   const handleReciveDisPlayMessages = (message) => {
     console.log('>>>>开始处理收到的消息', message);
@@ -36,8 +36,8 @@ export const emMessagesListener = (callback, listenerEventName) => {
       message.to,
       message.chatType
     );
-    messageStore.updateMessageCollection(key, message);
-    conversationStore.updateConversationLastMessage(key, message);
+    // messageStore.updateMessageCollection(key, message);
+    // conversationStore.updateConversationLastMessage(key, message);
     // }
   };
   //处理回执类型消息

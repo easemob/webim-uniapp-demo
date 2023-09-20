@@ -1,8 +1,8 @@
 import { EMClient } from '../index';
 import { HANDLER_EVENT_NAME } from '../constant';
-import { useInformStore } from '@/stores/inform';
+// import { useInformStore } from '@/stores/inform';
 export const emGroupListener = (callback, listenerEventName) => {
-  const informStore = useInformStore();
+  //   const informStore = useInformStore();
   console.log('>>>>群组事件监听挂载');
   const groupListenFunc = {
     onGroupEvent: (event) => {
@@ -77,7 +77,7 @@ export const emGroupListener = (callback, listenerEventName) => {
         case 'inviteToJoin':
           {
             const groupsInform = Object.assign({}, event);
-            informStore.addNewInform('groups', groupsInform);
+            // informStore.addNewInform('groups', groupsInform);
           }
 
           break;

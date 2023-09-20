@@ -1,15 +1,15 @@
 import { EMClient } from '../index';
 import { HANDLER_EVENT_NAME } from '../constant';
-import { useInformStore } from '@/stores';
+// import { useInformStore } from '@/stores';
 export const emContactsListener = (callback, listenerEventName) => {
-  const informStore = useInformStore();
+  //   const informStore = useInformStore();
   console.log('>>>>>好友关系监听挂载');
   const contactsListenFunc = {
     // 当前用户收到好友请求。用户 B 向用户 A 发送好友请求，用户 A 收到该事件。
     onContactInvited: function (msg) {
       const contactsInform = Object.assign({}, msg);
       callback && callback(contactsInform);
-      informStore.addNewInform('contacts', contactsInform);
+      //   informStore.addNewInform('contacts', contactsInform);
     },
     // 当前用户被其他用户从联系人列表上移除。用户 B 将用户 A 从联系人列表上删除，用户 A 收到该事件。
     onContactDeleted: function (msg) {
