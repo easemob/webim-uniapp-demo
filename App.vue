@@ -1,7 +1,7 @@
 <script>
-import _chunkArr from './utils/chunkArr';
 import { EMClient } from '@/EaseIM';
 import { emConnectListener } from '@/EaseIM/emListener';
+import { emConnect } from '@/EaseIM/emApis';
 import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
 
 // require("sdk/libs/strophe");
@@ -128,6 +128,30 @@ export default {
         url: '../conversation/conversation?myName=' + finalLoginUserId,
       });
     },
+    onDisconnect() {
+      const { closeEaseIM } = emConnect();
+      //断开回调触发后，如果业务登录状态为true则说明异常断开需要重新登录
+      if (!this.loginStatus) {
+        uni.showToast({
+          title: '退出登录',
+          icon: 'none',
+          duration: 2000,
+        });
+        uni.redirectTo({
+          url: '../login/login',
+        });
+        closeEaseIM();
+      } else {
+        //执行通过token进行重新登录
+        // actionEMReconnect();
+      }
+    },
+    onReconnecting() {
+      uni.showToast({
+        title: 'IM 重连中...',
+        icon: 'none',
+      });
+    },
     //获取登录所需基础参数
     async fetchLoginUserNeedData() {
       await this.$store.dispatch('fetchFriendList');
@@ -142,56 +166,6 @@ export default {
     async fetchJoinedGroupList() {
       //获取群组列表
       await this.$store.dispatch('fetchJoinedGroupList');
-    },
-    async fetchUserInfoWithLoginId() {
-      const userId = await uni.WebIM.conn.user;
-      if (userId) {
-        try {
-          const { data } = await uni.WebIM.conn.fetchUserInfoById(userId);
-          this.globalData.userInfoFromServer = Object.assign({}, data[userId]);
-        } catch (error) {
-          console.log(error);
-          uni.showToast({
-            title: '用户属性获取失败',
-            icon: 'none',
-            duration: 2000,
-          });
-        }
-      }
-    },
-    async fetchFriendInfoFromServer() {
-      let friendList = [];
-      try {
-        const res = await uni.WebIM.conn.getContacts();
-        friendList = Object.assign([], res?.data);
-        if (friendList.length && friendList.length < 99) {
-          const { data } = await uni.WebIM.conn.fetchUserInfoById(friendList);
-          this.setFriendUserInfotoMap(data);
-        } else {
-          let newArr = _chunkArr(friendList, 99);
-          for (let i = 0; i < newArr.length; i++) {
-            const { data } = await uni.WebIM.conn.fetchUserInfoById(newArr[i]);
-            this.setFriendUserInfotoMap(data);
-          }
-        }
-      } catch (error) {
-        console.log(error);
-        uni.showToast({
-          title: '用户属性获取失败',
-          icon: 'none',
-        });
-      }
-    },
-    setFriendUserInfotoMap(data) {
-      if (Object.keys(data).length) {
-        for (const key in data) {
-          if (Object.hasOwnProperty.call(data, key)) {
-            const values = data[key];
-            Object.values(values).length &&
-              this.globalData.friendUserInfoMap.set(key, values);
-          }
-        }
-      }
     },
   },
 };
