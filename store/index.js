@@ -3,8 +3,13 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex); //vue的插件机制
+import loginStore from './modules/login';
 import ConversationStore from './modules/conversation';
 import MessageStore from './modules/message';
+import ContactsStore from './modules/contacts';
+import GroupStore from './modules/group';
+import InformStore from './modules/inform';
+
 //Vuex.Store 构造器选项
 const store = new Vuex.Store({
   state: {
@@ -13,8 +18,12 @@ const store = new Vuex.Store({
     age: 18,
   },
   modules: {
+    loginStore,
     ConversationStore,
     MessageStore,
+    ContactsStore,
+    GroupStore,
+    InformStore,
   },
 });
 export default store;
