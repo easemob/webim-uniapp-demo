@@ -363,7 +363,7 @@ export default {
             if (conversationType === CHAT_TYPE.GROUP_CHAT) {
               return (
                 conversationId.indexOf(keyWord) > -1 ||
-                getGroupName(conversationId).indexOf(keyWord) > -1 ||
+                this.getGroupName(conversationId).indexOf(keyWord) > -1 ||
                 lastMessage?.msg.indexOf(keyWord) > -1
               );
             }
