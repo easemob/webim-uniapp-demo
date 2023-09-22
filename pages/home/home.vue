@@ -24,7 +24,7 @@ import Mine from '@/pages/mine/mine.vue';
 const TITLE_MAP_TEXT = {
   conversation: '会话列表',
   contacts: '联系人',
-  me: '我的',
+  mine: '我的',
 };
 export default {
   components: {
@@ -38,11 +38,15 @@ export default {
       isActiveComps: 'conversation',
     };
   },
+  watch: {
+    isActiveComps() {
+      uni.setNavigationBarTitle &&
+        uni.setNavigationBarTitle({
+          title: TITLE_MAP_TEXT[this.isActiveComps],
+        });
+    },
+  },
   onLoad(options) {
-    uni.setNavigationBarTitle &&
-      uni.setNavigationBarTitle({
-        title: TITLE_MAP_TEXT[this.isActiveComps],
-      });
     if (options.page) {
       console.log('>>>>>>>', options);
       this.switchHomeComponent(options.page);
