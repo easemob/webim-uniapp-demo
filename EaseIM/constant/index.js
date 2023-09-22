@@ -17,6 +17,16 @@ export const CONNECT_CALLBACK_TYPE = {
   ERROR_CALLBACK: 'onerror',
 };
 
+export const SESSION_MESSAGE_TYPE = {
+  img: '[图片]',
+  file: '[文件]',
+  audio: '[语音]',
+  loc: '[位置]',
+};
+
+export const CUSTOM_TYPE = {
+  userCard: '个人名片',
+};
 export const MESSAGE_TYPE = {
   IMAGE: 'img',
   TEXT: 'txt',

@@ -2,10 +2,12 @@ import { EaseSDK, EMClient } from '../index';
 import { CHAT_TYPE } from '../constant';
 const emConversation = () => {
   //从服务端获取会话列表
-  const fetchConversationFromServer = () => {
+  const fetchConversationFromServer = (
+    options = { pageSize: 50, cursor: '' }
+  ) => {
     return new Promise((resolve, reject) => {
       //支持分页这里写死只取二十条
-      EMClient.getConversationlist({ pageNum: 1, pageSize: 20 })
+      EMClient.getServerConversations({ ...options })
         .then((res) => {
           console.log('>>>>会话列表数据获取成功');
           resolve(res);

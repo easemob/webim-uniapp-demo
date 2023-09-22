@@ -1,6 +1,6 @@
 import { emGroups } from '@/EaseIM/emApis';
 const { fetchJoinedGroupListFromServer } = emGroups();
-const groupStore = {
+const GroupStore = {
   state: {
     joinedGroupList: [],
   },
@@ -29,4 +29,4 @@ const groupStore = {
   },
   getters: {},
 };
-export default groupStore;
+export default GroupStore;

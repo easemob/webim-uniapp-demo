@@ -3,8 +3,6 @@ import { EMClient } from '@/EaseIM';
 import { emConnectListener } from '@/EaseIM/emListener';
 import { emConnect } from '@/EaseIM/emApis';
 import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
-
-// require("sdk/libs/strophe");
 console.log('EMClient', EMClient);
 export default {
   globalData: {
@@ -159,7 +157,6 @@ export default {
       await this.$store.dispatch('setFriendUserInfotoMap');
       //获取当前登录用户好友信息
       await this.$store.dispatch('fetchLoginUserProfile');
-      //获取好友列表
       this.fetchJoinedGroupList();
     },
     //获取加入的群组列表
