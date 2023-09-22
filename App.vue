@@ -123,7 +123,7 @@ export default {
       uni.hideLoading();
       console.log('>>>>>>开始跳转至会话列表页面');
       uni.redirectTo({
-        url: '../conversation/conversation?myName=' + finalLoginUserId,
+        url: '../home/home?myName=' + finalLoginUserId,
       });
     },
     onDisconnect() {

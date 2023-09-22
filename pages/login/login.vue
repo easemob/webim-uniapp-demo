@@ -75,9 +75,9 @@ let timer;
 export default {
   data() {
     return {
-      usePwdLogin: false, //是否用户名+手机号方式登录
-      name: '',
-      psd: '',
+      usePwdLogin: true, //是否用户名+手机号方式登录
+      name: 'hfp',
+      psd: '1',
       grant_type: 'password',
       psdFocus: '',
       nameFocus: '',

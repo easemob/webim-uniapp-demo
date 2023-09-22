@@ -85,12 +85,12 @@
                     @tap.stop="into_room"
                   >
                     <image
-                      :src="showFriendAvatar(item.name) "
+                      :src="showFriendAvatar(item.name)"
                       @tap.stop="into_room"
                       :data-username="item.name"
                     ></image>
                     <text @tap.stop="into_room" :data-username="item.name">{{
-                        showFriendNickname(item.name)
+                      showFriendNickname(item.name)
                     }}</text>
                   </view>
                 </view>
@@ -122,7 +122,11 @@
             'em-unread-spot ' +
             (unReadSpotNum == '99+' ? 'em-unread-spot-litleFont' : '')
           "
-          >{{ unReadSpotNum == '99+'?unReadSpotNum:unReadSpotNum+ unReadTotalNotNum }}</view
+          >{{
+            unReadSpotNum == '99+'
+              ? unReadSpotNum
+              : unReadSpotNum + unReadTotalNotNum
+          }}</view
         >
         <image
           :class="unReadSpotNum > 0 || unReadSpotNum == '99+' ? 'haveSpot' : ''"
@@ -151,21 +155,21 @@
 </template>
 
 <script>
-let WebIM = require("../../utils/WebIM")["default"];
-let disp = require("../../utils/broadcast");
+let WebIM = require('../../utils/WebIM')['default'];
+let disp = require('../../utils/broadcast');
 let systemReady = false;
 let canPullDownreffesh = true;
 let oHeight = [];
-import swipeDelete from "../../components/swipedelete/swipedelete";
+import swipeDelete from '../../components/swipedelete/swipedelete';
 export default {
   data() {
     return {
       search_btn: true,
       search_friend: false,
       show_mask: false,
-      myName: "",
+      myName: '',
       member: [],
-      messageNum: "",
+      messageNum: '',
       //加好友申请数
       unReadSpotNum: 0,
       //未读消息数
@@ -176,16 +180,16 @@ export default {
       isActive: null,
       listMain: [],
       listTitles: [],
-      toView: "inToView0",
+      toView: 'inToView0',
       oHeight: [],
       scroolHeight: 0,
       show_clear: false,
       isHideLoadMore: true,
       isIPX: false,
       gotop: false,
-      input_code: "",
+      input_code: '',
       showFixedTitile: false,
-      defaultAvatar: "/static/images/theme2x.png",
+      defaultAvatar: '/static/images/theme2x.png',
     };
   },
   components: {
@@ -194,17 +198,17 @@ export default {
   onLoad(option) {
     const app = getApp().globalData;
     //监听加好友申请
-    disp.on("em.subscribe", this.onMainPageSubscribe);
+    disp.on('em.subscribe', this.onMainPageSubscribe);
     //监听联系人移除事件（主要为好友以及群组）
-    disp.on("em.contacts.remove", this.onMainPageRemoveContacts); //监听未读“聊天”
+    disp.on('em.contacts.remove', this.onMainPageRemoveContacts); //监听未读“聊天”
     //监听未读总数更新
-    disp.on("em.unreadspot", this.onMainPageUnreadspot); 
+    disp.on('em.unreadspot', this.onMainPageUnreadspot);
     //监听未读加群“通知”数
-    disp.on("em.invite.joingroup", this.onMainPageJoingroup);
+    disp.on('em.invite.joingroup', this.onMainPageJoingroup);
     //监听好友订阅成功
-    disp.on("em.subscribed", this.onMainPagesubscribed);
+    disp.on('em.subscribed', this.onMainPagesubscribed);
     // 监听被解除好友
-    disp.on("em.unsubscribed",this.onMainPageUnsubscribed );
+    disp.on('em.unsubscribed', this.onMainPageUnsubscribed);
     this.setData({
       myName: option.myName,
     });
@@ -213,12 +217,12 @@ export default {
     this.getRoster();
   },
   onShow() {
-    uni.hideHomeButton()
+    uni.hideHomeButton();
     this.setData({
       messageNum: getApp().globalData.saveFriendList.length,
       unReadSpotNum:
         getApp().globalData.unReadMessageNum > 99
-          ? "99+"
+          ? '99+'
           : getApp().globalData.unReadMessageNum,
       unReadNoticeNum: getApp().globalData.saveGroupInvitedList.length,
       unReadTotalNotNum:
@@ -231,37 +235,43 @@ export default {
       });
     }
   },
-  onUnload(){
-    disp.off("em.subscribe",this.onMainPageSubscribe)
-    disp.off("em.contacts.remove",this.onMainPageRemoveContacts)
-    disp.off("em.unreadspot",this.onMainPageUnreadspot)
-    disp.off("em.invite.joingroup",this.onMainPageJoingroup)
-    disp.off("em.subscribed",this.onMainPagesubscribed)
-    disp.off("em.unsubscribed",this.onMainPageUnsubscribed)
+  onUnload() {
+    disp.off('em.subscribe', this.onMainPageSubscribe);
+    disp.off('em.contacts.remove', this.onMainPageRemoveContacts);
+    disp.off('em.unreadspot', this.onMainPageUnreadspot);
+    disp.off('em.invite.joingroup', this.onMainPageJoingroup);
+    disp.off('em.subscribed', this.onMainPagesubscribed);
+    disp.off('em.unsubscribed', this.onMainPageUnsubscribed);
   },
   computed: {
     //好友头像展示
     showFriendAvatar() {
       const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
-      return (hxId)=>{
-        if(friendUserInfoMap.has(hxId) && friendUserInfoMap.get(hxId)?.avatarurl){
-            return friendUserInfoMap.get(hxId).avatarurl;
-        }else{
-            return this.defaultAvatar;
+      return (hxId) => {
+        if (
+          friendUserInfoMap.has(hxId) &&
+          friendUserInfoMap.get(hxId)?.avatarurl
+        ) {
+          return friendUserInfoMap.get(hxId).avatarurl;
+        } else {
+          return this.defaultAvatar;
         }
-      }
+      };
     },
     //好友昵称展示
     showFriendNickname() {
-        const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
-        return (hxId)=>{
-        if(friendUserInfoMap.has(hxId) && friendUserInfoMap.get(hxId)?.nickname){
-            return friendUserInfoMap.get(hxId).nickname;
-        }else{
-            return hxId;
+      const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
+      return (hxId) => {
+        if (
+          friendUserInfoMap.has(hxId) &&
+          friendUserInfoMap.get(hxId)?.nickname
+        ) {
+          return friendUserInfoMap.get(hxId).nickname;
+        } else {
+          return hxId;
         }
-      }
-    }
+      };
+    },
   },
   methods: {
     getRoster() {
@@ -271,13 +281,13 @@ export default {
           let member = [];
 
           for (let i = 0; i < roster.length; i++) {
-            if (roster[i].subscription == "both") {
+            if (roster[i].subscription == 'both') {
               member.push(roster[i]);
             }
           }
 
           uni.setStorage({
-            key: "member",
+            key: 'member',
             data: member,
           });
           me.setData({
@@ -285,7 +295,7 @@ export default {
           });
 
           if (!systemReady) {
-            disp.fire("em.main.ready");
+            disp.fire('em.main.ready');
             systemReady = true;
           }
 
@@ -293,7 +303,7 @@ export default {
         },
 
         error(err) {
-          console.log("[main:getRoster]", err);
+          console.log('[main:getRoster]', err);
         },
       };
 
@@ -306,7 +316,7 @@ export default {
           let member = [];
 
           for (let i = 0; i < roster.length; i++) {
-            if (roster[i].subscription == "both") {
+            if (roster[i].subscription == 'both') {
               member.push(roster[i]);
             }
           }
@@ -317,17 +327,15 @@ export default {
         },
       };
 
-      if (message.type == "unsubscribe" || message.type == "unsubscribed") {
-        WebIM.conn.deleteContact(
-          message.from,
-        );
+      if (message.type == 'unsubscribe' || message.type == 'unsubscribed') {
+        WebIM.conn.deleteContact(message.from);
         WebIM.conn.getContacts(rosters);
       }
     },
     handleFriendMsg: function (message) {
       uni.showModal({
-        title: "添加好友请求",
-        content: message.from + "请求加为好友",
+        title: '添加好友请求',
+        content: message.from + '请求加为好友',
         success: function (res) {
           if (res.confirm == true) {
             // WebIM.conn.subscribed({
@@ -336,12 +344,12 @@ export default {
             // });
             WebIM.conn.acceptContactInvite({
               to: message.from,
-              message: "[resp:true]",
+              message: '[resp:true]',
             });
           } else {
             WebIM.conn.declineContactInvite({
               to: message.from,
-              message: "rejectAddFriend",
+              message: 'rejectAddFriend',
             });
           }
         },
@@ -351,35 +359,33 @@ export default {
     delete_friend: function (event) {
       const me = this;
       var delName = event.currentTarget.dataset.username;
-      var myName = uni.getStorageSync("myUsername"); // 获取当前用户名
+      var myName = uni.getStorageSync('myUsername'); // 获取当前用户名
 
       uni.showModal({
-        title: "确认删除好友" + delName,
-        cancelText: "取消",
-        confirmText: "删除",
+        title: '确认删除好友' + delName,
+        cancelText: '取消',
+        confirmText: '删除',
 
         success(res) {
           if (res.confirm == true) {
-            WebIM.conn.deleteContact(
-              delName,
-            );
+            WebIM.conn.deleteContact(delName);
             uni.showToast({
-              title: "删除成功",
+              title: '删除成功',
             });
             // 删除好友后 执行删除本地有关存储并更新好友列表
-            me.removeStoreages(delName)
+            me.removeStoreages(delName);
           }
         },
       });
     },
-    removeStoreages:function(targetId){
-      if(!targetId) return;
-      const myName = uni.getStorageSync("myUsername");
+    removeStoreages: function (targetId) {
+      if (!targetId) return;
+      const myName = uni.getStorageSync('myUsername');
       uni.removeStorageSync(targetId + myName);
-      uni.removeStorageSync("rendered_" + targetId + myName);
+      uni.removeStorageSync('rendered_' + targetId + myName);
       //发布删除好友事件 订阅删除事件的接口会重新拉取好友列表
-      disp.fire("em.contacts.remove");
-      disp.fire("em.main.deleteFriend");
+      disp.fire('em.contacts.remove');
+      disp.fire('em.main.deleteFriend');
     },
     openSearch: function () {
       this.setData({
@@ -391,7 +397,7 @@ export default {
     },
     clearInput: function () {
       this.setData({
-        input_code: "",
+        input_code: '',
         show_clear: false,
       });
     },
@@ -429,12 +435,12 @@ export default {
     },
     add_new: function () {
       uni.navigateTo({
-        url: "../add_new/add_new",
+        url: '../add_new/add_new',
       });
     },
     tab_chat: function () {
       uni.redirectTo({
-        url: "../conversation/conversation",
+        url: '../conversation/conversation',
       });
     },
     close_mask: function () {
@@ -445,22 +451,22 @@ export default {
     },
     tab_setting: function () {
       uni.redirectTo({
-        url: "../setting/setting",
+        url: '../setting/setting',
       });
     },
     tab_notification: function () {
       uni.redirectTo({
-        url: "../notification/notification",
+        url: '../notification/notification',
       });
     },
     into_inform: function () {
       uni.navigateTo({
-        url: "../inform/inform?myName=" + this.myName, //uni.getStorageSync("myUsername")
+        url: '../inform/inform?myName=' + this.myName, //uni.getStorageSync("myUsername")
       });
     },
     into_groups: function () {
       uni.navigateTo({
-        url: "../groups/groups?myName=" + this.myName,
+        url: '../groups/groups?myName=' + this.myName,
       });
     },
     into_room: function (event) {
@@ -469,17 +475,20 @@ export default {
         your: event.target.dataset.username,
       };
       const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
-      if(friendUserInfoMap.has(nameList.your) && friendUserInfoMap.get(nameList.your)?.nickname){
+      if (
+        friendUserInfoMap.has(nameList.your) &&
+        friendUserInfoMap.get(nameList.your)?.nickname
+      ) {
         nameList.yourNickName = friendUserInfoMap.get(nameList.your).nickname;
       }
       uni.navigateTo({
-        url: "../chatroom/chatroom?username=" + JSON.stringify(nameList),
+        url: '../chatroom/chatroom?username=' + JSON.stringify(nameList),
       });
     },
     into_info: function (event) {
       uni.navigateTo({
         url:
-          "../friend_info/friend_info?yourname=" +
+          '../friend_info/friend_info?yourname=' +
           event.target.dataset.username,
       });
     },
@@ -492,7 +501,7 @@ export default {
         if (that.listMain[i].id === _id) {
           that.setData({
             isActive: _id,
-            toView: "inToView" + _id,
+            toView: 'inToView' + _id,
           });
           break;
         }
@@ -508,7 +517,7 @@ export default {
         if (reg.test(item.name.substring(0, 1))) {
           item.initial = item.name.substring(0, 1).toUpperCase();
         } else {
-          item.initial = "#";
+          item.initial = '#';
         }
       });
       member.sort((a, b) => a.initial.charCodeAt(0) - b.initial.charCodeAt(0));
@@ -521,11 +530,11 @@ export default {
           name: member[i].name,
         };
 
-        if (member[i].initial == "#") {
+        if (member[i].initial == '#') {
           if (!lastObj) {
             var lastObj = {
               id: i,
-              region: "#",
+              region: '#',
               brands: [],
             };
           }
@@ -557,7 +566,7 @@ export default {
       }); //赋值给当前高亮的isActive
 
       that.setData({
-        isActive: someArr.length > 0 ? someArr[0].id : "",
+        isActive: someArr.length > 0 ? someArr[0].id : '',
       }); //计算分组高度,uni.createSelectotQuery()获取节点信息
 
       let number = 0;
@@ -586,9 +595,9 @@ export default {
           .exec();
       }
     },
-   /*  disp event callback function */
+    /*  disp event callback function */
     onMainPageSubscribe() {
-        this.setData({
+      this.setData({
         messageNum: getApp().globalData.saveFriendList.length,
         unReadTotalNotNum:
           getApp().globalData.saveFriendList.length +
@@ -605,7 +614,7 @@ export default {
       this.setData({
         unReadSpotNum:
           getApp().globalData.unReadMessageNum > 99
-            ? "99+"
+            ? '99+'
             : getApp().globalData.unReadMessageNum,
       });
     },
@@ -627,17 +636,15 @@ export default {
       const pageStack = getCurrentPages();
       if (pageStack[pageStack.length - 1].route === this.__route__) {
         this.getRoster();
-        uni.showToast(
-            {
-             title: `与${message.from}好友关系解除`,
-             icon: "none",
-			}
-        );
+        uni.showToast({
+          title: `与${message.from}好友关系解除`,
+          icon: 'none',
+        });
       }
-    }
+    },
   },
 };
 </script>
 <style>
-@import "./main.css";
+@import './contacts.css';
 </style>

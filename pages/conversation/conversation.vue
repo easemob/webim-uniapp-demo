@@ -165,42 +165,6 @@
     <view style="height: 1px"></view>
 
     <view class="mask" @tap="close_mask" v-if="show_mask"></view>
-
-    <view :class="isIPX ? 'chatRoom_tab_X' : 'chatRoom_tab'">
-      <view class="tableBar">
-        <view
-          v-if="allConversationUnReadNum > 0"
-          :class="
-            'em-unread-spot ' +
-            (allConversationUnReadNum > 99 ? 'em-unread-spot-litleFont' : '')
-          "
-          >{{
-            allConversationUnReadNum > 99
-              ? unReadSpotNum
-              : unReadSpotNum + unReadTotalNotNum
-          }}</view
-        >
-        <image
-          :class="
-            allConversationUnReadNum > 0 || allConversationUnReadNum > 99
-              ? 'haveSpot'
-              : ''
-          "
-          src="/static/images/sessionhighlight2x.png"
-        ></image>
-        <text class="activeText">会话</text>
-      </view>
-
-      <view class="tableBar" @tap="entryTabContactsPage">
-        <image src="/static/images/comtacts2x.png"></image>
-        <text>联系人</text>
-      </view>
-
-      <view class="tableBar" @tap="entryTabMePage">
-        <image src="/static/images/setting2x.png"></image>
-        <text>我的</text>
-      </view>
-    </view>
   </view>
 </template>
 
@@ -244,16 +208,6 @@ export default {
     longPressModal,
   },
   props: {},
-  onLoad() {
-    setTimeout(() => {
-      if (!this.conversationList.length) {
-        this.$store.dispatch('fetchConversationList');
-      }
-    }, 100);
-  },
-  onShow: function () {
-    uni.hideHomeButton && uni.hideHomeButton();
-  },
   computed: {
     conversationList() {
       console.log('>>>>>>computed conversationlist');
@@ -341,6 +295,13 @@ export default {
         this.$store.getters.calcAllUnReadNumFromConversation
       );
     },
+  },
+  created() {
+    console.log('converstaion created');
+    if (!this.conversationList.length) {
+      this.$store.dispatch('fetchConversationList');
+    }
+    uni.hideHomeButton && uni.hideHomeButton();
   },
   methods: {
     //群组名称

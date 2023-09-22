@@ -1,249 +1,244 @@
 {
-	"pages": [
-		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarBackgroundColor": "#3E4091",
-				"navigationBarTextStyle": "white",
-				"backgroundTextStyle": "dark",
-				"navigationBarTitleText": "环信"
-			}
-		},
-		{
-			"path": "pages/notification_groupDetail/groupDetail",
-			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"backgroundTextStyle": "light",
-				"navigationBarTitleText": "加群组申请"
-			}
-		},
-		{
-			"path": "pages/notification_friendDetail/friendDetail",
-			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"backgroundTextStyle": "light",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "加好友申请"
-			}
-		},
-		{
-			"path": "pages/login_token/login_token",
-			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
-				"backgroundTextStyle": "light",
-				"navigationBarTitleText": "环信"
-			}
-		},
-		{
-			"path": "pages/main/main",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "联系人"
-			}
-		},
-		{
-			"path": "pages/chatroom/chatroom",
-			"style": {
-				"navigationBarTitleText": "chatting",
-				"backgroundTextStyle": "dark",
-				"enablePullDownRefresh": true,
-				"app-plus": {
-					"titleNView":{
-						"buttons":[{
-							"text":"...",
-							"fontSrc": "./static/iconfont/iconfont.ttf",
-							"fontSize": "24",
-							"float": "right"
-						}]
-					}
-				}
-			}
-		},
-		{
-			"path": "pages/index/index",
-			"style": {}
-		},
-		{
-			"path": "pages/register/register",
-			"style": {
-				"navigationBarBackgroundColor": "#3E4091",
-				"navigationBarTextStyle": "white",
-				"backgroundTextStyle": "dark",
-				"navigationBarTitleText": "环信"
-			}
-		},
-		{
-			"path": "pages/resetpassword/resetpassword",
-			"style": {
-				"navigationBarBackgroundColor": "#3E4091",
-				"navigationBarTextStyle": "white",
-				"backgroundTextStyle": "dark",
-				"navigationBarTitleText": "环信"
-			}
-		},
-		{
-			"path": "pages/add_new/add_new",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "添加好友"
-			}
-		},
-		{
-			"path": "pages/conversation/conversation",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "消息"
-			}
-		},
-		{
-			"path": "pages/notification/notification",
-			"style": {
-				"navigationBarBackgroundColor": "#ffffff",
-				"navigationBarTextStyle": "black",
-				"backgroundTextStyle": "light",
-				"navigationBarTitleText": "环信"
-			}
-		},
-		{
-			"path": "pages/setting_general/setting_general",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "通用设置"
-			}
-		},
-        {
-			"path": "pages/profile/profile",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "个人资料"
-			}
-		},
-        {
-            "path": "pages/profile/selectAvatar",
-            "style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "选择头像"
-			}
-        },
-		{
-			"path": "pages/groups/groups",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "群组"
-			}
-		},
-		{
-			"path": "pages/inform/inform",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "申请与通知"
-			}
-		},
-		{
-			"path": "pages/setting/setting",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "设置"
-			}
-		},
-		{
-			"path": "pages/add_groups/add_groups",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "创建群组"
-			}
-		},
-		{
-			"path": "pages/groupChatRoom/groupChatRoom",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "群聊",
-				"enablePullDownRefresh": true,
-				"app-plus": {
-					"titleNView": {
-						"buttons": [
-							{
-								"text": "...",
-								"fontSrc": "./static/iconfont/iconfont.ttf",
-								"fontSize": "24",
-								"float": "right"
-							}
-						]
-					}
-				}
-			}
-			// "style": {
-			// 	"navigationBarTitleText": "uni-app",
-			// 	"app-plus": {
-			// 		"titleNView": false, //禁用原生导航栏
-			// 		"subNVues": [{ //侧滑菜单
-			// 				"id": "drawer", //subNVue 的 id，可通过 uni.getSubNVueById('drawer') 获取
-			// 				"path": "platform/app-plus/subNVue/emedia", // nvue 路径
-			// 				"style": {
-			// 					"position": "absolute",
-			// 					"top": "100px",
-			// 					"left": "0px",
-			// 					"width": "750rpx",
-			// 					"height": "200px"
-			// 				}
-			// 			}
-			// 		]
-			// 		// "bounce": "none"
-			// 	}
-			// }
-		},
-		{
-			"path": "pages/groupSetting/groupSetting",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "群信息"
-			}
-		},
-		{
-			"path": "pages/emedia/index",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "emedia"
-			}
-		},
-		{
-			"path": "pages/moreMenu/moreMenu",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "好友配置"
-			}
-		},
-		{
-			"path": "pages/searchMsg/searchMsg",
-			"style": {
-				"navigationBarBackgroundColor": "#f2f2f2",
-				"navigationBarTextStyle": "black",
-				"navigationBarTitleText": "历史记录"
-			}
-		}
-    ],
-	"globalStyle": {
-		"backgroundTextStyle": "dark",
-		"navigationBarBackgroundColor": "#fff",
-		"navigationBarTextStyle": "black"
-	},
-	"easycom": {
-        "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarBackgroundColor": "#3E4091",
+        "navigationBarTextStyle": "white",
+        "backgroundTextStyle": "dark",
+        "navigationBarTitleText": "环信"
+      }
     },
-	"subPackages": []
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "backgroundTextStyle": "light",
+        "navigationBarTitleText": "首页"
+      }
+    },
+    {
+      "path": "pages/notification_groupDetail/groupDetail",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "backgroundTextStyle": "light",
+        "navigationBarTitleText": "加群组申请"
+      }
+    },
+    {
+      "path": "pages/notification_friendDetail/friendDetail",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "backgroundTextStyle": "light",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "加好友申请"
+      }
+    },
+    {
+      "path": "pages/login_token/login_token",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black",
+        "backgroundTextStyle": "light",
+        "navigationBarTitleText": "环信"
+      }
+    },
+
+    {
+      "path": "pages/chatroom/chatroom",
+      "style": {
+        "navigationBarTitleText": "chatting",
+        "backgroundTextStyle": "dark",
+        "enablePullDownRefresh": true,
+        "app-plus": {
+          "titleNView": {
+            "buttons": [
+              {
+                "text": "...",
+                "fontSrc": "./static/iconfont/iconfont.ttf",
+                "fontSize": "24",
+                "float": "right"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {}
+    },
+    {
+      "path": "pages/register/register",
+      "style": {
+        "navigationBarBackgroundColor": "#3E4091",
+        "navigationBarTextStyle": "white",
+        "backgroundTextStyle": "dark",
+        "navigationBarTitleText": "环信"
+      }
+    },
+    {
+      "path": "pages/resetpassword/resetpassword",
+      "style": {
+        "navigationBarBackgroundColor": "#3E4091",
+        "navigationBarTextStyle": "white",
+        "backgroundTextStyle": "dark",
+        "navigationBarTitleText": "环信"
+      }
+    },
+    {
+      "path": "pages/add_new/add_new",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "添加好友"
+      }
+    },
+    {
+      "path": "pages/conversation/conversation",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "消息"
+      }
+    },
+    {
+      "path": "pages/notification/notification",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black",
+        "backgroundTextStyle": "light",
+        "navigationBarTitleText": "环信"
+      }
+    },
+    {
+      "path": "pages/setting_general/setting_general",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "通用设置"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "个人资料"
+      }
+    },
+    {
+      "path": "pages/profile/selectAvatar",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "选择头像"
+      }
+    },
+    {
+      "path": "pages/groups/groups",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "群组"
+      }
+    },
+    {
+      "path": "pages/inform/inform",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "申请与通知"
+      }
+    },
+    {
+      "path": "pages/add_groups/add_groups",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "创建群组"
+      }
+    },
+    {
+      "path": "pages/groupChatRoom/groupChatRoom",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "群聊",
+        "enablePullDownRefresh": true,
+        "app-plus": {
+          "titleNView": {
+            "buttons": [
+              {
+                "text": "...",
+                "fontSrc": "./static/iconfont/iconfont.ttf",
+                "fontSize": "24",
+                "float": "right"
+              }
+            ]
+          }
+        }
+      }
+      // "style": {
+      // 	"navigationBarTitleText": "uni-app",
+      // 	"app-plus": {
+      // 		"titleNView": false, //禁用原生导航栏
+      // 		"subNVues": [{ //侧滑菜单
+      // 				"id": "drawer", //subNVue 的 id，可通过 uni.getSubNVueById('drawer') 获取
+      // 				"path": "platform/app-plus/subNVue/emedia", // nvue 路径
+      // 				"style": {
+      // 					"position": "absolute",
+      // 					"top": "100px",
+      // 					"left": "0px",
+      // 					"width": "750rpx",
+      // 					"height": "200px"
+      // 				}
+      // 			}
+      // 		]
+      // 		// "bounce": "none"
+      // 	}
+      // }
+    },
+    {
+      "path": "pages/groupSetting/groupSetting",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "群信息"
+      }
+    },
+    {
+      "path": "pages/emedia/index",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "emedia"
+      }
+    },
+    {
+      "path": "pages/moreMenu/moreMenu",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "好友配置"
+      }
+    },
+    {
+      "path": "pages/searchMsg/searchMsg",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "历史记录"
+      }
+    }
+  ],
+  "globalStyle": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTextStyle": "black"
+  },
+  "easycom": {
+    "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+  },
+  "subPackages": []
 }
