@@ -1,6 +1,10 @@
 page {
   height: 100%;
 }
+.contacts_container {
+  height: 100%;
+  overflow-y: auto;
+}
 .main_title {
   background-color: #fff;
   width: 100%;
@@ -15,14 +19,6 @@ page {
   font-weight: 400;
   margin-left: 32rpx;
 }
-/* .main_title_hide{
-	top: -128rpx;
-	transition: top 0.5s;
-}
-.main_title_show{
-	top: 0;
-	transition: top 0.5s;
-} */
 .search,
 .search_input {
   width: 100%;
@@ -92,8 +88,8 @@ page {
 }
 
 /*.contain {
-	margin-top: 40px;
-}*/
+      margin-top: 40px;
+  }*/
 .chat,
 .chat_groups,
 .chat_lists {
@@ -217,13 +213,13 @@ page {
 }
 
 /* .content{
-	padding-bottom: 270rpx; 
-	box-sizing: border-box; 
-	height: 100%;
-	width: 100%;
-	position: fixed;
-	top: 128rpx;
-}  */
+      padding-bottom: 270rpx; 
+      box-sizing: border-box; 
+      height: 100%;
+      width: 100%;
+      position: fixed;
+      top: 128rpx;
+  }  */
 
 .location {
   width: 100%;
@@ -351,19 +347,19 @@ page {
 }
 
 /* .goTop{
-	top: 0;
-	transition: top 0.5s;
-	padding-bottom: 104rpx!important;
-}
-.goTopX{
-	top: 0rpx;
-	transition: top 0.5s;
-	padding-bottom: 140rpx!important;
-}
-.goback{
-	top: 128rpx;
-	transition: top 0.5s;
-} */
+      top: 0;
+      transition: top 0.5s;
+      padding-bottom: 104rpx!important;
+  }
+  .goTopX{
+      top: 0rpx;
+      transition: top 0.5s;
+      padding-bottom: 140rpx!important;
+  }
+  .goback{
+      top: 128rpx;
+      transition: top 0.5s;
+  } */
 .fixedTitleTop {
   top: 0;
 }

@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view class="contacts_container">
     <view>
       <view class="search" v-if="search_btn">
         <view @tap="openSearch">
@@ -8,7 +8,6 @@
         </view>
       </view>
     </view>
-
     <view class="main_body">
       <view>
         <!-- 左侧列表内容部分 -->
@@ -64,10 +63,9 @@
               <text>群组</text>
             </view>
           </view>
-
           <view
-            v-for="(group, id) in listMain"
-            :key="id"
+            v-for="(group, index) in listMain"
+            :key="index"
             :id="'inToView' + group.id"
             :data-id="group.id"
           >
@@ -117,8 +115,6 @@
 
 <script>
 import { CHAT_TYPE } from '@/EaseIM/constant';
-let WebIM = require('../../utils/WebIM')['default'];
-let disp = require('../../utils/broadcast');
 import swipeDelete from '../../components/swipedelete/swipedelete';
 export default {
   data() {
@@ -144,8 +140,8 @@ export default {
       scroolHeight: 0,
       show_clear: false,
       isHideLoadMore: true,
-      isIPX: false,
-      gotop: false,
+      isIPX: true,
+      gotop: true,
       serachKeyword: '',
       showFixedTitile: false,
       defaultAvatar: '/static/images/theme2x.png',
@@ -157,6 +153,10 @@ export default {
   mounted() {
     uni.hideHomeButton && uni.hideHomeButton();
     this.getBrands(this.friendList);
+    uni.pageScrollTo({
+      scrollTop: 0,
+      duration: 300,
+    });
   },
   computed: {
     //好友列表
@@ -284,7 +284,7 @@ export default {
     },
     /* 形成indexlist好友列表 */
     //点击右侧字母导航定位触发
-    scrollToViewFn(e) {
+    scrollToViewFn: function (e) {
       let _id = e.target.dataset.id;
       for (let i = 0; i < this.listMain.length; ++i) {
         if (this.listMain[i].id === _id) {
@@ -293,12 +293,6 @@ export default {
           uni.pageScrollTo({
             selector: `#inToView${_id}`,
             duration: 300,
-            success: () => {
-              console.log('>>>>滚动成功');
-            },
-            fail: () => {
-              console.log('>>>>失败成功');
-            },
           });
           break;
         }

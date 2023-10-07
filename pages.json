@@ -12,7 +12,6 @@
     {
       "path": "pages/home/home",
       "style": {
-        "navigationBarBackgroundColor": "#ffffff",
         "backgroundTextStyle": "light",
         "navigationBarTitleText": "首页"
       }
