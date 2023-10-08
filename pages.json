@@ -111,7 +111,7 @@
       }
     },
     {
-      "path": "pages/setting_general/setting_general",
+      "path": "pages/settingGeneral/settingGeneral",
       "style": {
         "navigationBarBackgroundColor": "#f2f2f2",
         "navigationBarTextStyle": "black",

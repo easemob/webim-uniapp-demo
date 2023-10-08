@@ -76,7 +76,7 @@ export default {
     //跳转至通用设置
     goGeneralSetting: function () {
       uni.navigateTo({
-        url: '../setting_general/setting_general',
+        url: '../settingGeneral/settingGeneral',
       });
     },
     //退出登录
