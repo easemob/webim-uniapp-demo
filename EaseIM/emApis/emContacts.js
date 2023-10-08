@@ -14,12 +14,28 @@ const emContacts = () => {
   };
   const removeContactFromServer = (contactId) => {
     if (contactId) {
-      EMClient.deleteContact(contactId);
+      return new Promise((resolve, reject) => {
+        EMClient.deleteContact(contactId)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     }
   };
   const addContact = (contactId, applyMsg) => {
     if (contactId) {
-      EMClient.addContact(contactId, applyMsg);
+      return new Promise((resolve, reject) => {
+        EMClient.addContact(contactId, applyMsg)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     }
   };
   const acceptContactInvite = (contactId) => {

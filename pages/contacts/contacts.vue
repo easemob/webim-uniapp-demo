@@ -277,9 +277,7 @@ export default {
     //前往添加好友页面
     entryAddNewFreiend: function (event) {
       uni.navigateTo({
-        url:
-          '../friend_info/friend_info?yourname=' +
-          event.target.dataset.username,
+        url: '../addNewFriend/addNewFriend',
       });
     },
     /* 形成indexlist好友列表 */

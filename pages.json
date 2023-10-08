@@ -82,7 +82,7 @@
       }
     },
     {
-      "path": "pages/add_new/add_new",
+      "path": "pages/addNewFriend/addNewFriend",
       "style": {
         "navigationBarBackgroundColor": "#f2f2f2",
         "navigationBarTextStyle": "black",
