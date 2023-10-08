@@ -17,7 +17,7 @@
       }
     },
     {
-      "path": "pages/notification_groupDetail/groupDetail",
+      "path": "pages/notificationGroupDetail/groupDetail",
       "style": {
         "navigationBarBackgroundColor": "#ffffff",
         "backgroundTextStyle": "light",
@@ -25,7 +25,7 @@
       }
     },
     {
-      "path": "pages/notification_friendDetail/friendDetail",
+      "path": "pages/notificationFriendDetail/friendDetail",
       "style": {
         "navigationBarBackgroundColor": "#ffffff",
         "backgroundTextStyle": "light",
@@ -62,10 +62,6 @@
           }
         }
       }
-    },
-    {
-      "path": "pages/index/index",
-      "style": {}
     },
     {
       "path": "pages/register/register",
@@ -204,14 +200,6 @@
         "navigationBarBackgroundColor": "#f2f2f2",
         "navigationBarTextStyle": "black",
         "navigationBarTitleText": "群信息"
-      }
-    },
-    {
-      "path": "pages/emedia/index",
-      "style": {
-        "navigationBarBackgroundColor": "#f2f2f2",
-        "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "emedia"
       }
     },
     {

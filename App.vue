@@ -103,10 +103,10 @@ export default {
   },
   computed: {
     loginStoreStatus() {
-      return this.$store.state.loginStore.loginStatus;
+      return this.$store.state.LoginStore.loginStatus;
     },
     loginStoreUserBaseInfos() {
-      return this.$store.state.loginStore.loginUserBaseInfos;
+      return this.$store.state.LoginStore.loginUserBaseInfos;
     },
   },
   methods: {

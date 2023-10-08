@@ -257,7 +257,7 @@ export default {
     },
     //前往系统通知页面
     entryTabNnotificationPage: function () {
-      uni.redirectTo({
+      uni.navigateTo({
         url: '../notification/notification',
       });
     },

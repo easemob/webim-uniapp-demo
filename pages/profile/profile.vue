@@ -47,11 +47,11 @@ export default {
     };
   },
   onLoad() {
-    const { loginUserProfiles } = this.$store.state.loginStore;
+    const { loginUserProfiles } = this.$store.state.LoginStore;
     this.loginUserInfos = loginUserProfiles;
   },
   onShow() {
-    const { loginUserProfiles } = this.$store.state.loginStore;
+    const { loginUserProfiles } = this.$store.state.LoginStore;
     console.log('loginUserProfiles', loginUserProfiles);
     this.profileForm = Object.assign(this.profileForm, loginUserProfiles);
   },

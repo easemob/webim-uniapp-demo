@@ -48,7 +48,7 @@ export default {
   props: {},
   mounted(option) {
     const { loginUserBaseInfos, loginUserProfiles } =
-      this.$store.state.loginStore;
+      this.$store.state.LoginStore;
     this.yourname = loginUserBaseInfos?.loginUserId;
     this.phoneNumber = loginUserBaseInfos?.phoneNumber;
     this.userInfoFromServer = loginUserProfiles;

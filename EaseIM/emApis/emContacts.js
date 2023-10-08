@@ -24,12 +24,28 @@ const emContacts = () => {
   };
   const acceptContactInvite = (contactId) => {
     if (contactId) {
-      EMClient.acceptContactInvite(contactId);
+      return new Promise((resolve, reject) => {
+        EMClient.acceptContactInvite(contactId)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     }
   };
   const declineContactInvite = (contactId) => {
     if (contactId) {
-      EMClient.declineContactInvite(contactId);
+      return new Promise((resolve, reject) => {
+        EMClient.declineContactInvite(contactId)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     }
   };
   return {
