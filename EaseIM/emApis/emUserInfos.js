@@ -60,7 +60,6 @@ const emUserInofs = () => {
     });
   };
   const updateUserInfosFromServer = (params) => {
-    console.log('updateUserInfosFromServer params', params);
     return new Promise((resolve, reject) => {
       EMClient.updateUserInfo({ ...params })
         .then((res) => {
