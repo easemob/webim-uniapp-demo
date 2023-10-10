@@ -12,7 +12,7 @@ const GroupStore = {
       state.joinedGroupList.unshift(group);
     },
     DELETE_JOINEND_GROUP: (state, groupId) => {
-      state.joinedGroupList = this.joinedGroupList.filter(
+      state.joinedGroupList = state.joinedGroupList.filter(
         (group) => group.groupid !== groupId
       );
     },

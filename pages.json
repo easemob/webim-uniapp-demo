@@ -90,6 +90,14 @@
       }
     },
     {
+      "path": "pages/addNewGroups/addNewGroups",
+      "style": {
+        "navigationBarBackgroundColor": "#f2f2f2",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "创建群组"
+      }
+    },
+    {
       "path": "pages/conversation/conversation",
       "style": {
         "navigationBarBackgroundColor": "#f2f2f2",
@@ -144,14 +152,6 @@
         "navigationBarBackgroundColor": "#f2f2f2",
         "navigationBarTextStyle": "black",
         "navigationBarTitleText": "申请与通知"
-      }
-    },
-    {
-      "path": "pages/add_groups/add_groups",
-      "style": {
-        "navigationBarBackgroundColor": "#f2f2f2",
-        "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "创建群组"
       }
     },
     {

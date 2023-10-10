@@ -9,24 +9,38 @@
         </view>
       </view>
       <view class="group-member">
-        <view style="padding:10px">
+        <view style="padding: 10px">
           <text class="textd-10" style="margin: 5px 0 20px 5px">群组成员</text>
-          <text style="float:right">{{ groupCount }}人</text>
+          <text style="float: right">{{ groupCount }}人</text>
         </view>
-
-        <view v-for="(item, index) in groupMember" :key="index" style="display: inline-block">
-          <view class="member-list">
-            <image src="/static/images/theme2x.png"></image>
-            <text>{{ item.member || item.owner }}</text>
-          </view>
+      </view>
+      <view class="group-member-list">
+        <view
+          class="member-list"
+          v-for="(item, index) in groupMember"
+          :key="index"
+        >
+          <image
+            style="display: inline-block"
+            src="/static/images/theme2x.png"
+          ></image>
+          <text>{{ item.member || item.owner }}</text>
         </view>
       </view>
       <view class="invite-member">
         <!-- <text class="pd-10 invite-title">邀请群成员</text> -->
         <view class="invite-wrap">
-          <input placeholder="请输入用户名" @input="addFriendNameFun"
-            placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;" auto-focus />
-          <button style="background: #0091ff; width: 100px" type="primary" @tap="addGroupMembers">
+          <input
+            v-model.trim="addFriendName"
+            placeholder="请输入用户名"
+            placeholder-style="color:#CFCFCF;line-height:40px;font-size:14px;"
+            auto-focus
+          />
+          <button
+            style="background: #0091ff; width: 100px"
+            type="primary"
+            @tap="addGroupMembers"
+          >
             发送邀请
           </button>
         </view>
@@ -44,7 +58,7 @@
           <button type="warn" @tap="dissolveGroup">解散群组</button>
         </view>
         <view class="exit-group" v-if="!isOwner">
-          <button type="warn" @tap="leaveGroup">退出群组</button>
+          <button type="warn" @tap="leaveTheGroup">退出群组</button>
         </view>
       </view>
     </view>
@@ -52,92 +66,90 @@
 </template>
 
 <script>
-import Image from "../../components/chat/inputbar/suit/image/image.vue";
-var WebIM = require("../../utils/WebIM")["default"];
-let disp = require("../../utils/broadcast");
-//event function name
-let onGroupSettingPageLeaveGroup;
+/* im apis */
+import { emGroups } from '@/EaseIM/emApis';
+import { CHAT_TYPE } from '@/EaseIM/constant';
+const {
+  getGroupInfosFromServer,
+  getGroupMembersFromServer,
+  inviteUsersToGroup,
+  leaveGroupFromServer,
+  destroyGroupFromServer,
+} = emGroups();
 export default {
   data() {
     return {
-      roomId: "",
+      groupid: '',
       // 群id
-      groupName: "",
+      groupName: '',
       // 群名称
-      currentName: "",
+      currentName: '',
       // 当前用户
       groupMember: [],
       // 群成员
-      curOwner: "",
+      curOwner: '',
       // 当前群管理员
-      groupDec: "",
+      groupDec: '',
       // 群描述
-      groupCount: "",
+      groupCount: '',
       //群人数
-      addFriendName: [],
+      addFriendName: '',
       isOwner: false,
     };
   },
 
-  components: {},
+  computed: {
+    loginUserId() {
+      return this.$store.state.LoginStore.loginUserBaseInfos.loginUserId;
+    },
+    joinedGroupList() {
+      return this.$store.state.GroupStore.joinedGroupList;
+    },
+  },
   onLoad: function (options) {
-    this.setData({
-      roomId: JSON.parse(options.groupInfo).roomId,
-      groupName: JSON.parse(options.groupInfo).groupName,
-      currentName: JSON.parse(options.groupInfo).myName,
-    });
-    disp.on("em.group.leaveGroup", this.onGroupSettingPageLeaveGroup); // console.log(this.data.roomId, this.data.groupName, this.data.currentName);
-    // 获取群成员
-    this.getGroupMember(); // 获取群信息
+    const groupid = JSON.parse(options.groupInfo).groupid;
+    this.groupid = groupid;
+    this.currentName = this.loginUserId;
+    this.getGroupName(groupid);
+    this.getGroupMember();
     this.getGroupInfo();
   },
-  onUnload(){
-    disp.off("em.group.leaveGroup",this.onGroupSettingPageLeaveGroup);
-  },
   methods: {
-    getGroupMember: function () {
-      var me = this; // 获取群成员
-
-      var pageNum = 1,
-        pageSize = 1000;
-      var options = {
-        pageNum: pageNum,
-        pageSize: pageSize,
-        groupId: this.roomId,
-        success: function (resp) {
-          if (resp && resp.data) {
-            me.setData({
-              groupMember: resp.data,
-              groupCount: resp.count,
-            });
-          }
-        },
-        error: function (err) { },
-      };
-      WebIM.conn.listGroupMember(options);
+    async getGroupMember() {
+      if (this.groupid) {
+        try {
+          const res = await getGroupMembersFromServer(this.groupid);
+          this.groupMember = res;
+        } catch (error) {
+          console.log('>>>>>群组接口请求失败', error);
+        }
+      }
     },
-    getGroupInfo: function () {
-      var me = this;
-      // 获取群信息
-      var options = {
-        groupId: this.roomId,
-        success: function (resp) {
-          if (resp && resp.data) {
-            me.setData({
-              curOwner: resp.data[0].owner,
-              groupDec: resp.data[0].description,
-            });
-
-            if (me.currentName == resp.data[0].owner) {
-              me.setData({
-                isOwner: true,
-              });
-            }
+    async getGroupInfo() {
+      try {
+        const res = await getGroupInfosFromServer(this.groupid);
+        if (res.length) {
+          const { affiliations_count, owner, description } = res[0];
+          this.curOwner = owner;
+          this.groupDec = description;
+          this.groupCount = affiliations_count;
+          if (this.currentName === owner) {
+            this.isOwner = true;
           }
-        },
-        error: function () { },
-      };
-      WebIM.conn.getGroupInfo(options);
+        }
+      } catch (error) {
+        console.log('>>>>群组详情获取失败', error);
+      }
+    },
+    //获取群id对应的群组名
+    getGroupName(groupid) {
+      if (this.joinedGroupList.length) {
+        this.joinedGroupList.forEach((group) => {
+          if (group.groupid == groupid) {
+            this.groupName = group.groupname;
+          }
+        });
+      }
     },
     addFriendNameFun: function (e) {
       var firendArr = [];
@@ -147,122 +159,97 @@ export default {
       });
     },
     // 加好友入群
-    addGroupMembers: function () {
-      var me = this;
-      var option = {
-        users: this.addFriendName,
-        groupId: this.roomId,
-        success: function () {
-          if (me.isExistGroup(me.addFriendName, me.groupMember)) {
-            uni.showToast({
-              title: "已在群中",
-              duration: 2000,
-            });
-          } else {
-            uni.showToast({
-              title: "邀请已发出",
-              duration: 2000,
-            });
-          }
-          me.getGroupMember();
-        },
-        error: function (err) {
+    async addGroupMembers() {
+      try {
+        await inviteUsersToGroup(this.groupid, [this.addFriendName]);
+        uni.showToast({
+          title: '邀请已发出',
+          duration: 2000,
+        });
+      } catch (error) {
+        console.log('>>>>>邀请失败', error);
+        if (
+          error.data.error_description &&
+          error.data.error_description.includes("doesn't exist!")
+        ) {
           uni.showToast({
-            title: err.data.error_description,
-            icon: "none",
+            title: '该用户不存在',
+            duration: 2000,
           });
-        },
-      };
-      WebIM.conn.inviteToGroup(option);
-    },
-    isExistGroup: function (name, list) {
-      for (let index = 0; index < list.length; index++) {
-        if (name == list[index].member || name == list[index].owner) {
-          return true;
+        } else if (
+          error.data.error_description &&
+          error.data.error_description.includes('already in group')
+        ) {
+          uni.showToast({
+            title: '该用户已在群组中',
+            duration: 2000,
+          });
+        } else {
+          uni.showToast({
+            title: '邀请失败',
+            duration: 2000,
+          });
         }
       }
-
-      return false;
     },
-    leaveGroup: function () {
-      var me = this;
-      WebIM.conn.quitGroup({
-        groupId: this.roomId,
-        success: function () {
+    /* 退群解散群逻辑 */
+    //主动退出群组
+    async leaveTheGroup() {
+      console.log('>>>>>触发了退出群组');
+      if (!this.groupid) return;
+      try {
+        await leaveGroupFromServer(this.groupid);
+        uni.showToast({
+          title: '退出群组成功',
+          duration: 2000,
+        });
+        this.$store.commit('DELETE_JOINEND_GROUP', this.groupid);
+        //删除该群相关会话
+        await this.$store.dispatch('deleteConversation', {
+          conversationId: this.groupid,
+          conversationType: CHAT_TYPE.GROUP_CHAT,
+        });
+        uni.reLaunch({
+          url: '../home/home?page=contacts',
+        });
+      } catch (error) {
+        console.log('>>>>>退出群组失败', error);
+        uni.showToast({
+          title: '退出群组失败',
+          duration: 2000,
+        });
+      }
+    },
+    //解散群组
+    async dissolveGroup() {
+      if (this.isOwner && this.groupid) {
+        try {
+          await destroyGroupFromServer(this.groupid);
+          this.$store.commit('DELETE_JOINEND_GROUP', this.groupid);
+          //删除该群相关会话
+          await this.$store.dispatch('deleteConversation', {
+            conversationId: this.groupid,
+            conversationType: CHAT_TYPE.GROUP_CHAT,
+          });
           uni.showToast({
-            title: "已退群",
+            title: '解散群组成功',
             duration: 2000,
-            success: function (res) {
-              // redirectTo = 此操作不可返回
-              setTimeout(
-                () =>
-                  uni.navigateBack({
-                    url: "../groups/groups?myName=" + me.currentName,
-                  }),
-                2000
-              );
-            },
           });
-        me.removeLocalStorage(me.roomId)
-        },
-        error: function (err) {
+          uni.reLaunch({
+            url: '../home/home?page=contacts',
+          });
+        } catch (error) {
+          console.log('>>>>>error: ', error);
           uni.showToast({
-            title: err.data.error_description,
-            icon: "none",
+            title: '群组解散失败',
+            icon: 'none',
           });
-        },
-      });
-    },
-    dissolveGroup: function () {
-      var me = this; // 解散一个群组
-
-      WebIM.conn.dissolveGroup({
-        groupId: this.roomId,
-        success: function () {
-          uni.showToast({
-            title: "已解散",
-            duration: 2000,
-            success: function (res) {
-              // redirectTo = 此操作不可返回
-              console.log('>>>>>解散群组且跳转至会话列表');
-              //发布解散群组事件
-              me.removeLocalStorage(me.roomId)
-              setTimeout(
-                () =>
-                  uni.redirectTo({
-                    url: "../conversation/conversation",
-                  }),
-                1000
-              );
-            },
-          });
-        },
-        error: function (err) {
-          uni.showToast({
-            title: err.data.error_description,
-            icon: "none",
-          });
-        },
-      });
-    },
-    removeLocalStorage: function (gid) {
-     if(!gid) return;
-      console.log('>>>>>>>>执行删除本地会话')
-      var myName = uni.getStorageSync("myUsername");
-      uni.removeStorageSync(gid + myName);
-      uni.removeStorageSync("rendered_" + gid + myName);
-    },
-     /*  disp event callback function */
-     onGroupSettingPageLeaveGroup() {
-        const pageStack = getCurrentPages(); // 判断是否当前路由是本页
-        if (pageStack[pageStack.length - 1].route === this.__route__) {
-        this.getGroupMember();
-        this.getGroupInfo();
         }
-    }
+      }
+    },
   },
 };
 </script>
 <style>
-@import "./groupSetting.css";
+@import './groupSetting.css';
 </style>
