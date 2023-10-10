@@ -37,9 +37,8 @@
       :class="
         'chat_list_wraper ' + (gotop ? (isIPX ? 'goTopX' : 'goTop') : 'goback')
       "
-      :style="'padding-bottom: ' + (isIPX ? '270rpx' : '226rpx')"
+      :style="'padding-bottom: 270rpx'"
     >
-      <!-- 系统通知 -->
       <!-- 系统通知 -->
       <view class="tap_mask" v-if="lastInformData">
         <view class="list_box" @click="entryInform">
@@ -391,48 +390,10 @@ export default {
       this.search_chats = false;
       this.show_mask = false;
     },
-
-    into_chatRoom: function (event) {
-      let detail = JSON.parse(event.currentTarget.dataset.item);
-      if (
-        detail.chatType == 'groupchat' ||
-        detail.chatType == 'chatRoom' ||
-        detail.groupName
-      ) {
-        this.into_groupChatRoom(detail);
-      } else {
-        this.into_singleChatRoom(detail);
-      }
-    },
-    // 单聊
-    into_singleChatRoom: function (detail) {
-      var my = uni.getStorageSync('myUsername');
-      var nameList = {
-        myName: my,
-        your: detail.username,
-      };
-      const friendUserInfoMap = getApp().globalData.friendUserInfoMap;
-      if (
-        friendUserInfoMap.has(nameList.your) &&
-        friendUserInfoMap.get(nameList.your)?.nickname
-      ) {
-        nameList.yourNickName = friendUserInfoMap.get(nameList.your).nickname;
-      }
+    //进入系统通知页面
+    entryInform() {
       uni.navigateTo({
-        url: '../chatroom/chatroom?username=' + JSON.stringify(nameList),
-      });
-    },
-    // 群聊 和 聊天室 （两个概念）
-    into_groupChatRoom: function (detail) {
-      var my = uni.getStorageSync('myUsername');
-      var nameList = {
-        myName: my,
-        your: detail.groupName,
-        groupId: detail.info.to,
-      };
-      uni.navigateTo({
-        url:
-          '../groupChatRoom/groupChatRoom?username=' + JSON.stringify(nameList),
+        url: '../notification/notification',
       });
     },
     //进入聊天页面
@@ -462,24 +423,6 @@ export default {
           });
           console.log('删除失败', err);
         },
-      });
-    },
-    //进入联系人页面
-    entryTabContactsPage: function () {
-      uni.redirectTo({
-        url: '../main/main?myName=' + uni.getStorageSync('myUsername'),
-      });
-    },
-    //进入我的页面
-    entryTabMePage: function () {
-      uni.redirectTo({
-        url: '../setting/setting',
-      });
-    },
-    //
-    entryTabNotificationPage: function () {
-      uni.redirectTo({
-        url: '../notification/notification',
       });
     },
   },

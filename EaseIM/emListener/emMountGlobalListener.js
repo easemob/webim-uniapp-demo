@@ -2,7 +2,7 @@ import { emContactsListener } from './emContactsListener';
 import { emGroupListener } from './emGroupListener';
 import { emMessagesListener } from './emMessagesListener';
 import { emErrorListener } from './emErrorListener';
-export const emMountGlobalListener = (cb) => {
+export const emMountGlobalListener = (cb = () => {}) => {
   if (typeof cb === 'function') {
     // 参数是一个函数
     emMessagesListener(cb);

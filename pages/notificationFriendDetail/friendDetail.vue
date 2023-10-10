@@ -25,7 +25,7 @@
             v-if="!item.handleText"
             :data-from="item.from"
             class="rejectBtn"
-            @tap="rejectApply(item)"
+            @tap="rejectApply(item, index)"
             >拒绝</view
           >
           <view v-if="!item.handleText" class="centerLine"></view>
@@ -33,7 +33,7 @@
             v-if="!item.handleText"
             :data-from="item.from"
             class="agreeBtn"
-            @tap="agreeApply(item)"
+            @tap="agreeApply(item, index)"
             >同意</view
           >
           <view v-if="item.handleText" class="actionDone">{{
@@ -42,14 +42,15 @@
         </view>
       </template>
       <template v-else>
-        <view class="notInfoDetContent">
+        <view class="notInfoDetContent" @click="readedTheInform(index)">
           <view class="headContent">
             <image src="/static/images/theme2x.png"></image>
           </view>
           <view class="infoContent">
             <text class="itemName">{{ item.from }}</text>
-            <text>其他系统通知</text>
+            <text>{{ item.handleText || '未知系统通知' }}</text>
           </view>
+          <view v-if="!item.isHandled" class="notInfoDetContent_bage"> </view>
         </view>
       </template>
     </view>
@@ -57,16 +58,9 @@
 </template>
 
 <script>
-import { emContacts, emUserInfos } from '@/EaseIM/emApis';
-const {
-  fetchContactsListFromServer,
-  acceptContactInvite,
-  declineContactInvite,
-} = emContacts();
-const { fetchOtherInfoFromServer } = emUserInfos();
-var WebIM = require('../../utils/WebIM')['default'];
-let disp = require('../../utils/broadcast'); // 好友邀请提醒
-
+import { INFORM_TYPE } from '@/EaseIM/constant';
+import { emContacts } from '@/EaseIM/emApis';
+const { acceptContactInvite, declineContactInvite } = emContacts();
 export default {
   data() {
     return {
@@ -88,32 +82,44 @@ export default {
   },
 
   methods: {
-    async agreeApply(sourceItem) {
-      // 同意（无回调）
+    async agreeApply(sourceItem, index) {
+      let informData = { ...sourceItem };
+      // 同意
       //此处直接取的stores中的对象引用，因此直接进行了修改，同时引用对象中的内容也同步进行了变化。
       try {
-        await acceptContactInvite(sourceItem.from);
-        sourceItem.type = 'subscribed';
-        sourceItem.handleText = '已同意';
-        sourceItem.isHandled = true;
-
-        //调用好友接口并更新好友列表以及用户属性等数据。
+        acceptContactInvite(informData.from);
+        informData.type = 'subscribed';
+        informData.handleText = '已同意';
+        informData.isHandled = true;
+        this.$store.commit('CHANGE_INFORM', {
+          informType: INFORM_TYPE.CONTACTS,
+          informParams: informData,
+          index,
+        });
+        // 调用好友接口并更新好友列表以及用户属性等数据。
         await this.$store.dispatch('fetchFriendList');
-        //获取好友用户属性
+        // 获取好友用户属性
         await this.$store.dispatch('setFriendUserInfotoMap');
       } catch (error) {
+        console.log('first error: ', error);
         uni.showToast({
-          title: '已同意对方的好友申请',
+          title: '好友申请同意失败',
           icon: 'none',
         });
       }
     },
-    async rejectApply(sourceItem) {
+    async rejectApply(sourceItem, index) {
+      let informData = { ...sourceItem };
       try {
-        await declineContactInvite(sourceItem.from);
-        sourceItem.type = 'unsubscribed';
-        sourceItem.handleText = '已拒绝';
-        sourceItem.isHandled = true;
+        declineContactInvite(sourceItem.from);
+        informData.type = 'unsubscribed';
+        informData.handleText = '已拒绝';
+        informData.isHandled = true;
+        this.$store.commit('CHANGE_INFORM', {
+          informType: INFORM_TYPE.CONTACTS,
+          informParams: informData,
+          index,
+        });
         uni.showToast({
           title: '已拒绝对方的好友申请',
           icon: 'none',
@@ -124,6 +130,11 @@ export default {
           icon: 'none',
         });
       }
+    },
+    readedTheInform(index) {
+      this.$store.commit('READED_INFROM', {
+        index,
+      });
     },
   },
 };

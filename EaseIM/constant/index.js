@@ -2,6 +2,10 @@ export const CHAT_TYPE = {
   SINGLE_CHAT: 'singleChat',
   GROUP_CHAT: 'groupChat',
 };
+export const INFORM_TYPE = {
+  CONTACTS: 'contacts',
+  GROUPS: 'groups',
+};
 export const HANDLER_EVENT_NAME = {
   CONNECT_EVENT: 'connectEvent',
   MESSAGES_EVENT: 'messagesEvent',

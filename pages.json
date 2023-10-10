@@ -147,14 +147,6 @@
       }
     },
     {
-      "path": "pages/inform/inform",
-      "style": {
-        "navigationBarBackgroundColor": "#f2f2f2",
-        "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "申请与通知"
-      }
-    },
-    {
       "path": "pages/groupChatRoom/groupChatRoom",
       "style": {
         "navigationBarBackgroundColor": "#f2f2f2",

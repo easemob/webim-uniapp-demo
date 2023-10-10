@@ -23,7 +23,7 @@
       </view>
     </view>
     <view class="setting_list">
-      <view class="setting_listContent" @tap="logout">
+      <view class="setting_listContent" @tap="logoutEM">
         <text class="setting_redtext">退出登录</text>
       </view>
     </view>

@@ -24,7 +24,7 @@
             v-if="!item.handleText"
             :data-from="item.id"
             class="rejectBtn"
-            @tap="rejectJoinTheGroup(item)"
+            @tap="rejectJoinTheGroup(item, index)"
             >拒绝</view
           >
           <view v-if="!item.handleText" class="centerLine"></view>
@@ -41,7 +41,7 @@
         </view>
       </template>
       <template v-else>
-        <view class="notInfoDetContent">
+        <view class="notInfoDetContent" @click="readedTheInform(index)">
           <view class="headContent">
             <image src="/static/images/theme2x.png"></image>
           </view>
@@ -49,6 +49,7 @@
             <text class="itemName">{{ item.from }}</text>
             <text>其他群组系统通知</text>
           </view>
+          <view v-if="!item.isHandled" class="notInfoDetContent_bage"> </view>
         </view>
       </template>
     </view>
@@ -58,6 +59,7 @@
 <script>
 /* im apis */
 import { emGroups } from '@/EaseIM/emApis';
+import { INFORM_TYPE } from '@/EaseIM/constant';
 const { acceptGroupInvite, rejectGroupInvite } = emGroups();
 export default {
   data() {
@@ -78,30 +80,52 @@ export default {
   },
   methods: {
     async agreeJoinTheGroup(sourceItem) {
+      let informData = { ...sourceItem };
       try {
         await acceptGroupInvite(this.loginUserId, sourceItem.id);
-        sourceItem.isHandled = true;
-        sourceItem.handleText = '已同意入群';
+        informData.isHandled = true;
+        informData.handleText = '已同意入群';
+        this.$store.commit('CHANGE_INFORM', {
+          informType: INFORM_TYPE.GROUPS,
+          informParams: informData,
+          index,
+        });
         //同意入群后再调用加入的群组列表
         this.$store.dispatch('fetchJoinedGroupList');
       } catch (error) {
         console.log('>>>>>>同意入群失败', error.data.error_description);
         if (error?.data?.error_description.includes('not exist!')) {
-          sourceItem.isHandled = true;
-          sourceItem.handleText = '该群已解散';
+          informData.isHandled = true;
+          informData.handleText = '该群已解散';
+          this.$store.commit('CHANGE_INFORM', {
+            informType: INFORM_TYPE.GROUPS,
+            informParams: informData,
+            index,
+          });
         } else {
           uni.showToast({ title: '操作失败', icon: 'none' });
         }
       }
     },
     async rejectJoinTheGroup(sourceItem) {
+      let informData = { ...sourceItem };
       try {
         await rejectGroupInvite(this.loginUserId, sourceItem.id);
-        sourceItem.isHandled = true;
-        sourceItem.handleText = '拒绝加入此群';
+        informData.isHandled = true;
+        informData.handleText = '拒绝加入此群';
+        this.$store.commit('CHANGE_INFORM', {
+          informType: INFORM_TYPE.GROUPS,
+          informParams: informData,
+          index,
+        });
       } catch (error) {
         uni.showToast({ title: '操作失败', icon: 'none' });
       }
+    },
+    readedTheInform(index) {
+      this.$store.commit('READED_INFROM', {
+        index,
+      });
     },
   },
 };

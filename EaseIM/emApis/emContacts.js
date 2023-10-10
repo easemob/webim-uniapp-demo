@@ -14,54 +14,22 @@ const emContacts = () => {
   };
   const removeContactFromServer = (contactId) => {
     if (contactId) {
-      return new Promise((resolve, reject) => {
-        EMClient.deleteContact(contactId)
-          .then((res) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+      EMClient.deleteContact(contactId);
     }
   };
   const addContact = (contactId, applyMsg) => {
     if (contactId) {
-      return new Promise((resolve, reject) => {
-        EMClient.addContact(contactId, applyMsg)
-          .then((res) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+      EMClient.addContact(contactId, applyMsg);
     }
   };
   const acceptContactInvite = (contactId) => {
     if (contactId) {
-      return new Promise((resolve, reject) => {
-        EMClient.acceptContactInvite(contactId)
-          .then((res) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+      EMClient.acceptContactInvite(contactId);
     }
   };
   const declineContactInvite = (contactId) => {
     if (contactId) {
-      return new Promise((resolve, reject) => {
-        EMClient.declineContactInvite(contactId)
-          .then((res) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+      EMClient.declineContactInvite(contactId);
     }
   };
   return {

@@ -1,6 +1,6 @@
 <script>
 import { EMClient } from '@/EaseIM';
-import { emConnectListener } from '@/EaseIM/emListener';
+import { emConnectListener, emMountGlobalListener } from '@/EaseIM/emListener';
 import { emConnect } from '@/EaseIM/emApis';
 import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
 console.log('EMClient', EMClient);
@@ -99,7 +99,8 @@ export default {
     };
     /* 链接所需监听回调 */
     emConnectListener(connectedCallback);
-    // emMountGlobalListener();
+    /* 全局类型监听集合、消息、联系人、群组等... */
+    emMountGlobalListener();
   },
   computed: {
     loginStoreStatus() {
