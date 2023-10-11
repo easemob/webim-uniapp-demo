@@ -44,7 +44,7 @@
     },
 
     {
-      "path": "pages/chatroom/chatroom",
+      "path": "pages/emChatContainer/index",
       "style": {
         "navigationBarTitleText": "chatting",
         "backgroundTextStyle": "dark",
@@ -97,14 +97,7 @@
         "navigationBarTitleText": "创建群组"
       }
     },
-    {
-      "path": "pages/conversation/conversation",
-      "style": {
-        "navigationBarBackgroundColor": "#f2f2f2",
-        "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "消息"
-      }
-    },
+
     {
       "path": "pages/notification/notification",
       "style": {

@@ -107,7 +107,7 @@
 
           <view
             class="tap_mask"
-            @tap.stop="into_chatRoom"
+            @tap.stop="entryChatPage(conversationItem)"
             :data-item="JSON.stringify(conversationItem)"
             v-else
           >
@@ -403,6 +403,9 @@ export default {
         if (conversationItem.unReadCount > 0) {
           await sendChannelAck(conversationId, conversationType);
         }
+        uni.navigateTo({
+          url: `../emChatContainer/index?targetId=${conversationId}&chatType=${conversationType}`,
+        });
       } catch (error) {}
     },
     //删除会话
