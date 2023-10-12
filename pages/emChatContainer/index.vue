@@ -79,6 +79,27 @@ export default {
       }
     },
   },
+  async onPullDownRefresh() {
+    // this.getMoreHistoryMessages();
+    console.log('>>>>>开始了下拉页面');
+    uni.$emit('onPullDownRefresh');
+    // try {
+    //   const res = await this.$store.dispatch(
+    //     'fetchHistroyMessageListFromServer',
+    //     {
+    //       targetId: this.targetId,
+    //       chatType: this.chatType,
+    //     }
+    //   );
+    //   if (res.isLast) {
+    //     uni.showToast({ title: '暂无更多历史记录', icon: 'none' });
+    //   }
+    // } catch (error) {
+    //   uni.showToast({ title: '历史消息获取失败...', icon: 'none' });
+    // } finally {
+    //   uni.stopPullDownRefresh();
+    // }
+  },
 };
 </script>
 

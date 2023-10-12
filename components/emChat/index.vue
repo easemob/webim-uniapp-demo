@@ -1,9 +1,18 @@
 <template>
-  <view> 目标用户ID：{{ ItargetId }},目标聊天类型：{{ IchatType }} </view>
+  <view>
+    <message-list />
+    <!-- <input-bar /> -->
+  </view>
 </template>
 
 <script>
+import MessageList from './messageList';
+import InputBar from './inputBar';
 export default {
+  components: {
+    MessageList,
+    InputBar,
+  },
   inject: ['targetId', 'chatType'],
   data() {
     return {};
@@ -16,6 +25,10 @@ export default {
     IchatType() {
       return this.chatType();
     },
+  },
+  onPullDownRefresh() {
+    // this.getMoreHistoryMessages();
+    console.log('>>>>>开始了下拉页面');
   },
 };
 </script>
