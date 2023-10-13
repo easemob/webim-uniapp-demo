@@ -64,6 +64,15 @@
       }
     },
     {
+      "path": "pages/emChatContainer/selectUserCard/index",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black",
+        "backgroundTextStyle": "light",
+        "navigationBarTitleText": "选择朋友"
+      }
+    },
+    {
       "path": "pages/register/register",
       "style": {
         "navigationBarBackgroundColor": "#3E4091",

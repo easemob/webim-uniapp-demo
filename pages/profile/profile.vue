@@ -1,29 +1,49 @@
 <template>
   <view>
-    <view class="head_pic" @click="to_select_avatar">
-      <text>头像</text>
-      <image :src="loginUserAvactar"></image>
+    <!-- 他人个人信息 -->
+    <view v-if="otherProfile">
+      <view class="head_pic">
+        <text>头像</text>
+        <image
+          :src="otherProfile.avatarurl || otherProfile.avatar || defaultAvatar"
+        ></image>
+      </view>
+      <view class="head_pic">
+        <text>id</text>
+        <text>{{ otherProfile.uid || '' }}</text>
+      </view>
+      <view class="head_pic">
+        <text>昵称</text>
+        <text>{{ otherProfile.nickname || '暂无昵称' }}</text>
+      </view>
     </view>
-    <view class="head_pic" @click="showEditModal">
-      <text>昵称</text>
-      <text>{{ profileForm.nickname || '' }}</text>
+    <view v-else>
+      <!-- 个人用户信息 -->
+      <view class="head_pic" @click="entrySelectAvatar">
+        <text>头像</text>
+        <image :src="loginUserAvactar"></image>
+      </view>
+      <view class="head_pic" @click="showEditModal">
+        <text>昵称</text>
+        <text>{{ profileForm.nickname || '' }}</text>
+      </view>
+      <u-modal
+        v-model="isShowEditModal"
+        title="更改昵称"
+        async-close
+        confirm-text="保存"
+        cancel-text="取消"
+        show-cancel-button
+        @confirm="saveNickname"
+      >
+        <u-input
+          input-align="center"
+          v-model="nickname"
+          type="text"
+          maxlength="15"
+        />
+      </u-modal>
     </view>
-    <u-modal
-      v-model="isShowEditModal"
-      title="更改昵称"
-      async-close
-      confirm-text="保存"
-      cancel-text="取消"
-      show-cancel-button
-      @confirm="saveNickname"
-    >
-      <u-input
-        input-align="center"
-        v-model="nickname"
-        type="text"
-        maxlength="15"
-      />
-    </u-modal>
   </view>
 </template>
 <script>
@@ -42,11 +62,20 @@ export default {
         birth: '',
         sign: '',
       },
+      otherProfile: null,
       loginUserInfos: null,
       defaultAvatar: '/static/images/theme2x.png',
     };
   },
-  onLoad() {
+  onLoad(option) {
+    if (option.otherProfile) {
+      uni.setNavigationBarTitle({
+        title: '个人名片',
+      });
+      this.otherProfile = JSON.parse(option.otherProfile);
+    } else {
+      this.loginUserInfos = loginStore.loginUserProfiles;
+    }
     const { loginUserProfiles } = this.$store.state.LoginStore;
     this.loginUserInfos = loginUserProfiles;
   },
@@ -73,7 +102,7 @@ export default {
     },
   },
   methods: {
-    to_select_avatar() {
+    entrySelectAvatar() {
       uni.navigateTo({
         url: '../profile/selectAvatar',
       });

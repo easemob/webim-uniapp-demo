@@ -44,6 +44,13 @@ const ContactsStore = {
       }
     },
   },
-  getters: {},
+  getters: {
+    friendUserInfoMap(state) {
+      return state.friendUserInfoMap;
+    },
+    friendList(state) {
+      return state.friendList;
+    },
+  },
 };
 export default ContactsStore;

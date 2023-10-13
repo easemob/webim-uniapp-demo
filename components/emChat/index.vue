@@ -1,7 +1,7 @@
 <template>
   <view>
     <message-list />
-    <!-- <input-bar /> -->
+    <input-bar />
   </view>
 </template>
 
@@ -25,10 +25,6 @@ export default {
     IchatType() {
       return this.chatType();
     },
-  },
-  onPullDownRefresh() {
-    // this.getMoreHistoryMessages();
-    console.log('>>>>>开始了下拉页面');
   },
 };
 </script>

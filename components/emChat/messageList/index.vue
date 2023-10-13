@@ -151,38 +151,6 @@ export default {
       chatMsg: [],
       __visibility__: false,
       isIPX: false,
-      title: '消息举报',
-      list: [
-        {
-          text: '举报',
-        },
-      ],
-      show: false,
-      showRpt: false,
-      showRptType: false,
-      rptMsgId: '', // 举报消息id
-      rptType: '', // 举报类型
-      reason: '',
-      typeList: [
-        {
-          text: '涉政',
-        },
-        {
-          text: '涉黄',
-        },
-        {
-          text: '广告',
-        },
-        {
-          text: '辱骂',
-        },
-        {
-          text: '暴恐',
-        },
-        {
-          text: '违禁',
-        },
-      ],
       defaultAvatar: '/static/images/theme2x.png',
       defaultGroupAvatar: '/static/images/groupTheme.png',
       messageList: [],
@@ -311,14 +279,24 @@ export default {
         });
       });
     },
+    //预览图片
     previewImage(url) {
       uni.previewImage({
         urls: [url], // 需要预览的图片 http 链接列表
       });
     },
+    //执行举报
     actionAleartReportMsg(msgBody) {
       console.log('>>>>>>弹出举报', msgBody);
       this.$refs.reportComp.openReportEntry(msgBody);
+    },
+    //点击查看个人名片
+    entryProfilePage(userInfo) {
+      if (userInfo) {
+        uni.navigateTo({
+          url: `../profile/profile?otherProfile=${JSON.stringify(userInfo)}`,
+        });
+      }
     },
   },
   beforeDestroy() {

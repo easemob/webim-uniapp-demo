@@ -1,9 +1,7 @@
 import { EaseSDK, EMClient } from '../index';
-// import { useMessageStore } from '@/stores/message';
-// import { useConversationStore } from '@/stores/conversation';
 import { getEMKey } from '@/EaseIM/utils';
+import store from '@/store';
 const emMessages = () => {
-  //   const messageStore = useMessageStore();
   //   const conversationStore = useConversationStore();
 
   const reportMessages = (params) => {
@@ -57,13 +55,16 @@ const emMessages = () => {
     );
     console.log('>>>>要发送的消息key', key);
     return new Promise((resolve, reject) => {
-      const msg = EaseSDK.message.create(messageBody);
-      console.log('>>>>构建的消息msg', msg);
-      EMClient.send(msg)
+      const message = EaseSDK.message.create(messageBody);
+      console.log('>>>>构建的消息msg', message);
+      EMClient.send(message)
         .then((res) => {
           resolve(res);
-          msg.id = res.serverMsgId;
-          //   messageStore.updateMessageCollection(key, msg);
+          message.id = res.serverMsgId;
+          store.commit('UPDATE_MESSAGE_COLLECTION', {
+            key,
+            message,
+          });
           //   conversationStore.updateConversationLastMessage(key, msg);
         })
         .catch((err) => {

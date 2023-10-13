@@ -88,9 +88,9 @@ export default {
     //提交举报
     async submitReportResaon() {
       if (this.reportReason === '') {
-        this.$refs.uModal.clearLoading();
         uni.showToast({ title: '请填写举报原因', icon: 'none' });
-        return false;
+        this.isShowReportResaonModal = false;
+        return;
       }
       try {
         const params = {
