@@ -5,11 +5,12 @@
       childId="upload1"
       :width="width"
       :height="height"
-      :option="option"
+      :option="uploadOptions"
       :size="size"
       :formats="formats"
       :debug="debug"
       :instantly="instantly"
+      @change="checkedFile"
       @uploadEnd="onUploadEnd"
     >
       <view :style="{ width: width, height: height }">
@@ -20,95 +21,94 @@
 </template>
 
 <script>
-let WebIM = require("../../../../../utils/WebIM")["default"];
-let msgType = require("../../../msgtype");
-let disp = require("../../../../../utils/broadcast");
-let msgStorage = require("../../../msgstorage");
-const str = WebIM.config.appkey.split("#");
-const token = WebIM.conn.context.accessToken;
+/* EaseIM */
+import { EMClient } from '@/EaseIM';
+import { MESSAGE_TYPE } from '@/EaseIM/constant';
+import { emMessages } from '@/EaseIM/emApis';
+const { sendDisplayMessages } = emMessages();
+const apiUrl = EMClient.apiUrl;
+const orgName = EMClient.orgName;
+const appName = EMClient.appName;
+const token = EMClient.token;
+const uploadTargetUrl = `${apiUrl}/${orgName}/${appName}/chatfiles`;
 export default {
   data() {
     return {
-      option: {
-        url: `https://a1.easemob.com/${str[0]}/${str[1]}/chatfiles `,
-        name: "file",
+      uploadOptions: {
+        url: uploadTargetUrl,
+        name: 'file',
         header: {
-          Authorization: `Bearer${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       },
       // 选择文件后是否立即自动上传，true=选择后立即上传
       instantly: true,
       // 必传宽高且宽高应与slot宽高保持一致
-      width: "108rpx",
-      height: "155rpx",
+      width: '108rpx',
+      height: '155rpx',
       // 限制允许选择的格式，空串=不限制，默认为空
-      formats: "",
+      formats: '',
       // 文件上传大小限制
       size: 10,
       // 是否打印日志
-      debug: true
+      debug: true,
     };
   },
-  props: {
-    username: {
-      type: Object,
-      default: () => ({})
-    },
-    chatType: {
-      type: String,
-      default: msgType.chatType.SINGLE_CHAT
-    }
-  },
-  onReady() {},
   methods: {
-    getSendToParam() {
-      return this.isGroupChat() ? this.username.groupId : this.username.your;
+    //onProgress
+    checkedFile(evt) {
+      uni.showLoading({ title: '文件上传中，请稍后' });
     },
-    isGroupChat() {
-      return this.chatType == msgType.chatType.CHAT_ROOM;
+    //发送附件消息
+    async sendFileMessage(payload) {
+      console.log('>>>>>sendFileMessage payload', payload);
+      const { dataObj, filename, file_length } = payload;
+      let params = {
+        // 消息类型。
+        type: MESSAGE_TYPE.FILE,
+        // 单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
+        chatType: injectChatType.value,
+        // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
+        to: injectTargetId.value,
+        body: {
+          // 文件 URL。
+          url: dataObj.uri + '/' + dataObj.entities[0].uuid,
+          // 文件类型。
+          type: 'filetype',
+          // 文件名称。
+          filename: filename,
+          // 文件大小。
+          file_length: file_length,
+        },
+      };
+      // 发送消息。
+      console.log('>>>>>要发送的消息params', params);
+      try {
+        await sendDisplayMessages(params);
+        console.log('>>>>>文件发送成功');
+        uni.hideLoading();
+        this.$emit('closeAllModal');
+      } catch (error) {
+        console.log('>>>>>文件消息发送失败', error);
+        uni.showToast({
+          title: '消息发送失败',
+          icon: 'none',
+        });
+      }
     },
-
-    saveSendMsg(evt) {
-      msgStorage.saveMsg(evt.msg, evt.type);
-    },
-
+    //onUploadEnd
     onUploadEnd(res) {
       console.log(res);
-      let id = WebIM.conn.getUniqueId();
-      let msg = new WebIM.message(msgType.FILE, id);
-      let dataObj = JSON.parse(res.responseText); // 接收上传文件对象
-      let me = this;
-
-      msg.set({
-        apiUrl: WebIM.config.apiURL,
-        accessToken: token,
-        body: {
-          type: msgType.FILE,
-          url: dataObj.uri + "/" + dataObj.entities[0].uuid,
-          filename: res.name,
-          accessToken: token,
-          file_length: res.size
-        },
-        from: me.username.myName,
-        to: me.getSendToParam(),
-        roomType: false,
-        chatType: me.chatType,
-        success: function (argument) {
-          disp.fire("em.chat.sendSuccess", id);
-        }
-      });
-
-      if (this.isGroupChat()) {
-        msg.setGroup("groupchat");
-      }
-
-      WebIM.conn.send(msg.body);
-      let obj = {
-        msg: msg,
-        type: msgType.FILE
+      const dataObj = JSON.parse(res.responseText); // 接收上传文件对象
+      const payload = {
+        dataObj,
+        filename: res.name,
+        file_length: res.size,
       };
-      this.saveSendMsg(obj);
-    }
-  }
+      sendFileMessage(payload);
+      uni.hideLoading();
+      this.$emit('closeAllModal');
+    },
+  },
 };
 </script>

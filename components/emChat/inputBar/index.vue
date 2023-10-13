@@ -65,6 +65,7 @@ import InputAudio from './suit/audio/audio.vue';
 import InputMain from './suit/main/main';
 import InputEmoji from './suit/emoji/emoji';
 import InputImage from './suit/image/image';
+import InputAttach from './suit/attach/attach';
 export default {
   inject: ['targetId', 'chatType'],
   components: {
@@ -72,6 +73,7 @@ export default {
     InputMain,
     InputEmoji,
     InputImage,
+    InputAttach,
   },
   data() {
     return {
