@@ -18,6 +18,10 @@ export const emMessagesListener = (callback, listenerEventName) => {
       key,
       message,
     });
+    store.commit('UPDATE_CONVERSATION_ITEM', {
+      conversationId: key,
+      lastMessage: message,
+    });
     // messageStore.updateMessageCollection(key, message);
     // conversationStore.updateConversationLastMessage(key, message);
     // }

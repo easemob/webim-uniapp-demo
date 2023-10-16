@@ -21,6 +21,7 @@ export default {
     console.log(option);
     this.targetId = option.targetId;
     this.chatType = option.chatType;
+    this.$store.commit('SET_CHATING_USERID', option.targetId);
   },
   mounted() {
     uni.setNavigationBarTitle({
@@ -83,22 +84,11 @@ export default {
     // this.getMoreHistoryMessages();
     console.log('>>>>>开始了下拉页面');
     uni.$emit('onPullDownRefresh');
-    // try {
-    //   const res = await this.$store.dispatch(
-    //     'fetchHistroyMessageListFromServer',
-    //     {
-    //       targetId: this.targetId,
-    //       chatType: this.chatType,
-    //     }
-    //   );
-    //   if (res.isLast) {
-    //     uni.showToast({ title: '暂无更多历史记录', icon: 'none' });
-    //   }
-    // } catch (error) {
-    //   uni.showToast({ title: '历史消息获取失败...', icon: 'none' });
-    // } finally {
-    //   uni.stopPullDownRefresh();
-    // }
+  },
+  onUnload() {
+    console.log('>>>聊天容器页面卸载');
+    //置空正在沟通中的用户ID
+    this.$store.commit('SET_CHATING_USERID', '');
   },
 };
 </script>

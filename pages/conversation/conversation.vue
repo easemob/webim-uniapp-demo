@@ -401,7 +401,10 @@ export default {
       const { conversationId, conversationType } = conversationItem;
       try {
         if (conversationItem.unReadCount > 0) {
-          await sendChannelAck(conversationId, conversationType);
+          this.$store.dispatch('sendConversatonReadedAck', {
+            targetId: conversationId,
+            chatType: conversationType,
+          });
         }
         uni.navigateTo({
           url: `../emChatContainer/index?targetId=${conversationId}&chatType=${conversationType}`,

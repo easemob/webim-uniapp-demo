@@ -2,8 +2,6 @@ import { EaseSDK, EMClient } from '../index';
 import { getEMKey } from '@/EaseIM/utils';
 import store from '@/store';
 const emMessages = () => {
-  //   const conversationStore = useConversationStore();
-
   const reportMessages = (params) => {
     const { reportType, reportReason, messageId } = params;
     return new Promise((resolve, reject) => {
@@ -65,7 +63,10 @@ const emMessages = () => {
             key,
             message,
           });
-          //   conversationStore.updateConversationLastMessage(key, msg);
+          store.commit('UPDATE_MESSAGE_COLLECTION', {
+            conversationId: key,
+            lastMessage: { ...message },
+          });
         })
         .catch((err) => {
           reject(err);
