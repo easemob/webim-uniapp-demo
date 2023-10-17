@@ -230,7 +230,7 @@ const releaseMediaDevice = async () => {
 const leaveChannel = async () => {
   try {
     (await state.engine) && state.engine.leaveChannel();
-    uni.navigateBack({ delta: 1 });
+    uni.navigateBack();
     //设置本地状态为闲置
     agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
     uni.showToast({

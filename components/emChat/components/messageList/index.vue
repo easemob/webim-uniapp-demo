@@ -159,12 +159,11 @@ import {
   reactive,
   computed,
   watch,
-  onMounted,
   inject,
   nextTick,
   getCurrentInstance,
 } from 'vue';
-import { onLoad, onUnload } from '@dcloudio/uni-app';
+import { onLoad, onUnload, onShow } from '@dcloudio/uni-app';
 /* EaseIM */
 import parseEmoji from '@/EaseIM/utils/paseEmoji';
 import { CHAT_TYPE, MESSAGE_TYPE } from '@/EaseIM/constant';
@@ -217,10 +216,18 @@ const scrollToBottom = () => {
     query.select('#commentContent').boundingClientRect();
     query.exec((res) => {
       //如果子元素高度大于父元素高度(显示高度)
+      console.log(
+        'res[1].height',
+        res[1].height,
+        'res[0].height',
+        res[0].height
+      );
       if (res[1].height > res[0].height) {
         //计算出二者差值就是需要滚动的距离
         commentScrollTop.value = res[1].height - res[0].height;
       } else if (res[1].height == res[0].height) {
+        commentScrollTop.value = res[1].height + 500;
+      } else if (res[1].height < res[0].height) {
         commentScrollTop.value = res[1].height + 500;
       }
     });
@@ -306,7 +313,7 @@ const getMoreHistoryMessages = async () => {
     console.log('>>>>>返回失败', error);
   }
 };
-onMounted(() => {
+onShow(() => {
   scrollToBottom();
 });
 //监听消息内容改变，滚动列表

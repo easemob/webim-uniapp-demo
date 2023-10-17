@@ -67,7 +67,7 @@ watch(localClientStatus, (newVal, oldVal) => {
     enterSingleCallPage();
   }
   if (newVal === CALLSTATUS.idle) {
-    uni.navigateBack({ delta: 1 });
+    uni.navigateBack();
   }
 });
 const agreeJoinChannel = () => {
