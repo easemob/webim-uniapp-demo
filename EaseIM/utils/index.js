@@ -1,3 +1,5 @@
 import paseEmoji from './paseEmoji';
 import getEMKey from './getEMKey';
-export { paseEmoji, getEMKey };
+import emHandleReconnect from './emHandleReconnect';
+import { emInsertInformMessage } from './emInsertInformMessage';
+export { paseEmoji, getEMKey, emHandleReconnect, emInsertInformMessage };

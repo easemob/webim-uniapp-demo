@@ -30,114 +30,122 @@
           :key="msgBody.id + index + ''"
           :id="msgBody.id"
         >
-          <!-- 消息体 -->
-          <view class="main" :class="isSelf(msgBody) ? 'self' : ''">
-            <view class="user">
-              <!-- yourname：就是消息的 from -->
-              <text v-if="!isSelf(msgBody)" class="user-text">{{
-                showMessageListNickname(msgBody.from) +
-                ' ' +
-                handleTime(msgBody)
-              }}</text>
+          <!-- 灰色通知类消息 -->
+          <template v-if="msgBody.type === 'inform'">
+            <view class="gray_inform">
+              <text class="gray_inform_text">{{ msgBody.msg }}</text>
             </view>
-            <image class="avatar" :src="showMessageListAvatar(msgBody)" />
-            <view class="msg">
-              <image
-                v-if="isSelf(msgBody)"
-                src="/static/images/poprightarrow2x.png"
-                class="msg_poprightarrow"
-              />
-              <image
-                v-if="!isSelf(msgBody)"
-                src="/static/images/popleftarrow2x.png"
-                class="msg_popleftarrow"
-              />
-              <!-- 文本类型消息 -->
-              <view v-if="msgBody.type === MESSAGE_TYPE.TEXT">
-                <view
-                  class="template"
-                  v-for="(d_item, d_index) in parseMsgEmoji(msgBody.msg)"
-                  :key="d_index"
-                >
-                  <text
-                    :data-msg="msgBody"
-                    v-if="d_item.type == MESSAGE_TYPE.TEXT"
-                    class="msg-text"
-                    style="float: left"
-                    selectable="true"
-                    >{{ d_item.data }}</text
-                  >
-
-                  <image
-                    v-if="d_item.type == MESSAGE_TYPE.EMOJI"
-                    class="avatar"
-                    :src="'/static/images/faces/' + d_item.data"
-                    style="
-                      width: 25px;
-                      height: 25px;
-                      margin: 0 0 2px 0;
-                      float: left;
-                    "
-                  />
-                </view>
+          </template>
+          <!-- 普通消息体 -->
+          <template v-else>
+            <view class="main" :class="isSelf(msgBody) ? 'self' : ''">
+              <view class="user">
+                <!-- yourname：就是消息的 from -->
+                <text v-if="!isSelf(msgBody)" class="user-text">{{
+                  showMessageListNickname(msgBody.from) +
+                  ' ' +
+                  handleTime(msgBody)
+                }}</text>
               </view>
-              <!-- 文件类型消息 -->
-              <file-msg
-                v-if="msgBody.type === MESSAGE_TYPE.FILE"
-                :msg="msgBody"
-              ></file-msg>
-              <!-- 语音片段类型消息 -->
-              <audio-msg
-                v-if="msgBody.type === MESSAGE_TYPE.AUDIO"
-                :msg="msgBody"
-              ></audio-msg>
-              <!-- 图片以及视频类型消息 -->
-              <view
-                v-if="
-                  msgBody.type == MESSAGE_TYPE.IMAGE ||
-                  msgBody.type == MESSAGE_TYPE.VIDEO
-                "
-              >
+              <image class="avatar" :src="showMessageListAvatar(msgBody)" />
+              <view class="msg">
                 <image
-                  v-if="msgBody.type == MESSAGE_TYPE.IMAGE"
-                  class="avatar"
-                  :src="msgBody.url"
-                  style="width: 90px; height: 120px; margin: 2px auto"
-                  mode="aspectFit"
-                  @tap="previewImage(msgBody.url)"
+                  v-if="isSelf(msgBody)"
+                  src="/static/images/poprightarrow2x.png"
+                  class="msg_poprightarrow"
                 />
-                <video
-                  v-if="msgBody.type == MESSAGE_TYPE.VIDEO"
-                  :src="msgBody.url"
-                  controls
-                  style="width: 300rpx"
+                <image
+                  v-if="!isSelf(msgBody)"
+                  src="/static/images/popleftarrow2x.png"
+                  class="msg_popleftarrow"
                 />
-              </view>
-              <!-- 自定义类型消息 -->
-              <view
-                v-if="
-                  msgBody.type == MESSAGE_TYPE.CUSTOM &&
-                  msgBody.customEvent === 'userCard'
-                "
-                @click="entryProfilePage(msgBody.customExts)"
-              >
-                <view class="usercard_mian">
-                  <image
-                    :src="
-                      msgBody.customExts.avatarurl ||
-                      msgBody.customExts.avatar ||
-                      msglistState.defaultAvatar
-                    "
-                  />
-                  <text class="name">{{
-                    msgBody.customExts.nickname || msgBody.customExts.uid
-                  }}</text>
+                <!-- 文本类型消息 -->
+                <view v-if="msgBody.type === MESSAGE_TYPE.TEXT">
+                  <view
+                    class="template"
+                    v-for="(d_item, d_index) in parseMsgEmoji(msgBody.msg)"
+                    :key="d_index"
+                  >
+                    <text
+                      :data-msg="msgBody"
+                      v-if="d_item.type == MESSAGE_TYPE.TEXT"
+                      class="msg-text"
+                      style="float: left"
+                      selectable="true"
+                      >{{ d_item.data }}</text
+                    >
+
+                    <image
+                      v-if="d_item.type == MESSAGE_TYPE.EMOJI"
+                      class="avatar"
+                      :src="'/static/images/faces/' + d_item.data"
+                      style="
+                        width: 25px;
+                        height: 25px;
+                        margin: 0 0 2px 0;
+                        float: left;
+                      "
+                    />
+                  </view>
                 </view>
-                <!-- <u-divider :use-slot="false" /> -->
-                <text>[个人名片]</text>
+                <!-- 文件类型消息 -->
+                <file-msg
+                  v-if="msgBody.type === MESSAGE_TYPE.FILE"
+                  :msg="msgBody"
+                ></file-msg>
+                <!-- 语音片段类型消息 -->
+                <audio-msg
+                  v-if="msgBody.type === MESSAGE_TYPE.AUDIO"
+                  :msg="msgBody"
+                ></audio-msg>
+                <!-- 图片以及视频类型消息 -->
+                <view
+                  v-if="
+                    msgBody.type == MESSAGE_TYPE.IMAGE ||
+                    msgBody.type == MESSAGE_TYPE.VIDEO
+                  "
+                >
+                  <image
+                    v-if="msgBody.type == MESSAGE_TYPE.IMAGE"
+                    class="avatar"
+                    :src="msgBody.url"
+                    style="width: 90px; height: 120px; margin: 2px auto"
+                    mode="aspectFit"
+                    @tap="previewImage(msgBody.url)"
+                  />
+                  <video
+                    v-if="msgBody.type == MESSAGE_TYPE.VIDEO"
+                    :src="msgBody.url"
+                    controls
+                    style="width: 300rpx"
+                  />
+                </view>
+                <!-- 自定义类型消息 -->
+                <view
+                  v-if="
+                    msgBody.type == MESSAGE_TYPE.CUSTOM &&
+                    msgBody.customEvent === 'userCard'
+                  "
+                  @click="entryProfilePage(msgBody.customExts)"
+                >
+                  <view class="usercard_mian">
+                    <image
+                      :src="
+                        msgBody.customExts.avatarurl ||
+                        msgBody.customExts.avatar ||
+                        msglistState.defaultAvatar
+                      "
+                    />
+                    <text class="name">{{
+                      msgBody.customExts.nickname || msgBody.customExts.uid
+                    }}</text>
+                  </view>
+                  <!-- <u-divider :use-slot="false" /> -->
+                  <text>[个人名片]</text>
+                </view>
               </view>
             </view>
-          </view>
+          </template>
         </view>
       </view>
     </scroll-view>

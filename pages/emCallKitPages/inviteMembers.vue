@@ -20,9 +20,11 @@
 
 <script setup>
 import { ref, toRefs, computed, onMounted } from 'vue';
+import { CHAT_TYPE } from '@/EaseIM/constant';
 import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
 import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
 import { onLoad } from '@dcloudio/uni-app';
+import { emInsertInformMessage } from '@/EaseIM/utils';
 /* props */
 const props = defineProps({
   groupId: {
@@ -58,6 +60,7 @@ const packageMembers = async (groupId) => {
     });
 };
 let checkedMember = ref([]);
+const { insertInformMessage } = emInsertInformMessage();
 const sendMultiInviteChannelMsg = async () => {
   if (!checkedMember.value.length) return;
   const localClientStatus = agoraChannelStore.callKitStatus.localClientStatus;
@@ -76,6 +79,11 @@ const sendMultiInviteChannelMsg = async () => {
         groupId.value
       );
     }
+    insertInformMessage({
+      to: groupId.value,
+      chatType: CHAT_TYPE.GROUP_CHAT,
+      msg: '您已发起多人通话',
+    });
     uni.showToast({ icon: 'none', title: '邀请已发出正在等待对方加入！' });
     uni.redirectTo({
       url: '/pages/emCallKitPages/multiCall',

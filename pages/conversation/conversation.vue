@@ -97,6 +97,11 @@
                   }}</text>
                   <text
                     class="list_word"
+                    v-if="item.lastMessage.type == 'inform'"
+                    >{{ item.lastMessage.msg }}</text
+                  >
+                  <text
+                    class="list_word"
                     v-if="item.lastMessage.type == MESSAGE_TYPE.TEXT"
                     >{{ item.lastMessage.msg }}</text
                   >
@@ -209,7 +214,6 @@ const getGroupName = (groupid) => {
 const informStore = useInformStore();
 //最近一条系统通知
 const lastInformData = computed(() => {
-
   return (
     informStore.getAllInformsList[informStore.getAllInformsList.length - 1] ||
     null

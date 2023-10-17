@@ -26,7 +26,7 @@
   top: 200px;
   left: 40px;
   right: 40px;
-  color: #bbb;
+  color: rgba(187, 187, 187, 0.433);
 }
 .message {
   width: 100%;
@@ -34,19 +34,18 @@
   position: relative;
 }
 
-.time {
+.gray_inform {
   margin: 14rpx 0;
   text-align: center;
 }
 
-.time .time-text {
+.gray_inform_text {
   display: inline-block;
   padding: 6rpx 20rpx 0 20rpx;
   font-size: 24rpx;
-  color: #fff;
+  color: #bbb;
   line-height: 28rpx;
   border-radius: 4rpx;
-  background-color: #dcdcdc;
 }
 
 .user .user-text {

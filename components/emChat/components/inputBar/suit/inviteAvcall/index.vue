@@ -24,8 +24,10 @@
 <script setup>
 import { ref, inject } from 'vue';
 import useAgoraChannelStore from '@/components/emCallKit/stores/channelManger';
+import { CHAT_TYPE } from '@/EaseIM/constant';
 import { CALL_TYPES } from '@/components/emCallKit/contants';
 import onFeedTap from '@/utils/feedTap';
+import { emInsertInformMessage } from '@/EaseIM/utils';
 const agoraChannelStore = useAgoraChannelStore();
 const injectTargetId = inject('targetId');
 const invitePopup = ref(null);
@@ -39,10 +41,18 @@ const onCannel = () => {
   onFeedTap && onFeedTap();
   closeInvitePopup();
 };
+const { insertInformMessage } = emInsertInformMessage();
 const sendAvCallMessage = async (callType) => {
   onFeedTap && onFeedTap();
   try {
     await agoraChannelStore.sendInviteMessage(injectTargetId.value, callType);
+    insertInformMessage({
+      to: injectTargetId.value,
+      chatType: CHAT_TYPE.SINGLE_CHAT,
+      msg: `您已发起${
+        callType === CALL_TYPES.SINGLE_VIDEO ? '视频通话' : '语音通话'
+      }`,
+    });
     uni.navigateTo({
       url: '/pages/emCallKitPages/alertScreen',
     });
