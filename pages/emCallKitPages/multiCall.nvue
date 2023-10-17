@@ -216,6 +216,16 @@ const joinChannel = async () => {
     uni.showToast({ icon: 'none', title: '多人会议加入失败，请稍后重试！' });
   }
 };
+//释放硬件设备占用
+const releaseMediaDevice = async () => {
+  console.log('>>>>>执行释放媒体设备');
+  try {
+    (await state.engine) && state.engine.enableLocalVideo(false);
+    (await state.engine) && state.engine.muteLocalAudioStream(false);
+  } catch (error) {
+    console.log('>>>>>>释放失败', error);
+  }
+};
 //挂断
 const leaveChannel = async () => {
   if (
@@ -236,6 +246,7 @@ const leaveChannel = async () => {
       title: `通话结束【${formatTime.value}】`,
     });
   }
+  releaseMediaDevice();
 };
 //切换摄像头
 const onSwitchCamera = () => {
@@ -285,6 +296,7 @@ const entryInviteMoreMembers = () => {
     url: '/pages/emCallKitPages/inviteMembers',
   });
 };
+
 onLoad(() => {
   console.log('+++++++multiCall onLoad');
   initEngine();

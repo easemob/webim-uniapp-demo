@@ -216,16 +216,32 @@ const joinChannel = async () => {
     state.engine.joinChannel(accessToken, channelName.value, null, agoraUserId);
   startInChannelTimer();
 };
+//释放硬件设备占用
+const releaseMediaDevice = async () => {
+  console.log('>>>>>执行释放媒体设备');
+  try {
+    (await state.engine) && state.engine.enableLocalVideo(false);
+    (await state.engine) && state.engine.muteLocalAudioStream(false);
+  } catch (error) {
+    console.log('>>>>>>释放失败', error);
+  }
+};
 //挂断
 const leaveChannel = async () => {
-  (await state.engine) && state.engine.leaveChannel();
-  uni.navigateBack({ delta: 1 });
-  //设置本地状态为闲置
-  agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
-  uni.showToast({
-    icon: 'none',
-    title: `通话结束【${formatTime.value}】`,
-  });
+  try {
+    (await state.engine) && state.engine.leaveChannel();
+    uni.navigateBack({ delta: 1 });
+    //设置本地状态为闲置
+    agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
+    uni.showToast({
+      icon: 'none',
+      title: `通话结束【${formatTime.value}】`,
+    });
+  } catch (error) {
+    console.error('leaveChannel error', error);
+  } finally {
+    releaseMediaDevice();
+  }
 };
 //切换摄像头
 const onSwitchCamera = () => {
@@ -275,6 +291,7 @@ onLoad(() => {
   initEngine();
 });
 onUnload(() => {
+  console.log('>>>>>>singleChat onUnload 页面');
   state.engine && state.engine.destroy();
   state.isJoined = false;
   //卸载组件清除通话计时
