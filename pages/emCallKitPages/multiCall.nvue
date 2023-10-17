@@ -178,20 +178,27 @@ const addListeners = () => {
 //初始化频道实例
 const initEngine = async () => {
   console.log('>>>>>>>初始化声网RTC');
-  state.engine = await RtcEngine.create(AGORA_APP_ID);
-  addListeners();
-  if (uni.getSystemInfoSync().platform === 'android') {
-    await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
-    await permision.requestAndroidPermission('android.permission.CAMERA');
+  try {
+    if (uni.getSystemInfoSync().platform === 'android') {
+      await permision.requestAndroidPermission(
+        'android.permission.RECORD_AUDIO'
+      );
+      await permision.requestAndroidPermission('android.permission.CAMERA');
+    }
+    await state.engine.enableVideo();
+    await state.engine.startPreview();
+    await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+    await state.engine.setClientRole(ClientRole.Broadcaster);
+    //设置频道麦克风为扬声器模式
+    await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
+    await joinChannel();
+    state.engine = await RtcEngine.create(AGORA_APP_ID);
+    addListeners();
+  } catch (error) {
+    console.log('initEngine error: ', error);
   }
-  await state.engine.enableVideo();
-  await state.engine.startPreview();
-  await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
-  await state.engine.setClientRole(ClientRole.Broadcaster);
-  //设置频道麦克风为扬声器模式
-  await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
-  await joinChannel();
 };
+initEngine();
 //加入频道
 const joinChannel = async () => {
   try {
@@ -299,7 +306,6 @@ const entryInviteMoreMembers = () => {
 
 onLoad(() => {
   console.log('+++++++multiCall onLoad');
-  initEngine();
 });
 onUnload(() => {
   state.engine && state.engine.destroy();

@@ -193,15 +193,19 @@ const initEngine = async () => {
     await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
     await permision.requestAndroidPermission('android.permission.CAMERA');
   }
-  await state.engine.enableVideo();
-  await state.engine.startPreview();
-  await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
-  await state.engine.setClientRole(ClientRole.Broadcaster);
-  //设置频道麦克风为扬声器模式
-  await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
-  await joinChannel();
+  try {
+    await state.engine.enableVideo();
+    await state.engine.startPreview();
+    await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+    await state.engine.setClientRole(ClientRole.Broadcaster);
+    //设置频道麦克风为扬声器模式
+    await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
+    await joinChannel();
+  } catch (error) {
+    console.log('>>>>initEngine error', error);
+  }
 };
-
+initEngine();
 //加入频道
 const joinChannel = async () => {
   let { accessToken, agoraUserId } =
@@ -288,7 +292,6 @@ const onSwitchLocalCameraOpened = async () => {
 
 onLoad(() => {
   console.log('+++++++singleCall onLoad');
-  initEngine();
 });
 onUnload(() => {
   console.log('>>>>>>singleChat onUnload 页面');
