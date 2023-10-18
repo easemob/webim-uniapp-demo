@@ -221,14 +221,9 @@ const joinChannel = async () => {
   startInChannelTimer();
 };
 //释放硬件设备占用
-const releaseMediaDevice = async () => {
-  console.log('>>>>>执行释放媒体设备');
-  try {
-    (await state.engine) && state.engine.enableLocalVideo(false);
-    (await state.engine) && state.engine.muteLocalAudioStream(false);
-  } catch (error) {
-    console.log('>>>>>>释放失败', error);
-  }
+const destroyAgoraEngine = () => {
+  state.engine && state.engine.destroy();
+  console.log('>++++++++++destroy');
 };
 //挂断
 const leaveChannel = async () => {
@@ -244,7 +239,7 @@ const leaveChannel = async () => {
   } catch (error) {
     console.error('leaveChannel error', error);
   } finally {
-    releaseMediaDevice();
+    destroyAgoraEngine();
   }
 };
 //切换摄像头
@@ -295,7 +290,6 @@ onLoad(() => {
 });
 onUnload(() => {
   console.log('>>>>>>singleChat onUnload 页面');
-  state.engine && state.engine.destroy();
   state.isJoined = false;
   //卸载组件清除通话计时
   //清除通话计时

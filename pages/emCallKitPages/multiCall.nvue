@@ -224,14 +224,9 @@ const joinChannel = async () => {
   }
 };
 //释放硬件设备占用
-const releaseMediaDevice = async () => {
+const destroyAgoraEngine = () => {
+  state.engine && state.engine.destroy();
   console.log('>>>>>执行释放媒体设备');
-  try {
-    (await state.engine) && state.engine.enableLocalVideo(false);
-    (await state.engine) && state.engine.muteLocalAudioStream(false);
-  } catch (error) {
-    console.log('>>>>>>释放失败', error);
-  }
 };
 //挂断
 const leaveChannel = async () => {
@@ -253,7 +248,7 @@ const leaveChannel = async () => {
       title: `通话结束【${formatTime.value}】`,
     });
   }
-  releaseMediaDevice();
+  destroyAgoraEngine();
 };
 //切换摄像头
 const onSwitchCamera = () => {
@@ -308,7 +303,6 @@ onLoad(() => {
   console.log('+++++++multiCall onLoad');
 });
 onUnload(() => {
-  state.engine && state.engine.destroy();
   state.isJoined = false;
   //卸载组件清除通话计时
   //清除通话计时
