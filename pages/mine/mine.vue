@@ -2,7 +2,7 @@
   <view>
     <view class="setting_head">
       <view class="head_pic" @click="entryProfilePage">
-        <image :src="loginUserAvactar"></image>
+        <image :src="loginUserAvatar"></image>
         <view>
           <text class="setting_username">{{ loginUserNickname }}</text>
           <text class="setting_username2">{{ phoneNumber }}</text>
@@ -39,7 +39,7 @@ export default {
       yourname: '',
       isIPX: false,
       phoneNumber: '',
-      defaultAvatar: '/static/images/avatar.png',
+      defaultAvatar: '/static/images/theme2x.png',
       userInfoFromServer: null,
     };
   },
@@ -57,9 +57,9 @@ export default {
     uni.hideHomeButton && uni.hideHomeButton();
   },
   computed: {
-    loginUserAvactar() {
-      if (this.userInfoFromServer) {
-        return this.userInfoFromServer.avatarurl;
+    loginUserAvatar() {
+      if (this.userInfoFromServer?.avatarurl) {
+        return this.userInfoFromServer?.avatarurl;
       } else {
         return this.defaultAvatar;
       }
