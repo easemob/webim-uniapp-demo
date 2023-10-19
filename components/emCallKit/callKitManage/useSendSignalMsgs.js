@@ -170,6 +170,17 @@ const useSendSignalMsgs = () => {
         .catch((e) => {
           // 消息发送失败回调。
           console.log('invite Fail', e);
+          if (e.type === 221) {
+            uni.showToast({
+              icon: 'none',
+              title: '该应用开启了非好友关系检测，邀请失败！',
+            });
+          } else {
+            uni.showToast({
+              icon: 'none',
+              title: '邀请失败,请稍后重试！',
+            });
+          }
           reject(e);
         });
     });

@@ -79,11 +79,7 @@ const sendMultiInviteChannelMsg = async () => {
         groupId.value
       );
     }
-    insertInformMessage({
-      to: groupId.value,
-      chatType: CHAT_TYPE.GROUP_CHAT,
-      msg: '您已发起多人通话',
-    });
+
     uni.showToast({ icon: 'none', title: '邀请已发出正在等待对方加入！' });
     uni.redirectTo({
       url: '/pages/emCallKitPages/multiCall',

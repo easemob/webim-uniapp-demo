@@ -179,6 +179,7 @@ const addListeners = () => {
 const initEngine = async () => {
   console.log('>>>>>>>初始化声网RTC');
   try {
+    state.engine = await RtcEngine.create(AGORA_APP_ID);
     if (uni.getSystemInfoSync().platform === 'android') {
       await permision.requestAndroidPermission(
         'android.permission.RECORD_AUDIO'
@@ -192,7 +193,7 @@ const initEngine = async () => {
     //设置频道麦克风为扬声器模式
     await state.engine.setDefaultAudioRoutetoSpeakerphone(true);
     await joinChannel();
-    state.engine = await RtcEngine.create(AGORA_APP_ID);
+
     addListeners();
   } catch (error) {
     console.log('initEngine error: ', error);
