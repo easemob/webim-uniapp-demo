@@ -238,10 +238,10 @@ const leaveChannel = async () => {
   ) {
     (await state.engine) && state.engine.leaveChannel();
     agoraChannelStore.handleCancelCall();
-    uni.navigateBack({ delta: 1 });
+    uni.navigateBack();
   } else {
     (await state.engine) && state.engine.leaveChannel();
-    uni.navigateBack({ delta: 1 });
+    uni.navigateBack();
     //设置本地状态为闲置
     agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
     uni.showToast({

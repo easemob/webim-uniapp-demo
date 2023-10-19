@@ -27,6 +27,7 @@ export const emInsertInformMessage = (isUpdateConversation = true) => {
     };
     const { from, to, chatType } = informMessageBody;
     const key = getEMKey(EMClient.user, from, to, chatType);
+    console.log('>>>>>>key', key);
     //通知本地消息列表进行插入
     messageStore.insertLocalGrayInformMessage(key, informMessageBody);
     //是否需要同步更新会话列表

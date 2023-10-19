@@ -73,13 +73,17 @@ const sendMultiInviteChannelMsg = async () => {
         CALL_TYPES.MULTI_VIDEO
       );
     } else {
+      insertInformMessage({
+        to: groupId.value,
+        chatType: CHAT_TYPE.GROUP_CHAT,
+        msg: `您已发起多人通话`,
+      });
       await agoraChannelStore.sendInviteMessage(
         checkedMember.value,
         CALL_TYPES.MULTI_VIDEO,
         groupId.value
       );
     }
-
     uni.showToast({ icon: 'none', title: '邀请已发出正在等待对方加入！' });
     uni.redirectTo({
       url: '/pages/emCallKitPages/multiCall',
