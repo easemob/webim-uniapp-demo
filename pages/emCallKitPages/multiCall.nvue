@@ -98,6 +98,7 @@ import { ref, reactive, computed } from 'vue';
 import { onLoad, onUnload } from '@dcloudio/uni-app';
 import { AGORA_APP_ID } from '@/components/emCallKit/config/index.js';
 import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
+import { CHAT_TYPE } from '@/EaseIM/constant';
 import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
 import {
   ClientRole,
@@ -238,10 +239,8 @@ const leaveChannel = async () => {
   ) {
     (await state.engine) && state.engine.leaveChannel();
     agoraChannelStore.handleCancelCall();
-    uni.navigateBack();
   } else {
     (await state.engine) && state.engine.leaveChannel();
-    uni.navigateBack();
     //设置本地状态为闲置
     agoraChannelStore.updateLocalStatus(CALLSTATUS.idle);
     uni.showToast({
@@ -249,6 +248,9 @@ const leaveChannel = async () => {
       title: `通话结束【${formatTime.value}】`,
     });
   }
+  uni.reLaunch({
+    url: '../home/index',
+  });
   destroyAgoraEngine();
 };
 //切换摄像头
