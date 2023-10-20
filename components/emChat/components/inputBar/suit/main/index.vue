@@ -76,7 +76,16 @@ const delEmojiMapString = () => {
 const { sendDisplayMessages } = emMessages();
 const injectTargetId = inject('targetId');
 const injeactChatType = inject('chatType');
+let sending = false;
 const sendTextMessage = async () => {
+  if (sending) {
+    uni.showToast({
+      title: '正发送请稍后...',
+      icon: 'none',
+    });
+    return;
+  }
+  sending = true;
   const params = {
     // 消息类型。
     type: 'txt',
@@ -93,11 +102,19 @@ const sendTextMessage = async () => {
     console.log('>>>>>文本消息发送成功', res);
   } catch (error) {
     console.log('>>>>>文本消息发送失败', error);
-    uni.showToast({
-      title: '消息发送失败',
-      icon: 'none',
-    });
+    if (error.type === 508) {
+      uni.showToast({
+        title: '发送内容不合规',
+        icon: 'none',
+      });
+    } else {
+      uni.showToast({
+        title: '消息发送失败',
+        icon: 'none',
+      });
+    }
   } finally {
+    sending = false;
     inputContent.value = '';
     uni.hideKeyboard();
   }
