@@ -98,7 +98,6 @@ import { ref, reactive, computed } from 'vue';
 import { onLoad, onUnload } from '@dcloudio/uni-app';
 import { AGORA_APP_ID } from '@/components/emCallKit/config/index.js';
 import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
-import { CHAT_TYPE } from '@/EaseIM/constant';
 import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
 import {
   ClientRole,
