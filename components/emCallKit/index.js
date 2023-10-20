@@ -276,6 +276,12 @@ export const useInitCallKit = () => {
             }
             // 防止通话中收到 busy refuse时挂断
             if (
+              callKitStatus.value.localClientStatus === CALLSTATUS.inviting ||
+              callKitStatus.value.localClientStatus ===
+                CALLSTATUS.receivedConfirmRing
+            )
+              return;
+            if (
               cmdMsgBody.result !== ANSWER_TYPE.ACCPET &&
               callKitStatus.value.localClientStatus !== CALLSTATUS.confirmCallee
             ) {
