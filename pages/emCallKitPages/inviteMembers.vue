@@ -85,9 +85,7 @@ const sendMultiInviteChannelMsg = async () => {
       );
     }
     uni.showToast({ icon: 'none', title: '邀请已发出正在等待对方加入！' });
-    uni.redirectTo({
-      url: '/pages/emCallKitPages/multiCall',
-    });
+    uni.navigateBack();
   } catch (error) {
     console.log('error', error);
     uni.showToast({ icon: 'none', title: '会议邀请发送失败，请稍后重试！' });
