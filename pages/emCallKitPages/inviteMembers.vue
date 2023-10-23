@@ -72,6 +72,7 @@ const sendMultiInviteChannelMsg = async () => {
         checkedMember.value,
         CALL_TYPES.MULTI_VIDEO
       );
+      uni.navigateBack();
     } else {
       insertInformMessage({
         to: groupId.value,
@@ -83,9 +84,11 @@ const sendMultiInviteChannelMsg = async () => {
         CALL_TYPES.MULTI_VIDEO,
         groupId.value
       );
+      uni.redirectTo({
+        url: '../emCallKitPages/multiCall',
+      });
     }
     uni.showToast({ icon: 'none', title: '邀请已发出正在等待对方加入！' });
-    uni.navigateBack();
   } catch (error) {
     console.log('error', error);
     uni.showToast({ icon: 'none', title: '会议邀请发送失败，请稍后重试！' });
