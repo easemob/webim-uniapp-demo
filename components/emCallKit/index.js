@@ -163,7 +163,6 @@ export const useInitCallKit = () => {
       switch (action) {
         case CALL_ACTIONS_TYPE.ALERT: //回复confirmring
           updateLocalStatus(CALLSTATUS.alerting);
-
           if (cmdMsgBody.callId !== currentCallKitCallId) {
             status = false;
             console.warn('callId 于当前呼叫端callId 不一致');
@@ -189,7 +188,7 @@ export const useInitCallKit = () => {
           }
 
           break;
-        case CALL_ACTIONS_TYPE.CONFIRM_RING:
+        case CALL_ACTIONS_TYPE.CONFIRM_RING: //回复 receivedConfirmRing
           {
             //调起confirm待接听界面
             if (calleeDevId !== clientResource) return; //【多端情况】被叫方设备id 如果不为当前用户登陆设备ID，则不处理。
@@ -204,9 +203,9 @@ export const useInitCallKit = () => {
             updateLocalStatus(CALLSTATUS.receivedConfirmRing);
           }
           break;
-        case CALL_ACTIONS_TYPE.ANSWER:
+        case CALL_ACTIONS_TYPE.ANSWER: //回复 confirmCallee
           {
-            if (callerDevId !== clientResource) return; //【多端情况】被叫方设备id 如果不为当前用户登陆设备ID，则不处理。
+            if (callerDevId !== clientResource) return; //【多端情况】呼叫方设备id 如果不为当前用户登陆设备ID，则不处理。
             updateLocalStatus(CALLSTATUS.receivedAnswerCall);
             callKitTimer.value && clearTimeout(callKitTimer.value);
             const params = {
@@ -237,6 +236,11 @@ export const useInitCallKit = () => {
               if (callKitStatus.value.channelInfos.callType !== 2) {
                 //无论对方是忙碌还是拒接都讲通话状态更改为闲置。
                 if (cmdMsgBody.result === ANSWER_TYPE.BUSY) {
+                  uni.showToast({
+                    title: '对方正忙',
+                    icon: 'none',
+                    duration: 2000,
+                  });
                   eventParams.type =
                     CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLEE_BUSY];
                   eventParams.ext = { message: '对方正忙' };
@@ -245,6 +249,11 @@ export const useInitCallKit = () => {
                   eventParams.type =
                     CALLKIT_EVENT_TYPE[CALLKIT_EVENT_CODE.CALLEE_REFUSE];
                   eventParams.ext = { message: '对方拒绝接听' };
+                  uni.showToast({
+                    title: '对方拒绝接听',
+                    icon: 'none',
+                    duration: 2000,
+                  });
                 }
                 eventParams.callType =
                   callKitStatus.value.channelInfos.callType;
@@ -257,10 +266,14 @@ export const useInitCallKit = () => {
             }
           }
           break;
-        case CALL_ACTIONS_TYPE.CONFIRM_CALLEE:
+        case CALL_ACTIONS_TYPE.CONFIRM_CALLEE: //被叫方认证
           {
-            if (cmdMsgBody.calleeDevId !== clientResource) {
-              if (msgBody.to === CallKitEMClient.user) {
+            //如果calleeDevId不等于当前设备resource
+            if (msgBody.to === CallKitEMClient.user) {
+              if (cmdMsgBody.result && cmdMsgBody.result === ANSWER_TYPE.BUSY) {
+                return;
+              }
+              if (cmdMsgBody.calleeDevId !== clientResource) {
                 updateLocalStatus(CALLSTATUS.idle); //更改状态为闲置
                 console.log('%c 已在其他设备处理', 'color:red;');
                 eventParams.type =
@@ -270,17 +283,16 @@ export const useInitCallKit = () => {
                   callKitStatus.value.channelInfos.callType;
                 eventParams.eventHxId = msgBody.from || '';
                 PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
+                uni.showToast({
+                  title: '该通话已在其他设备处理',
+                  icon: 'none',
+                  duration: 2000,
+                });
                 return;
               }
-              return;
             }
+
             // 防止通话中收到 busy refuse时挂断
-            if (
-              callKitStatus.value.localClientStatus === CALLSTATUS.inviting ||
-              callKitStatus.value.localClientStatus ===
-                CALLSTATUS.receivedConfirmRing
-            )
-              return;
             if (
               cmdMsgBody.result !== ANSWER_TYPE.ACCPET &&
               callKitStatus.value.localClientStatus !== CALLSTATUS.confirmCallee
@@ -341,6 +353,11 @@ export const useInitCallKit = () => {
       if (callKitStatus.value.channelInfos.callType === 2) {
         eventParams.eventHxId = callKitStatus.value.channelInfos.groupId;
       }
+      uni.showToast({
+        title: '通话已接听',
+        icon: 'none',
+        duration: 2000,
+      });
       PUB_CHANNEL_EVENT(EVENT_NAME, { ...eventParams });
     }
     if (sendType === ANSWER_TYPE.REFUSE) {
@@ -354,6 +371,11 @@ export const useInitCallKit = () => {
         callType: callKitStatus.value.channelInfos.callType,
         eventHxId: channelInfos.callerIMName,
       };
+      uni.showToast({
+        title: '已拒绝通话邀请',
+        icon: 'none',
+        duration: 2000,
+      });
       //如果是多人就取对应群组ID
       if (callKitStatus.value.channelInfos.callType === 2) {
         eventParams.eventHxId = callKitStatus.value.channelInfos.groupId;
