@@ -41,10 +41,15 @@ const channelInfos = computed(
   () => agoraChannelStore.callKitStatus.channelInfos
 );
 onLoad((option) => {
-  packageMembers(option?.groupId);
+  if (option?.inChannelUserList) {
+    console.log(typeof option?.inChannelUserList);
+    packageMembers(null, JSON.parse(option?.inChannelUserList));
+  } else {
+    packageMembers(option?.groupId);
+  }
 });
 let memberList = ref([]);
-const packageMembers = async (groupId) => {
+const packageMembers = async (groupId, inChannelUserList) => {
   const resGroupMembers = await agoraChannelStore.getTheGroupMembers(
     groupId || channelInfos.value.groupId
   );
@@ -54,8 +59,10 @@ const packageMembers = async (groupId) => {
         text: memberData.member || memberData.owner,
         value: memberData.member || memberData.owner,
         disable:
-          memberData.member === emClientInfos.value.loginUserId ||
-          memberData.owner === emClientInfos.value.loginUserId,
+          inChannelUserList?.length > 0
+            ? inChannelUserList.includes(memberData.member || memberData.owner)
+            : memberData.member === emClientInfos.value.loginUserId ||
+              memberData.owner === emClientInfos.value.loginUserId,
       });
     });
 };
