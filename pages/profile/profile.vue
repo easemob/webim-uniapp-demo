@@ -25,7 +25,7 @@
       </view>
       <view class="head_pic" @click="showEditModal">
         <text>昵称</text>
-        <text>{{ profileForm.nickname || '' }}</text>
+        <text>{{ profileForm.nickname || '暂无昵称' }}</text>
       </view>
       <u-modal
         v-model="isShowEditModal"
@@ -74,7 +74,7 @@ export default {
       });
       this.otherProfile = JSON.parse(option.otherProfile);
     } else {
-      this.loginUserInfos = loginStore.loginUserProfiles;
+      this.loginUserInfos = this.$store.state.LoginStore.loginUserProfiles;
     }
     const { loginUserProfiles } = this.$store.state.LoginStore;
     this.loginUserInfos = loginUserProfiles;
