@@ -63,9 +63,9 @@ const emMessages = () => {
             key,
             message,
           });
-          store.commit('UPDATE_MESSAGE_COLLECTION', {
-            conversationId: key,
-            lastMessage: { ...message },
+          store.commit('UPDATE_CONVERSATION_ITEM', {
+            conversationId: messageBody.to,
+            lastMessage: message,
           });
         })
         .catch((err) => {

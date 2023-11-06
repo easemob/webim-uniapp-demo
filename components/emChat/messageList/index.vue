@@ -153,7 +153,6 @@ export default {
       isIPX: false,
       defaultAvatar: '/static/images/theme2x.png',
       defaultGroupAvatar: '/static/images/groupTheme.png',
-      messageList: [],
     };
   },
   components: {
@@ -162,9 +161,8 @@ export default {
     ReportMessage,
   },
   mounted() {
-    this.messageList =
-      this.$store.getters.messageCollection[this.ItargetId] || [];
-    if (!this.messageList.length) {
+    if (!this.messageList || !this.messageList?.length) {
+      console.log('获取漫游列表');
       this.getMoreHistoryMessages();
     }
     this.onPullDownRefresh = uni.$on('onPullDownRefresh', () => {
@@ -179,6 +177,9 @@ export default {
           this.$store.state.LoginStore.loginUserBaseInfos.loginUserId
         );
       };
+    },
+    messageList() {
+      return this.$store.state.MessageStore.messageCollection[this.ItargetId];
     },
     /* inject */
     ItargetId() {
@@ -256,9 +257,6 @@ export default {
         console.log('>>>>>>res', res);
         if (res.isLast) {
           uni.showToast({ title: '暂无更多历史记录', icon: 'none' });
-        } else {
-          this.messageList =
-            this.$store.getters.messageCollection[this.ItargetId] || [];
         }
         uni.stopPullDownRefresh();
       } catch (error) {

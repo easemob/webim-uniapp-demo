@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { emMessages } from '@/EaseIM/emApis';
 const { fetchHistoryMessagesFromServer } = emMessages();
 const MessageStore = {
@@ -8,7 +9,11 @@ const MessageStore = {
     UPDATE_MESSAGE_COLLECTION(state, payload) {
       const { key, message } = payload;
       if (!state.messageCollection[key]) {
-        state.messageCollection[key] = [];
+        /**
+         * Vue 无法检测 property 的添加或移除。由于 Vue 会在初始化实例时对 property 执行 getter/setter 转化，
+         * 因此使用Vue.set()方法，新增属性引起视图变化。
+         */
+        Vue.set(state.messageCollection, key, []);
       }
       state.messageCollection[key].push(message);
     },
@@ -17,7 +22,7 @@ const MessageStore = {
       if (state.messageCollection[key]) {
         state.messageCollection[key].unshift(...messageList);
       } else {
-        state.messageCollection[key] = [];
+        Vue.set(state.messageCollection, key, []);
         state.messageCollection[key].push(...messageList);
       }
     },
