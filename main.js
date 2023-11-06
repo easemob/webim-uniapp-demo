@@ -1,11 +1,10 @@
 import Vue from 'vue';
 import App from './App';
-import uView from 'uview-ui';
 import store from './store';
+import uView from '@/uni_modules/uview-ui';
 
 Vue.prototype.$store = store;
 Vue.use(uView);
-
 Vue.config.productionTip = false;
 
 Vue.mixin({
