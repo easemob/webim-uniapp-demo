@@ -13,7 +13,7 @@
       @longtap="actionAleartReportMsg(msgBody)"
       class="message"
       v-for="(msgBody, index) in messageList"
-      :key="msgBody.id + index + ''"
+      :key="msgBody.id + index"
       :id="msgBody.id"
     >
       <!-- 消息体 -->

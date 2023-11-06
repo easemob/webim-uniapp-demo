@@ -2,13 +2,13 @@
   <view>
     <!-- 好友列表cell -->
     <u-cell-group>
-      <u-cell-item
+      <u-cell
         v-for="(item, index) in friendList"
         :key="item + index"
         icon="account-fill"
         :title="showConversationName(item)"
         @click="openWaitSendModal(item)"
-      ></u-cell-item>
+      ></u-cell>
     </u-cell-group>
     <!-- 待发送框 -->
     <u-modal
