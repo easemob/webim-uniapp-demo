@@ -34,7 +34,7 @@
 .chatRoom_tab {
   width: 100%;
   height: 102rpx;
-  background-color: #f2f2f2;
+  background-color: #f8f9f9;
   position: fixed;
   bottom: 0;
   right: 0;
@@ -45,7 +45,7 @@
 .chatRoom_tab_X {
   width: 100%;
   height: 142rpx;
-  background-color: #f2f2f2;
+  background-color: #f8f9f9;
   position: fixed;
   bottom: 0;
   right: 0;

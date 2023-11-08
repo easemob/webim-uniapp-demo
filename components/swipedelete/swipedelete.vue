@@ -1,8 +1,13 @@
 <template>
-<view class="swipedelete-wrapper" @touchmove="touchMoveHandler" @touchstart="touchStartHandler" :style="'transform:translateX(' + translateX + 'rpx)'">
-	<slot></slot>
-  <view class="swipedelete-btn" @tap="deleteItem">删除</view>
-</view>
+  <view
+    class="swipedelete-wrapper"
+    @touchmove="touchMoveHandler"
+    @touchstart="touchStartHandler"
+    :style="'transform:translateX(' + translateX + 'rpx)'"
+  >
+    <slot></slot>
+    <view class="swipedelete-btn" @tap="deleteItem">删除</view>
+  </view>
 </template>
 
 <script>
@@ -11,7 +16,7 @@ let startX = 0;
 export default {
   data() {
     return {
-      translateX: 0
+      translateX: 0,
     };
   },
 
@@ -20,11 +25,15 @@ export default {
   methods: {
     deleteItem: function (e) {
       this.setData({
-        translateX: 0
+        translateX: 0,
       });
-      this.$emit('deleteChatItem', {}, {
-        bubbles: true
-      });
+      this.$emit(
+        'deleteChatItem',
+        {},
+        {
+          bubbles: true,
+        }
+      );
     },
 
     /**
@@ -45,14 +54,13 @@ export default {
         return;
       } // e.target.style.WebkitTransform = `translateX(${moveX}px)`
 
-
       if (moveX > 0) {
         // 右滑 隐藏删除
         if (Math.abs(this.translateX) == 0) {
           return;
         } else {
           this.setData({
-            translateX: 0
+            translateX: 0,
           });
         }
       } else {
@@ -61,14 +69,14 @@ export default {
           return;
         } else {
           this.setData({
-            translateX: -160
+            translateX: -160,
           });
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style>
-@import "./swipedelete.css";
+@import './swipedelete.css';
 </style>

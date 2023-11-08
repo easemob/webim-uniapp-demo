@@ -1,169 +1,191 @@
 <template>
-  <view>
-    <!-- 搜索会话列表相关 -->
-    <view>
-      <view class="search" v-if="search_btn">
-        <view @tap="openSearch">
-          <icon type="search" size="12"></icon>
-          <text>搜索</text>
-        </view>
-      </view>
-    </view>
-    <view class="search_input" v-if="search_chats">
+  <view class="conversation_container">
+    <template v-if="pinConversationList.length || conversationList.length">
+      <!-- 搜索会话列表相关 -->
       <view>
-        <icon type="search" size="12"></icon>
-        <input
-          placeholder="搜索"
-          placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;"
-          auto-focus
-          confirm-type="search"
-          type="text"
-          @confirm="actionSearch"
-          @input="onInput"
-          v-model.trim="searchInputKeywords"
-        />
-        <icon
-          type="clear"
-          size="12"
-          @tap.stop="clearInput"
-          v-if="show_clear"
-        ></icon>
-      </view>
-      <text @tap="cancelSearch">取消</text>
-    </view>
-    <!-- 会话列表展示相关 -->
-    <scroll-view
-      scroll-y="true"
-      :class="
-        'chat_list_wraper ' + (gotop ? (isIPX ? 'goTopX' : 'goTop') : 'goback')
-      "
-      :style="'padding-bottom: 270rpx'"
-    >
-      <!-- 系统通知 -->
-      <view class="tap_mask" v-if="lastInformData">
-        <view class="list_box" @click="entryInform">
-          <view class="list_left">
-            <view class="list_pic">
-              <view v-if="unReadNoticeNum > 0" class="em-msgNum">{{
-                unReadNoticeNum
-              }}</view>
-              <image
-                :class="unReadNoticeNum > 0 ? 'haveSpot' : ''"
-                src="../../static/images/inform.png"
-              ></image>
-            </view>
-            <view class="list_text">
-              <text class="list_user"> 系统通知 </text>
-              <text class="list_word">来自：{{ lastInformData.from }}</text>
-            </view>
-          </view>
-          <view class="list_right">
-            <text>{{ handleTime(lastInformData) }}</text>
+        <view class="search" v-if="search_btn">
+          <view @tap="openSearch">
+            <icon type="search" size="12"></icon>
+            <text>搜索</text>
           </view>
         </view>
       </view>
-      <!-- 普通会话 -->
-      <view
-        v-for="(conversationItem, index) in search_chats
-          ? searchResConversationList
-          : conversationList"
-        :key="conversationItem.conversationId + index"
-        class="chat_list"
-        @tap.stop="deleteConversationItem(conversationItem)"
-      >
-        <swipe-delete>
-          <!-- 通知模块 -->
-          <view
-            class="tap_mask"
-            @tap.stop="entryTabNotificationPage"
-            :data-item="conversationItem"
-            v-if="false"
-          >
-            <view class="list_box">
-              <view class="list_left">
-                <view class="list_pic">
-                  <view v-if="unReadTotalNotNum > 0" class="em-unread-spot2">{{
-                    unReadTotalNotNum
+      <view class="search_input" v-if="search_chats">
+        <view>
+          <icon type="search" size="12"></icon>
+          <input
+            placeholder="搜索"
+            placeholder-style="color:#9B9B9B;line-height:21px;font-size:15px;"
+            auto-focus
+            confirm-type="search"
+            type="text"
+            @confirm="actionSearch"
+            @input="onInput"
+            v-model.trim="searchInputKeywords"
+          />
+          <icon
+            type="clear"
+            size="12"
+            @tap.stop="clearInput"
+            v-if="show_clear"
+          ></icon>
+        </view>
+        <text @tap="cancelSearch">取消</text>
+      </view>
+      <!-- 会话列表展示相关 -->
+      <u-list @scrolltolower="scrolltolower">
+        <!-- 系统通知 -->
+        <u-list-item v-if="lastInformData">
+          <u-cell title="系统通知" value="系统通知哈哈哈哈">
+            <u-avatar
+              slot="icon"
+              shape="square"
+              size="35"
+              src="../../static/images/inform.png"
+              customStyle="margin: -3px 5px -3px 0"
+            ></u-avatar>
+            <text slot="value" class="u-slot-value">{{
+              handleTime(lastInformData)
+            }}</text>
+          </u-cell>
+        </u-list-item>
+        <!-- 置顶会话列表 -->
+        <u-list-item
+          class="pinconversation_item"
+          v-for="(conversationItem, index) in pinConversationList"
+          :key="conversationItem.conversationId"
+        >
+          <view @longpress="onConversationMoreFunction(conversationItem)">
+            <u-cell>
+              <!-- 头像 -->
+              <u-avatar
+                slot="icon"
+                shape="square"
+                size="50"
+                :src="showConversationAvatar(conversationItem)"
+                customStyle="margin: -3px 5px -3px 0"
+              ></u-avatar>
+              <!-- name -->
+              <view class="conversation_item_title" slot="title">
+                <u--text
+                  class="conversation_item_title_text"
+                  :lines="1"
+                  :text="showConversationName(conversationItem)"
+                  :suffixIcon="
+                    conversationItemSilentStatus(
+                      conversationItem.conversationId
+                    )
+                      ? '/static/images/new_ui/no_disturbing.png'
+                      : ''
+                  "
+                  iconStyle="margin-left: 2px;"
+                >
+                </u--text>
+              </view>
+              <!-- lastmsg -->
+              <u--text
+                slot="label"
+                :lines="1"
+                :text="handleLastMsgContent(conversationItem.lastMessage)"
+              ></u--text>
+              <!-- time&unReadNum -->
+              <view slot="value" class="conversation_item_right">
+                <view>
+                  <view class="conversation_item_time">{{
+                    handleTime(conversationItem)
                   }}</view>
-                  <image
-                    :class="unReadTotalNotNum > 0 ? 'haveSpot' : ''"
-                    src="../../static/images/inform.png"
-                  ></image>
-                </view>
-                <view class="list_text">
-                  <text class="list_user"> 系统通知 </text>
-                  <text class="list_word" v-if="item.chatType == 'INFORM'"
-                    >申请通知来自：{{ item.info.from }}</text
-                  >
+                  <view class="conversation_item_unread">
+                    <u-badge
+                      class="conversation_item_badge"
+                      type="primary"
+                      max="99"
+                      :offset="[15, 0]"
+                      :absolute="true"
+                      :value="conversationItem.unReadCount"
+                    ></u-badge>
+                  </view>
                 </view>
               </view>
-              <view class="list_right">
-                <text :data-username="item.username">{{
-                  handleTime(item)
-                }}</text>
-              </view>
-            </view>
+            </u-cell>
           </view>
-
-          <view
-            class="tap_mask"
-            @tap.stop="entryChatPage(conversationItem)"
-            :data-item="JSON.stringify(conversationItem)"
-            v-else
-          >
-            <!-- 消息列表 -->
-            <view class="list_box">
-              <view
-                class="list_left"
-                :data-username="conversationItem.conversationId"
-              >
-                <view class="list_pic">
-                  <view
-                    class="em-msgNum"
-                    v-if="conversationItem.unReadCount > 0"
+        </u-list-item>
+        <!-- 普通会话列表 -->
+        <u-list-item
+          class="conversation_item"
+          v-for="(conversationItem, index) in conversationList"
+          :key="conversationItem.conversationId"
+        >
+          <swipe-delete>
+            <view @longpress="onConversationMoreFunction(conversationItem)">
+              <u-cell>
+                <!-- 头像 -->
+                <u-avatar
+                  slot="icon"
+                  shape="square"
+                  size="50"
+                  :src="showConversationAvatar(conversationItem)"
+                  customStyle="margin: -3px 5px -3px 0"
+                ></u-avatar>
+                <!-- name -->
+                <view class="conversation_item_title" slot="title">
+                  <u--text
+                    class="conversation_item_title_text"
+                    :lines="1"
+                    :text="showConversationName(conversationItem)"
+                    :suffixIcon="
+                      conversationItemSilentStatus(
+                        conversationItem.conversationId
+                      )
+                        ? '/static/images/new_ui/no_disturbing.png'
+                        : ''
+                    "
+                    iconStyle="margin-left: 2px;"
                   >
-                    {{
-                      conversationItem.unReadCount > 99
-                        ? '99+'
-                        : conversationItem.unReadCount
-                    }}</view
-                  >
-
-                  <image
-                    :src="showConversationAvatar(conversationItem)"
-                  ></image>
+                  </u--text>
                 </view>
-                <view class="list_text">
-                  <text class="list_user">{{
-                    showConversationName(conversationItem)
-                  }}</text>
-                  <text class="list_word" v-if="conversationItem.lastMessage">{{
-                    handleLastMsgContent(conversationItem.lastMessage)
-                  }}</text>
+                <!-- lastmsg -->
+                <u--text
+                  slot="label"
+                  :lines="1"
+                  :text="handleLastMsgContent(conversationItem.lastMessage)"
+                ></u--text>
+                <!-- time&unReadNum -->
+                <view slot="value" class="conversation_item_right">
+                  <view>
+                    <view class="conversation_item_time">{{
+                      handleTime(conversationItem)
+                    }}</view>
+                    <view class="conversation_item_unread">
+                      <u-badge
+                        class="conversation_item_badge"
+                        type="primary"
+                        max="99"
+                        :offset="[15, 0]"
+                        :absolute="true"
+                        :value="conversationItem.unReadCount"
+                      ></u-badge>
+                    </view>
+                  </view>
                 </view>
-              </view>
-              <view class="list_right">
-                <text :data-username="conversationItem.conversationId">{{
-                  handleTime(conversationItem)
-                }}</text>
-              </view>
+              </u-cell>
             </view>
-          </view>
-        </swipe-delete>
-      </view>
-      <view
-        v-if="conversationList && conversationList.length == 0"
-        class="chat_noChat"
-      >
-        <image class="ctbg" src="/static/images/ctbg.png"></image>
-        暂无聊天消息
-      </view>
-      <!-- </view> -->
-    </scroll-view>
-    <!-- bug: margin-bottom 不生效 需要加一个空标签-->
-    <view style="height: 1px"></view>
-
-    <view class="mask" @tap="close_mask" v-if="show_mask"></view>
+          </swipe-delete>
+        </u-list-item>
+      </u-list>
+      <u-action-sheet
+        :actions="moreFunctionList"
+        :closeOnClickOverlay="true"
+        :closeOnClickAction="true"
+        :safeAreaInsetBottom="true"
+        :show="isShowMoreFunction"
+        round="5"
+        @select="onSelectClick"
+        @close="onConversationMoreFunction"
+      ></u-action-sheet>
+    </template>
+    <template v-else>
+      <u-empty mode="history"> </u-empty>
+    </template>
   </view>
 </template>
 
@@ -197,8 +219,36 @@ export default {
       popStyle: '',
       currentVal: '',
       pushConfigData: [],
-      defaultAvatar: '/static/images/theme2x.png',
-      defaultGroupAvatar: '/static/images/groupTheme.png',
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
+      defaultGroupAvatar: '/static/images/new_ui/defaultGroupAvatar.png',
+      longPressCheckedConversationItem: {},
+      isShowMoreFunction: false,
+      moreFunctionList: [
+        {
+          name: '删除会话',
+          type: 0,
+          color: '#FF002B',
+          fontSize: '15',
+        },
+        {
+          name: '会话置顶',
+          type: 1,
+          color: '#009EFF',
+          fontSize: '15',
+        },
+        {
+          name: '会话免打扰',
+          type: 2,
+          color: '#009EFF',
+          fontSize: '15',
+        },
+        {
+          name: '标记已读',
+          type: 3,
+          color: '#009EFF',
+          fontSize: '15',
+        },
+      ],
     };
   },
 
@@ -208,6 +258,9 @@ export default {
   },
   props: {},
   computed: {
+    pinConversationList() {
+      return this.$store.getters.sortedPinConversationList;
+    },
     conversationList() {
       console.log('>>>>>>computed conversationlist');
       return this.$store.getters.sortedConversationList;
@@ -294,15 +347,28 @@ export default {
         this.$store.getters.calcAllUnReadNumFromConversation
       );
     },
+    //免打扰状态
+    conversationItemSilentStatus() {
+      return (conversationId) => {
+        const silentStatus =
+          this.$store.getters.silentConversationMap.get(conversationId)
+            ?.type === 'NONE';
+        return silentStatus;
+      };
+    },
   },
   created() {
     console.log('converstaion created');
+    this.$store.dispatch('fetchPinConversationList');
     if (!this.conversationList.length) {
       this.$store.dispatch('fetchConversationList');
     }
     uni.hideHomeButton && uni.hideHomeButton();
   },
   methods: {
+    scrolltolower() {
+      console.log('>>>>>>list触底');
+    },
     //群组名称
     getGroupName(groupid) {
       const joinedGroupList = this.$store.state.GroupStore.joinedGroupList;
@@ -390,6 +456,121 @@ export default {
       this.search_chats = false;
       this.show_mask = false;
     },
+    //长按会话事件
+    onConversationMoreFunction(conversationItem) {
+      if (conversationItem) {
+        const silentStatus =
+          this.$store.getters.silentConversationMap.get(
+            conversationItem?.conversationId
+          )?.type === 'NONE';
+        this.longPressCheckedConversationItem = { ...conversationItem };
+        this.isShowMoreFunction = true;
+        //长按时选项调整
+        this.moreFunctionList.map((item) => {
+          switch (item.type) {
+            case 1:
+              {
+                if (conversationItem.isPinned) {
+                  item.name = '取消置顶';
+                } else {
+                  item.name = '置顶';
+                }
+              }
+              break;
+            case 2:
+              {
+                if (silentStatus) {
+                  item.name = '取消免打扰';
+                } else {
+                  item.name = '免打扰';
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        });
+        this.isShowMoreFunction = true;
+        console.log('conversationItem++++', conversationItem);
+        return;
+      }
+      this.isShowMoreFunction = false;
+      console.log('>>>>>onLoginPress');
+    },
+    onSelectClick(item) {
+      console.log('>>>>>点选了', item);
+      switch (item.type) {
+        case 0:
+          this.deleteConversationItem();
+          break;
+        case 1:
+          this.handlePinConversationItem();
+          break;
+        case 2:
+          this.handleConversationSilent();
+        default:
+          break;
+      }
+    },
+    //置顶操作
+    handlePinConversationItem() {
+      const conversationItem = { ...this.longPressCheckedConversationItem };
+      conversationItem.isPinned = !conversationItem.isPinned;
+      console.log(
+        '处理置顶>>>>>>>',
+        this.longPressCheckedConversationItem.isPinned,
+        conversationItem.isPinned
+      );
+      this.$store.dispatch('pinConversationItem', conversationItem);
+    },
+    //删除会话
+    deleteConversationItem: function () {
+      uni.showModal({
+        title: '确认删除？',
+        confirmText: '删除',
+        success: async (res) => {
+          if (res.confirm) {
+            this.$store.dispatch('deleteConversation', {
+              ...this.longPressCheckedConversationItem,
+            });
+          }
+        },
+        fail: function (err) {
+          uni.showToast({
+            title: '删除失败',
+            icon: 'none',
+            duration: 2000,
+          });
+          console.log('删除失败', err);
+        },
+      });
+    },
+    //会话免打扰操作
+    handleConversationSilent() {
+      const { conversationId, conversationType } =
+        this.longPressCheckedConversationItem;
+      const silentStatus =
+        this.$store.getters.silentConversationMap.get(conversationId)?.type ===
+        'NONE';
+      const params = {
+        conversationId,
+        type: conversationType,
+      };
+      console.log('handleConversationSilent silentStatus', silentStatus);
+      if (silentStatus) {
+        this.$store.dispatch('setConversationSilentMode', {
+          ...params,
+        });
+      } else {
+        (params.options = {
+          paramType: 0,
+          remindType: 'NONE',
+        }),
+          this.$store.dispatch('setConversationSilentMode', {
+            ...params,
+          });
+      }
+    },
     //进入系统通知页面
     entryInform() {
       uni.navigateTo({
@@ -410,26 +591,6 @@ export default {
           url: `../emChatContainer/index?targetId=${conversationId}&chatType=${conversationType}`,
         });
       } catch (error) {}
-    },
-    //删除会话
-    deleteConversationItem: function (conversationItem) {
-      uni.showModal({
-        title: '确认删除？',
-        confirmText: '删除',
-        success: async (res) => {
-          if (res.confirm) {
-            this.$store.dispatch('deleteConversation', { ...conversationItem });
-          }
-        },
-        fail: function (err) {
-          uni.showToast({
-            title: '删除失败',
-            icon: 'none',
-            duration: 2000,
-          });
-          console.log('删除失败', err);
-        },
-      });
     },
   },
 };

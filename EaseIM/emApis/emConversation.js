@@ -1,16 +1,48 @@
 import { EaseSDK, EMClient } from '../index';
 import { CHAT_TYPE } from '../constant';
 const emConversation = () => {
+  //从服务端获取置顶会话列表
+  const fetchPinConversationFromServer = (pageSize = 50, cursor = '') => {
+    return new Promise((resolve, reject) => {
+      EMClient.getServerPinnedConversations({ pageSize, cursor })
+        .then((res) => {
+          console.log('>>>>置顶会话列表数据获取成功');
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  //置顶会话列表
+  const pinConversationItem = (params) => {
+    const { conversationId, conversationType, isPinned } = params;
+    return new Promise((resolve, reject) => {
+      EMClient.pinConversation({
+        conversationId,
+        conversationType,
+        isPinned,
+      })
+        .then((res) => {
+          console.log('>>>>置顶会话列表添加成功');
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   //从服务端获取会话列表
   const fetchConversationFromServer = (
-    options = { pageSize: 50, cursor: '' }
+    options = { pageSize: 20, cursor: '' }
   ) => {
     return new Promise((resolve, reject) => {
       //支持分页这里写死只取二十条
       EMClient.getServerConversations({ ...options })
         .then((res) => {
           console.log('>>>>会话列表数据获取成功');
-          resolve(res);
+          const result = res.data.conversations;
+          resolve(result);
         })
         .catch((error) => {
           reject(error);
@@ -47,6 +79,8 @@ const emConversation = () => {
     EMClient.send(msg);
   };
   return {
+    fetchPinConversationFromServer,
+    pinConversationItem,
     fetchConversationFromServer,
     removeConversationFromServer,
     sendChannelAck,
