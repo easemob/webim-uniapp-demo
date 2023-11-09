@@ -162,16 +162,12 @@ const addListeners = () => {
     console.info('UserJoined', uid, elapsed);
     state.remoteUids = [...state.remoteUids, uid];
     const { result } = await agoraChannelStore.requestInChannelMapHxId();
-    state.inChannelMapHxId = { ...result };
     console.log('>>>>>>频道内环信ID获取完毕', result);
+    state.inChannelMapHxId = { ...result };
   });
-  state.engine.addListener('UserOffline', async (uid, reason) => {
+  state.engine.addListener('UserOffline', (uid, reason) => {
     console.info('UserOffline', uid, reason);
     state.remoteUids = state.remoteUids.filter((item) => uid != item);
-    const { result } = await agoraChannelStore.requestInChannelMapHxId();
-    state.inChannelMapHxId = { ...result };
-    state.inChannelMapHxId[uid] && delete state.inChannelMapHxId[uid];
-    console.log('>>UserOffline>>', state.inChannelMapHxId);
   });
   state.engine.addListener('LeaveChannel', (stats) => {
     console.info('LeaveChannel', stats);
@@ -300,13 +296,8 @@ const onSwitchLocalCameraOpened = async () => {
 };
 //发起频道中邀请
 const entryInviteMoreMembers = () => {
-  let inChannelMapHxIdList = [
-    ...new Set(Object.values(state.inChannelMapHxId)),
-  ];
   uni.navigateTo({
-    url: `/pages/emCallKitPages/inviteMembers?inChannelUserList=${JSON.stringify(
-      inChannelMapHxIdList
-    )}`,
+    url: '/pages/emCallKitPages/inviteMembers',
   });
 };
 
