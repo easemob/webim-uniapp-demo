@@ -22,8 +22,8 @@ const emSilent = () => {
     });
   };
   const setSilentModeForConversation = (params) => {
+    const { conversationId, type, options } = params;
     return new Promise((resolve, reject) => {
-      const { conversationId, type, options } = params;
       EMClient.setSilentModeForConversation({ conversationId, type, options })
         .then((res) => {
           resolve(res);
@@ -31,7 +31,8 @@ const emSilent = () => {
         .catch((err) => reject(err));
     });
   };
-  const clearRemindTypeForConversation = (conversationId, type) => {
+  const clearRemindTypeForConversation = (params) => {
+    const { conversationId, type } = params;
     return new Promise((resolve, reject) => {
       EMClient.clearRemindTypeForConversation({ conversationId, type })
         .then((res) => {

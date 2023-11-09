@@ -7,7 +7,11 @@ const {
   removeConversationFromServer,
   sendChannelAck,
 } = emConversation();
-const { getSilentModeForConversationList } = emSilent();
+const {
+  getSilentModeForConversationList,
+  setSilentModeForConversation,
+  clearRemindTypeForConversation,
+} = emSilent();
 const ConversationStore = {
   state: {
     chattingId: '', //进入聊天页面聊天中的目标聊天用户信息
@@ -22,8 +26,16 @@ const ConversationStore = {
     SET_PIN_CONVERSATION_LIST: (state, pinConversationList) => {
       state.pinConversationList = [...pinConversationList];
     },
-    SET_SILENT_CONVERSATION_MAP: (state, silentConversationMap) => {
-      state.silentConversationMap = silentConversationMap;
+    SET_SILENT_CONVERSATION_MAP: (state, payload) => {
+      const { type, data } = payload;
+      if (type === 'init') {
+        state.silentConversationMap = data;
+      }
+      if (type === 'setSingleSilentMode') {
+        const { conversationId, type } = data;
+        console.log('>>>>>>免打扰设置type', type);
+        state.silentConversationMap.set(conversationId, { type });
+      }
     },
     UPDATE_PIN_CONVERSATION_ITEM: (state, conversationItem) => {
       const { conversationId, isPinned } = conversationItem;
@@ -177,18 +189,43 @@ const ConversationStore = {
             silentConversationListRes.set(key, silentUserInfo[key]);
           }
         }
-        commit('SET_SILENT_CONVERSATION_MAP', silentConversationListRes);
+        commit('SET_SILENT_CONVERSATION_MAP', {
+          type: 'init',
+          data: silentConversationListRes,
+        });
       } catch (error) {
         console.log('>>>>>会话免打扰列表拉取失败', error);
       }
     },
     //设置会话免打扰
     setConversationSilentMode: async ({ commit }, params) => {
-      if (params.hasOwnProperty('options')) {
-        console.log('>>>>设置会话免打扰');
-      } else {
-        console.log('>>>>>取消会话免打扰');
+      const { conversationId, type } = params;
+      try {
+        if (params.hasOwnProperty('options')) {
+          console.log('>>>>设置会话免打扰');
+          await setSilentModeForConversation({ ...params });
+          commit('SET_SILENT_CONVERSATION_MAP', {
+            type: 'setSingleSilentMode',
+            data: {
+              conversationId,
+              type: 'NONE',
+            },
+          });
+        } else {
+          console.log('>>>>>取消会话免打扰');
+          await clearRemindTypeForConversation({ ...params });
+          commit('SET_SILENT_CONVERSATION_MAP', {
+            type: 'setSingleSilentMode',
+            data: {
+              conversationId,
+              type: '',
+            },
+          });
+        }
+      } catch (error) {
+        console.log('>>>>>>会话设置失败', error);
       }
+
       // try {
       //   const result = await setSilentModeForConversation({
       //     conversationId,
