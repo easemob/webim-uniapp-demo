@@ -123,6 +123,10 @@ const agoraChannelStore = useAgoraChannelStore();
 const callKitStatus = computed(() => {
   return agoraChannelStore.callKitStatus;
 });
+//channelInfos
+const channelInfos = computed(() => {
+  return agoraChannelStore.callKitStatus.channelInfos ?? {};
+});
 //channelName
 const channelName = computed(
   () => agoraChannelStore.callKitStatus.channelInfos?.channelName
@@ -194,8 +198,11 @@ const initEngine = async () => {
     await permision.requestAndroidPermission('android.permission.CAMERA');
   }
   try {
-    await state.engine.enableVideo();
-    await state.engine.startPreview();
+    //单人视频通话才开启video以及预览画面
+    if (channelInfos.value.callType === CALL_TYPES.SINGLE_VIDEO) {
+      await state.engine.enableVideo();
+      await state.engine.startPreview();
+    }
     await state.engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
     await state.engine.setClientRole(ClientRole.Broadcaster);
     //设置频道麦克风为扬声器模式
