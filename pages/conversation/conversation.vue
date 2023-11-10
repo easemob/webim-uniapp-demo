@@ -99,6 +99,11 @@
                       class="conversation_item_badge"
                       type="primary"
                       max="99"
+                      :isDot="
+                        conversationItemSilentStatus(
+                          conversationItem.conversationId
+                        )
+                      "
                       :offset="[15, 0]"
                       :absolute="true"
                       :value="conversationItem.unReadCount"
@@ -160,6 +165,11 @@
                         class="conversation_item_badge"
                         type="primary"
                         max="99"
+                        :isDot="
+                          conversationItemSilentStatus(
+                            conversationItem.conversationId
+                          )
+                        "
                         :offset="[15, 0]"
                         :absolute="true"
                         :value="conversationItem.unReadCount"
@@ -351,8 +361,8 @@ export default {
     conversationItemSilentStatus() {
       return (conversationId) => {
         const silentStatus =
-          this.$store.getters.silentConversationMap.get(conversationId)
-            ?.type === 'NONE';
+          this.$store.getters.silentConversationMap[conversationId]?.type ===
+          'NONE';
         return silentStatus;
       };
     },
@@ -460,9 +470,9 @@ export default {
     onConversationMoreFunction(conversationItem) {
       if (conversationItem) {
         const silentStatus =
-          this.$store.getters.silentConversationMap.get(
+          this.$store.getters.silentConversationMap[
             conversationItem?.conversationId
-          )?.type === 'NONE';
+          ]?.type === 'NONE';
         this.longPressCheckedConversationItem = { ...conversationItem };
         this.isShowMoreFunction = true;
         //长按时选项调整
@@ -550,7 +560,7 @@ export default {
       const { conversationId, conversationType } =
         this.longPressCheckedConversationItem;
       const silentStatus =
-        this.$store.getters.silentConversationMap.get(conversationId)?.type ===
+        this.$store.getters.silentConversationMap[conversationId]?.type ===
         'NONE';
       const params = {
         conversationId,

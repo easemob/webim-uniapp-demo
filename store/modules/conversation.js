@@ -17,7 +17,7 @@ const ConversationStore = {
     chattingId: '', //进入聊天页面聊天中的目标聊天用户信息
     pinConversationList: [],
     conversationList: [],
-    silentConversationMap: new Map(),
+    silentConversationMap: {},
   },
   mutations: {
     SET_CHATING_USERID: (state, conversationId) => {
@@ -34,7 +34,10 @@ const ConversationStore = {
       if (type === 'setSingleSilentMode') {
         const { conversationId, type } = data;
         console.log('>>>>>>免打扰设置type', type);
-        state.silentConversationMap.set(conversationId, { type });
+        if (!state.silentConversationMap[conversationId]) {
+          Vue.set(state.silentConversationMap, conversationId, {});
+        }
+        state.silentConversationMap[conversationId] = { type };
       }
     },
     UPDATE_PIN_CONVERSATION_ITEM: (state, conversationItem) => {
@@ -178,20 +181,14 @@ const ConversationStore = {
           };
         }
       );
-      let silentConversationListRes = new Map();
       try {
         const { data } = await getSilentModeForConversationList(
           silentConversationListParams
         );
         const silentUserInfo = { ...data?.user, ...data?.group };
-        for (const key in silentUserInfo) {
-          if (Object.hasOwnProperty.call(silentUserInfo, key)) {
-            silentConversationListRes.set(key, silentUserInfo[key]);
-          }
-        }
         commit('SET_SILENT_CONVERSATION_MAP', {
           type: 'init',
-          data: silentConversationListRes,
+          data: silentUserInfo,
         });
       } catch (error) {
         console.log('>>>>>会话免打扰列表拉取失败', error);
@@ -257,7 +254,36 @@ const ConversationStore = {
     },
     //会话未读总数
     calcAllUnReadNumFromConversation(state) {
-      return state.conversationList.reduce((a, c) => a + c.unReadCount, 0);
+      const pinConversationListUnReadNum = state.pinConversationList.reduce(
+        (a, c) => {
+          if (
+            state.silentConversationMap[c.conversationId] &&
+            state.silentConversationMap[c.conversationId]?.type !== 'NONE' &&
+            c.unReadCount
+          ) {
+            return a + c.unReadCount;
+          } else {
+            return a;
+          }
+        },
+        0
+      );
+      const conversationListUnReadNum = state.conversationList.reduce(
+        (a, c) => {
+          if (
+            state.silentConversationMap[c.conversationId] &&
+            state.silentConversationMap[c.conversationId]?.type !== 'NONE' &&
+            c.unReadCount
+          ) {
+            return a + c.unReadCount;
+          } else {
+            return a;
+          }
+        },
+        0
+      );
+      console.log('pinConversationListUnReadNum', pinConversationListUnReadNum);
+      return pinConversationListUnReadNum + conversationListUnReadNum;
     },
   },
 };
