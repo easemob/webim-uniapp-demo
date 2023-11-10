@@ -109,6 +109,10 @@ import { AGORA_APP_ID } from '@/components/emCallKit/config/index.js';
 import { CALLSTATUS, CALL_TYPES } from '@/components/emCallKit/contants';
 import RtcEngine, { RtcChannel } from '@/components/Agora-RTC-JS/index';
 import {
+  RtcEngineContext,
+  LogConfig,
+} from '@/components/Agora-RTC-JS/common/Classes';
+import {
   ClientRole,
   ChannelProfile,
 } from '@/components/Agora-RTC-JS/common/Enums';
@@ -190,8 +194,19 @@ uni.setKeepScreenOn({
 //初始化频道实例
 const initEngine = async () => {
   console.log('>>>>>>>初始化声网RTC');
-
-  state.engine = await RtcEngine.create(AGORA_APP_ID);
+  //   state.engine = await RtcEngine.create(AGORA_APP_ID);
+  /**
+   * 该创建方式可以在本地缓存相关日志，有助于问题排查。
+   * 日志文件的完整路径。默认路径为：
+   * Android: /storage/emulated/0/Android/data/<package_name>/files/agorasdk.log
+   * iOS: App Sandbox/Library/caches/agorasdk.log
+   */
+  const context = new RtcEngineContext(
+    AGORA_APP_ID,
+    undefined,
+    new LogConfig()
+  );
+  state.engine = await RtcEngine.createWithContext(context);
   addListeners();
   if (uni.getSystemInfoSync().platform === 'android') {
     await permision.requestAndroidPermission('android.permission.RECORD_AUDIO');
