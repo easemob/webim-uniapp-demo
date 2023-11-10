@@ -100,9 +100,11 @@
                       type="primary"
                       max="99"
                       :isDot="
-                        conversationItemSilentStatus(
+                        (conversationItemSilentStatus(
                           conversationItem.conversationId
-                        )
+                        ) &&
+                          conversationItem.unReadCount > 0) ||
+                        !conversationItem.isRead
                       "
                       :offset="[15, 0]"
                       :absolute="true"
@@ -166,9 +168,11 @@
                         type="primary"
                         max="99"
                         :isDot="
-                          conversationItemSilentStatus(
+                          (conversationItemSilentStatus(
                             conversationItem.conversationId
-                          )
+                          ) &&
+                            conversationItem.unReadCount > 0) ||
+                          !conversationItem.isRead
                         "
                         :offset="[15, 0]"
                         :absolute="true"
@@ -235,12 +239,6 @@ export default {
       isShowMoreFunction: false,
       moreFunctionList: [
         {
-          name: '删除会话',
-          type: 0,
-          color: '#FF002B',
-          fontSize: '15',
-        },
-        {
           name: '会话置顶',
           type: 1,
           color: '#009EFF',
@@ -256,6 +254,12 @@ export default {
           name: '标记已读',
           type: 3,
           color: '#009EFF',
+          fontSize: '15',
+        },
+        {
+          name: '删除会话',
+          type: 0,
+          color: '#FF002B',
           fontSize: '15',
         },
       ],
@@ -496,6 +500,16 @@ export default {
                 }
               }
               break;
+            case 3: {
+              if (
+                conversationItem?.unReadCount > 0 ||
+                !conversationItem.isRead
+              ) {
+                item.name = '标记已读';
+              } else {
+                item.name = '标记未读';
+              }
+            }
             default:
               break;
           }
@@ -518,6 +532,11 @@ export default {
           break;
         case 2:
           this.handleConversationSilent();
+          break;
+        case 3:
+          this.handleConversationUnRead();
+
+          break;
         default:
           break;
       }
@@ -579,6 +598,26 @@ export default {
           this.$store.dispatch('setConversationSilentMode', {
             ...params,
           });
+      }
+    },
+    /**
+     * 会话已读未读状态变更
+     * isRead: true表示已读，false表示未读
+     * 实现原理为本地往会话数据中插入isRead字段从而标记实现手动标记会话已读状态
+     * !需注意此功能为本地实现，并不记录远端会话列表接口，刷新状态重置。
+     */
+    handleConversationUnRead() {
+      const { unReadCount } = this.longPressCheckedConversationItem;
+      if (unReadCount > 0 || !this.longPressCheckedConversationItem?.isRead) {
+        this.$store.dispatch('setConversationReadStatus', {
+          conversationItem: this.longPressCheckedConversationItem,
+          isRead: true,
+        });
+      } else {
+        this.$store.dispatch('setConversationReadStatus', {
+          conversationItem: this.longPressCheckedConversationItem,
+          isRead: false,
+        });
       }
     },
     //进入系统通知页面

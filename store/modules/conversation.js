@@ -116,6 +116,27 @@ const ConversationStore = {
         }
       });
     },
+    SET_CONVERSATION_ITEM_READ_SATUS: (state, payload) => {
+      const {
+        conversationItem: { isPinned, conversationId },
+        isRead,
+      } = payload;
+
+      const conversationList = isPinned
+        ? state.pinConversationList
+        : state.conversationList;
+
+      const targetConversationItem = conversationList.find(
+        (conversationItem) => conversationItem.conversationId === conversationId
+      );
+
+      if (targetConversationItem) {
+        if (isRead) {
+          targetConversationItem.unReadCount = 0;
+        }
+        targetConversationItem.isRead = isRead;
+      }
+    },
   },
   actions: {
     fetchPinConversationList: async ({ commit }) => {
@@ -233,6 +254,25 @@ const ConversationStore = {
       // } catch (error) {
       //   console.log('>>>>>设置会话免打扰失败', error);
       // }
+    },
+    //调整会话已读状态
+    setConversationReadStatus: async ({ commit }, params) => {
+      const { conversationItem, isRead } = params;
+      if (isRead) {
+        sendChannelAck(
+          conversationItem.conversationId,
+          conversationItem.conversationType
+        );
+        commit('SET_CONVERSATION_ITEM_READ_SATUS', {
+          conversationItem,
+          isRead: true,
+        });
+      } else {
+        commit('SET_CONVERSATION_ITEM_READ_SATUS', {
+          conversationItem,
+          isRead: false,
+        });
+      }
     },
   },
   getters: {
