@@ -50,6 +50,13 @@ export default {
     if (options.page) {
       console.log('>>>>>>>', options);
       this.switchHomeComponent(options.page);
+    } else {
+      console.log('>>>>>>切换为默认的会话页面');
+      this.switchHomeComponent('conversation');
+      uni.setNavigationBarTitle &&
+        uni.setNavigationBarTitle({
+          title: TITLE_MAP_TEXT[this.isActiveComps],
+        });
     }
   },
   methods: {

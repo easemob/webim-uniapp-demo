@@ -1,5 +1,5 @@
 <template>
-  <view :class="isIPX ? 'chatRoom_tab_X' : 'chatRoom_tab'">
+  <!-- <view :class="isIPX ? 'chatRoom_tab_X' : 'chatRoom_tab'">
     <view class="tableBar" @click="changeTab('conversation')">
       <view
         v-if="allConversationUnReadNum > 0"
@@ -33,34 +33,65 @@
       ></image>
       <text :class="tabbarType === 'mine' && 'activeText'">我的</text>
     </view>
-  </view>
+  </view> -->
+  <u-tabbar
+    :value="tabbarType"
+    @change="changeTab"
+    activeColor="#469CF8"
+    :fixed="true"
+    :placeholder="true"
+    :safeAreaInsetBottom="true"
+  >
+    <u-tabbar-item
+      name="conversation"
+      text="会话"
+      :badge="allConversationUnReadNum"
+      badgeStyle="margin-right: 10rpx"
+    >
+      <image
+        class="tabbar_icon_image"
+        slot="active-icon"
+        src="/static/images/new_ui/layout/conversation_active.png"
+      ></image>
+      <image
+        class="tabbar_icon_image"
+        slot="inactive-icon"
+        src="/static/images/new_ui/layout/conversation.png"
+      ></image>
+    </u-tabbar-item>
+    <u-tabbar-item name="contacts" text="联系人">
+      <image
+        class="tabbar_icon_image"
+        slot="active-icon"
+        src="/static/images/new_ui/layout/contacts_avtive.png"
+      ></image>
+      <image
+        class="tabbar_icon_image"
+        slot="inactive-icon"
+        src="/static/images/new_ui/layout/contacts.png"
+      ></image>
+    </u-tabbar-item>
+    <u-tabbar-item text="我的" name="mine">
+      <image
+        class="tabbar_icon_image"
+        slot="active-icon"
+        src="/static/images/new_ui/layout/mine_active.png"
+      ></image>
+      <image
+        class="tabbar_icon_image"
+        slot="inactive-icon"
+        src="/static/images/new_ui/layout/mine.png"
+      ></image>
+    </u-tabbar-item>
+  </u-tabbar>
 </template>
 
 <script>
-const conversationImg = '/static/images/session2x.png';
-const highlightConversationImg = '/static/images/sessionhighlight2x.png';
-const contactsImg = '/static/images/comtacts2x.png';
-const highlightContactsImg = '/static/images/comtactshighlight2x.png';
-const settingImg = '/static/images/setting2x.png';
-const highlightSettingImg = '/static/images/settinghighlight2x.png';
 export default {
   data() {
     return {
-      isIPX: false,
-      conversationImg,
-      highlightConversationImg,
-      contactsImg,
-      highlightContactsImg,
-      settingImg,
-      highlightSettingImg,
+      tabbarType: 'conversation',
     };
-  },
-  props: {
-    tabbarType: {
-      type: String,
-      default: 'conversation',
-      required: true,
-    },
   },
   computed: {
     unReadNoticeNum() {
@@ -78,6 +109,7 @@ export default {
   },
   methods: {
     changeTab(type) {
+      this.tabbarType = type;
       this.$emit('switchHomeComponent', type);
     },
   },

@@ -1,5 +1,18 @@
 <template>
   <view class="conversation_container">
+    <u-navbar title="会话" :placeholder="true" leftIcon="arrow-left">
+      <u-avatar
+        slot="left"
+        shape="square"
+        src="/static/images/new_ui/defaultAvatar.png"
+      ></u-avatar>
+      <view slot="center">
+        <image
+          class="conversation_navbar_center"
+          src="/static/images/new_ui/chat_logo.png"
+        />
+      </view>
+    </u-navbar>
     <template v-if="pinConversationList.length || conversationList.length">
       <!-- 搜索会话列表相关 -->
       <view>

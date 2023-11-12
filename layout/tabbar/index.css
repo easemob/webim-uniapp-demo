@@ -79,3 +79,8 @@
 .tableBar .haveSpot {
   margin-top: -24rpx;
 }
+
+.tabbar_icon_image {
+  width: 32px;
+  height: 32px;
+}

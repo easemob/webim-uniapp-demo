@@ -221,3 +221,7 @@ page {
   font-size: 12px;
   font-weight: 600;
 }
+.conversation_navbar_center {
+  width: 52px;
+  height: 22px;
+}
