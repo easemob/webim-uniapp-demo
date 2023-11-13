@@ -1,150 +1,148 @@
 <template>
-  <view class="contacts_container">
+  <view>
+    <!-- navbar -->
+    <u-navbar title="联系人" :placeholder="true" leftIcon="arrow-left">
+      <u-avatar
+        size="32"
+        slot="left"
+        shape="square"
+        src="/static/images/new_ui/defaultAvatar.png"
+      ></u-avatar>
+      <view slot="center">
+        <image
+          class="contacts_navbar_center"
+          src="/static/images/new_ui/contacts_log.png"
+        />
+      </view>
+      <u-icon
+        slot="right"
+        size="24"
+        name="/static/images/new_ui/contacts/add_contacts.png"
+        @click="entryAddContactsPage"
+      ></u-icon>
+    </u-navbar>
+    <!-- search -->
+    <!-- 搜索会话列表相关 -->
     <view>
-      <view class="search" v-if="search_btn">
-        <view @tap="openSearch">
-          <icon type="search" size="12"></icon>
-          <text>搜索</text>
+      <view class="default_search_container" v-if="isShowDefaultSearch">
+        <view class="search_container" @click="openSearch">
+          <u-icon
+            size="22"
+            name="/static/images/new_ui/search_icon.png"
+          ></u-icon>
+          <text class="search_text">搜索</text>
         </view>
       </view>
     </view>
-    <view class="main_body">
-      <view>
-        <!-- 左侧列表内容部分 -->
-        <scroll-view
-          :class="
-            'content ' + (gotop ? (isIPX ? 'goTopX' : 'goTop') : 'goback')
-          "
-          enable-back-to-top
-          :scroll-into-view="toView"
-          scroll-y="true"
-          scroll-with-animation="true"
-          :style="'padding-bottom: ' + (isIPX ? '270rpx' : '226rpx')"
-        >
-          <view class="search_input" v-if="search_friend">
-            <view>
-              <icon type="search" size="13"></icon>
-              <input
-                placeholder="搜索"
-                placeholder-style="color:#CFCFCF;line-height:20px;font-size:12px;"
-                auto-focus
-                confirm-type="search"
-                type="text"
-                @confirm="onSearchContacts"
-                @input="onInput"
-                v-model="serachKeyword"
-              />
-              <icon
-                type="clear"
-                size="13"
-                @tap.stop="clearInput"
-                v-if="show_clear"
-              ></icon>
-            </view>
-            <text @tap="cancelSearchContacts">取消</text>
-          </view>
-          <view class="contain">
-            <view class="otherItem" @click="entryTabNnotificationPage">
-              <image
-                src="../../static/images/inform.png"
-                data-username="name"
-              ></image>
-              <text>系统通知</text>
-            </view>
-            <view class="otherItem" @click="entryAddNewFreiend">
-              <image
-                src="/static/images/invite_theme2x.png"
-                data-username="name"
-              ></image>
-              <text>添加好友</text>
-            </view>
-            <view class="otherItem" @click="entryGroupsPage">
-              <image src="/static/images/groupTheme.png"></image>
-              <text>群组</text>
-            </view>
-          </view>
-          <view
-            v-for="(group, index) in listMain"
-            :key="index"
-            :id="'inToView' + group.id"
-            :data-id="group.id"
+    <view class="search_input" v-if="!isShowDefaultSearch">
+      <u-search
+        v-model.trim="searchInputKeywords"
+        shape="square"
+        placeholder="搜索联系人"
+        :actionText="'取消'"
+        :actionStyle="{
+          color: '#0873de',
+        }"
+        :clearabled="true"
+        :focus="true"
+        @search="actionSearch"
+        @custom="cancelSearch"
+      ></u-search>
+    </view>
+    <u-index-list
+      :index-list="indexList"
+      @select="onSelectIndex"
+      activeColor="#009EFF"
+    >
+      <!-- Contacts -->
+      <view slot="header" class="contacts_header_container">
+        <u-cell-group :border="false">
+          <u-cell :clickable="true" :isLink="true">
+            <text slot="title" class="header_title">系统通知</text>
+            <u-badge slot="value" type="primary" max="99" :value="99"></u-badge>
+          </u-cell>
+          <u-cell :clickable="true" :isLink="true">
+            <text slot="title" class="header_title">群聊</text>
+            <text slot="value">{{ groupList.length || 0 }}</text>
+          </u-cell>
+          <u-cell :clickable="true" :isLink="true">
+            <text slot="title" class="header_title">黑名单</text>
+            <text slot="value">9</text>
+          </u-cell>
+        </u-cell-group>
+      </view>
+      <template v-for="(item, index) in sortedContactsList">
+        <u-index-item>
+          <u-index-anchor
+            :text="indexList[index]"
+            bgColor="#FFF"
+            color="#75828A"
+            height="32px"
+          ></u-index-anchor>
+          <u-cell
+            class="contacts_item_cell"
+            v-for="(cell, index1) in item"
+            :key="cell.initial + cell.name"
+            :border="false"
           >
-            <view class="address_top">{{ group.region }}</view>
-            <view
-              v-for="(item, brandId) in group.brands"
-              :key="brandId"
-              :data-username="item.name"
-            >
-              <swipe-delete @deleteChatItem="deleteFriend(item)">
-                <view
-                  class="tap_mask"
-                  :data-username="item.name"
-                  @click="entryemChat(item)"
-                >
-                  <view class="address_bottom" :data-username="item.name">
-                    <image
-                      :src="showFriendAvatar(item.name)"
-                      :data-username="item.name"
-                    ></image>
-                    <text :data-username="item.name">{{
-                      showFriendNickname(item.name)
-                    }}</text>
-                  </view>
-                </view>
-              </swipe-delete>
+            <!-- 头像 -->
+            <u-avatar
+              slot="icon"
+              shape="square"
+              size="40"
+              :src="showFriendAvatar(cell.name)"
+              customStyle="margin: -3px 5px -3px 0"
+            ></u-avatar>
+            <!-- name -->
+            <view class="conversation_item_title" slot="title">
+              <u--text
+                class="conversation_item_title_text"
+                :lines="1"
+                :text="showFriendNickname(cell.name)"
+                iconStyle="margin-left: 2px;"
+              >
+              </u--text>
             </view>
-          </view>
-        </scroll-view>
-        <!-- 右侧字母导航 -->
-        <view class="orientation_region">
-          <block v-for="(item, id) in listMain" :key="id">
-            <view
-              :class="
-                'orientation_city ' + (isActive == item.id ? 'active' : '')
-              "
-              @tap="scrollToViewFn"
-              :data-id="item.id"
-              >{{ item.region }}</view
-            >
-          </block>
-        </view>
+          </u-cell>
+        </u-index-item>
+      </template>
+      <view slot="footer" class="u-safe-area-inset--bottom">
+        <text class="list__footer"></text>
+        <u-divider
+          :text="`${friendList.length}个联系人`"
+          :hairline="true"
+        ></u-divider>
       </view>
-    </view>
+    </u-index-list>
   </view>
 </template>
 
 <script>
 import { CHAT_TYPE } from '@/EaseIM/constant';
 import swipeDelete from '../../components/swipedelete/swipedelete';
+const indexList = () => {
+  const indexList = [];
+  const charCodeOfA = 'A'.charCodeAt(0);
+  console.log('charCodeOfA', charCodeOfA);
+  for (let i = 0; i < 26; i++) {
+    indexList.push(String.fromCharCode(charCodeOfA + i));
+  }
+  indexList.push('#');
+  return indexList;
+};
 export default {
   data() {
     return {
-      search_btn: true,
-      search_friend: false,
-      show_mask: false,
-      myName: '',
-      member: [],
-      messageNum: '',
-      //加好友申请数
-      unReadSpotNum: 0,
-      //未读消息数
-      unReadNoticeNum: 0,
-      //加群通知数
-      unReadTotalNotNum: 0,
-      //总通知数：加好友申请数 + 加群通知数
-      isActive: null,
-      listMain: [],
-      listTitles: [],
-      toView: 'inToView0',
-      oHeight: [],
-      scroolHeight: 0,
-      show_clear: false,
-      isHideLoadMore: true,
-      isIPX: true,
-      gotop: true,
-      serachKeyword: '',
-      showFixedTitile: false,
+      isShowDefaultSearch: true,
+      searchKeyword: '',
       defaultAvatar: '/static/images/theme2x.png',
+      indexList: indexList(),
+      itemArr: [
+        ['列表A1', '列表A2', '列表A3'],
+        ['列表B1', '列表B2', '列表B3'],
+        ['列表C1', '列表C2', '列表C3'],
+      ],
+      sortedContactsList: [],
     };
   },
   components: {
@@ -152,11 +150,7 @@ export default {
   },
   mounted() {
     uni.hideHomeButton && uni.hideHomeButton();
-    this.getBrands(this.friendList);
-    uni.pageScrollTo({
-      scrollTop: 0,
-      duration: 300,
-    });
+    this.getBrandsList(this.friendList);
   },
   computed: {
     //好友列表
@@ -165,6 +159,10 @@ export default {
     },
     friendUserInfoMap() {
       return this.$store.state.ContactsStore.friendUserInfoMap;
+    },
+    //群组列表
+    groupList() {
+      return this.$store.state.GroupStore.joinedGroupList;
     },
     //好友头像展示
     showFriendAvatar() {
@@ -280,87 +278,43 @@ export default {
         url: '../addNewFriend/addNewFriend',
       });
     },
-    /* 形成indexlist好友列表 */
-    //点击右侧字母导航定位触发
-    scrollToViewFn: function (e) {
-      let _id = e.target.dataset.id;
-      for (let i = 0; i < this.listMain.length; ++i) {
-        if (this.listMain[i].id === _id) {
-          this.isActive = _id;
-          this.toView = 'inToView' + _id;
-          uni.pageScrollTo({
-            selector: `#inToView${_id}`,
-            duration: 300,
-          });
-          break;
-        }
-      }
-    },
-    // 处理数据格式 生成list 索引。
-    getBrands(member) {
+    //构建indexList
+    getBrandsList(friendsList) {
       const reg = /[a-z]/i;
-      let contactsList = [];
-      member.length &&
-        member.forEach((userId) => {
-          let contactsObj = {};
-          contactsObj.name = userId;
+      let contactsObj = {};
+      let indexList = [];
+
+      friendsList.length &&
+        friendsList.forEach((userId) => {
+          const params = {};
+          params.name = userId;
           if (reg.test(userId.substring(0, 1))) {
-            contactsObj.initial = userId.substring(0, 1).toUpperCase();
-            contactsList.push({ ...contactsObj });
+            const initial = userId.substring(0, 1).toUpperCase();
+            if (!contactsObj[initial]) {
+              contactsObj[initial] = [];
+            }
+            params.initial = initial;
+            contactsObj[initial].push(params);
+            indexList.push(userId.substring(0, 1).toUpperCase());
           } else {
-            contactsObj.initial = '#';
-            contactsList.push({ ...contactsObj });
+            params.initial = '#';
+            contactsObj[initial].push({ ...params });
+            indexList.push('#');
           }
         });
-      this.generateIndexedList(contactsList);
+      this.sortedContactsList = Object.values(contactsObj);
+      console.log('contactsList', Object.values(contactsObj));
+      this.indexList = [...new Set(indexList)];
     },
-    generateIndexedList(contactsList) {
-      contactsList.sort(
-        (a, b) => a.initial.charCodeAt(0) - b.initial.charCodeAt(0)
-      );
-      var someTtitle = null;
-      var someArr = [];
-
-      for (var i = 0; i < contactsList.length; i++) {
-        var newBrands = {
-          brandId: contactsList[i].name + contactsList[i].initial,
-          name: contactsList[i].name,
-        };
-
-        if (contactsList[i].initial == '#') {
-          if (!lastObj) {
-            var lastObj = {
-              id: i,
-              region: '#',
-              brands: [],
-            };
-          }
-
-          lastObj.brands.push(newBrands);
-        } else {
-          if (contactsList[i].initial != someTtitle) {
-            someTtitle = contactsList[i].initial;
-            var newObj = {
-              id: i,
-              region: someTtitle,
-              brands: [],
-            };
-            someArr.push(newObj);
-          }
-
-          newObj.brands.push(newBrands);
-        }
-      }
-
-      someArr.sort((a, b) => a.region.charCodeAt(0) - b.region.charCodeAt(0));
-
-      if (lastObj) {
-        someArr.push(lastObj);
-      }
-      //赋值给列表值
-      this.listMain = someArr;
-      //赋值给当前高亮的isActive
-      this.isActive = someArr.length > 0 ? someArr[0].id : '';
+    onSelectIndex(value) {
+      console.log('>>>>>>>', value);
+    },
+    //前往添加联系人页面
+    entryAddContactsPage() {
+      console.log('?>?????');
+      uni.navigateTo({
+        url: '../addContacts/index',
+      });
     },
   },
 };

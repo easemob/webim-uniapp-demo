@@ -121,6 +121,17 @@ const emGroups = () => {
         });
     });
   };
+  const joinPublicGroup = (groupId) => {
+    return new Promise((resolve, reject) => {
+      EMClient.joinGroup({ groupId, message: 'I want to join the group' })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   return {
     fetchJoinedGroupListFromServer,
     createNewGroup,
@@ -131,6 +142,7 @@ const emGroups = () => {
     destroyGroupFromServer,
     acceptGroupInvite,
     rejectGroupInvite,
+    joinPublicGroup,
   };
 };
 

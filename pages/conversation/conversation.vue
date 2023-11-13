@@ -2,6 +2,7 @@
   <view class="conversation_container">
     <u-navbar title="会话" :placeholder="true" leftIcon="arrow-left">
       <u-avatar
+        size="32"
         slot="left"
         shape="square"
         src="/static/images/new_ui/defaultAvatar.png"
