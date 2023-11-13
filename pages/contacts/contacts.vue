@@ -59,15 +59,20 @@
         <u-cell-group :border="false">
           <u-cell :clickable="true" :isLink="true">
             <text slot="title" class="header_title">系统通知</text>
-            <u-badge slot="value" type="primary" max="99" :value="99"></u-badge>
+            <u-badge
+              slot="value"
+              type="primary"
+              max="99"
+              :value="unReadNoticeNum"
+            ></u-badge>
           </u-cell>
           <u-cell :clickable="true" :isLink="true">
             <text slot="title" class="header_title">群聊</text>
-            <text slot="value">{{ groupList.length || 0 }}</text>
+            <text slot="value">{{ groupList.length }}</text>
           </u-cell>
           <u-cell :clickable="true" :isLink="true">
             <text slot="title" class="header_title">黑名单</text>
-            <text slot="value">9</text>
+            <text slot="value">{{ blockUserList.length }}</text>
           </u-cell>
         </u-cell-group>
       </view>
@@ -159,6 +164,14 @@ export default {
     },
     friendUserInfoMap() {
       return this.$store.state.ContactsStore.friendUserInfoMap;
+    },
+    blockUserList() {
+      return this.$store.state.ContactsStore.blockUserList;
+    },
+    unReadNoticeNum() {
+      return this.$store.getters.getAllInformsList.filter(
+        (inform) => !inform.isHandled
+      ).length;
     },
     //群组列表
     groupList() {

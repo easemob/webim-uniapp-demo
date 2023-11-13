@@ -158,6 +158,7 @@ export default {
       await this.$store.dispatch('setFriendUserInfotoMap');
       //获取当前登录用户好友信息
       await this.$store.dispatch('fetchLoginUserProfile');
+      await this.$store.dispatch('fetchBlockUserList');
       this.fetchJoinedGroupList();
     },
     //获取加入的群组列表

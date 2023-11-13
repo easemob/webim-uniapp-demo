@@ -1,10 +1,11 @@
 import { emContacts, emUserInfos } from '@/EaseIM/emApis';
-const { fetchContactsListFromServer } = emContacts();
+const { fetchContactsListFromServer, getBlocklistFromServer } = emContacts();
 const { fetchOtherInfoFromServer } = emUserInfos();
 const ContactsStore = {
   state: {
     friendList: [],
     friendUserInfoMap: new Map(), //好友属性
+    blockUserList: [],
   },
   mutations: {
     SET_FROEND_LIST: (state, friendList) => {
@@ -20,6 +21,9 @@ const ContactsStore = {
           }
         }
       }
+    },
+    SET_BLOCK_USER_LIST: (state, userList) => {
+      state.blockUserList = [...state.blockUserList, ...userList];
     },
   },
   actions: {
@@ -41,6 +45,14 @@ const ContactsStore = {
         } catch (error) {
           console.log('>>>>>好友属性获取失败', error);
         }
+      }
+    },
+    async fetchBlockUserList({ commit }) {
+      try {
+        const userList = await getBlocklistFromServer();
+        commit('SET_BLOCK_USER_LIST', userList);
+      } catch (error) {
+        console.log('>>>>获取好友黑名单失败', error);
       }
     },
   },
