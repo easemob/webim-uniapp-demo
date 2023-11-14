@@ -1,78 +1,139 @@
 page {
-	background-color: #F5F5F5;
+  background-color: #fff;
 }
-.setting_title{
-	height: 128rpx;
-	line-height: 128rpx;
-	font-size: 64rpx;
-	font-weight: 400;
-	padding-left: 32rpx;
-	background-color: #fff;
+.mine_container_header {
+  margin: 50rpx 0;
+  width: 100%;
+  height: 380rpx;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
 }
-.setting_head {
-	width: 100%;
-	height: 160rpx;
-	background-color: #fff;
+.mine_container_header_avatar {
+  margin: 20rpx 0;
 }
-.head_pic {
-	height: 100%;
-	margin: 0 32rpx;
-	border-bottom: 0.5px #E5E5E5 solid;
-	display: flex;
-	align-items: center;
+.mine_container_header_sign {
+  width: 80%;
+  margin: 5rpx;
 }
-.head_pic view{
-	margin-left: 20rpx;
+.setting_title {
+  /* Title */
+  height: 22px;
+
+  /* 简体中文/次级标题/中 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height, or 138% */
+
+  /* Neutral/1 */
+  color: #171a1c;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
-.head_pic image {
-	width: 112rpx;
-	height: 112rpx;
-	border-radius: 56rpx;
-	display: block;
+.setting_value {
+  /* Label */
+
+  height: 18px;
+
+  /* 简体中文/标签/中 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  /* identical to box height, or 129% */
+
+  /* Neutral/5 */
+  color: #75828a;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
-.feedback {
-	background: none;
-	padding: 0;
-	margin: 0;
-	font-size: 16px;
+::v-deep .u-cell-group__title__text {
+  /* Headline */
+
+  width: 358px;
+  height: 18px;
+
+  /* 简体中文/次级标题/小 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  /* identical to box height, or 129% */
+
+  /* Neutral/5 */
+  color: #75828a;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
-.feedback:after {
-	border: none;
-}
-.setting_username {
-	height: 68rpx;
-	line-height: 68rpx;
-	font-size: 40rpx;
-	display: block;
+.mine_login_title {
+  /* Title */
+  height: 22px;
+
+  /* 简体中文/次级标题/中 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height, or 138% */
+
+  /* Primary/5 */
+  color: #009eff;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
 }
 
-.setting_username2{
-	height: 54rpx;
-	line-height: 54rpx;
-	font-size: 30rpx;
-	color: #9B9B9B;
-	display: block;
+.presence_modal_content {
+  position: relative;
+}
+.textarea_count {
+  position: absolute;
+  right: 10rpx;
+  top: 10px;
+  /* Alphabet/Body/Large */
+  font-family: 'SF Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height, or 138% */
+  text-align: right;
+  letter-spacing: 0.002em;
+
+  /* Neutral/7 */
+  color: #acb4b9;
+}
+.presence_modal_footer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+::v-deep .u-action-sheet__item-wrap {
+  padding-top: 10px;
 }
 
-.setting_list{
-	background-color: #fff;
-}
-.setting_listContent {
-	height: 88rpx;
-	margin: 48rpx 32rpx 0;
-	border-bottom: 0.5px #E5E5E5 solid;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	font-size: 32rpx;
-	background-color: #fff;
-}
-.list_right {
-	width: 48rpx;
-	height: 48rpx;
-	margin-right: 8rpx;
-	color: #9B9B9B;
-}
-.setting_redtext{
-	color: #CE3918;
+::v-deep .u-textarea {
+  width: 280px;
+  background: #f1f2f3;
+  position: relative;
 }
