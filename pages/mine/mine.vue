@@ -24,9 +24,7 @@
           color="#464E53"
           size="14"
           lineHeight="18"
-          text="关于uView的取名来由，首字母u来自于uni-app首字母，
-uni-app是基Vuejs，Vue和View(延伸为UI、视图之意)同音，同时view组件uni-app中
-最础最重要的组件，故取名uView，表达源于uni-app和Vue之意，同时在此也对它示感谢。"
+          text="关于uView的取名来由，首字母u来自于uni-app首字母，uni-app是基Vuejs。"
         ></u--text>
       </view>
       <view>

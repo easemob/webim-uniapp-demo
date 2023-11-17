@@ -24,6 +24,20 @@
       }
     },
     {
+      "path": "pages/newInvite/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/groupList/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/mine/myProfile",
       "style": {
         "navigationStyle": "custom",

@@ -1,13 +1,16 @@
 import { EMClient } from '@/EaseIM';
 const emGroups = () => {
-  const fetchJoinedGroupListFromServer = () => {
+  const fetchJoinedGroupListFromServer = (pageNum = 0, pageSize = 20) => {
     return new Promise((resolve, reject) => {
       console.log('>>>>开始获取加入的群组列表');
-      EMClient.getGroup({
-        limit: 100,
+      EMClient.getJoinedGroups({
+        pageNum,
+        pageSize,
+        needAffiliations: true,
+        needRole: true,
       })
         .then((res) => {
-          resolve(res.data);
+          resolve(res);
         })
         .catch((error) => {
           reject(error);

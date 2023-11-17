@@ -104,18 +104,26 @@
         <!-- Contacts -->
         <view slot="header" class="contacts_header_container">
           <u-cell-group :border="false">
-            <u-cell :clickable="true" :isLink="true">
+            <u-cell
+              :clickable="true"
+              :isLink="true"
+              @click="entryNewInvitePage"
+            >
               <text slot="title" class="header_title">系统通知</text>
               <u-badge
                 slot="value"
                 type="primary"
                 max="99"
-                :value="unReadNoticeNum"
+                :value="newInviteMsgNum"
               ></u-badge>
             </u-cell>
-            <u-cell :clickable="true" :isLink="true">
+            <u-cell
+              :clickable="true"
+              :isLink="true"
+              @click="entryGroupListPage"
+            >
               <text slot="title" class="header_title">群聊</text>
-              <text slot="value">{{ groupList.length }}</text>
+              <text slot="value">{{ joinedGroupTotal }}</text>
             </u-cell>
             <u-cell :clickable="true" :isLink="true">
               <text slot="title" class="header_title">黑名单</text>
@@ -198,14 +206,14 @@ export default {
     blockUserList() {
       return this.$store.state.ContactsStore.blockUserList;
     },
-    unReadNoticeNum() {
-      return this.$store.getters.getAllInformsList.filter(
+    newInviteMsgNum() {
+      return this.$store.getters.getReceiveInviteList.filter(
         (inform) => !inform.isHandled
       ).length;
     },
-    //群组列表
-    groupList() {
-      return this.$store.state.GroupStore.joinedGroupList;
+    //群组总数
+    joinedGroupTotal() {
+      return this.$store.getters.joinedGroupTotal;
     },
     //好友头像展示
     showFriendAvatar() {
@@ -346,9 +354,26 @@ export default {
     },
     //前往添加联系人页面
     entryAddContactsPage() {
-      console.log('?>?????');
       uni.navigateTo({
         url: '../addContacts/index',
+      });
+    },
+    //前往新邀请页面
+    entryNewInvitePage() {
+      uni.navigateTo({
+        url: '../newInvite/index',
+      });
+    },
+    //前往群组列表页面
+    entryGroupListPage() {
+      uni.navigateTo({
+        url: '../groupList/index',
+      });
+    },
+    //前往群聊页面
+    entryGroupChatPage() {
+      uni.navigateTo({
+        url: '../groupChat/index',
       });
     },
   },

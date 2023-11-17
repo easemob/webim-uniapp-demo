@@ -1,5 +1,5 @@
 import { EMClient } from '../index';
-import { HANDLER_EVENT_NAME, INFORM_TYPE } from '../constant';
+import { HANDLER_EVENT_NAME, INFORM_TYPE, CHAT_TYPE } from '../constant';
 import store from '@/store';
 console.log('>>>>>>vuex store', store);
 export const emContactsListener = (callback, listenerEventName) => {
@@ -10,12 +10,17 @@ export const emContactsListener = (callback, listenerEventName) => {
       inform: params,
     });
   };
+  //处理新邀请更新至邀请信息缓存store
+  const reveiveFriendInvite = (params) => {
+    store.commit('ADD_NEW_RECEIVE_INVITE_MSG', params);
+  };
   const contactsListenFunc = {
     // 当前用户收到好友请求。用户 B 向用户 A 发送好友请求，用户 A 收到该事件。
     onContactInvited: function (msg) {
       const contactsInform = Object.assign({}, msg);
       callback && callback(contactsInform);
-      addNewInformFunc(msg);
+      addNewInformFunc({ ...msg });
+      reveiveFriendInvite({ chatType: CHAT_TYPE.SINGLE_CHAT, ...msg });
     },
     // 当前用户被其他用户从联系人列表上移除。用户 B 将用户 A 从联系人列表上删除，用户 A 收到该事件。
     onContactDeleted: function (msg) {

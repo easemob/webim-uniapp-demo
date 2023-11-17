@@ -160,6 +160,8 @@ export default {
       await this.$store.dispatch('fetchLoginUserProfile');
       await this.$store.dispatch('fetchBlockUserList');
       this.fetchJoinedGroupList();
+      //初始化缓存本地的新邀请列表
+      this.$store.commit('INIT_RECEIVE_INVITE_LIST');
     },
     //获取加入的群组列表
     async fetchJoinedGroupList() {

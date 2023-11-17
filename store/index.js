@@ -9,7 +9,7 @@ import MessageStore from './modules/message';
 import ContactsStore from './modules/contacts';
 import GroupStore from './modules/group';
 import InformStore from './modules/inform';
-
+import ReceiveInviteStore from './modules/receiveInvite';
 //Vuex.Store 构造器选项
 const store = new Vuex.Store({
   modules: {
@@ -19,6 +19,7 @@ const store = new Vuex.Store({
     ContactsStore,
     GroupStore,
     InformStore,
+    ReceiveInviteStore,
   },
 });
 export default store;

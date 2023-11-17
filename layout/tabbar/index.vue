@@ -59,7 +59,12 @@
         src="/static/images/new_ui/layout/conversation.png"
       ></image>
     </u-tabbar-item>
-    <u-tabbar-item name="contacts" text="联系人">
+    <u-tabbar-item
+      name="contacts"
+      text="联系人"
+      :badge="newInviteMsgNum"
+      badgeStyle="margin-right: 10rpx"
+    >
       <image
         class="tabbar_icon_image"
         slot="active-icon"
@@ -96,6 +101,11 @@ export default {
   computed: {
     unReadNoticeNum() {
       return this.$store.getters.getAllInformsList.filter(
+        (inform) => !inform.isHandled
+      ).length;
+    },
+    newInviteMsgNum() {
+      return this.$store.getters.getReceiveInviteList.filter(
         (inform) => !inform.isHandled
       ).length;
     },

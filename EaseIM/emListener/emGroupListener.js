@@ -1,9 +1,12 @@
 import { EMClient } from '../index';
-import { HANDLER_EVENT_NAME } from '../constant';
-// import { useInformStore } from '@/stores/inform';
+import { HANDLER_EVENT_NAME, CHAT_TYPE } from '../constant';
+import store from '@/store';
 export const emGroupListener = (callback, listenerEventName) => {
-  //   const informStore = useInformStore();
   console.log('>>>>群组事件监听挂载');
+  //处理新邀请更新至邀请信息缓存store
+  const reveiveFriendInvite = (params) => {
+    store.commit('ADD_NEW_RECEIVE_INVITE_MSG', params);
+  };
   const groupListenFunc = {
     onGroupEvent: (event) => {
       console.log('>>>>群组事件监听触发', event);
@@ -76,8 +79,7 @@ export const emGroupListener = (callback, listenerEventName) => {
         // 当前用户收到了入群邀请。受邀用户会收到该回调。例如，用户 B 邀请用户 A 入群，则用户 A 会收到该回调。
         case 'inviteToJoin':
           {
-            const groupsInform = Object.assign({}, event);
-            // informStore.addNewInform('groups', groupsInform);
+            reveiveFriendInvite({ chatType: CHAT_TYPE.GROUP_CHAT, ...event });
           }
 
           break;
