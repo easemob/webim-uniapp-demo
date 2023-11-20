@@ -215,6 +215,12 @@ const ConversationStore = {
         console.log('>>>>>会话免打扰列表拉取失败', error);
       }
     },
+    //获取单个会话免打扰状态
+    fetchSilentConversation: async ({ commit }, params) => {
+      const { userId, chatType } = params;
+      try {
+      } catch (error) {}
+    },
     //设置会话免打扰
     setConversationSilentMode: async ({ commit }, params) => {
       const { conversationId, type } = params;

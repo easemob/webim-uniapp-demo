@@ -135,6 +135,40 @@ const emGroups = () => {
         });
     });
   };
+  /* 群组属性相关 */
+  //获取单个用户属性
+  const getSingleGroupAttributesFromServer = (groupId, userId) => {
+    let options = {
+      groupId,
+      userId,
+    };
+    return new Promise((resolve, reject) => {
+      EMClient.getGroupMemberAttributes({ ...options })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  //根据key获取多个群组成员自定义属性
+  const getMultiGroupAttributesFromServer = (params) => {
+    const { groupId, userIds, keys } = params;
+    return new Promise((resolve, reject) => {
+      EMClient.setGroupAttributes({
+        groupId,
+        userIds,
+        keys,
+      })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   return {
     fetchJoinedGroupListFromServer,
     createNewGroup,
@@ -146,6 +180,8 @@ const emGroups = () => {
     acceptGroupInvite,
     rejectGroupInvite,
     joinPublicGroup,
+    getSingleGroupAttributesFromServer,
+    getMultiGroupAttributesFromServer,
   };
 };
 

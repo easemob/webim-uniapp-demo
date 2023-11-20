@@ -30,7 +30,7 @@
           lineHeigth="28"
           :bold="true"
           size="20"
-          text="法外狂徒"
+          :text="(groupDetail && groupDetail.name) || '暂无群组名称'"
         ></u--text>
       </view>
       <!-- 群描述 -->
@@ -39,15 +39,16 @@
           :lines="3"
           color="#464E53"
           size="14"
+          align="center"
           lineHeight="18"
-          text="关于uView的取名来由，首字母u来自于uni-app首字母，uni-app是基Vuejs。"
+          :text="(groupDetail && groupDetail.description) || '暂无群组名称'"
         ></u--text>
       </view>
       <!-- 群id -->
       <view>
         <u--text
           class="group_detail_container_header_groupid"
-          text="环信ID：hfp"
+          :text="`群组ID：${groupDetail && groupDetail.id}`"
           size="12"
           color="#ACB4B9"
           suffixIcon="/static/images/new_ui/mine/copy_icon.png"
@@ -65,10 +66,20 @@
       </view>
     </view>
     <!-- 群人数 -->
-    <u-cell :border="false" title="群成员" isLink value="88人"> </u-cell>
+    <u-cell
+      :border="false"
+      title="群成员"
+      isLink
+      :value="groupDetail && groupDetail.affiliations_count"
+    >
+    </u-cell>
     <u-gap height="10" bgColor="#F1F2F3"></u-gap>
     <u-cell-group :border="false">
-      <u-cell title="我在本群的昵称" isLink></u-cell>
+      <u-cell
+        title="我在本群的昵称"
+        isLink
+        :value="inGroupNickname || '暂未设置'"
+      ></u-cell>
       <u-cell title="消息免打扰">
         <u-switch slot="value"></u-switch>
       </u-cell>
@@ -88,6 +99,10 @@
 </template>
 
 <script>
+import { EMClient } from '@/EaseIM';
+import { emGroups } from '@/EaseIM/emApis';
+const { getGroupInfosFromServer, getSingleGroupAttributesFromServer } =
+  emGroups();
 export default {
   data() {
     return {
@@ -101,14 +116,46 @@ export default {
       ],
       groupId: '',
       groupDetail: {},
+      inGroupNickname: '',
     };
   },
   onLoad(option) {
     if (option?.groupId) {
       this.groupId = option.groupId;
+      this.fetchGroupDetail();
+      this.fetchInGroupNickname();
     }
   },
-  methods: {},
+  methods: {
+    async fetchGroupDetail() {
+      const groupId = this.groupId;
+      try {
+        const result = await getGroupInfosFromServer(groupId);
+        console.log('>>>>>获取群组详情', result);
+        result.length && (this.groupDetail = { ...result[0] });
+      } catch (error) {
+        console.log('>>>>群详情获取失败');
+      }
+    },
+    async fetchInGroupNickname() {
+      const groupId = this.groupId;
+      const userId = EMClient.user;
+      try {
+        const result = await getSingleGroupAttributesFromServer(
+          groupId,
+          userId
+        );
+        console.log('>>>>>获取群成员昵称', result);
+        if (result?.data?.nickName) {
+          this.inGroupNickname = result.data.nickName;
+        }
+      } catch (error) {
+        console.log('>>>>获取群成员昵称失败', error);
+      }
+    },
+    //获取免打扰状态
+    async getGroupSilentStatus() {},
+  },
 };
 </script>
 
