@@ -48,7 +48,7 @@
           v-for="(item, index) in searchGroupListResult"
           :key="item.groupId"
         >
-          <u-cell :title="item.groupName">
+          <u-cell :title="item.groupName" @click="entryGroupDetail(item)">
             <u-avatar
               slot="icon"
               shape="square"
@@ -66,7 +66,7 @@
           v-for="(item, index) in joinedGroupList"
           :key="item.groupId"
         >
-          <u-cell :title="item.groupName">
+          <u-cell :title="item.groupName" @click="entryGroupDetail(item)">
             <u-avatar
               slot="icon"
               shape="square"
@@ -135,6 +135,15 @@ export default {
       uni.navigateTo({
         url: '../addContacts/index',
       });
+    },
+    //前往群组详情页面
+    entryGroupDetail(groupItem) {
+      const groupId = groupItem?.groupId;
+      if (groupId) {
+        uni.navigateTo({
+          url: '../groupDetail/index?groupId=' + groupId,
+        });
+      }
     },
     //触底函数
     //TODO 处理下拉新的一页群组

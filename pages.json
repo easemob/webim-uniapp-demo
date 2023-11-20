@@ -38,6 +38,13 @@
       }
     },
     {
+      "path": "pages/groupDetail/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/mine/myProfile",
       "style": {
         "navigationStyle": "custom",
