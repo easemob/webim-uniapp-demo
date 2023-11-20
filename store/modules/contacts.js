@@ -37,9 +37,10 @@ const ContactsStore = {
     },
     async setFriendUserInfotoMap({ state, commit }) {
       if (state.friendList.length) {
+        const friendUserIdList = state.friendList.map((item) => item.userId);
         try {
           const friendProfiles = await fetchOtherInfoFromServer(
-            state.friendList
+            friendUserIdList
           );
           commit('SET_FRIEND_USER_INFO', friendProfiles);
         } catch (error) {

@@ -68,7 +68,7 @@
             <u-cell
               class="contacts_item_cell"
               v-for="(cell, index1) in item"
-              :key="cell.initial + cell.name"
+              :key="cell.initial + cell.userId"
               :border="false"
             >
               <!-- 头像 -->
@@ -76,7 +76,7 @@
                 slot="icon"
                 shape="square"
                 size="40"
-                :src="showFriendAvatar(cell.name)"
+                :src="showFriendAvatar(cell.userId)"
                 customStyle="margin: -3px 5px -3px 0"
               ></u-avatar>
               <!-- name -->
@@ -84,7 +84,7 @@
                 <u--text
                   class="conversation_item_title_text"
                   :lines="1"
-                  :text="showFriendNickname(cell.name)"
+                  :text="showFriendNickname(cell)"
                   iconStyle="margin-left: 2px;"
                 >
                 </u--text>
@@ -142,7 +142,7 @@
             <u-cell
               class="contacts_item_cell"
               v-for="(cell, index1) in item"
-              :key="cell.initial + cell.name"
+              :key="cell.initial + cell.userId"
               :border="false"
             >
               <!-- 头像 -->
@@ -150,7 +150,7 @@
                 slot="icon"
                 shape="square"
                 size="40"
-                :src="showFriendAvatar(cell.name)"
+                :src="showFriendAvatar(cell.userId)"
                 customStyle="margin: -3px 5px -3px 0"
               ></u-avatar>
               <!-- name -->
@@ -158,7 +158,7 @@
                 <u--text
                   class="conversation_item_title_text"
                   :lines="1"
-                  :text="showFriendNickname(cell.name)"
+                  :text="showFriendNickname(cell)"
                   iconStyle="margin-left: 2px;"
                 >
                 </u--text>
@@ -230,14 +230,18 @@ export default {
     },
     //好友昵称展示
     showFriendNickname() {
-      return (hxId) => {
+      return (userItem) => {
+        const { userId, remark } = userItem;
+        if (remark) {
+          return remark;
+        }
         if (
-          this.friendUserInfoMap.has(hxId) &&
-          this.friendUserInfoMap.get(hxId)?.nickname
+          this.friendUserInfoMap.has(userId) &&
+          this.friendUserInfoMap.get(userId)?.nickname
         ) {
-          return this.friendUserInfoMap.get(hxId).nickname;
+          return this.friendUserInfoMap.get(userId).nickname;
         } else {
-          return hxId;
+          return userId;
         }
       };
     },
@@ -323,9 +327,11 @@ export default {
       let indexList = [];
 
       friendsList.length &&
-        friendsList.forEach((userId) => {
+        friendsList.forEach((friendItem) => {
+          const { userId, remark } = friendItem;
           const params = {};
-          params.name = userId;
+          params.userId = userId;
+          params.remark = remark;
           if (reg.test(userId.substring(0, 1))) {
             const initial = userId.substring(0, 1).toUpperCase();
             if (!contactsObj[initial]) {

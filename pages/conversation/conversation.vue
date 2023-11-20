@@ -345,6 +345,10 @@ export default {
     friendUserInfoMap() {
       return this.$store.state.ContactsStore.friendUserInfoMap;
     },
+    //好友列表
+    friendList() {
+      return this.$store.state.ContactsStore.friendList;
+    },
     //会话头像展示
     showConversationAvatar() {
       return (item) => {
@@ -367,6 +371,12 @@ export default {
       return (item) => {
         if (item.conversationType === CHAT_TYPE.SINGLE_CHAT) {
           if (
+            this.friendList.find((f) => f.userId === item.conversationId)
+              ?.remark
+          ) {
+            return this.friendList.find((f) => f.userId === item.conversationId)
+              .remark;
+          } else if (
             this.friendUserInfoMap.has(item.conversationId) &&
             this.friendUserInfoMap.get(item.conversationId)?.nickname
           ) {

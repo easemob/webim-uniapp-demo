@@ -2,7 +2,7 @@ import { EMClient } from '../index';
 const emContacts = () => {
   const fetchContactsListFromServer = () => {
     return new Promise((resolve, reject) => {
-      EMClient.getContacts()
+      EMClient.getAllContacts()
         .then((res) => {
           const { data } = res;
           resolve(data);
