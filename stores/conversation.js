@@ -27,6 +27,7 @@ export const useConversationStore = defineStore('conversation', {
       this.chattingId = channel_id;
     },
     setConversationList(conversationList) {
+      const rePackageConversationList = [];
       conversationList?.length &&
         conversationList.map((channel) => {
           const conversationBody = {
@@ -42,7 +43,6 @@ export const useConversationStore = defineStore('conversation', {
           const chatType =
             (regexp.test(channel_id) && CHAT_TYPE.SINGLE_CHAT) ||
             CHAT_TYPE.GROUP_CHAT; //判断是单聊会话还是群组或聊天室会话
-          console.log('chatType+++++++', chatType);
           conversationBody.channel_id = getEMKey(
             EMClient.user,
             from,
@@ -53,8 +53,9 @@ export const useConversationStore = defineStore('conversation', {
           conversationBody.lastMessage = channel.lastMessage;
           conversationBody.unread_num = unread_num;
           conversationBody.time = time;
-          return this.conversationList.push(conversationBody);
+          return rePackageConversationList.push(conversationBody);
         });
+      this.conversationList = rePackageConversationList;
     },
     async deleteConversation(channel_id) {
       this.conversationList.length &&

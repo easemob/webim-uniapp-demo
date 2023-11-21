@@ -74,7 +74,7 @@ import { useGroupStore } from '@/stores/group';
 import { useConversationStore } from '@/stores/conversation';
 /* im apis */
 import { emGroups } from '@/EaseIM/imApis';
-import Image from '@/components/emChat/inputBar/suit/image';
+import Image from '@/components/emChat/components/inputBar/suit/image';
 const groupSettingState = reactive({
   groupid: '',
   // 群id

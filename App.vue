@@ -2,14 +2,24 @@
 /* EaseIM */
 import '@/EaseIM';
 import { emConnectListener, emMountGlobalListener } from '@/EaseIM/listener';
+import { emInsertInformMessage } from '@/EaseIM/utils';
 import { emConnect, emUserInfos, emGroups, emContacts } from '@/EaseIM/imApis';
 import emHandleReconnect from '@/EaseIM/utils/emHandleReconnect';
-import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
+import {
+  CONNECT_CALLBACK_TYPE,
+  HANDLER_EVENT_NAME,
+  CHAT_TYPE,
+} from '@/EaseIM/constant';
 import { useLoginStore } from '@/stores/login';
 import { useGroupStore } from '@/stores/group';
 import { useConversationStore } from '@/stores/conversation';
 import { useContactsStore } from '@/stores/contacts';
 import { EMClient, EaseSDK } from './EaseIM';
+// #ifdef APP-PLUS
+/* callKit */
+import { useInitCallKit } from '@/components/emCallKit';
+import useCallKitEvent from '@/components/emCallKit/callKitManage/useCallKitEvent';
+// #endif
 
 export default {
   setup() {
@@ -164,6 +174,59 @@ export default {
       }
     };
     emMountGlobalListener(globaleventcallback);
+
+    /* callKit仅支持原生端使用 */
+    // #ifdef APP-PLUS
+    const { setCallKitClient } = useInitCallKit();
+    setCallKitClient(EMClient, EaseSDK.message);
+    //监听callkit状态变化展示对应的页面
+    const { EVENT_NAME, CALLKIT_EVENT_CODE, SUB_CHANNEL_EVENT } =
+      useCallKitEvent();
+    const { insertInformMessage } = emInsertInformMessage();
+    SUB_CHANNEL_EVENT(EVENT_NAME, (params) => {
+      const { type, ext, callType, eventHxId } = params;
+      console.log('>>>>>>订阅到callkit事件发布', params);
+      //弹出待接听事件
+      switch (type.code) {
+        case CALLKIT_EVENT_CODE.ALERT_SCREEN:
+          {
+            console.log('>>>>>>监听到对应code', type.code);
+            uni.navigateTo({
+              url: '../emCallKitPages/alertScreen',
+            });
+          }
+          break;
+        case CALLKIT_EVENT_CODE.TIMEOUT:
+          {
+            console.log('>>>>>通话超时未接听');
+            insertInformMessage({
+              to: params.eventHxId,
+              chatType:
+                params.callType > 1
+                  ? CHAT_TYPE.GROUP_CHAT
+                  : CHAT_TYPE.SINGLE_CHAT,
+              msg: params.ext.message,
+            });
+          }
+          break;
+
+        case CALLKIT_EVENT_CODE.CALLEE_BUSY:
+          {
+            insertInformMessage({
+              to: params.eventHxId,
+              chatType:
+                params.callType > 1
+                  ? CHAT_TYPE.GROUP_CHAT
+                  : CHAT_TYPE.SINGLE_CHAT,
+              msg: params.ext.message,
+            });
+          }
+          break;
+        default:
+          break;
+      }
+    });
+    // #endif
   },
 };
 </script>

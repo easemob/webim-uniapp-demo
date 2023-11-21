@@ -1,0 +1,30 @@
+<template>
+	<Agora-RTC-TextureView :renderMode="renderMode" :data="{uid:uid, channelId:channelId}" :mirrorMode="mirrorMode"></Agora-RTC-TextureView>
+</template>
+
+<script>
+	import {
+		VideoRenderMode,
+		VideoMirrorMode
+	} from './common/Enums';
+
+	export default {
+		name: 'RtcTextureView',
+		props: {
+			renderMode: {
+				type: Number,
+				default: VideoRenderMode.Hidden
+			},
+			uid: Number,
+			channelId: String,
+			mirrorMode: {
+				type: Number,
+				default: VideoMirrorMode.Auto
+			}
+		}
+	}
+</script>
+
+<style>
+
+</style>
