@@ -45,6 +45,13 @@
       }
     },
     {
+      "path": "pages/groupDetail/editGroupAttributes",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/mine/myProfile",
       "style": {
         "navigationStyle": "custom",

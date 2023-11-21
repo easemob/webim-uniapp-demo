@@ -152,6 +152,23 @@ const emGroups = () => {
         });
     });
   };
+  //设置单个群组属性
+  const setSingleGroupAttributesFromServer = (params) => {
+    const { groupId, userId, memberAttributes } = params;
+    return new Promise((resolve, reject) => {
+      EMClient.setGroupMemberAttributes({
+        groupId,
+        userId,
+        memberAttributes: { ...memberAttributes },
+      })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   //根据key获取多个群组成员自定义属性
   const getMultiGroupAttributesFromServer = (params) => {
     const { groupId, userIds, keys } = params;
@@ -169,6 +186,7 @@ const emGroups = () => {
         });
     });
   };
+
   return {
     fetchJoinedGroupListFromServer,
     createNewGroup,
@@ -182,6 +200,7 @@ const emGroups = () => {
     joinPublicGroup,
     getSingleGroupAttributesFromServer,
     getMultiGroupAttributesFromServer,
+    setSingleGroupAttributesFromServer,
   };
 };
 

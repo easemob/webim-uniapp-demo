@@ -77,6 +77,7 @@
     <u-gap height="10" bgColor="#F1F2F3"></u-gap>
     <u-cell-group :border="false">
       <u-cell
+        @click="entryEditInGroupNickname"
         title="我在本群的昵称"
         isLink
         :value="inGroupNickname || '暂未设置'"
@@ -321,6 +322,12 @@ export default {
       } finally {
         this.isShowCofirmModal = false;
       }
+    },
+    //进入群内昵称编辑页面
+    entryEditInGroupNickname() {
+      uni.navigateTo({
+        url: `../groupDetail/editGroupAttributes?groupId=${this.groupId}&inGroupNickname=${this.inGroupNickname}`,
+      });
     },
   },
 };
