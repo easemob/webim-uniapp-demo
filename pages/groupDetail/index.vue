@@ -54,6 +54,7 @@
           suffixIcon="/static/images/new_ui/mine/copy_icon.png"
         ></u--text>
       </view>
+
       <!-- 功能面板 -->
       <view class="group_detail_container_header_function_panel">
         <view class="group_detail_container_header_function_panel_item">
@@ -81,7 +82,11 @@
         :value="inGroupNickname || '暂未设置'"
       ></u-cell>
       <u-cell title="消息免打扰">
-        <u-switch slot="value"></u-switch>
+        <u-switch
+          slot="value"
+          v-model="groupSilentStatus"
+          @input="changeGroupSilentStatus"
+        ></u-switch>
       </u-cell>
       <u-cell title="清空聊天记录"></u-cell>
     </u-cell-group>
@@ -91,24 +96,50 @@
       :show="isShowMoreActionSheet"
       :closeOnClickAction="true"
       :safeAreaInsetBottom="true"
+      @select="onSelectClick"
       @close="isShowMoreActionSheet = false"
       cancelText="取消"
       round="16px"
     ></u-action-sheet>
+    <u-modal
+      :show="isShowCofirmModal"
+      @confirm="onConfirmModal"
+      @cancel="isShowCofirmModal = false"
+      ref="uModal"
+      showCancelButton
+      :asyncClose="true"
+      :title="modalShowContent[groupRole].title"
+      :content="modalShowContent[groupRole].content"
+    >
+    </u-modal>
   </view>
 </template>
 
 <script>
 import { EMClient } from '@/EaseIM';
 import { emGroups } from '@/EaseIM/emApis';
-const { getGroupInfosFromServer, getSingleGroupAttributesFromServer } =
-  emGroups();
+import {
+  CHAT_TYPE,
+  GROUP_ROLE_TYPE,
+  GROUP_ROLE_TYPE_NAME,
+} from '@/EaseIM/constant';
+const {
+  getGroupInfosFromServer,
+  getSingleGroupAttributesFromServer,
+  leaveGroupFromServer,
+  destroyGroupFromServer,
+} = emGroups();
+const ACTIONS_TYPE = {
+  EXIT_GROUP: 1,
+  DESTORY_GROUP: 2,
+};
 export default {
   data() {
     return {
       isShowMoreActionSheet: false,
       actions: [
         {
+          type: ACTIONS_TYPE.EXIT_GROUP,
           name: '退出群组',
           color: '#FF002B',
           fontSize: '16',
@@ -117,6 +148,22 @@ export default {
       groupId: '',
       groupDetail: {},
       inGroupNickname: '',
+      groupSilentStatus: false,
+      isShowCofirmModal: false,
+      modalShowContent: {
+        [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.MEMBER]]: {
+          title: '确认退出群聊？',
+          content: '确认退出群组，同时删除该群组的聊天记录。',
+        },
+        [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.ADMIN]]: {
+          title: '确认退出群聊？',
+          content: '确认退出群组，同时删除该群组的聊天记录。',
+        },
+        [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]]: {
+          title: '确认解散群聊？',
+          content: '确认解散群组，同时删除该群组的聊天记录。',
+        },
+      },
     };
   },
   onLoad(option) {
@@ -124,17 +171,45 @@ export default {
       this.groupId = option.groupId;
       this.fetchGroupDetail();
       this.fetchInGroupNickname();
+      this.getGroupSilentStatus();
     }
   },
+  computed: {
+    groupRole() {
+      const group = this.$store.getters.joinedGroupList.find(
+        (item) => item.groupId === this.groupId
+      );
+      return group?.role
+        ? GROUP_ROLE_TYPE[group.role]
+        : GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.MEMBER];
+    },
+  },
+  mounted() {
+    this.initActions();
+  },
   methods: {
+    initActions() {
+      this.actions[0].name =
+        this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]
+          ? '解散群组'
+          : '退出群组';
+
+      this.actions[0].type =
+        this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]
+          ? ACTIONS_TYPE.DESTORY_GROUP
+          : ACTIONS_TYPE.EXIT_GROUP;
+    },
     async fetchGroupDetail() {
       const groupId = this.groupId;
       try {
         const result = await getGroupInfosFromServer(groupId);
         console.log('>>>>>获取群组详情', result);
         result.length && (this.groupDetail = { ...result[0] });
+        this.$store.commit('UPDATE_JOINED_GROUP_DATA', {
+          groupDetail: result[0],
+        });
       } catch (error) {
-        console.log('>>>>群详情获取失败');
+        console.log('>>>>群详情获取失败', error);
       }
     },
     async fetchInGroupNickname() {
@@ -154,7 +229,99 @@ export default {
       }
     },
     //获取免打扰状态
-    async getGroupSilentStatus() {},
+    async getGroupSilentStatus() {
+      const params = {
+        groupId: this.groupId,
+        chatType: CHAT_TYPE.GROUP_CHAT,
+      };
+      console.log('>>>>获取单个会话免打扰状态', params);
+      try {
+        const res = await this.$store.dispatch('fetchSilentConversation', {
+          ...params,
+        });
+        console.log('>>>>>>获取到的值', res);
+        if (Object.keys(res).length && res.type === 'NONE') {
+          this.groupSilentStatus = true;
+        } else {
+          this.groupSilentStatus = false;
+        }
+      } catch (error) {
+        console.log('>>>>>获取免打扰状态失败', error);
+      }
+    },
+    //修改免打扰状态
+    changeGroupSilentStatus(status) {
+      console.log('>>>>>>修改免打��状态', status);
+      const params = {
+        conversationId: this.groupId,
+        type: CHAT_TYPE.GROUP_CHAT,
+      };
+      if (status) {
+        (params.options = {
+          paramType: 0,
+          remindType: 'NONE',
+        }),
+          this.$store.dispatch('setConversationSilentMode', {
+            ...params,
+          });
+      } else {
+        this.$store.dispatch('setConversationSilentMode', {
+          ...params,
+        });
+      }
+    },
+    onSelectClick(item) {
+      console.log('>>>>>>>已选择', item);
+      this.isShowCofirmModal = true;
+    },
+    //确认模态框
+    onConfirmModal() {
+      console.log('>>>>>确认弹出框', this.actions[0].type);
+      if (this.actions[0].type === ACTIONS_TYPE.DESTORY_GROUP) {
+        this.destroyGroup();
+      }
+      if (this.actions[0].type === ACTIONS_TYPE.EXIT_GROUP) {
+        this.exitGroup();
+      }
+    },
+    //普通成员退出群组
+    async exitGroup() {
+      const groupId = this.groupId;
+      if (!groupId) return;
+      try {
+        await leaveGroupFromServer(groupId);
+        this.$store.commit('DELETE_JOINEND_GROUP', groupId);
+        this.$store.commit('DELETE_CONVERSATION_ITEM', groupId);
+        uni.navigateBack();
+      } catch (error) {
+        console.log('>>>>退出群组失败', error);
+        uni.showToast({
+          title: '退出群组失败',
+          icon: 'none',
+        });
+      } finally {
+        this.isShowCofirmModal = false;
+      }
+    },
+    //群主解散群组
+    async destroyGroup() {
+      const groupId = this.groupId;
+      if (!groupId) return;
+      try {
+        await destroyGroupFromServer(groupId);
+        this.$store.commit('DELETE_JOINEND_GROUP', groupId);
+        this.$store.commit('DELETE_CONVERSATION_ITEM', groupId);
+        uni.navigateBack();
+      } catch (error) {
+        console.log('>>>>解散群组失败', error);
+        uni.showToast({
+          title: '解散群组失败',
+          icon: 'none',
+        });
+      } finally {
+        this.isShowCofirmModal = false;
+      }
+    },
   },
 };
 </script>

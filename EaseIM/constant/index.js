@@ -136,3 +136,13 @@ export const EMOJIOBJ = {
     '[del]': 'del.png',
   },
 };
+export const GROUP_ROLE_TYPE_NAME = {
+  OWNER: 'owner',
+  ADMIN: 'admin',
+  MEMBER: 'member',
+};
+export const GROUP_ROLE_TYPE = {
+  [GROUP_ROLE_TYPE_NAME.OWNER]: 0,
+  [GROUP_ROLE_TYPE_NAME.ADMIN]: 1,
+  [GROUP_ROLE_TYPE_NAME.MEMBER]: 2,
+};

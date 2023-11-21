@@ -5,6 +5,7 @@ const emContacts = () => {
       EMClient.getAllContacts()
         .then((res) => {
           const { data } = res;
+          console.log('>>>>>获取全部好友列表');
           resolve(data);
         })
         .catch((error) => {

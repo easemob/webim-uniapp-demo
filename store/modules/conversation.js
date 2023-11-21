@@ -1,5 +1,6 @@
 import { emConversation, emSilent } from '@/EaseIM/emApis';
 import { EMClient } from '@/EaseIM';
+import Vue from 'vue';
 const {
   fetchPinConversationFromServer,
   pinConversationItem,
@@ -8,6 +9,7 @@ const {
   sendChannelAck,
 } = emConversation();
 const {
+  getSilentModeForConversation,
   getSilentModeForConversationList,
   setSilentModeForConversation,
   clearRemindTypeForConversation,
@@ -216,10 +218,34 @@ const ConversationStore = {
       }
     },
     //获取单个会话免打扰状态
-    fetchSilentConversation: async ({ commit }, params) => {
-      const { userId, chatType } = params;
-      try {
-      } catch (error) {}
+    fetchSilentConversation: ({ commit }, params) => {
+      const { groupId, chatType } = params;
+      return new Promise((resolve, reject) => {
+        getSilentModeForConversation(groupId, chatType)
+          .then((res) => {
+            if (Object.keys(res?.data).length) {
+              commit('SET_SILENT_CONVERSATION_MAP', {
+                type: 'setSingleSilentMode',
+                data: {
+                  conversationId: groupId,
+                  type: 'NONE',
+                },
+              });
+            } else {
+              commit('SET_SILENT_CONVERSATION_MAP', {
+                type: 'setSingleSilentMode',
+                data: {
+                  conversationId: groupId,
+                  type: '',
+                },
+              });
+            }
+            resolve(res?.data);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     },
     //设置会话免打扰
     setConversationSilentMode: async ({ commit }, params) => {
@@ -249,17 +275,6 @@ const ConversationStore = {
       } catch (error) {
         console.log('>>>>>>会话设置失败', error);
       }
-
-      // try {
-      //   const result = await setSilentModeForConversation({
-      //     conversationId,
-      //     conversationType,
-      //     silentMode,
-      //   });
-      //   console.log('>>>>>>>设置会话免打扰成功', result);
-      // } catch (error) {
-      //   console.log('>>>>>设置会话免打扰失败', error);
-      // }
     },
     //调整会话已读状态
     setConversationReadStatus: async ({ commit }, params) => {
