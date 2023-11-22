@@ -135,6 +135,20 @@ const emGroups = () => {
         });
     });
   };
+  const modifyGroupInfo = (groupId, params) => {
+    return new Promise((resolve, reject) => {
+      EMClient.modifyGroup({
+        groupId,
+        ...params,
+      })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   /* 群组属性相关 */
   //获取单个用户属性
   const getSingleGroupAttributesFromServer = (groupId, userId) => {
@@ -198,6 +212,7 @@ const emGroups = () => {
     acceptGroupInvite,
     rejectGroupInvite,
     joinPublicGroup,
+    modifyGroupInfo,
     getSingleGroupAttributesFromServer,
     getMultiGroupAttributesFromServer,
     setSingleGroupAttributesFromServer,

@@ -74,8 +74,8 @@
       :value="groupDetail && groupDetail.affiliations_count"
     >
     </u-cell>
-    <u-gap height="10" bgColor="#F1F2F3"></u-gap>
     <u-cell-group :border="false">
+      <u-gap height="10" bgColor="#F1F2F3"></u-gap>
       <u-cell
         @click="entryEditInGroupNickname"
         title="我在本群的昵称"
@@ -90,6 +90,25 @@
         ></u-switch>
       </u-cell>
       <u-cell title="清空聊天记录"></u-cell>
+    </u-cell-group>
+    <u-cell-group :border="false">
+      <u-gap height="10" bgColor="#F1F2F3"></u-gap>
+      <u-cell
+        v-if="groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]"
+        @click="entryEditInGroupName"
+        title="群名称"
+        isLink
+        :value="(groupDetail && groupDetail.name) || '暂无群组名称'"
+      ></u-cell>
+      <u-cell
+        v-if="
+          groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.ADMIN] ||
+          groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]
+        "
+        @click="entryEditInGroupDescription"
+        title="群描述"
+        isLink
+      ></u-cell>
     </u-cell-group>
     <!-- more -->
     <u-action-sheet
@@ -137,6 +156,8 @@ const ACTIONS_TYPE = {
 export default {
   data() {
     return {
+      GROUP_ROLE_TYPE,
+      GROUP_ROLE_TYPE_NAME,
       isShowMoreActionSheet: false,
       actions: [
         {
@@ -170,9 +191,6 @@ export default {
   onLoad(option) {
     if (option?.groupId) {
       this.groupId = option.groupId;
-      this.fetchGroupDetail();
-      this.fetchInGroupNickname();
-      this.getGroupSilentStatus();
     }
   },
   computed: {
@@ -185,8 +203,14 @@ export default {
         : GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.MEMBER];
     },
   },
-  mounted() {
+  onShow() {
     this.initActions();
+    //TODO 优化减少接口的调用
+    if (this.groupId) {
+      this.fetchGroupDetail();
+      this.fetchInGroupNickname();
+      this.getGroupSilentStatus();
+    }
   },
   methods: {
     initActions() {
@@ -199,6 +223,7 @@ export default {
         this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]
           ? ACTIONS_TYPE.DESTORY_GROUP
           : ACTIONS_TYPE.EXIT_GROUP;
+      //TODO 待新增如果为群组还需插入一个转译群主的功能
     },
     async fetchGroupDetail() {
       const groupId = this.groupId;
@@ -327,6 +352,23 @@ export default {
     entryEditInGroupNickname() {
       uni.navigateTo({
         url: `../groupDetail/editGroupAttributes?groupId=${this.groupId}&inGroupNickname=${this.inGroupNickname}`,
+      });
+    },
+    //进入群组名称修改页面
+    entryEditInGroupName() {
+      const groupId = this.groupId;
+      const groupName = this.groupDetail?.name || '';
+      console.log('this.groupDetail?', groupName);
+      uni.navigateTo({
+        url: `../groupDetail/editGroupName?groupId=${groupId}&groupName=${groupName}`,
+      });
+    },
+    //进入群组详情修改页面
+    entryEditInGroupDescription() {
+      const groupId = this.groupId;
+      const groupDescription = this.groupDetail?.description || '';
+      uni.navigateTo({
+        url: `../groupDetail/editGroupDescription?groupId=${groupId}&groupDescription=${groupDescription}`,
       });
     },
   },

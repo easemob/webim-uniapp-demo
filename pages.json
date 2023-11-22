@@ -52,6 +52,20 @@
       }
     },
     {
+      "path": "pages/groupDetail/editGroupName",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/groupDetail/editGroupDescription",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/mine/myProfile",
       "style": {
         "navigationStyle": "custom",
