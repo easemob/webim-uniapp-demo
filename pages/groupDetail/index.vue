@@ -229,7 +229,6 @@ export default {
       const groupId = this.groupId;
       try {
         const result = await getGroupInfosFromServer(groupId);
-        console.log('>>>>>获取群组详情', result);
         result.length && (this.groupDetail = { ...result[0] });
         this.$store.commit('UPDATE_JOINED_GROUP_DATA', {
           groupDetail: result[0],
@@ -246,7 +245,6 @@ export default {
           groupId,
           userId
         );
-        console.log('>>>>>获取群成员昵称', result);
         if (result?.data?.nickName) {
           this.inGroupNickname = result.data.nickName;
         }
@@ -260,12 +258,10 @@ export default {
         groupId: this.groupId,
         chatType: CHAT_TYPE.GROUP_CHAT,
       };
-      console.log('>>>>获取单个会话免打扰状态', params);
       try {
         const res = await this.$store.dispatch('fetchSilentConversation', {
           ...params,
         });
-        console.log('>>>>>>获取到的值', res);
         if (Object.keys(res).length && res.type === 'NONE') {
           this.groupSilentStatus = true;
         } else {

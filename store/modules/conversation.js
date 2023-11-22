@@ -35,7 +35,6 @@ const ConversationStore = {
       }
       if (type === 'setSingleSilentMode') {
         const { conversationId, type } = data;
-        console.log('>>>>>>免打扰设置type', type);
         if (!state.silentConversationMap[conversationId]) {
           Vue.set(state.silentConversationMap, conversationId, {});
         }
@@ -343,7 +342,6 @@ const ConversationStore = {
         },
         0
       );
-      console.log('pinConversationListUnReadNum', pinConversationListUnReadNum);
       return pinConversationListUnReadNum + conversationListUnReadNum;
     },
   },

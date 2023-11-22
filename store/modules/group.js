@@ -33,13 +33,11 @@ const GroupStore = {
     UPDATE_JOINED_GROUP_DATA: (state, payload) => {
       const { groupDetail } = payload;
       const convertGroupDetails = convertGroupDetailsToGroupList(groupDetail);
-      console.log('convertGroupDetails', convertGroupDetails);
       const index = state.joinedGroupList.findIndex(
         (item) => item.groupId === convertGroupDetails.groupId
       );
       const oldGroupData = state.joinedGroupList[index];
       const newGroupDetails = { ...oldGroupData, ...convertGroupDetails };
-      console.log('newGroupDetails', newGroupDetails);
       state.joinedGroupList[index] = newGroupDetails;
     },
   },
