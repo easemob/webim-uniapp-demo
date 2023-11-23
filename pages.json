@@ -38,6 +38,13 @@
       }
     },
     {
+      "path": "pages/groupMembers/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/groupDetail/index",
       "style": {
         "navigationStyle": "custom",

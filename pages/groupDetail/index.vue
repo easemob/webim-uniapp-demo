@@ -68,6 +68,7 @@
     </view>
     <!-- 群人数 -->
     <u-cell
+      @click="entryGroupMembers"
       :border="false"
       title="群成员"
       isLink
@@ -138,6 +139,7 @@
 <script>
 import { EMClient } from '@/EaseIM';
 import { emGroups } from '@/EaseIM/emApis';
+import { GROUP_MEMEBERS_SHOW_TYPE } from '@/constant';
 import {
   CHAT_TYPE,
   GROUP_ROLE_TYPE,
@@ -152,6 +154,7 @@ const {
 const ACTIONS_TYPE = {
   EXIT_GROUP: 1,
   DESTORY_GROUP: 2,
+  TRANSFER_OWNER: 3,
 };
 export default {
   data() {
@@ -192,6 +195,7 @@ export default {
     if (option?.groupId) {
       this.groupId = option.groupId;
     }
+    this.initActions();
   },
   computed: {
     groupRole() {
@@ -204,7 +208,6 @@ export default {
     },
   },
   onShow() {
-    this.initActions();
     //TODO 优化减少接口的调用
     if (this.groupId) {
       this.fetchGroupDetail();
@@ -224,6 +227,14 @@ export default {
           ? ACTIONS_TYPE.DESTORY_GROUP
           : ACTIONS_TYPE.EXIT_GROUP;
       //TODO 待新增如果为群组还需插入一个转译群主的功能
+      if (this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]) {
+        this.actions.push({
+          type: ACTIONS_TYPE.TRANSFER_OWNER,
+          name: '转让群主',
+          color: '#009EFF',
+          fontSize: '16',
+        });
+      }
     },
     async fetchGroupDetail() {
       const groupId = this.groupId;
@@ -251,6 +262,14 @@ export default {
       } catch (error) {
         console.log('>>>>获取群成员昵称失败', error);
       }
+    },
+    //进入群组成员页面
+    entryGroupMembers() {
+      const groupId = this.groupId;
+      const groupMembersShowType = GROUP_MEMEBERS_SHOW_TYPE.HANDLER_MEMBER;
+      uni.navigateTo({
+        url: `../groupMembers/index?groupId=${groupId}&groupMembersShowType=${groupMembersShowType}`,
+      });
     },
     //获取免打扰状态
     async getGroupSilentStatus() {
@@ -294,7 +313,15 @@ export default {
     },
     onSelectClick(item) {
       console.log('>>>>>>>已选择', item);
-      this.isShowCofirmModal = true;
+      if (item.type === ACTIONS_TYPE.TRANSFER_OWNER) {
+        console.log('>>>>>>跳转至转让群主');
+      }
+      if (
+        item.type === ACTIONS_TYPE.DESTORY_GROUP ||
+        item.type === ACTIONS_TYPE.EXIT_GROUP
+      ) {
+        this.isShowCofirmModal = true;
+      }
     },
     //确认模态框
     onConfirmModal() {

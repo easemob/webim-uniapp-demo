@@ -149,6 +149,21 @@ const emGroups = () => {
         });
     });
   };
+  //分页获取群组列表
+  const listGroupMembersFromServer = (params) => {
+    const { pageNum = 1, pageSize = 100, groupId } = params;
+    return new Promise((resolve, reject) => {
+      EMClient.listGroupMembers({
+        ...params,
+      })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   /* 群组属性相关 */
   //获取单个用户属性
   const getSingleGroupAttributesFromServer = (groupId, userId) => {
@@ -187,7 +202,7 @@ const emGroups = () => {
   const getMultiGroupAttributesFromServer = (params) => {
     const { groupId, userIds, keys } = params;
     return new Promise((resolve, reject) => {
-      EMClient.setGroupAttributes({
+      EMClient.getGroupMembersAttributes({
         groupId,
         userIds,
         keys,
@@ -213,6 +228,7 @@ const emGroups = () => {
     rejectGroupInvite,
     joinPublicGroup,
     modifyGroupInfo,
+    listGroupMembersFromServer,
     getSingleGroupAttributesFromServer,
     getMultiGroupAttributesFromServer,
     setSingleGroupAttributesFromServer,

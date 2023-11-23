@@ -1,6 +1,9 @@
-import { emGroups } from '@/EaseIM/emApis';
+import Vue from 'vue';
+import { emUserInfos, emGroups } from '@/EaseIM/emApis';
 import { convertGroupDetailsToGroupList } from '@/EaseIM/utils';
-const { fetchJoinedGroupListFromServer } = emGroups();
+const { fetchOtherInfoFromServer } = emUserInfos();
+const { getMultiGroupAttributesFromServer, fetchJoinedGroupListFromServer } =
+  emGroups();
 const GroupStore = {
   state: {
     pageNum: 0,
@@ -8,6 +11,7 @@ const GroupStore = {
     isLastPageStatus: false,
     joinedGroupList: [],
     joinedGroupTotal: 0,
+    groupMembersProfile: {},
   },
   mutations: {
     SET_JOINEND_GROUP_LIST: (state, payload) => {
@@ -40,6 +44,16 @@ const GroupStore = {
       const newGroupDetails = { ...oldGroupData, ...convertGroupDetails };
       state.joinedGroupList[index] = newGroupDetails;
     },
+    SET_GROUP_MEMBERS_PROFILE: (state, payload) => {
+      const { groupId, groupMembersProfile } = payload;
+      if (!state.groupMembersProfile[groupId]) {
+        state.groupMembersProfile[groupId] = {};
+      }
+      Vue.set(state.groupMembersProfile, groupId, {
+        ...state.groupMembersProfile[groupId],
+        ...groupMembersProfile,
+      });
+    },
   },
   actions: {
     fetchJoinedGroupList: async ({ state, commit }) => {
@@ -62,11 +76,30 @@ const GroupStore = {
         });
       }
     },
+    fetchGroupMembersProfile: async ({ commit }, params) => {
+      const { groupId, memberList } = params;
+      //获取对应用户属性
+      const profileRes = await fetchOtherInfoFromServer(memberList);
+      //获取对应群成员属性
+      const groupAttributesRes = await getMultiGroupAttributesFromServer({
+        groupId,
+        userIds: memberList,
+        keys: ['nickName'],
+      });
+      commit('SET_GROUP_MEMBERS_PROFILE', {
+        groupId,
+        groupMembersProfile: Object.assign(
+          { ...groupAttributesRes },
+          { ...profileRes }
+        ),
+      });
+    },
   },
   getters: {
     joinedGroupList: (state) => state.joinedGroupList,
     joinedGroupTotal: (state) => state.joinedGroupTotal,
     isLastPageStatus: (state) => state.isLastPageStatus,
+    groupMembersProfile: (state) => state.groupMembersProfile,
   },
 };
 export default GroupStore;
