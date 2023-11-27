@@ -207,9 +207,12 @@ export default {
       return this.$store.state.ContactsStore.blockUserList;
     },
     newInviteMsgNum() {
-      return this.$store.getters.getReceiveInviteList.filter(
-        (inform) => !inform.isHandled
-      ).length;
+      return (
+        this.$store.getters.getReceiveInviteList?.length &&
+        this.$store.getters.getReceiveInviteList.filter(
+          (inform) => !inform.isHandled
+        ).length
+      );
     },
     //群组总数
     joinedGroupTotal() {

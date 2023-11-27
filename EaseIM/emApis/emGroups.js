@@ -149,6 +149,20 @@ const emGroups = () => {
         });
     });
   };
+  const removeGroupMembers = (groupId, users) => {
+    return new Promise((resolve, reject) => {
+      EMClient.removeGroupMembers({
+        groupId,
+        users,
+      })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   //分页获取群组列表
   const listGroupMembersFromServer = (params) => {
     const { pageNum = 1, pageSize = 100, groupId } = params;
@@ -228,6 +242,7 @@ const emGroups = () => {
     rejectGroupInvite,
     joinPublicGroup,
     modifyGroupInfo,
+    removeGroupMembers,
     listGroupMembersFromServer,
     getSingleGroupAttributesFromServer,
     getMultiGroupAttributesFromServer,

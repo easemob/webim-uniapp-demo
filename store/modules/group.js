@@ -2,8 +2,11 @@ import Vue from 'vue';
 import { emUserInfos, emGroups } from '@/EaseIM/emApis';
 import { convertGroupDetailsToGroupList } from '@/EaseIM/utils';
 const { fetchOtherInfoFromServer } = emUserInfos();
-const { getMultiGroupAttributesFromServer, fetchJoinedGroupListFromServer } =
-  emGroups();
+const {
+  getMultiGroupAttributesFromServer,
+  fetchJoinedGroupListFromServer,
+  removeGroupMembers,
+} = emGroups();
 const GroupStore = {
   state: {
     pageNum: 0,
@@ -47,12 +50,20 @@ const GroupStore = {
     SET_GROUP_MEMBERS_PROFILE: (state, payload) => {
       const { groupId, groupMembersProfile } = payload;
       if (!state.groupMembersProfile[groupId]) {
-        state.groupMembersProfile[groupId] = {};
+        Vue.set(state.groupMembersProfile, groupId, {});
       }
-      Vue.set(state.groupMembersProfile, groupId, {
+      state.groupMembersProfile[groupId] = {
         ...state.groupMembersProfile[groupId],
         ...groupMembersProfile,
-      });
+      };
+    },
+    DELETE_GROUP_MEMBERS_PROFILE: (state, payload) => {
+      const { groupId, memberList } = payload;
+      if (state.groupMembersProfile[groupId]) {
+        memberList.forEach((userId) => {
+          Vue.delete(state.groupMembersProfile[groupId], userId);
+        });
+      }
     },
   },
   actions: {
@@ -92,6 +103,22 @@ const GroupStore = {
           { ...groupAttributesRes },
           { ...profileRes }
         ),
+      });
+    },
+    deleteInGroupMembers: async ({ commit }, params) => {
+      const { groupId, memberList } = params;
+      return new Promise((resolve, reject) => {
+        removeGroupMembers(groupId, memberList)
+          .then((res) => {
+            resolve(res);
+            commit('DELETE_GROUP_MEMBERS_PROFILE', {
+              groupId,
+              memberList,
+            });
+          })
+          .catch((error) => {
+            reject(error);
+          });
       });
     },
   },

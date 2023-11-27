@@ -266,9 +266,10 @@ export default {
     //进入群组成员页面
     entryGroupMembers() {
       const groupId = this.groupId;
-      const groupMembersShowType = GROUP_MEMEBERS_SHOW_TYPE.HANDLER_MEMBER;
+      const groupMembersShowType = GROUP_MEMEBERS_SHOW_TYPE.READ_ONLY;
+      const groupRole = this.groupRole;
       uni.navigateTo({
-        url: `../groupMembers/index?groupId=${groupId}&groupMembersShowType=${groupMembersShowType}`,
+        url: `../groupMembers/index?groupId=${groupId}&groupRole=${groupRole}&groupMembersShowType=${groupMembersShowType}`,
       });
     },
     //获取免打扰状态

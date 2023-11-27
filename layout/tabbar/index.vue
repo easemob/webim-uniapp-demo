@@ -105,9 +105,12 @@ export default {
       ).length;
     },
     newInviteMsgNum() {
-      return this.$store.getters.getReceiveInviteList.filter(
-        (inform) => !inform.isHandled
-      ).length;
+      return (
+        this.$store.getters.getReceiveInviteList?.length &&
+        this.$store.getters.getReceiveInviteList.filter(
+          (inform) => !inform.isHandled
+        ).length
+      );
     },
     //会话未读数
     allConversationUnReadNum() {
