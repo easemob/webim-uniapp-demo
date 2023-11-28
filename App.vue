@@ -166,7 +166,9 @@ export default {
     //获取加入的群组列表
     async fetchJoinedGroupList() {
       //获取群组列表
-      await this.$store.dispatch('fetchJoinedGroupList');
+      await this.$store.dispatch('fetchJoinedGroupList', {
+        isInit: true,
+      });
     },
   },
 };

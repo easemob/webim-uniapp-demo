@@ -195,7 +195,6 @@ export default {
     if (option?.groupId) {
       this.groupId = option.groupId;
     }
-    this.initActions();
   },
   computed: {
     groupRole() {
@@ -207,6 +206,7 @@ export default {
         : GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.MEMBER];
     },
   },
+
   onShow() {
     //TODO 优化减少接口的调用
     if (this.groupId) {
@@ -214,26 +214,33 @@ export default {
       this.fetchInGroupNickname();
       this.getGroupSilentStatus();
     }
+    this.initActions();
+    console.log('>>>当前role', this.groupRole);
   },
   methods: {
     initActions() {
-      this.actions[0].name =
-        this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]
-          ? '解散群组'
-          : '退出群组';
+      const _index = this.actions.findIndex(
+        (item) => item.type === ACTIONS_TYPE.TRANSFER_OWNER
+      );
+      console.log('_index', _index);
 
-      this.actions[0].type =
-        this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]
-          ? ACTIONS_TYPE.DESTORY_GROUP
-          : ACTIONS_TYPE.EXIT_GROUP;
-      //TODO 待新增如果为群组还需插入一个转译群主的功能
       if (this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]) {
-        this.actions.push({
-          type: ACTIONS_TYPE.TRANSFER_OWNER,
-          name: '转让群主',
-          color: '#009EFF',
-          fontSize: '16',
-        });
+        this.actions[0].name = '解散群组';
+        this.actions[0].type = ACTIONS_TYPE.DESTORY_GROUP;
+        if (_index === -1) {
+          this.actions.push({
+            type: ACTIONS_TYPE.TRANSFER_OWNER,
+            name: '转让群主',
+            color: '#009EFF',
+            fontSize: '16',
+          });
+        }
+      } else {
+        this.actions[0].name = '退出群组';
+        this.actions[0].type = ACTIONS_TYPE.EXIT_GROUP;
+        if (_index > -1) {
+          this.actions.splice(_index, 1);
+        }
       }
     },
     async fetchGroupDetail() {
@@ -316,6 +323,12 @@ export default {
       console.log('>>>>>>>已选择', item);
       if (item.type === ACTIONS_TYPE.TRANSFER_OWNER) {
         console.log('>>>>>>跳转至转让群主');
+        const groupId = this.groupId;
+        const groupMembersShowType = GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER;
+        const groupRole = this.groupRole;
+        uni.navigateTo({
+          url: `../groupMembers/index?groupId=${groupId}&groupRole=${groupRole}&groupMembersShowType=${groupMembersShowType}`,
+        });
       }
       if (
         item.type === ACTIONS_TYPE.DESTORY_GROUP ||

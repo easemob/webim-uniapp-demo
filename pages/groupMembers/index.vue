@@ -58,44 +58,100 @@
           >删除（{{ checkboxValue.length }}）</text
         >
       </template>
+      <!-- 转让群成员right -->
+      <template
+        v-if="
+          groupMembersShowType === GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER &&
+          memberPermissionCheck
+        "
+      >
+        <text
+          slot="right"
+          @click="setGroupMembersModalContent"
+          :class="[radiovalue ? 'edit_save_btn' : 'edit_save_btn_gray']"
+          >确认</text
+        >
+      </template>
     </u-navbar>
     <!-- 群成员list -->
     <view>
       <u-list @scrolltolower="scrolltolower">
-        <u-checkbox-group
-          v-model="checkboxValue"
-          placement="column"
-          @change="checkboxChange"
+        <!-- 单选框模式 -->
+        <template
+          v-if="groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER"
         >
-          <u-list-item
-            v-for="(groupMemberItem, key, index) in groupMembersProfileData"
-            :key="key"
+          <u-radio-group
+            v-model="radiovalue"
+            placement="column"
+            @change="radioChange"
           >
-            <u-cell>
-              <u-checkbox
-                v-show="isShowCheckbox"
-                slot="icon"
-                :name="key"
-                :disabled="key === loginUserId || key === getGroupOwner"
-              >
-              </u-checkbox>
-              <u-avatar
-                slot="icon"
-                shape="square"
-                size="40"
-                :src="groupMembersAvatarUrl(groupMemberItem)"
-                customStyle="margin: -3px 5px -3px 0"
-              ></u-avatar>
-              <view slot="title">
-                <u--text
-                  :lines="1"
-                  :text="groupMembersNickname(groupMemberItem, key)"
-                  iconStyle="margin-left: 2px;"
-                ></u--text>
-              </view>
-            </u-cell>
-          </u-list-item>
-        </u-checkbox-group>
+            <u-list-item
+              v-for="(groupMemberItem, key, index) in groupMembersProfileData"
+              :key="key"
+            >
+              <u-cell>
+                <u-radio
+                  slot="icon"
+                  v-show="isShowRadio"
+                  shape="square"
+                  :name="key"
+                  :disabled="key === loginUserId || key === getGroupOwner"
+                >
+                </u-radio>
+                <u-avatar
+                  slot="icon"
+                  shape="square"
+                  size="40"
+                  :src="groupMembersAvatarUrl(groupMemberItem)"
+                  customStyle="margin: -3px 5px -3px 0"
+                ></u-avatar>
+                <view slot="title">
+                  <u--text
+                    :lines="1"
+                    :text="groupMembersNickname(groupMemberItem, key)"
+                    iconStyle="margin-left: 2px;"
+                  ></u--text>
+                </view>
+              </u-cell>
+            </u-list-item>
+          </u-radio-group>
+        </template>
+        <!-- 复选框模式 -->
+        <template v-else>
+          <u-checkbox-group
+            v-model="checkboxValue"
+            placement="column"
+            @change="checkboxChange"
+          >
+            <u-list-item
+              v-for="(groupMemberItem, key, index) in groupMembersProfileData"
+              :key="key"
+            >
+              <u-cell>
+                <u-checkbox
+                  v-show="isShowCheckbox"
+                  slot="icon"
+                  :name="key"
+                  :disabled="key === loginUserId || key === getGroupOwner"
+                >
+                </u-checkbox>
+                <u-avatar
+                  slot="icon"
+                  shape="square"
+                  size="40"
+                  :src="groupMembersAvatarUrl(groupMemberItem)"
+                  customStyle="margin: -3px 5px -3px 0"
+                ></u-avatar>
+                <view slot="title">
+                  <u--text
+                    :lines="1"
+                    :text="groupMembersNickname(groupMemberItem, key)"
+                    iconStyle="margin-left: 2px;"
+                  ></u--text>
+                </view>
+              </u-cell>
+            </u-list-item> </u-checkbox-group
+        ></template>
       </u-list>
     </view>
     <!-- modal -->
@@ -129,6 +185,9 @@ export default {
       groupId: '',
       groupMembersShowType: GROUP_MEMEBERS_SHOW_TYPE.READ_ONLY,
       groupRole: 0,
+      /* radio */
+      isShowRadio: false,
+      radiovalue: '',
       /* checkbox */
       isShowCheckbox: false,
       checkboxValue: [],
@@ -142,6 +201,11 @@ export default {
     this.groupRole = options.groupRole * 1;
     this.groupMembersShowType = options.groupMembersShowType * 1;
     console.log('>>>>groupMembersProfileList', this.groupMembersProfileData);
+    if (
+      options.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER
+    ) {
+      this.isShowRadio = true;
+    }
     if (!this.groupMembersProfileData) {
       this.fetchInGroupMembers();
     }
@@ -239,7 +303,12 @@ export default {
         // this.$store.dispatch('fetchGroupMembersProfile', params);
       } catch (error) {}
     },
+    radioChange(newVal) {
+      console.log('>>>>>>>>radioChange', newVal);
+      this.radiovalue = newVal;
+    },
     checkboxChange(newList) {
+      console.log('????????', newList);
       this.checkboxValue = [...newList];
     },
     //操作群组成员
@@ -281,6 +350,13 @@ export default {
           this.groupMembersModalContent = `确认删除“${content}”等${this.checkboxValue.length}位群成员？`;
         }
       }
+      if (
+        this.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER
+      ) {
+        let content = '';
+        content = this.getMemberGroupNickname(this.radiovalue);
+        this.groupMembersModalContent = `确认转让群主身份给“${content}”？`;
+      }
       this.$nextTick(() => {
         this.isShowGroupMembersModal = true;
       });
@@ -293,11 +369,22 @@ export default {
         this.groupMembersShowType = GROUP_MEMEBERS_SHOW_TYPE.READ_ONLY;
         this.isShowGroupMembersModal = false;
       }
+      if (
+        this.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER
+      ) {
+        this.radiovalue = '';
+        this.isShowGroupMembersModal = false;
+      }
     },
     //modal 点击确认
     onGroupMembersModalConfirm() {
       if (this.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.DEL_MEMBER) {
         this.actionDeleteInGroupMembers();
+      }
+      if (
+        this.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER
+      ) {
+        this.actionTransferGroupOwner();
       }
     },
     //获取用户对应群组昵称
@@ -310,10 +397,10 @@ export default {
       return nickname;
     },
     //执行删除群组成员
-    actionDeleteInGroupMembers() {
+    async actionDeleteInGroupMembers() {
       const memberList = this.checkboxValue;
       try {
-        this.$store.dispatch('deleteInGroupMembers', {
+        await this.$store.dispatch('deleteInGroupMembers', {
           groupId: this.groupId,
           memberList,
         });
@@ -335,7 +422,31 @@ export default {
         this.checkboxValue = [];
       }
     },
-
+    //执行转让群组功能
+    async actionTransferGroupOwner() {
+      if (!this.groupId && !this.radiovalue) return;
+      try {
+        await this.$store.dispatch('transferGroupOwners', {
+          groupId: this.groupId,
+          newOwner: this.radiovalue,
+        });
+        uni.showToast({
+          icon: 'none',
+          title: '已转让',
+          duration: 2000,
+        });
+        setTimeout(() => {
+          uni.navigateBack();
+        }, 1000);
+      } catch (error) {
+        console.log('>>>>转让失败', error);
+        uni.showToast({
+          icon: 'none',
+          title: '转让失败，请重新操作',
+          duration: 2000,
+        });
+      }
+    },
     scrolltolower() {},
   },
 };

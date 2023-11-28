@@ -96,14 +96,14 @@ export default {
         ? `群聊（${this.joinedGroupTotal}）`
         : '群聊';
     },
+    groupPageParams() {
+      return this.$store.getters.groupPageParams;
+    },
     joinedGroupTotal() {
       return this.$store.getters.joinedGroupTotal;
     },
     joinedGroupList() {
       return this.$store.getters.joinedGroupList;
-    },
-    isLastPageStatus() {
-      return this.$store.getters.isLastPageStatus;
     },
   },
   methods: {
@@ -148,16 +148,23 @@ export default {
     //触底函数
     //TODO 处理下拉新的一页群组
     async scrolltolower() {
-      console.log('>>>>>>触底');
-      if (this.isLastPageStatus) {
-        // uni.showToast({
-        //   title: '已经是最后一页了',
-        //   icon: 'none',
-        //   duration: 2000,
-        // });
-        return;
+      console.log('>>>>>>触底', this.groupPageParams);
+      const { pageSize, pageNum } = this.groupPageParams;
+      //当前已加入的群组数小于默认单页数量，不需要加载更多。
+      if (this.joinedGroupList.length < pageSize) return;
+      console.log('>>>>>执行分页');
+      this.$store.commit('UPDATE_PAGE_PARAMS', { pageNum: pageNum + 1 });
+      try {
+        const res = await this.$store.dispatch('fetchJoinedGroupList', {
+          pageNum: this.groupPageParams.pageNum,
+          pageSize: pageSize,
+        });
+      } catch (error) {
+        uni.showToast({
+          icon: 'none',
+          title: '群组列表获取失败请稍后重试！',
+        });
       }
-      this.$store.dispatch('fetchJoinedGroupList');
     },
   },
 };

@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { GROUP_ROLE_TYPE_NAME } from '@/EaseIM/constant';
 import { emUserInfos, emGroups } from '@/EaseIM/emApis';
 import { convertGroupDetailsToGroupList } from '@/EaseIM/utils';
 const { fetchOtherInfoFromServer } = emUserInfos();
@@ -6,27 +7,35 @@ const {
   getMultiGroupAttributesFromServer,
   fetchJoinedGroupListFromServer,
   removeGroupMembers,
+  changeGroupOwner,
 } = emGroups();
 const GroupStore = {
   state: {
+    /* 默认存储在state中的分页参数 */
     pageNum: 0,
     pageSize: 20,
-    isLastPageStatus: false,
     joinedGroupList: [],
     joinedGroupTotal: 0,
     groupMembersProfile: {},
   },
   mutations: {
+    UPDATE_PAGE_PARAMS: (state, payload) => {
+      if (payload.pageNum !== undefined) {
+        state.pageNum = payload.pageNum;
+      }
+      if (state.pageSize !== undefined) {
+        state.pageSize = state.pageSize;
+      }
+    },
     SET_JOINEND_GROUP_LIST: (state, payload) => {
-      const { groupList, joinedGroupTotal } = payload;
-      state.joinedGroupList = [...state.joinedGroupList, ...groupList];
-      if (!state.joinedGroupTotal) {
-        state.joinedGroupTotal = joinedGroupTotal;
+      const { isInit, groupList, joinedGroupTotal } = payload;
+      if (isInit) {
+        state.joinedGroupList = [...groupList];
+        state.pageNum = 0;
+      } else {
+        state.joinedGroupList = [...state.joinedGroupList, ...groupList];
       }
-      if (groupList.length < state.pageSize) {
-        state.isLastPageStatus = true;
-      }
-      state.pageNum = state.pageNum + 1;
+      state.joinedGroupTotal = joinedGroupTotal;
     },
     ADD_NEW_JOINEND_GROUP: (state, group) => {
       state.joinedGroupList.unshift(group);
@@ -65,27 +74,45 @@ const GroupStore = {
         });
       }
     },
+    TRANSFER_GROUP_OWNER: (state, payload) => {
+      const { groupId, newOwner } = payload;
+      const soureData = state.joinedGroupList.find(
+        (group) => group.groupId === groupId
+      );
+      const _index = state.joinedGroupList.findIndex(
+        (group) => group.groupId === groupId
+      );
+      if (soureData && _index > -1) {
+        soureData.role = GROUP_ROLE_TYPE_NAME.MEMBER;
+        soureData.owner = newOwner;
+      }
+      state.joinedGroupList.splice(_index, 1, soureData);
+    },
   },
   actions: {
-    fetchJoinedGroupList: async ({ state, commit }) => {
-      try {
-        console.log('获取群组列表————————', state.pageNum, state.pageSize);
-        const joinedGroupList = await fetchJoinedGroupListFromServer(
-          state.pageNum,
-          state.pageSize
-        );
-        const { total, entities } = joinedGroupList;
-        commit('SET_JOINEND_GROUP_LIST', {
-          groupList: [...entities],
-          joinedGroupTotal: total,
-        });
-      } catch (error) {
-        console.log('>>>>>远端群组列表拉取失败', error);
-        uni.showToast({
-          title: '远端群组列表拉取失败',
-          icon: 'none',
-        });
-      }
+    fetchJoinedGroupList: async ({ state, commit }, params) => {
+      const { isInit } = params;
+      const param = {
+        pageNum: isInit ? 0 : params.pageNum,
+        pageSize: isInit ? 20 : params.pageSize,
+      };
+      return new Promise((resolve, reject) => {
+        fetchJoinedGroupListFromServer(param.pageNum, param.pageSize)
+          .then((joinedGroupList) => {
+            const { total, entities } = joinedGroupList;
+            console.log('total, entities ', total, entities);
+            commit('SET_JOINEND_GROUP_LIST', {
+              isInit,
+              groupList: [...entities],
+              joinedGroupTotal: total,
+            });
+            resolve(joinedGroupList);
+          })
+          .catch((error) => {
+            console.log('>>>>>远端群组列表拉取失败', error);
+            reject(error);
+          });
+      });
     },
     fetchGroupMembersProfile: async ({ commit }, params) => {
       const { groupId, memberList } = params;
@@ -121,11 +148,29 @@ const GroupStore = {
           });
       });
     },
+    transferGroupOwners: async ({ commit }, params) => {
+      const { groupId, newOwner } = params;
+      return new Promise((resolve, reject) => {
+        changeGroupOwner(groupId, newOwner)
+          .then((res) => {
+            commit('TRANSFER_GROUP_OWNER', { groupId, newOwner });
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
   },
   getters: {
+    groupPageParams: (state) => {
+      return {
+        pageNum: state.pageNum,
+        pageSize: state.pageSize,
+      };
+    },
     joinedGroupList: (state) => state.joinedGroupList,
     joinedGroupTotal: (state) => state.joinedGroupTotal,
-    isLastPageStatus: (state) => state.isLastPageStatus,
     groupMembersProfile: (state) => state.groupMembersProfile,
   },
 };

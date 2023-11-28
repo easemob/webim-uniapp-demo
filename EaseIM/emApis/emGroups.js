@@ -163,6 +163,17 @@ const emGroups = () => {
         });
     });
   };
+  const changeGroupOwner = (groupId, newOwner) => {
+    return new Promise((resolve, reject) => {
+      EMClient.changeGroupOwner({ groupId, newOwner })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   //分页获取群组列表
   const listGroupMembersFromServer = (params) => {
     const { pageNum = 1, pageSize = 100, groupId } = params;
@@ -242,6 +253,7 @@ const emGroups = () => {
     rejectGroupInvite,
     joinPublicGroup,
     modifyGroupInfo,
+    changeGroupOwner,
     removeGroupMembers,
     listGroupMembersFromServer,
     getSingleGroupAttributesFromServer,

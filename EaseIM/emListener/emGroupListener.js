@@ -60,6 +60,14 @@ export const emGroupListener = (callback, listenerEventName) => {
           break;
         // 群组所有者和管理员拉用户进群时，无需用户确认时会触发该回调。被拉进群的用户会收到该回调。
         case 'directJoined':
+          //强制被拉入群，更新加入的群组列表
+          console.log('>>>>被拉入群组当中。');
+          setTimeout(() => {
+            store.dispatch('fetchJoinedGroupList', {
+              isInit: true,
+            });
+          }, 1000);
+
           break;
         // 群成员主动退出群组。除了退群的成员，其他群成员会收到该回调。
         case 'memberAbsence':
