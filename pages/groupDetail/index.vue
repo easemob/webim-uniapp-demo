@@ -30,7 +30,7 @@
           lineHeigth="28"
           :bold="true"
           size="20"
-          :text="(groupDetail && groupDetail.name) || '暂无群组名称'"
+          :text="(groupDetail && groupDetail.groupName) || '暂无群组名称'"
         ></u--text>
       </view>
       <!-- 群描述 -->
@@ -48,7 +48,7 @@
       <view>
         <u--text
           class="group_detail_container_header_groupid"
-          :text="`群组ID：${groupDetail && groupDetail.id}`"
+          :text="`群组ID：${groupDetail && groupDetail.groupId}`"
           size="12"
           color="#ACB4B9"
           suffixIcon="/static/images/new_ui/mine/copy_icon.png"
@@ -72,7 +72,7 @@
       :border="false"
       title="群成员"
       isLink
-      :value="groupDetail && groupDetail.affiliations_count"
+      :value="groupDetail && groupDetail.affiliationsCount"
     >
     </u-cell>
     <u-cell-group :border="false">
@@ -171,7 +171,7 @@ export default {
         },
       ],
       groupId: '',
-      groupDetail: {},
+      //   groupDetail: {},
       inGroupNickname: '',
       groupSilentStatus: false,
       isShowCofirmModal: false,
@@ -204,6 +204,12 @@ export default {
       return group?.role
         ? GROUP_ROLE_TYPE[group.role]
         : GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.MEMBER];
+    },
+    groupDetail() {
+      const group = this.$store.getters.joinedGroupList.find(
+        (item) => item.groupId === this.groupId
+      );
+      return group;
     },
   },
 
@@ -245,11 +251,14 @@ export default {
     },
     async fetchGroupDetail() {
       const groupId = this.groupId;
+      let data = {};
       try {
         const result = await getGroupInfosFromServer(groupId);
-        result.length && (this.groupDetail = { ...result[0] });
+        data = {
+          ...result[0],
+        };
         this.$store.commit('UPDATE_JOINED_GROUP_DATA', {
-          groupDetail: result[0],
+          groupDetail: data,
         });
       } catch (error) {
         console.log('>>>>群详情获取失败', error);

@@ -49,12 +49,12 @@ const GroupStore = {
     UPDATE_JOINED_GROUP_DATA: (state, payload) => {
       const { groupDetail } = payload;
       const convertGroupDetails = convertGroupDetailsToGroupList(groupDetail);
-      const index = state.joinedGroupList.findIndex(
+      const _index = state.joinedGroupList.findIndex(
         (item) => item.groupId === convertGroupDetails.groupId
       );
-      const oldGroupData = state.joinedGroupList[index];
-      const newGroupDetails = { ...oldGroupData, ...convertGroupDetails };
-      state.joinedGroupList[index] = newGroupDetails;
+      const oldGroupData = state.joinedGroupList[_index];
+      const newGroupDetails = Object.assign(oldGroupData, convertGroupDetails);
+      state.joinedGroupList.splice(_index, 1, newGroupDetails);
     },
     SET_GROUP_MEMBERS_PROFILE: (state, payload) => {
       const { groupId, groupMembersProfile } = payload;
@@ -88,6 +88,23 @@ const GroupStore = {
       }
       state.joinedGroupList.splice(_index, 1, soureData);
     },
+    CHANGE_AFFILIATIONS_COUNT: (state, payload) => {
+      const { groupId, count } = payload;
+      const soureData = state.joinedGroupList.find(
+        (group) => group.groupId === groupId
+      );
+      const _index = state.joinedGroupList.findIndex(
+        (group) => group.groupId === groupId
+      );
+      if (soureData && _index > -1) {
+        if (count > 0) {
+          soureData.affiliationsCount = soureData.affiliationsCount + 1;
+        } else {
+          soureData.affiliationsCount = soureData.affiliationsCount - 1;
+        }
+      }
+      state.joinedGroupList.splice(_index, 1, soureData);
+    },
   },
   actions: {
     fetchJoinedGroupList: async ({ state, commit }, params) => {
@@ -115,6 +132,7 @@ const GroupStore = {
       });
     },
     fetchGroupMembersProfile: async ({ commit }, params) => {
+      console.log('fetchGroupMembersProfile', params);
       const { groupId, memberList } = params;
       //获取对应用户属性
       const profileRes = await fetchOtherInfoFromServer(memberList);
@@ -138,10 +156,14 @@ const GroupStore = {
         removeGroupMembers(groupId, memberList)
           .then((res) => {
             resolve(res);
-            commit('DELETE_GROUP_MEMBERS_PROFILE', {
-              groupId,
-              memberList,
-            });
+            /**
+             * 目前依赖memberAbsence，事件调用DELETE_GROUP_MEMBERS_PROFILE。
+             * 删除群内信息，因此暂时注释
+             */
+            // commit('DELETE_GROUP_MEMBERS_PROFILE', {
+            //   groupId,
+            //   memberList,
+            // });
           })
           .catch((error) => {
             reject(error);

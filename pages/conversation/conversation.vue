@@ -385,6 +385,7 @@ export default {
             return item.conversationId;
           }
         } else if (item.conversationType === CHAT_TYPE.GROUP_CHAT) {
+          console.log('getGroupName', item.conversationId);
           return this.getGroupName(item.conversationId);
         }
       };
@@ -462,9 +463,8 @@ export default {
       let groupName = '';
       if (joinedGroupList.length) {
         joinedGroupList.forEach((item) => {
-          if (item.groupid === groupid) {
-            console.log(item.groupname);
-            return (groupName = item.groupname);
+          if (item.groupId == groupid) {
+            return (groupName = item.groupName);
           }
         });
         return groupName;

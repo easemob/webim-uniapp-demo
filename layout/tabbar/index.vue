@@ -1,39 +1,4 @@
 <template>
-  <!-- <view :class="isIPX ? 'chatRoom_tab_X' : 'chatRoom_tab'">
-    <view class="tableBar" @click="changeTab('conversation')">
-      <view
-        v-if="allConversationUnReadNum > 0"
-        :class="
-          'em-unread-spot ' +
-          (allConversationUnReadNum > 99 ? 'em-unread-spot-litleFont' : '')
-        "
-        >{{ allConversationUnReadNum }}</view
-      >
-      <image
-        :class="allConversationUnReadNum > 0 ? 'haveSpot' : ''"
-        :src="
-          tabbarType === 'conversation'
-            ? highlightConversationImg
-            : conversationImg
-        "
-      ></image>
-      <text :class="tabbarType === 'conversation' && 'activeText'">会话</text>
-    </view>
-
-    <view class="tableBar" @click="changeTab('contacts')">
-      <image
-        :src="tabbarType === 'contacts' ? highlightContactsImg : contactsImg"
-      ></image>
-      <text :class="tabbarType === 'contacts' && 'activeText'">联系人</text>
-    </view>
-
-    <view class="tableBar" @click="changeTab('mine')">
-      <image
-        :src="tabbarType === 'mine' ? highlightSettingImg : settingImg"
-      ></image>
-      <text :class="tabbarType === 'mine' && 'activeText'">我的</text>
-    </view>
-  </view> -->
   <u-tabbar
     :value="tabbarType"
     @change="changeTab"

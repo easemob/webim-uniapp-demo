@@ -10,7 +10,7 @@ export const emGroupListener = (callback, listenerEventName) => {
   const groupListenFunc = {
     onGroupEvent: (event) => {
       console.log('>>>>群组事件监听触发', event);
-      const { operation } = event;
+      const { operation, from, id: groupId } = event;
       callback(HANDLER_EVENT_NAME.GROUP_EVENT, event);
       switch (operation) {
         // 有新群组创建。群主的其他设备会收到该回调。
@@ -71,9 +71,25 @@ export const emGroupListener = (callback, listenerEventName) => {
           break;
         // 群成员主动退出群组。除了退群的成员，其他群成员会收到该回调。
         case 'memberAbsence':
+          store.commit('DELETE_GROUP_MEMBERS_PROFILE', {
+            groupId,
+            memberList: [from],
+          });
+          store.commit('CHANGE_AFFILIATIONS_COUNT', {
+            groupId,
+            count: -1,
+          });
           break;
         // 有用户加入群组。除了新成员，其他群成员会收到该回调。
         case 'memberPresence':
+          store.dispatch('fetchGroupMembersProfile', {
+            groupId,
+            memberList: [from],
+          });
+          store.commit('CHANGE_AFFILIATIONS_COUNT', {
+            groupId,
+            count: 1,
+          });
           break;
         // 用户被移出群组。被踢出群组的成员会收到该回调。
         case 'removeMember':
