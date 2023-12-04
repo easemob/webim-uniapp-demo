@@ -46,6 +46,10 @@
                 @onClickPlayAudio="onClickPlayAudio"
               />
             </template>
+            <!-- 附件消息 -->
+            <template v-if="msgBody.type === MESSAGE_TYPE.FILE">
+              <file-msg-item :msgBody="msgBody" />
+            </template>
           </view>
           <!-- <text class="message_list_item_content_time">{{
             messageTime(msgBody.time)
@@ -61,12 +65,14 @@ import { MESSAGE_TYPE } from '@/EaseIM/constant';
 import TextMsgItem from './messagesItem/textMsgItem';
 import ImageMsgItem from './messagesItem/imageMsgItem';
 import AudioMsgItem from './messagesItem/audioMsgItem';
+import FileMsgItem from './messagesItem/fileMsgItem';
 export default {
   inject: ['targetId', 'chatType'],
   components: {
     TextMsgItem,
     ImageMsgItem,
     AudioMsgItem,
+    FileMsgItem,
   },
   data() {
     return {
