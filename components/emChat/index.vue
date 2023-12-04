@@ -1,17 +1,20 @@
 <template>
   <view>
-    <message-list />
-    <input-bar />
+    <!-- <message-list /> -->
+    <MessageListContainer />
+    <!-- <input-bar /> -->
   </view>
 </template>
 
 <script>
-import MessageList from './messageList';
-import InputBar from './inputBar';
+// import MessageList from './messageList';
+import MessageListContainer from './MessageListContainer';
+// import InputBar from './inputBar';
 export default {
   components: {
-    MessageList,
-    InputBar,
+    // MessageList,
+    MessageListContainer,
+    // InputBar,
   },
   inject: ['targetId', 'chatType'],
   data() {

@@ -4,6 +4,7 @@ const { fetchHistoryMessagesFromServer } = emMessages();
 const MessageStore = {
   state: {
     messageCollection: {},
+    messageStatusCollection: {}, //readed、unread、recalled
   },
   mutations: {
     UPDATE_MESSAGE_COLLECTION(state, payload) {

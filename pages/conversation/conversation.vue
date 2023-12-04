@@ -201,7 +201,10 @@
             :key="conversationItem.conversationId"
           >
             <swipe-delete>
-              <view @longpress="onConversationMoreFunction(conversationItem)">
+              <view
+                @longpress="onConversationMoreFunction(conversationItem)"
+                @click="entryChatPage(conversationItem)"
+              >
                 <u-cell>
                   <!-- 头像 -->
                   <u-avatar
@@ -393,7 +396,12 @@ export default {
     //处理时间显示
     handleTime() {
       return (item) => {
-        return this.$u.timeFormat(item.time, 'mm/dd/hh:MM');
+        // return this.$u.timeFormat(item.time, 'mm/dd/hh:MM');
+        const {
+          lastMessage: { time },
+        } = item;
+        // console.log(item.lastMessage.time);
+        return this.$u.timeFrom(time);
       };
     },
     //处理预览消息内容
@@ -685,17 +693,16 @@ export default {
     //进入聊天页面
     entryChatPage: async function (conversationItem) {
       const { conversationId, conversationType } = conversationItem;
-      try {
-        if (conversationItem.unReadCount > 0) {
-          this.$store.dispatch('sendConversatonReadedAck', {
-            targetId: conversationId,
-            chatType: conversationType,
-          });
-        }
-        uni.navigateTo({
-          url: `../emChatContainer/index?targetId=${conversationId}&chatType=${conversationType}`,
+      if (conversationItem.unReadCount > 0) {
+        this.$store.dispatch('sendConversatonReadedAck', {
+          targetId: conversationId,
+          chatType: conversationType,
         });
-      } catch (error) {}
+      }
+      console.log('>>>>>>>conversationItem', conversationItem);
+      uni.navigateTo({
+        url: `../emChatContainer/index?targetId=${conversationId}&chatType=${conversationType}`,
+      });
     },
   },
 };

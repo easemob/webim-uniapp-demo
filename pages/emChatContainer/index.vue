@@ -1,10 +1,12 @@
 <template>
   <view>
+    <em-chat-navbar :targetId="targetId" :chatType="chatType" />
     <em-chat />
   </view>
 </template>
 
 <script>
+import EmChatNavbar from './emChatNavbar';
 import EmChat from '@/components/emChat';
 import { CHAT_TYPE } from '@/EaseIM/constant';
 export default {
@@ -15,6 +17,7 @@ export default {
     };
   },
   components: {
+    EmChatNavbar,
     EmChat,
   },
   onLoad(option) {
@@ -24,9 +27,9 @@ export default {
     this.$store.commit('SET_CHATING_USERID', option.targetId);
   },
   mounted() {
-    uni.setNavigationBarTitle({
-      title: this.getTheIdName(this.targetId, this.chatType),
-    });
+    // uni.setNavigationBarTitle({
+    //   title: this.getTheIdName(this.targetId, this.chatType),
+    // });
   },
   provide() {
     return {
@@ -80,11 +83,11 @@ export default {
       }
     },
   },
-  async onPullDownRefresh() {
-    // this.getMoreHistoryMessages();
-    console.log('>>>>>开始了下拉页面');
-    uni.$emit('onPullDownRefresh');
-  },
+  //   async onPullDownRefresh() {
+  //     // this.getMoreHistoryMessages();
+  //     console.log('>>>>>开始了下拉页面');
+  //     uni.$emit('onPullDownRefresh');
+  //   },
   onUnload() {
     console.log('>>>聊天容器页面卸载');
     //置空正在沟通中的用户ID

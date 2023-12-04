@@ -144,21 +144,8 @@
     {
       "path": "pages/emChatContainer/index",
       "style": {
-        "navigationBarTitleText": "chatting",
-        "backgroundTextStyle": "dark",
-        "enablePullDownRefresh": true,
-        "app-plus": {
-          "titleNView": {
-            "buttons": [
-              {
-                "text": "...",
-                "fontSrc": "./static/iconfont/iconfont.ttf",
-                "fontSize": "24",
-                "float": "right"
-              }
-            ]
-          }
-        }
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
       }
     },
     {
