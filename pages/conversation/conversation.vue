@@ -396,12 +396,13 @@ export default {
     //处理时间显示
     handleTime() {
       return (item) => {
+        console.log('conversationItem.time', item);
         // return this.$u.timeFormat(item.time, 'mm/dd/hh:MM');
-        const {
-          lastMessage: { time },
-        } = item;
+        // const {
+        //   lastMessage: { time },
+        // } = item;
         // console.log(item.lastMessage.time);
-        return this.$u.timeFrom(time);
+        return this.$u.timeFrom(item?.time || item?.lastMessage?.time);
       };
     },
     //处理预览消息内容

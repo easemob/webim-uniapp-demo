@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import { emMessages } from '@/EaseIM/emApis';
+import ConversationStore from './conversation';
+import { EVENT_BUS_NAME } from '@/constant';
 const { fetchHistoryMessagesFromServer } = emMessages();
 const MessageStore = {
   state: {
@@ -16,12 +18,19 @@ const MessageStore = {
          */
         Vue.set(state.messageCollection, key, []);
       }
-      state.messageCollection[key].push(message);
+      //如果当前会话中Id为消息from，则发布消息列表更新事件。
+      if (ConversationStore.state.chattingId === key) {
+        uni.$emit(EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE, {
+          msgBody: message,
+        });
+      }
+
+      state.messageCollection[key].unshift(message);
     },
     UPDATE_MESSAGE_FROM_SERVER(state, payload) {
       const { key, messageList } = payload;
       if (state.messageCollection[key]) {
-        state.messageCollection[key].unshift(...messageList);
+        state.messageCollection[key].push(...messageList);
       } else {
         Vue.set(state.messageCollection, key, []);
         state.messageCollection[key].push(...messageList);
@@ -32,8 +41,9 @@ const MessageStore = {
     async fetchHistroyMessageListFromServer({ state, commit }, params) {
       const { targetId, chatType } = params;
       const sourceMessage = state.messageCollection[targetId] || [];
-      const cursorMsgId = (sourceMessage.length && sourceMessage[0]?.id) || -1;
-
+      const cursorMsgId =
+        (sourceMessage.length && sourceMessage[sourceMessage.length - 1]?.id) ||
+        -1;
       return new Promise((resolve, reject) => {
         fetchHistoryMessagesFromServer({
           targetId,
@@ -44,7 +54,7 @@ const MessageStore = {
             if (res.messages.length) {
               commit('UPDATE_MESSAGE_FROM_SERVER', {
                 key: targetId,
-                messageList: res.messages.reverse(),
+                messageList: res.messages,
               });
             }
             resolve(res);

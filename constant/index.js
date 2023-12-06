@@ -5,3 +5,7 @@ export const GROUP_MEMEBERS_SHOW_TYPE = {
   ADD_NEW_MEMBER: 3, //新增群成员
   DEL_MEMBER: 4, //删除群成员
 };
+
+export const EVENT_BUS_NAME = {
+  EASEIM_MESSAGE_COLLECTION_UPDATE: 'easeim-message-collection-update',
+};

@@ -1,14 +1,47 @@
 <template>
   <view>
-    <em-chat-navbar :targetId="targetId" :chatType="chatType" />
-    <em-chat />
+    <!-- <em-chat /> -->
+    <z-paging
+      ref="paging"
+      v-model="dataList"
+      use-page-scroll
+      use-chat-record-mode
+      :default-page-size="20"
+      :safe-area-inset-bottom="true"
+      @query="queryList"
+    >
+      <template #top>
+        <em-chat-navbar :targetId="targetId" :chatType="chatType" />
+      </template>
+      <!-- 聊天item，:id="`z-paging-${index}`"必须加 -->
+      <view
+        class="click_more_history_box"
+        v-if="isLoadingLocalMsgList"
+        @click="onClickLoadMore"
+        >如无更多，试试点击加载更多</view
+      >
+      <view
+        :id="`z-paging-${index}`"
+        v-for="(msgBody, index) in dataList"
+        :key="msgBody.id"
+      >
+        <em-message-list-container :msgBody="msgBody" />
+      </view>
+      <!-- 底部聊天输入框 -->
+      <template #bottom>
+        <!-- <chat-input-bar @send="doSend" /> -->
+      </template>
+    </z-paging>
   </view>
 </template>
 
 <script>
 import EmChatNavbar from './emChatNavbar';
 import EmChat from '@/components/emChat';
+import EmMessageListContainer from './emMessageListContainer';
+import CustomRefresher from '@/components/custom-refresher/custom-refresher';
 import { CHAT_TYPE } from '@/EaseIM/constant';
+import { EVENT_BUS_NAME } from '@/constant';
 export default {
   data() {
     return {
@@ -16,11 +49,14 @@ export default {
       chatType: '',
       //v-model绑定的这个变量不要在分页请求结束中自己赋值！！！
       dataList: [],
+      isLoadingLocalMsgList: false,
     };
   },
   components: {
     EmChatNavbar,
     EmChat,
+    EmMessageListContainer,
+    CustomRefresher,
   },
   onLoad(option) {
     console.log(option);
@@ -36,11 +72,6 @@ export default {
       this.$refs.paging.doChatRecordLoadMore();
     }
   },
-  mounted() {
-    // uni.setNavigationBarTitle({
-    //   title: this.getTheIdName(this.targetId, this.chatType),
-    // });
-  },
   provide() {
     return {
       targetId: () => this.targetId,
@@ -54,6 +85,15 @@ export default {
     friendUserInfoMap() {
       return this.$store.state.ContactsStore.friendUserInfoMap;
     },
+    messageList() {
+      return this.$store.state.MessageStore.messageCollection[this.targetId];
+    },
+  },
+  mounted() {
+    uni.$on(
+      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
+      this.appentNewMessage
+    );
   },
   methods: {
     getGroupName(groupid) {
@@ -92,52 +132,92 @@ export default {
           return null;
       }
     },
-    queryList(pageNo, pageSize) {
-      //组件加载时会自动触发此方法，因此默认页面加载时会自动触发，无需手动调用
-      //这里的pageNo和pageSize会自动计算好，直接传给服务器即可
-      //模拟请求服务器获取分页数据，请替换成自己的网络请求
-      const params = {
-        pageNo: pageNo,
-        pageSize: pageSize,
-      };
-      this.$request
-        .queryChatList(params)
-        .then((res) => {
-          //将请求的结果数组传递给z-paging
-          this.$refs.paging.complete(res.data.list);
-        })
-        .catch((res) => {
-          //如果请求失败写this.$refs.paging.complete(false);
-          //注意，每次都需要在catch中写这句话很麻烦，z-paging提供了方案可以全局统一处理
-          //在底层的网络请求抛出异常时，写uni.$emit('z-paging-error-emit');即可
+    async queryList(pageNo, pageSize, from) {
+      /* from  0.用户主动下拉刷新 1.通过reload触发 2.通过refresh触发 3.通过滚动到底部加载更多或点击底部加载更多触发) */
+      console.log(pageNo, pageSize, from);
+      /* 初始化时获取数据 */
+      if (from === 1) {
+        if (!this.messageList?.length) {
+          try {
+            const messages = await this.getMoreHistoryMessages();
+            this.$refs.paging.complete([...messages]);
+          } catch (error) {
+            console.log('漫游加载失败', error);
+            this.$refs.paging.complete(false);
+          }
+        } else {
+          /* 设置本地分页，请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging作分页处理 */
+          this.isLoadingLocalMsgList = true;
+          const res = await this.$refs.paging.setLocalPaging([
+            ...this.messageList,
+          ]);
+          console.log('>>>>加载本地已有历史记录。', res);
+        }
+      }
+      /* 触顶加载更多消息时获取数据 */
+      if (from === 3) {
+        console.log('>>>>触顶加载更多');
+        try {
+          const messages = await this.getMoreHistoryMessages();
+          this.$refs.paging.complete([...messages]);
+        } catch (error) {
+          console.log('漫游加载失败', error);
           this.$refs.paging.complete(false);
-        });
+        }
+      }
     },
-    doSend(msg) {
-      uni.showLoading({
-        title: '发送中...',
+    async getMoreHistoryMessages() {
+      const params = {
+        targetId: this.targetId,
+        chatType: this.chatType,
+      };
+      return new Promise((resolve, reject) => {
+        this.$store
+          .dispatch('fetchHistroyMessageListFromServer', params)
+          .then((res) => {
+            resolve(res.messages);
+          })
+          .catch((err) => {
+            console.log(err);
+            reject(err);
+          });
       });
-      setTimeout(() => {
-        uni.hideLoading();
-        this.$refs.paging.addChatRecordData({
-          time: '',
-          icon: '/static/daxiong.jpg',
-          name: '大雄',
-          content: msg,
-          isMe: true,
-        });
-      }, 500);
+    },
+    appentNewMessage(data) {
+      console.log('>>>>>新消息添加', data);
+      const { msgBody } = data;
+      this.$refs.paging.addChatRecordData({
+        ...msgBody,
+      });
+    },
+    async onClickLoadMore() {
+      try {
+        const messages = await this.getMoreHistoryMessages();
+        if (messages.length) {
+          this.$refs.paging.addDataFromTop([...messages]);
+          this.$refs.paging.doChatRecordLoadMore();
+        } else {
+          this.isLoadingLocalMsgList = false;
+          uni.showToast({
+            title: '真的没有更多了',
+            icon: 'none',
+            duration: 2000,
+          });
+          return;
+        }
+      } catch (error) {
+        console.log('漫游加载失败', error);
+        this.$refs.paging.complete(false);
+      }
     },
   },
-  //   async onPullDownRefresh() {
-  //     // this.getMoreHistoryMessages();
-  //     console.log('>>>>>开始了下拉页面');
-  //     uni.$emit('onPullDownRefresh');
-  //   },
   onUnload() {
-    console.log('>>>聊天容器页面卸载');
     //置空正在沟通中的用户ID
     this.$store.commit('SET_CHATING_USERID', '');
+    uni.$off(
+      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
+      this.appentNewMessage
+    );
   },
 };
 </script>
