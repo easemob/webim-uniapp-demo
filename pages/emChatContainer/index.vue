@@ -4,11 +4,11 @@
     <z-paging
       ref="paging"
       v-model="dataList"
-      use-page-scroll
       use-chat-record-mode
       :default-page-size="20"
       :safe-area-inset-bottom="true"
       @query="queryList"
+      use-page-scroll
     >
       <template #top>
         <em-chat-navbar :targetId="targetId" :chatType="chatType" />
@@ -29,7 +29,7 @@
       </view>
       <!-- 底部聊天输入框 -->
       <template #bottom>
-        <!-- <chat-input-bar @send="doSend" /> -->
+        <em-input-bar-container @resetScrollHeight="resetScrollHeight" />
       </template>
     </z-paging>
   </view>
@@ -39,7 +39,7 @@
 import EmChatNavbar from './emChatNavbar';
 import EmChat from '@/components/emChat';
 import EmMessageListContainer from './emMessageListContainer';
-import CustomRefresher from '@/components/custom-refresher/custom-refresher';
+import EmInputBarContainer from './emInputBarContainer';
 import { CHAT_TYPE } from '@/EaseIM/constant';
 import { EVENT_BUS_NAME } from '@/constant';
 export default {
@@ -56,7 +56,7 @@ export default {
     EmChatNavbar,
     EmChat,
     EmMessageListContainer,
-    CustomRefresher,
+    EmInputBarContainer,
   },
   onLoad(option) {
     console.log(option);
@@ -209,6 +209,12 @@ export default {
         console.log('漫游加载失败', error);
         this.$refs.paging.complete(false);
       }
+    },
+    resetScrollHeight(height) {
+      this.$nextTick(() => {
+        this.$refs.paging.updatePageScrollTopHeight();
+        console.log(this.scrollHeight);
+      });
     },
   },
   onUnload() {

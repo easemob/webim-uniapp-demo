@@ -396,7 +396,6 @@ export default {
     //处理时间显示
     handleTime() {
       return (item) => {
-        console.log('conversationItem.time', item);
         // return this.$u.timeFormat(item.time, 'mm/dd/hh:MM');
         // const {
         //   lastMessage: { time },

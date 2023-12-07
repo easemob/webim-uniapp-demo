@@ -1,3 +1,5 @@
+import * as emoji from './emoji';
+export { emoji };
 //群成员页面为复用页面，定义三种展示形态
 export const GROUP_MEMEBERS_SHOW_TYPE = {
   READ_ONLY: 1, //只读
