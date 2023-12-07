@@ -38,7 +38,7 @@
     </view>
     <!-- 音频发送板块 -->
     <view v-show="isShowAudioMessageContainer" class="chat-audio-container">
-      <SendAudioMessage />
+      <RecordAudioContainer />
     </view>
     <!-- Emoji Icon选择板块 -->
     <view v-show="isShowEmojiIconContainer" class="chat-emoji-picker-container">
@@ -53,13 +53,13 @@
 </template>
 
 <script>
-import SendAudioMessage from './inputMessages/sendAudioMessage';
-import EmojiPickerContainer from './inputMessages/emojiPickerContainer';
+import RecordAudioContainer from './recordAudioContainer';
+import EmojiPickerContainer from './emojiPickerContainer';
 import MoreFuncContainer from './moreFuncContainer';
 export default {
   name: 'chat-input-bar',
   components: {
-    SendAudioMessage,
+    RecordAudioContainer,
     EmojiPickerContainer,
     MoreFuncContainer,
   },
@@ -94,6 +94,7 @@ export default {
         this.msg = this.msg.slice(0, -1);
       });
       // #endif
+      this.onCloseAllShowContainer();
     },
     sendClick() {
       if (!this.msg.length) return;
@@ -103,16 +104,25 @@ export default {
     onShowAudioMessageContainer() {
       this.isShowAudioMessageContainer = !this.isShowAudioMessageContainer;
       this.isShowEmojiIconContainer && (this.isShowEmojiIconContainer = false);
+      this.isShowMoreFuncContainer && (this.isShowMoreFuncContainer = false);
       this.$emit('resetScrollHeight', 200);
     },
     onShowEmojiIconContainer() {
       this.isShowEmojiIconContainer = !this.isShowEmojiIconContainer;
       this.isShowAudioMessageContainer &&
         (this.isShowAudioMessageContainer = false);
+      this.isShowMoreFuncContainer && (this.isShowMoreFuncContainer = false);
     },
     onShowMoreFuncContainer() {
-      console.log(111);
       this.isShowMoreFuncContainer = !this.isShowMoreFuncContainer;
+      this.isShowAudioMessageContainer &&
+        (this.isShowAudioMessageContainer = false);
+      this.isShowEmojiIconContainer && (this.isShowEmojiIconContainer = false);
+    },
+    onCloseAllShowContainer() {
+      this.isShowAudioMessageContainer = false;
+      this.isShowEmojiIconContainer = false;
+      this.isShowMoreFuncContainer = false;
     },
   },
 };
