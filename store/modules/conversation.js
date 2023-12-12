@@ -1,5 +1,6 @@
 import { emConversation, emSilent } from '@/EaseIM/emApis';
 import { EMClient } from '@/EaseIM';
+import { CHAT_TYPE } from '@/EaseIM/constant';
 import Vue from 'vue';
 const {
   fetchPinConversationFromServer,
@@ -17,13 +18,15 @@ const {
 const ConversationStore = {
   state: {
     chattingId: '', //进入聊天页面聊天中的目标聊天用户信息
+    chattingChatType: CHAT_TYPE.SINGLE_CHAT, //当前聊天页面中的聊天类型类型
     pinConversationList: [],
     conversationList: [],
     silentConversationMap: {},
   },
   mutations: {
-    SET_CHATING_USERID: (state, conversationId) => {
-      state.chattingId = conversationId;
+    SET_CHATING_USER_INFO: (state, payload) => {
+      state.chattingId = payload.targetId || '';
+      state.chattingChatType = payload.chatType || CHAT_TYPE.SINGLE_CHAT;
     },
     SET_PIN_CONVERSATION_LIST: (state, pinConversationList) => {
       state.pinConversationList = [...pinConversationList];
@@ -343,6 +346,13 @@ const ConversationStore = {
         0
       );
       return pinConversationListUnReadNum + conversationListUnReadNum;
+    },
+    //聊天中用户ID
+    chattingId(state) {
+      return state.chattingId;
+    },
+    chattingChatType(state) {
+      return state.chattingChatType;
     },
   },
 };

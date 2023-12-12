@@ -62,7 +62,10 @@ export default {
     console.log(option);
     this.targetId = option.targetId;
     this.chatType = option.chatType;
-    this.$store.commit('SET_CHATING_USERID', option.targetId);
+    this.$store.commit('SET_CHATING_USER_INFO', {
+      targetId: this.targetId,
+      chatType: this.chatType,
+    });
   },
   onPageScroll(e) {
     //更新z-paging内部scrollTop
@@ -218,8 +221,8 @@ export default {
     },
   },
   onUnload() {
-    //置空正在沟通中的用户ID
-    this.$store.commit('SET_CHATING_USERID', '');
+    //置空正在沟通中的用户信息
+    this.$store.commit('SET_CHATING_USER_INFO', {});
     uni.$off(
       EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
       this.appentNewMessage

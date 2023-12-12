@@ -38,7 +38,11 @@
     </view>
     <!-- 音频发送板块 -->
     <view v-show="isShowAudioMessageContainer" class="chat-audio-container">
-      <RecordAudioContainer />
+      <RecordAudioContainer
+        @changeRecordAudioContainer="
+          () => (isShowAudioMessageContainer = false)
+        "
+      />
     </view>
     <!-- Emoji Icon选择板块 -->
     <view v-show="isShowEmojiIconContainer" class="chat-emoji-picker-container">

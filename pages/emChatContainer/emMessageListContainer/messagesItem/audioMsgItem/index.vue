@@ -52,8 +52,8 @@ export default {
       );
     },
     audioLength() {
-      const { length } = this.msgBody;
-      return length;
+      const { length, body } = this.msgBody;
+      return length || body?.length;
     },
   },
   mounted() {
@@ -72,9 +72,9 @@ export default {
   methods: {
     //转换为mp3格式
     formatAudioToMp3() {
-      const { url } = this.msgBody;
+      const { url, body } = this.msgBody;
       uni.downloadFile({
-        url: url,
+        url: url || body?.url,
         header: {
           'X-Requested-With': 'XMLHttpRequest',
           Accept: 'audio/mp3',

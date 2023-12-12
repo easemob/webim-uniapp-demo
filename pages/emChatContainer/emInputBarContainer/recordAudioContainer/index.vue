@@ -73,7 +73,14 @@ export default {
       }
     },
   },
-  computed() {},
+  computed: {
+    chattingId() {
+      return this.$store.getters.chattingId;
+    },
+    chattingChatType() {
+      return this.$store.getters.chattingChatType;
+    },
+  },
   methods: {
     startRecordAudio() {
       console.log('>>>>>开始采集');
@@ -259,6 +266,8 @@ export default {
         });
         this.recorderManager.stop();
       }
+      this.isStartRecording = false;
+      this.$emit('changeRecordAudioContainer');
     },
     //上传录音附件资源至环信服务器
     async uploadRecordFile(tempFilePath) {
@@ -312,9 +321,9 @@ export default {
           body: { ...bodys },
           filename: bodys.filename,
           // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
-          to: this.ItargetId,
+          to: this.chattingId,
           // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
-          chatType: this.IchatType,
+          chatType: this.chattingChatType,
         };
         const res = await sendDisplayMessages({ ...params });
         console.log('>>>>>>已发送', res);
@@ -324,6 +333,9 @@ export default {
           title: `消息发送失败${error}`,
           icon: 'none',
         });
+      } finally {
+        this.isStartRecording = false;
+        this.$emit('changeRecordAudioContainer');
       }
     },
     // 记录录音时长
