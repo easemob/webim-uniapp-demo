@@ -3,7 +3,7 @@
     <u--image
       @click="onPrevieImage"
       mode="aspectFit"
-      :src="msgBody.thumb"
+      :src="msgBody.thumb || msgBody.url"
       :width="imgSize.width"
       :height="imgSize.height"
       :radius="5 + 'px'"
@@ -26,10 +26,12 @@ export default {
         width: '',
         height: '',
       };
-
       if (this.msgBody.width > 1000 || this.msgBody.height > 1000) {
         imgSize.width = this.msgBody.width / 10 + 'px';
         imgSize.height = this.msgBody.height / 10 + 'px';
+      } else if (this.msgBody.width < 100 || this.msgBody.height < 100) {
+        imgSize.width = this.msgBody.width + 'px';
+        imgSize.height = this.msgBody.height + 'px';
       } else {
         imgSize.width = this.msgBody.width / 2 + 'px';
         imgSize.height = this.msgBody.height / 2 + 'px';

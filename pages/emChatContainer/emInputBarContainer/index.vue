@@ -51,7 +51,7 @@
     </view>
     <!-- 更多功能选择板块 -->
     <view v-show="isShowMoreFuncContainer" class="chat-more-icon-container">
-      <MoreFuncContainer />
+      <MoreFuncContainer @onCloseAllShowContainer="onCloseAllShowContainer" />
     </view>
     <view class="chat-input-bar-bottom-placeholder"></view>
   </view>

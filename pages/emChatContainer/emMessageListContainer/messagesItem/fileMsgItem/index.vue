@@ -8,9 +8,11 @@
   >
     <view class="file_msg_content">
       <text class="name">
-        {{ msgBody.filename }}
+        {{ msgBody.filename || msgBody.body.filename }}
       </text>
-      <text class="size">{{ formatMoney(msgBody.file_length) }}</text>
+      <text class="size">{{
+        formatMoney(msgBody.file_length || msgBody.body.file_length)
+      }}</text>
     </view>
     <image
       class="file_msg_icon"
