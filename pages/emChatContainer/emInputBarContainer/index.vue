@@ -9,13 +9,13 @@
       <view class="chat-input-container">
         <input
           class="chat-input"
-          v-model="msg"
+          v-model="msgContent"
           :cursor-spacing="cursorSpacing"
           confirm-type="send"
           type="text"
           placeholder="请输入内容"
           @focus="onInputFocus"
-          @confirm="sendClick"
+          @confirm="sendTextMessage"
         />
       </view>
       <image
@@ -26,8 +26,9 @@
 
       <image
         class="chat-emoji-icon-container"
-        v-if="msg"
+        v-if="msgContent"
         src="/static/images/new_ui/inputbar/audio_send_icon.png"
+        @click="sendTextMessage"
       ></image>
       <image
         v-else
@@ -46,7 +47,7 @@
     </view>
     <!-- Emoji Icon选择板块 -->
     <view v-show="isShowEmojiIconContainer" class="chat-emoji-picker-container">
-      <EmojiPickerContainer />
+      <EmojiPickerContainer @appendEmojiIcon="appendEmojiIcon" />
     </view>
     <!-- 更多功能选择板块 -->
     <view v-show="isShowMoreFuncContainer" class="chat-more-icon-container">
@@ -57,9 +58,11 @@
 </template>
 
 <script>
+import { emMessages } from '@/EaseIM/emApis';
 import RecordAudioContainer from './recordAudioContainer';
 import EmojiPickerContainer from './emojiPickerContainer';
 import MoreFuncContainer from './moreFuncContainer';
+const { sendDisplayMessages } = emMessages();
 export default {
   name: 'chat-input-bar',
   components: {
@@ -69,7 +72,7 @@ export default {
   },
   data() {
     return {
-      msg: '',
+      msgContent: '',
       cursorSpacing: 20,
       isShowAudioMessageContainer: false,
       isShowEmojiIconContainer: false,
@@ -89,21 +92,57 @@ export default {
       .exec();
     // #endif
   },
+  computed: {
+    chattingId() {
+      return this.$store.getters.chattingId;
+    },
+    chattingChatType() {
+      return this.$store.getters.chattingChatType;
+    },
+  },
   methods: {
     onInputFocus() {
       // input focus的时候重新设置一下input内容以修复在微信小程序&QQ小程序中input focus后位置偏移的bug
       // #ifdef MP-WEIXIN || MP-QQ
-      this.msg += ' ';
+      this.msgContent += ' ';
       this.$nextTick(() => {
-        this.msg = this.msg.slice(0, -1);
+        this.msgContent = this.msgContent.slice(0, -1);
       });
       // #endif
       this.onCloseAllShowContainer();
     },
-    sendClick() {
-      if (!this.msg.length) return;
-      this.$emit('send', this.msg);
-      this.msg = '';
+    async sendTextMessage() {
+      if (!this.msgContent.length) return;
+      const params = {
+        // 消息类型。
+        type: 'txt',
+        // 消息内容。
+        msg: this.msgContent,
+        // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
+        to: this.chattingId,
+        // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
+        chatType: this.chattingChatType,
+      };
+      try {
+        const res = await sendDisplayMessages({ ...params });
+        console.log('>>>>>文本消息发送成功', res);
+      } catch (error) {
+        console.log('>>>>>文本消息发送失败', error);
+        if (error.type === 508) {
+          uni.showToast({
+            title: '发送内容不合规',
+            icon: 'none',
+          });
+        } else {
+          uni.showToast({
+            title: '消息发送失败',
+            icon: 'none',
+          });
+        }
+      } finally {
+        this.msgContent = '';
+        this.onCloseAllShowContainer();
+      }
     },
     onShowAudioMessageContainer() {
       this.isShowAudioMessageContainer = !this.isShowAudioMessageContainer;
@@ -127,6 +166,9 @@ export default {
       this.isShowAudioMessageContainer = false;
       this.isShowEmojiIconContainer = false;
       this.isShowMoreFuncContainer = false;
+    },
+    appendEmojiIcon(emoji) {
+      this.msgContent += emoji;
     },
   },
 };

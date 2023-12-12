@@ -5,6 +5,7 @@
         class="emoji-item"
         v-for="(item, index) in emoji.emojis"
         :key="index"
+        @click="handleClick(item)"
         >{{ item }}</view
       >
     </scroll-view>
@@ -13,14 +14,17 @@
 
 <script>
 import { emoji } from '@/constant';
-console.log('emoji', emoji.emojis);
 export default {
   data() {
     return {
       emoji,
     };
   },
-  methods: {},
+  methods: {
+    handleClick(emoji) {
+      this.$emit('appendEmojiIcon', emoji);
+    },
+  },
 };
 </script>
 

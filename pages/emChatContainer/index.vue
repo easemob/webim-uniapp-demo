@@ -81,6 +81,12 @@ export default {
       chatType: () => this.chatType,
     };
   },
+  mounted() {
+    uni.$on(
+      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
+      this.appentNewMessage
+    );
+  },
   computed: {
     joinedGroupList() {
       return this.$store.state.GroupStore.joinedGroupList;
@@ -91,12 +97,6 @@ export default {
     messageList() {
       return this.$store.state.MessageStore.messageCollection[this.targetId];
     },
-  },
-  mounted() {
-    uni.$on(
-      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
-      this.appentNewMessage
-    );
   },
   methods: {
     getGroupName(groupid) {
