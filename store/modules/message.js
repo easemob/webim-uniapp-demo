@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import { emMessages } from '@/EaseIM/emApis';
+import { MESSAGE_STATUS } from '@/EaseIM/constant';
 import ConversationStore from './conversation';
 import { EVENT_BUS_NAME } from '@/constant';
 const { fetchHistoryMessagesFromServer } = emMessages();
@@ -36,6 +37,28 @@ const MessageStore = {
         state.messageCollection[key].push(...messageList);
       }
     },
+    UPDATE_MESSAGE_COLLECTION_STATUS(state, payload) {
+      //key 为消息serverMsgId
+      const { key, status } = payload;
+      if (state.messageStatusCollection[key]) {
+        state.messageStatusCollection[key] = status;
+      } else {
+        Vue.set(state.messageStatusCollection, key, status);
+      }
+    },
+    ADD_NEW_GRAY_INFORM_MESSAGE(state, payload) {
+      const { key, message } = payload;
+      if (!state.messageCollection[key]) {
+        Vue.set(state.messageCollection, key, []);
+      }
+      //如果当前会话中Id为消息from，则发布消息列表更新事件。
+      if (ConversationStore.state.chattingId === key) {
+        uni.$emit(EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE, {
+          msgBody: message,
+        });
+      }
+      state.messageCollection[key].unshift(message);
+    },
   },
   actions: {
     async fetchHistroyMessageListFromServer({ state, commit }, params) {
@@ -68,6 +91,9 @@ const MessageStore = {
   getters: {
     messageCollection(state) {
       return state.messageCollection;
+    },
+    messageStatusCollection(state) {
+      return state.messageStatusCollection;
     },
   },
 };

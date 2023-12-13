@@ -1,6 +1,6 @@
 import { EMClient } from '../index';
 import store from '@/store';
-import { CHAT_TYPE, HANDLER_EVENT_NAME } from '../constant';
+import { CHAT_TYPE, HANDLER_EVENT_NAME, MESSAGE_STATUS } from '../constant';
 import { getEMKey } from '@/EaseIM/utils';
 export const emMessagesListener = (callback, listenerEventName) => {
   console.log('消息监听已挂载');
@@ -32,7 +32,13 @@ export const emMessagesListener = (callback, listenerEventName) => {
   };
   //处理撤回类型消息
   const handleReciveRecallMessage = (message) => {
-    console.log('>>>>开始处理撤回类型消息');
+    const { mid } = message;
+    //收集消息状态--撤回
+    store.commit('UPDATE_MESSAGE_COLLECTION_STATUS', {
+      key: mid,
+      status: MESSAGE_STATUS.RECALL,
+    });
+    console.log('>>>>开始处理撤回类型消息', message);
   };
   const messagesListenFunc = {
     // 当前用户收到文本消息。

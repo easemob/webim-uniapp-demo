@@ -170,6 +170,14 @@ export default {
     appendEmojiIcon(emoji) {
       this.msgContent += emoji;
     },
+    appendReEditTextMessage(content) {
+      this.msgContent = content;
+      if (this.msgContent) {
+        this.msgContent += content;
+      } else {
+        this.msgContent = content;
+      }
+    },
   },
 };
 </script>

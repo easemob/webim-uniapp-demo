@@ -1,5 +1,12 @@
 import { EMClient } from '../index';
-import { HANDLER_EVENT_NAME, INFORM_TYPE, CHAT_TYPE } from '../constant';
+import { getEMKey } from '@/EaseIM/utils';
+import {
+  HANDLER_EVENT_NAME,
+  CHAT_TYPE,
+  INFORM_TYPE,
+  MESSAGE_TYPE,
+  GRAY_INFORM_TYPE_SINGLE,
+} from '../constant';
 import store from '@/store';
 console.log('>>>>>>vuex store', store);
 export const emContactsListener = (callback, listenerEventName) => {
@@ -13,6 +20,25 @@ export const emContactsListener = (callback, listenerEventName) => {
   //处理新邀请更新至邀请信息缓存store
   const reveiveFriendInvite = (params) => {
     store.commit('ADD_NEW_RECEIVE_INVITE_MSG', params);
+  };
+  //构造inform消息体
+  const addGrayInformMessage = (params) => {
+    const message = {
+      from: params.from,
+      to: params.to,
+      chatType: CHAT_TYPE.SINGLE_CHAT,
+      type: MESSAGE_TYPE.GRAY_INFORM,
+      time: Date.now(),
+      grayInformType: params.grayInformType,
+    };
+
+    const key = getEMKey(
+      EMClient.user,
+      message.from,
+      message.to,
+      message.chatType
+    );
+    store.commit('ADD_NEW_GRAY_INFORM_MESSAGE', { key, message });
   };
   const contactsListenFunc = {
     // 当前用户收到好友请求。用户 B 向用户 A 发送好友请求，用户 A 收到该事件。
@@ -31,6 +57,9 @@ export const emContactsListener = (callback, listenerEventName) => {
     onContactAdded: function (msg) {
       callback && callback(msg);
       addNewInformFunc(msg);
+      const msgBody = Object.assign({}, msg);
+      msgBody.grayInformType = GRAY_INFORM_TYPE_SINGLE.CONTACT_ADDED;
+      addGrayInformMessage(msgBody);
     },
     // 当前用户发送的好友请求被拒绝。用户 A 向用户 B 发送好友请求，用户 B 收到好友请求后，拒绝加好友，则用户 A 收到该事件。
     onContactRefuse: function (msg) {
@@ -41,6 +70,9 @@ export const emContactsListener = (callback, listenerEventName) => {
     onContactAgreed: function (msg) {
       callback && callback(msg);
       addNewInformFunc(msg);
+      const msgBody = Object.assign({}, msg);
+      msgBody.grayInformType = GRAY_INFORM_TYPE_SINGLE.CONTACT_AGREED;
+      addGrayInformMessage(msgBody);
     },
   };
   EMClient.removeEventHandler(

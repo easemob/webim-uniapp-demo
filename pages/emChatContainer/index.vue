@@ -26,13 +26,29 @@
         :key="msgBody.id"
       >
         <em-message-list-container
+          v-show="
+            isShowMessageItem(msgBody) &&
+            msgBody.type !== MESSAGE_TYPE.GRAY_INFORM
+          "
           :msgBody="msgBody"
           :isNeedShowMessageTime="isNeedShowMessageTime(msgBody, index)"
+        />
+        <!-- 灰色系统通知类型消息 -->
+        <em-gray-message-container
+          v-show="
+            !isShowMessageItem(msgBody) ||
+            msgBody.type === MESSAGE_TYPE.GRAY_INFORM
+          "
+          :msgBody="msgBody"
+          @reEditTextMessage="reEditTextMessage"
         />
       </view>
       <!-- 底部聊天输入框 -->
       <template #bottom>
-        <em-input-bar-container @resetScrollHeight="resetScrollHeight" />
+        <em-input-bar-container
+          ref="emInputBarComps"
+          @resetScrollHeight="resetScrollHeight"
+        />
       </template>
     </z-paging>
   </view>
@@ -43,11 +59,15 @@ import EmChatNavbar from './emChatNavbar';
 import EmChat from '@/components/emChat';
 import EmMessageListContainer from './emMessageListContainer';
 import EmInputBarContainer from './emInputBarContainer';
-import { CHAT_TYPE } from '@/EaseIM/constant';
+import EmGrayMessageContainer from './emGrayMessageContainer';
+import { CHAT_TYPE, MESSAGE_STATUS } from '@/EaseIM/constant';
 import { EVENT_BUS_NAME } from '@/constant';
+import { MESSAGE_TYPE } from '../../EaseIM/constant';
 export default {
   data() {
     return {
+      MESSAGE_STATUS,
+      MESSAGE_TYPE,
       targetId: '',
       chatType: '',
       //v-model绑定的这个变量不要在分页请求结束中自己赋值！！！
@@ -60,6 +80,7 @@ export default {
     EmChat,
     EmMessageListContainer,
     EmInputBarContainer,
+    EmGrayMessageContainer,
   },
   onLoad(option) {
     console.log(option);
@@ -99,6 +120,28 @@ export default {
     },
     messageList() {
       return this.$store.state.MessageStore.messageCollection[this.targetId];
+    },
+    messageCollectionStatus() {
+      return this.$store.getters.messageStatusCollection;
+    },
+    //recall delete 两种消息状态不展示对应消息item
+    isShowMessageItem() {
+      return (msgBody) => {
+        if (!msgBody.id) return false;
+        if (
+          this.messageCollectionStatus &&
+          this.messageCollectionStatus[msgBody.id] === MESSAGE_STATUS.DELETE
+        ) {
+          return false;
+        } else if (
+          this.messageCollectionStatus &&
+          this.messageCollectionStatus[msgBody.id] === MESSAGE_STATUS.RECALL
+        ) {
+          return false;
+        } else {
+          return true;
+        }
+      };
     },
     //两条消息之差大于5min，方可展示消息时间。
     isNeedShowMessageTime() {
@@ -231,6 +274,10 @@ export default {
         console.log('漫游加载失败', error);
         this.$refs.paging.complete(false);
       }
+    },
+    //重新编辑
+    reEditTextMessage(msgContent) {
+      this.$refs.emInputBarComps.appendReEditTextMessage(msgContent);
     },
     resetScrollHeight(height) {
       this.$nextTick(() => {
