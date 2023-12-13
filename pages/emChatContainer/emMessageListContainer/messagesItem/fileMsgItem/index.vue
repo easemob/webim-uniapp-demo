@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import formatFileSize from '@/utils/formatFileSize';
 const ATTACH_KEY = 'filePathCache';
 export default {
   props: {
@@ -42,7 +43,7 @@ export default {
     },
     formatMoney() {
       return (value) => {
-        return `${(value / 1024 / 1024).toFixed(2)}M`;
+        return formatFileSize(value);
       };
     },
   },
