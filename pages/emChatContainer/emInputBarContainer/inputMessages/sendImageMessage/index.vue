@@ -27,8 +27,7 @@ export default {
     },
   },
   mounted() {
-    const res = uni.getSystemInfo();
-    console.log('platForm', res);
+    const res = uni.getSystemInfoSync();
     this.platForm = res?.uniPlatform;
   },
   methods: {

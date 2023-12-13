@@ -25,7 +25,10 @@
         v-for="(msgBody, index) in dataList"
         :key="msgBody.id"
       >
-        <em-message-list-container :msgBody="msgBody" />
+        <em-message-list-container
+          :msgBody="msgBody"
+          :isNeedShowMessageTime="isNeedShowMessageTime(msgBody, index)"
+        />
       </view>
       <!-- 底部聊天输入框 -->
       <template #bottom>
@@ -96,6 +99,22 @@ export default {
     },
     messageList() {
       return this.$store.state.MessageStore.messageCollection[this.targetId];
+    },
+    //两条消息之差大于5min，方可展示消息时间。
+    isNeedShowMessageTime() {
+      return (msgBody, index) => {
+        const { time } = msgBody;
+        if (index !== 0) {
+          const lastTime = this.messageList[index - 1].time;
+          if (time - lastTime > 50000) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
+      };
     },
   },
   methods: {

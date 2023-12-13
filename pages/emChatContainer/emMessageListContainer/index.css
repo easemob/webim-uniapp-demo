@@ -37,7 +37,12 @@
   /* Neutral Special/5 */
   color: #5270ad;
 }
-.message_list_item_content_time {
+.message_time {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 16px;
   /* Alphabet/Body/Small */
   font-family: 'SF Pro';
@@ -46,7 +51,7 @@
   font-size: 12px;
   line-height: 16px;
   /* identical to box height, or 133% */
-
   /* Neutral/7 */
   color: #acb4b9;
+  margin: 10px 0 5px 0;
 }

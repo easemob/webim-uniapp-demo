@@ -1,47 +1,53 @@
 <template>
-  <view
-    :class="['message_list_item', !isSelf(msgBody) || 'message_list_item_mine']"
-  >
-    <!--user avatar -->
-    <view class="message_list_item_avatar">
-      <u-avatar src="/static/images/new_ui/defaultAvatar.png" :size="28" />
+  <view>
+    <text v-show="isNeedShowMessageTime" class="message_time">{{
+      messageTime(msgBody.time)
+    }}</text>
+    <view
+      :class="[
+        'message_list_item',
+        !isSelf(msgBody) || 'message_list_item_mine',
+      ]"
+    >
+      <!--user avatar -->
+      <view class="message_list_item_avatar">
+        <u-avatar src="/static/images/new_ui/defaultAvatar.png" :size="28" />
+      </view>
+      <view class="message_list_item_content">
+        <text class="message_list_item_content_nickname">{{
+          msgBody.from
+        }}</text>
+        <!-- 文本消息 -->
+        <template v-if="msgBody.type === MESSAGE_TYPE.TEXT">
+          <text-msg-item :msgBody="msgBody" />
+        </template>
+        <!-- 图片消息 -->
+        <template v-if="msgBody.type === MESSAGE_TYPE.IMAGE">
+          <image-msg-item :msgBody="msgBody" />
+        </template>
+        <!-- 语音消息 -->
+        <template v-if="msgBody.type === MESSAGE_TYPE.AUDIO">
+          <audio-msg-item
+            :msgBody="msgBody"
+            :playAudioMid="playAudioMid"
+            @onClickPlayAudio="onClickPlayAudio"
+          />
+        </template>
+        <!-- 附件消息 -->
+        <template v-if="msgBody.type === MESSAGE_TYPE.FILE">
+          <file-msg-item :msgBody="msgBody" />
+        </template>
+        <!-- 个人名片 -->
+        <template
+          v-if="
+            msgBody.type === MESSAGE_TYPE.CUSTOM &&
+            msgBody.customEvent === CUSTOM_EVENT_NAME.USER_CARD
+          "
+        >
+          <user-card-msg-item :msgBody="msgBody" />
+        </template>
+      </view>
     </view>
-
-    <view class="message_list_item_content">
-      <text class="message_list_item_content_nickname">{{ msgBody.from }}</text>
-      <!-- 文本消息 -->
-      <template v-if="msgBody.type === MESSAGE_TYPE.TEXT">
-        <text-msg-item :msgBody="msgBody" />
-      </template>
-      <!-- 图片消息 -->
-      <template v-if="msgBody.type === MESSAGE_TYPE.IMAGE">
-        <image-msg-item :msgBody="msgBody" />
-      </template>
-      <!-- 语音消息 -->
-      <template v-if="msgBody.type === MESSAGE_TYPE.AUDIO">
-        <audio-msg-item
-          :msgBody="msgBody"
-          :playAudioMid="playAudioMid"
-          @onClickPlayAudio="onClickPlayAudio"
-        />
-      </template>
-      <!-- 附件消息 -->
-      <template v-if="msgBody.type === MESSAGE_TYPE.FILE">
-        <file-msg-item :msgBody="msgBody" />
-      </template>
-      <!-- 个人名片 -->
-      <template
-        v-if="
-          msgBody.type === MESSAGE_TYPE.CUSTOM &&
-          msgBody.customEvent === CUSTOM_EVENT_NAME.USER_CARD
-        "
-      >
-        <user-card-msg-item :msgBody="msgBody" />
-      </template>
-    </view>
-    <!-- <text class="message_list_item_content_time">{{
-            messageTime(msgBody.time)
-          }}</text> -->
   </view>
 </template>
 
@@ -59,6 +65,10 @@ export default {
       type: Object,
       default: () => ({}),
       required: true,
+    },
+    isNeedShowMessageTime: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -96,6 +106,7 @@ export default {
       console.log('mid', mid);
       console.log('++++++++');
     },
+    //TODO 待好友详情页完成，点击userCard消息跳转至用户详情
   },
 };
 </script>
