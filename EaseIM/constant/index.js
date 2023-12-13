@@ -27,9 +27,11 @@ export const SESSION_MESSAGE_TYPE = {
   audio: '[语音]',
   loc: '[位置]',
 };
-
+export const CUSTOM_EVENT_NAME = {
+  USER_CARD: 'userCard',
+};
 export const CUSTOM_TYPE = {
-  userCard: '个人名片',
+  [CUSTOM_EVENT_NAME.USER_CARD]: '个人名片',
 };
 export const MESSAGE_TYPE = {
   IMAGE: 'img',

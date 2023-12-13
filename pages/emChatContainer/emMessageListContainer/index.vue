@@ -29,6 +29,15 @@
       <template v-if="msgBody.type === MESSAGE_TYPE.FILE">
         <file-msg-item :msgBody="msgBody" />
       </template>
+      <!-- 个人名片 -->
+      <template
+        v-if="
+          msgBody.type === MESSAGE_TYPE.CUSTOM &&
+          msgBody.customEvent === CUSTOM_EVENT_NAME.USER_CARD
+        "
+      >
+        <user-card-msg-item :msgBody="msgBody" />
+      </template>
     </view>
     <!-- <text class="message_list_item_content_time">{{
             messageTime(msgBody.time)
@@ -37,11 +46,12 @@
 </template>
 
 <script>
-import { MESSAGE_TYPE } from '@/EaseIM/constant';
+import { MESSAGE_TYPE, CUSTOM_EVENT_NAME } from '@/EaseIM/constant';
 import TextMsgItem from './messagesItem/textMsgItem';
 import ImageMsgItem from './messagesItem/imageMsgItem';
 import AudioMsgItem from './messagesItem/audioMsgItem';
 import FileMsgItem from './messagesItem/fileMsgItem';
+import UserCardMsgItem from './messagesItem/userCardItem';
 export default {
   inject: ['targetId', 'chatType'],
   props: {
@@ -56,10 +66,12 @@ export default {
     ImageMsgItem,
     AudioMsgItem,
     FileMsgItem,
+    UserCardMsgItem,
   },
   data() {
     return {
       MESSAGE_TYPE,
+      CUSTOM_EVENT_NAME,
       playAudioMid: '',
     };
   },

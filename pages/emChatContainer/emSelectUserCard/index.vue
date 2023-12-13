@@ -1,18 +1,44 @@
 <template>
   <view>
-    <!-- 好友列表cell -->
-    <u-cell-group>
-      <u-cell
-        v-for="(item, index) in friendList"
-        :key="item + index"
-        icon="account-fill"
-        :title="showConversationName(item)"
-        @click="openWaitSendModal(item)"
-      ></u-cell>
-    </u-cell-group>
-    <!-- 待发送框 -->
+    <u-navbar
+      title="选择朋友"
+      :safeAreaInsetTop="true"
+      :placeholder="true"
+      :fixed="true"
+      leftIcon="close"
+      :autoBack="true"
+    >
+    </u-navbar>
+    <!-- 好友列表 -->
+    <view>
+      <u-list @scrolltolower="scrolltolower">
+        <u-list-item v-for="(friendItem, index) in friendList" :key="index">
+          <!-- 展示的cell不能为当前聊天中的好友 -->
+          <u-cell
+            v-if="chattingId !== friendItem.userId"
+            @click="openWaitSendModal(friendItem.userId)"
+          >
+            <u-avatar
+              slot="icon"
+              shape="square"
+              size="40"
+              :src="showFriendAvatar(friendItem)"
+              customStyle="margin: -3px 5px -3px 0"
+            ></u-avatar>
+            <view slot="title">
+              <u--text
+                :lines="1"
+                :text="showFriendNickname(friendItem)"
+                iconStyle="margin-left: 2px;"
+              ></u--text>
+            </view>
+          </u-cell>
+        </u-list-item>
+      </u-list>
+    </view>
+    <!-- 待发送modal -->
     <u-modal
-      v-model="isShowWaitSendModal"
+      :show="isShowWaitSendModal"
       :zoom="true"
       title="发送名片"
       async-close
@@ -27,10 +53,10 @@
         <view class="send_target_user_info">
           <image
             class="send_target_avatar"
-            :src="showConversationAvatar(targetId)"
+            :src="showFriendAvatar(chattingId)"
           ></image>
           <text class="send_target_nickname">{{
-            showConversationName(targetId)
+            showFriendNickname({ userId: chattingId })
           }}</text>
         </view>
         <text class="wait_send_user_nickname"
@@ -55,29 +81,52 @@ const { sendDisplayMessages } = emMessages();
 export default {
   data() {
     return {
-      targetId: '',
-      chatType: '',
+      sendTargetInfo: {
+        userId: '',
+        chatType: '',
+      },
       isShowWaitSendModal: false,
       waitSendUserId: '',
       waitSendUserNickname: '',
       leaveMessageInput: '',
-      defaultAvatar: '/static/images/theme2x.png',
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
     };
   },
-  onLoad(option) {
-    this.targetId = option.targetId;
-    this.chatType = option.chatType;
-  },
+
   computed: {
+    chattingId() {
+      return this.$store.getters.chattingId;
+    },
+    chattingChatType() {
+      return this.$store.getters.chattingChatType;
+    },
+    //好友列表
     friendList() {
-      return this.$store.getters.friendList;
+      return this.$store.state.ContactsStore.friendList;
     },
     friendUserInfoMap() {
       return this.$store.state.ContactsStore.friendUserInfoMap;
     },
-    //会话name展示
-    showConversationName() {
-      return (userId) => {
+    //好友头像展示
+    showFriendAvatar() {
+      return (hxId) => {
+        if (
+          this.friendUserInfoMap.has(hxId) &&
+          this.friendUserInfoMap.get(hxId)?.avatarurl
+        ) {
+          return this.friendUserInfoMap.get(hxId).avatarurl;
+        } else {
+          return this.defaultAvatar;
+        }
+      };
+    },
+    //好友昵称展示
+    showFriendNickname() {
+      return (userItem) => {
+        const { userId, remark } = userItem;
+        if (remark) {
+          return remark;
+        }
         if (
           this.friendUserInfoMap.has(userId) &&
           this.friendUserInfoMap.get(userId)?.nickname
@@ -88,20 +137,9 @@ export default {
         }
       };
     },
-    showConversationAvatar() {
-      return (userId) => {
-        if (
-          this.friendUserInfoMap.has(userId) &&
-          this.friendUserInfoMap.get(userId)?.avatarurl
-        ) {
-          return this.friendUserInfoMap.get(userId).avatarurl;
-        } else {
-          return this.defaultAvatar;
-        }
-      };
-    },
   },
   methods: {
+    scrolltolower() {},
     loginUserAvactar() {
       return (
         this.$store.state.LoginStore.loginUserProfiles?.avatarurl ||
@@ -109,6 +147,7 @@ export default {
       );
     },
     openWaitSendModal(userId) {
+      console.log('>>>>>>>111', userId);
       this.isShowWaitSendModal = true;
       this.$nextTick(() => {
         this.waitSendUserId = userId;
@@ -122,23 +161,24 @@ export default {
       }
     },
     closeWaitSendModal() {
+      this.isShowWaitSendModal = false;
       this.waitSendUserId = '';
       this.waitSendUserNickname = '';
     },
     async sendUserCardMessage() {
       const customEvent = 'userCard';
-      if (!this.targetId) return;
+      if (!this.chattingId) return;
       const friendInfo = this.getWaitSendUserInfo(this.waitSendUserId);
       const customExtParams = {
-        uid: this.targetId,
+        uid: this.chattingId,
         ...friendInfo,
       };
       const params = {
         type: MESSAGE_TYPE.CUSTOM,
         // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
-        to: this.targetId,
+        to: this.chattingId,
         // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
-        chatType: this.chatType,
+        chatType: this.chattingChatType,
         customEvent,
         customExts: { ...customExtParams },
       };
@@ -164,9 +204,9 @@ export default {
         // 消息内容。
         msg: this.leaveMessageInput,
         // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
-        to: this.targetId,
+        to: this.chattingId,
         // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
-        chatType: this.chatType,
+        chatType: this.chattingChatType,
       };
       try {
         const res = await sendDisplayMessages({ ...params });
@@ -188,7 +228,9 @@ export default {
 
 <style scoped>
 .content_box {
-  padding: 20rpx;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .send_target_user_info {
   display: flex;

@@ -122,12 +122,10 @@
       }
     },
     {
-      "path": "pages/emChatContainer/selectUserCard/index",
+      "path": "pages/emChatContainer/emSelectUserCard/index",
       "style": {
-        "navigationBarBackgroundColor": "#ffffff",
-        "navigationBarTextStyle": "black",
-        "backgroundTextStyle": "light",
-        "navigationBarTitleText": "选择朋友"
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
       }
     },
     {

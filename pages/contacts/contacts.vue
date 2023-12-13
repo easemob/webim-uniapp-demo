@@ -186,7 +186,7 @@ export default {
       isShowDefaultSearch: true,
       searchInputKeywords: '',
       searchFriendResultList: [],
-      defaultAvatar: '/static/images/theme2x.png',
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
       indexList: [],
       sortedContactsList: [],
     };

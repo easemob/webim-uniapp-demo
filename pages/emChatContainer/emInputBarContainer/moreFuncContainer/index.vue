@@ -37,7 +37,7 @@
     </view>
 
     <!-- 名片 -->
-    <view class="more_func_item">
+    <view class="more_func_item" @click="entrySelectUserCard">
       <view class="more_func_item_icon">
         <image
           class="more_func_item_icon_profile"
@@ -71,6 +71,12 @@ export default {
     },
     onCloseAllShowContainer() {
       this.$emit('onCloseAllShowContainer');
+    },
+    entrySelectUserCard() {
+      uni.navigateTo({
+        url: '../emChatContainer/emSelectUserCard/index',
+      });
+      this.onCloseAllShowContainer();
     },
   },
 };
