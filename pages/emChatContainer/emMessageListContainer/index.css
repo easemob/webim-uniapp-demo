@@ -37,6 +37,9 @@
   /* Neutral Special/5 */
   color: #5270ad;
 }
+.message_list_item_content_nickname_mine {
+  text-align: right;
+}
 .message_time {
   display: flex;
   flex-direction: row;

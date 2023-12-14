@@ -38,7 +38,7 @@
   /* Neutral Special/5 */
   color: #5270ad;
 }
-.message_list_item_content_time {
+.message_list_item_content_nickname_mine .message_list_item_content_time {
   height: 16px;
   /* Alphabet/Body/Small */
   font-family: 'SF Pro';

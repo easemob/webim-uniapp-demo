@@ -11,12 +11,17 @@
     >
       <!--user avatar -->
       <view class="message_list_item_avatar">
-        <u-avatar src="/static/images/new_ui/defaultAvatar.png" :size="28" />
+        <u-avatar :src="messageItemAvatar" shape="square" :size="28" />
       </view>
       <view class="message_list_item_content">
-        <text class="message_list_item_content_nickname">{{
-          msgBody.from
-        }}</text>
+        <text
+          :class="[
+            'message_list_item_content_nickname',
+            isSelf(msgBody) && 'message_list_item_content_nickname_mine',
+          ]"
+          >{{ messageItemNickName }}</text
+        >
+
         <!-- 文本消息 -->
         <template v-if="msgBody.type === MESSAGE_TYPE.TEXT">
           <text-msg-item :msgBody="msgBody" />
@@ -52,12 +57,13 @@
 </template>
 
 <script>
-import { MESSAGE_TYPE, CUSTOM_EVENT_NAME } from '@/EaseIM/constant';
+import { MESSAGE_TYPE, CUSTOM_EVENT_NAME, CHAT_TYPE } from '@/EaseIM/constant';
 import TextMsgItem from './messagesItem/textMsgItem';
 import ImageMsgItem from './messagesItem/imageMsgItem';
 import AudioMsgItem from './messagesItem/audioMsgItem';
 import FileMsgItem from './messagesItem/fileMsgItem';
 import UserCardMsgItem from './messagesItem/userCardItem';
+import { EMClient } from '@/EaseIM';
 export default {
   inject: ['targetId', 'chatType'],
   props: {
@@ -83,6 +89,7 @@ export default {
       MESSAGE_TYPE,
       CUSTOM_EVENT_NAME,
       playAudioMid: '',
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
     };
   },
   computed: {
@@ -94,10 +101,77 @@ export default {
         );
       };
     },
+    loginUserProfiles() {
+      return this.$store.state.LoginStore.loginUserProfiles;
+    },
     messageTime() {
       return (time) => {
         return this.$u.timeFrom(time);
       };
+    },
+    friendUserInfoMap() {
+      return this.$store.state.ContactsStore.friendUserInfoMap;
+    },
+    groupMembersProfileData() {
+      return this.$store.getters.groupMembersProfile;
+    },
+    messageItemAvatar() {
+      if (this.isSelf(this.msgBody)) {
+        return this.loginUserProfiles?.avatarurl || this.defaultAvatar;
+      }
+      if (this.msgBody.chatType === CHAT_TYPE.SINGLE_CHAT) {
+        const userId = this.msgBody.from;
+        if (
+          this.friendUserInfoMap.has(userId) &&
+          this.friendUserInfoMap.get(userId)?.avatarurl
+        ) {
+          return (
+            this.friendUserInfoMap.get(userId).avatarurl || this.defaultAvatar
+          );
+        } else {
+          return this.defaultAvatar;
+        }
+      }
+      if (this.msgBody.chatType === CHAT_TYPE.GROUP_CHAT) {
+        const groupId = this.msgBody.to;
+        const userId = this.msgBody.from;
+        const groupMemberData = this.groupMembersProfileData[groupId];
+        if (groupMemberData) {
+          return groupMemberData[userId]?.avatarurl || this.defaultAvatar;
+        } else {
+          return this.defaultAvatar;
+        }
+      }
+    },
+    messageItemNickName() {
+      if (this.isSelf(this.msgBody)) {
+        return this.loginUserProfiles?.nickname || EMClient.user;
+      }
+      if (this.msgBody.chatType === CHAT_TYPE.SINGLE_CHAT) {
+        const userId = this.msgBody.from;
+        if (
+          this.friendUserInfoMap.has(userId) &&
+          this.friendUserInfoMap.get(userId)?.nickname
+        ) {
+          return (
+            this.friendUserInfoMap.get(userId).nickname || this.msgBody.from
+          );
+        }
+      }
+      if (this.msgBody.chatType === CHAT_TYPE.GROUP_CHAT) {
+        const groupId = this.msgBody.to;
+        const userId = this.msgBody.from;
+        const groupMemberData = this.groupMembersProfileData[groupId];
+        if (groupMemberData) {
+          return (
+            groupMemberData[userId]?.nickName ||
+            groupMemberData[userId]?.nickname ||
+            this.msgBody.from
+          );
+        } else {
+          return this.msgBody.from;
+        }
+      }
     },
   },
   methods: {
