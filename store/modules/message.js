@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { emMessages } from '@/EaseIM/emApis';
-import { MESSAGE_STATUS } from '@/EaseIM/constant';
+import { MESSAGE_STATUS, MESSAGE_TYPE } from '@/EaseIM/constant';
 import ConversationStore from './conversation';
 import { EVENT_BUS_NAME } from '@/constant';
 const { fetchHistoryMessagesFromServer } = emMessages();
@@ -8,7 +8,6 @@ const MessageStore = {
   state: {
     messageCollection: {},
     messageStatusCollection: {}, //readed、unread、recalled
-    cacheHistoryMessageCursor: {}, //key-value形式缓存漫游游标。
   },
   mutations: {
     UPDATE_MESSAGE_COLLECTION(state, payload) {
@@ -28,14 +27,6 @@ const MessageStore = {
       }
 
       state.messageCollection[key].unshift(message);
-    },
-    UPDATE_HISTORY_MESSAGE_CURSOR(state, payload) {
-      const { key, cursor } = payload;
-      if (!state.cacheHistoryMessageCursor[key]) {
-        Vue.set(state.cacheHistoryMessageCursor, key, cursor || '');
-      } else {
-        state.cacheHistoryMessageCursor[key] = cursor;
-      }
     },
     UPDATE_MESSAGE_FROM_SERVER(state, payload) {
       const { key, messageList } = payload;
@@ -72,7 +63,16 @@ const MessageStore = {
   actions: {
     async fetchHistroyMessageListFromServer({ state, commit }, params) {
       const { targetId, chatType } = params;
-      const cursorMsgId = state.cacheHistoryMessageCursor[targetId] || '';
+      let cursorMsgId = '';
+      const messages = state.messageCollection[targetId];
+      //查找消息列表数组中的最后一条消息且不为灰色通知消息最为漫游cursorMsgId
+      if (messages?.length) {
+        const reverseMessages = Object.assign([], messages).reverse();
+        const lastMsgBody = reverseMessages.find((message) => {
+          return message.type !== MESSAGE_TYPE.GRAY_INFORM;
+        });
+        cursorMsgId = lastMsgBody?.id;
+      }
       return new Promise((resolve, reject) => {
         fetchHistoryMessagesFromServer({
           targetId,
@@ -84,10 +84,6 @@ const MessageStore = {
               commit('UPDATE_MESSAGE_FROM_SERVER', {
                 key: targetId,
                 messageList: res.messages,
-              });
-              commit('UPDATE_HISTORY_MESSAGE_CURSOR', {
-                key: targetId,
-                cursor: res.cursor,
               });
             }
             resolve(res);

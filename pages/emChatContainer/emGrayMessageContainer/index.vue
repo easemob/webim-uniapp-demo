@@ -166,12 +166,17 @@ export default {
     //获取用户对应群组昵称
     getMemberGroupNickname(userId, groupId) {
       const groupMemberData = this.groupMembersProfileData[groupId];
+      console.log(groupMemberData);
       let nickname = '';
-      nickname =
-        groupMemberData[userId]?.nickName ||
-        groupMemberData[userId]?.nickname ||
-        userId;
-      return `“${nickname}”`;
+      if (groupMemberData) {
+        nickname =
+          groupMemberData[userId]?.nickName ||
+          groupMemberData[userId]?.nickname ||
+          userId;
+        return `“${nickname}”`;
+      } else {
+        return `“${userId}”`;
+      }
     },
   },
 };
