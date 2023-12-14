@@ -8,7 +8,6 @@ import {
   GRAY_INFORM_TYPE_SINGLE,
 } from '../constant';
 import store from '@/store';
-console.log('>>>>>>vuex store', store);
 export const emContactsListener = (callback, listenerEventName) => {
   console.log('>>>>>好友关系监听挂载');
   const addNewInformFunc = (params) => {

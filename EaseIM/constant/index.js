@@ -1,3 +1,18 @@
+import {
+  GRAY_INFORM_TYPE_SINGLE,
+  GRAY_INFORM_MAP_SINGLE_TEXT,
+  GRAY_INFORM_TYPE_GROUP,
+  GRAY_INFORM_MAP_GROUP_TEXT,
+  GRAY_INFORM_TEMPLATE_NAME,
+} from './grayInform';
+/* 灰色通知类型 */
+export {
+  GRAY_INFORM_TYPE_SINGLE,
+  GRAY_INFORM_MAP_SINGLE_TEXT,
+  GRAY_INFORM_TYPE_GROUP,
+  GRAY_INFORM_MAP_GROUP_TEXT,
+  GRAY_INFORM_TEMPLATE_NAME,
+};
 export const CHAT_TYPE = {
   SINGLE_CHAT: 'singleChat',
   GROUP_CHAT: 'groupChat',
@@ -50,21 +65,8 @@ export const MESSAGE_TYPE = {
   EMOJI: 'emoji',
   FILE: 'file',
   CUSTOM: 'custom',
-  GRAY_INFORM: 'gray_inform', //此类型非正式类型，为自定义的本地插入用于灰色通知类型。
+  GRAY_INFORM: 'gray_inform', //此类型非SDK正式类型，此类型为自定义的本地插入用于灰色通知类型。
 };
-//灰色通知好友类型
-export const GRAY_INFORM_TYPE_SINGLE = {
-  CONTACT_ADDED: 'contactAdded',
-  CONTACT_AGREED: 'contactAgreed',
-};
-//灰色通知对应好友文本展示，[XXX]用于替换为实际用户ID或昵称
-export const GRAY_INFORM_MAP_SINGLE_TEXT = {
-  [GRAY_INFORM_TYPE_SINGLE.CONTACT_ADDED]: '你已添加了[XXX]，打个招呼吧！',
-  [GRAY_INFORM_TYPE_SINGLE.CONTACT_AGREED]:
-    '[XXX]通过了你的好友申请，打个招呼吧！',
-};
-//灰色通知群聊
-export const GRAY_INFORM_TYPE_GROUP = {};
 
 export const EMOJI = {
   path: '@/static/images/faces',

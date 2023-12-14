@@ -1,7 +1,9 @@
 <template>
   <view class="message_gray_item">
     <!-- 撤回类型通知消息 -->
-    <template v-if="msgBody.type !== CHAT_TYPE.GRAY_INFORM && msgType !== ''">
+    <template
+      v-if="msgBody.type !== MESSAGE_TYPE.GRAY_INFORM && msgType !== ''"
+    >
       <text class="message_time">{{ messageTime(msgBody.time) }}</text>
       <view
         v-if="msgType === MESSAGE_STATUS.RECALL"
@@ -35,6 +37,17 @@
       </view>
     </template>
     <!-- 群组事件系统通知 -->
+    <template
+      v-if="
+        msgBody.chatType === CHAT_TYPE.GROUP_CHAT &&
+        GRAY_INFORM_MAP_GROUP_TEXT[msgBody.grayInformType]
+      "
+    >
+      <text class="message_time">{{ messageTime(msgBody.time) }}</text>
+      <view class="common_msg_item_container">
+        <text>{{ replaceStr }}</text>
+      </view>
+    </template>
   </view>
 </template>
 
@@ -45,6 +58,9 @@ import {
   MESSAGE_TYPE,
   GRAY_INFORM_TYPE_SINGLE,
   GRAY_INFORM_MAP_SINGLE_TEXT,
+  GRAY_INFORM_TEMPLATE_NAME,
+  GRAY_INFORM_TYPE_GROUP,
+  GRAY_INFORM_MAP_GROUP_TEXT,
 } from '@/EaseIM/constant';
 export default {
   props: {
@@ -61,6 +77,9 @@ export default {
       MESSAGE_TYPE,
       GRAY_INFORM_TYPE_SINGLE,
       GRAY_INFORM_MAP_SINGLE_TEXT,
+      GRAY_INFORM_TEMPLATE_NAME,
+      GRAY_INFORM_TYPE_GROUP,
+      GRAY_INFORM_MAP_GROUP_TEXT,
     };
   },
   computed: {
@@ -81,7 +100,9 @@ export default {
     friendUserInfoMap() {
       return this.$store.state.ContactsStore.friendUserInfoMap;
     },
-
+    groupMembersProfileData() {
+      return this.$store.getters.groupMembersProfile;
+    },
     // 灰色通知消息类型
     msgType() {
       const msgBody = this.msgBody;
@@ -103,10 +124,25 @@ export default {
     },
     //将灰色系统通知包含昵称模版的进一步替换替换字符串[XXX]为用户昵称或ID
     replaceStr() {
-      const { chatType, grayInformType, from } = this.msgBody;
+      const { chatType, grayInformType, from, to } = this.msgBody;
       if (chatType === CHAT_TYPE.SINGLE_CHAT) {
-        const str = GRAY_INFORM_MAP_SINGLE_TEXT[grayInformType];
-        return str.replace('[XXX]', this.getFriendNickname(from));
+        let str = GRAY_INFORM_MAP_SINGLE_TEXT[grayInformType];
+        str = str.replace(
+          GRAY_INFORM_TEMPLATE_NAME.USER,
+          this.getFriendNickname(from)
+        );
+        return str;
+      }
+      if (chatType === CHAT_TYPE.GROUP_CHAT) {
+        const groupId = to;
+        let str = GRAY_INFORM_MAP_GROUP_TEXT[grayInformType];
+        if (str.includes(GRAY_INFORM_TEMPLATE_NAME.GROUP_USER_FROM)) {
+          str = str.replace(
+            GRAY_INFORM_TEMPLATE_NAME.GROUP_USER_FROM,
+            this.getMemberGroupNickname(from, groupId)
+          );
+        }
+        return str;
       }
     },
   },
@@ -126,6 +162,16 @@ export default {
       } else {
         return `“${userId}”`;
       }
+    },
+    //获取用户对应群组昵称
+    getMemberGroupNickname(userId, groupId) {
+      const groupMemberData = this.groupMembersProfileData[groupId];
+      let nickname = '';
+      nickname =
+        groupMemberData[userId]?.nickName ||
+        groupMemberData[userId]?.nickname ||
+        userId;
+      return `“${nickname}”`;
     },
   },
 };

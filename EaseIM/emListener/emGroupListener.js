@@ -1,5 +1,11 @@
 import { EMClient } from '../index';
-import { HANDLER_EVENT_NAME, CHAT_TYPE } from '../constant';
+import { getEMKey } from '@/EaseIM/utils';
+import {
+  HANDLER_EVENT_NAME,
+  CHAT_TYPE,
+  MESSAGE_TYPE,
+  GRAY_INFORM_TYPE_GROUP,
+} from '../constant';
 import store from '@/store';
 export const emGroupListener = (callback, listenerEventName) => {
   console.log('>>>>群组事件监听挂载');
@@ -7,10 +13,29 @@ export const emGroupListener = (callback, listenerEventName) => {
   const reveiveFriendInvite = (params) => {
     store.commit('ADD_NEW_RECEIVE_INVITE_MSG', params);
   };
+  //构造inform消息体
+  const addGrayInformMessage = (params) => {
+    const message = {
+      from: params.from,
+      to: params.id,
+      chatType: CHAT_TYPE.GROUP_CHAT,
+      type: MESSAGE_TYPE.GRAY_INFORM,
+      time: Date.now(),
+      grayInformType: params.grayInformType,
+    };
+    const key = getEMKey(
+      EMClient.user,
+      message.from,
+      message.to,
+      message.chatType
+    );
+    store.commit('ADD_NEW_GRAY_INFORM_MESSAGE', { key, message });
+  };
   const groupListenFunc = {
     onGroupEvent: (event) => {
       console.log('>>>>群组事件监听触发', event);
       const { operation, from, id: groupId } = event;
+      const msgBody = Object.assign({}, event);
       callback(HANDLER_EVENT_NAME.GROUP_EVENT, event);
       switch (operation) {
         // 有新群组创建。群主的其他设备会收到该回调。
@@ -57,6 +82,9 @@ export const emGroupListener = (callback, listenerEventName) => {
           break;
         // 转让群组。原群主和新群主会收到该回调。
         case 'changeOwner':
+          //TODO 待处理store中的owner变更
+          msgBody.grayInformType = GRAY_INFORM_TYPE_GROUP.CHANGE_OWNER;
+          addGrayInformMessage(msgBody);
           break;
         // 群组所有者和管理员拉用户进群时，无需用户确认时会触发该回调。被拉进群的用户会收到该回调。
         case 'directJoined':
@@ -79,6 +107,8 @@ export const emGroupListener = (callback, listenerEventName) => {
             groupId,
             count: -1,
           });
+          msgBody.grayInformType = GRAY_INFORM_TYPE_GROUP.MEMBER_ABSENCE;
+          addGrayInformMessage(msgBody);
           break;
         // 有用户加入群组。除了新成员，其他群成员会收到该回调。
         case 'memberPresence':
@@ -90,6 +120,8 @@ export const emGroupListener = (callback, listenerEventName) => {
             groupId,
             count: 1,
           });
+          msgBody.grayInformType = GRAY_INFORM_TYPE_GROUP.MEMBER_PRESENCE;
+          addGrayInformMessage(msgBody);
           break;
         // 用户被移出群组。被踢出群组的成员会收到该回调。
         case 'removeMember':

@@ -3,7 +3,6 @@ import { EMClient } from '@/EaseIM';
 import { emConnectListener, emMountGlobalListener } from '@/EaseIM/emListener';
 import { emConnect } from '@/EaseIM/emApis';
 import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
-console.log('EMClient', EMClient);
 export default {
   globalData: {
     phoneNumber: '',

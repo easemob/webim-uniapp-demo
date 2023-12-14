@@ -388,7 +388,6 @@ export default {
             return item.conversationId;
           }
         } else if (item.conversationType === CHAT_TYPE.GROUP_CHAT) {
-          console.log('getGroupName', item.conversationId);
           return this.getGroupName(item.conversationId);
         }
       };
