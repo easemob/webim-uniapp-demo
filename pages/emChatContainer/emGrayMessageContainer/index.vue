@@ -96,11 +96,9 @@ export default {
           this.messageCollectionStatus &&
           this.messageCollectionStatus[msgBody.id] === MESSAGE_STATUS.RECALL
         ) {
-          console.log('>>>>>该条消息为撤回');
           msgStatus = MESSAGE_STATUS.RECALL;
         }
       }
-      console.log('msgStatus', msgStatus);
       return msgStatus;
     },
     //将灰色系统通知包含昵称模版的进一步替换替换字符串[XXX]为用户昵称或ID

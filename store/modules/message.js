@@ -8,6 +8,7 @@ const MessageStore = {
   state: {
     messageCollection: {},
     messageStatusCollection: {}, //readed、unread、recalled
+    cacheHistoryMessageCursor: {}, //key-value形式缓存漫游游标。
   },
   mutations: {
     UPDATE_MESSAGE_COLLECTION(state, payload) {
@@ -27,6 +28,14 @@ const MessageStore = {
       }
 
       state.messageCollection[key].unshift(message);
+    },
+    UPDATE_HISTORY_MESSAGE_CURSOR(state, payload) {
+      const { key, cursor } = payload;
+      if (!state.cacheHistoryMessageCursor[key]) {
+        Vue.set(state.cacheHistoryMessageCursor, key, cursor || '');
+      } else {
+        state.cacheHistoryMessageCursor[key] = cursor;
+      }
     },
     UPDATE_MESSAGE_FROM_SERVER(state, payload) {
       const { key, messageList } = payload;
@@ -63,10 +72,7 @@ const MessageStore = {
   actions: {
     async fetchHistroyMessageListFromServer({ state, commit }, params) {
       const { targetId, chatType } = params;
-      const sourceMessage = state.messageCollection[targetId] || [];
-      const cursorMsgId =
-        (sourceMessage.length && sourceMessage[sourceMessage.length - 1]?.id) ||
-        -1;
+      const cursorMsgId = state.cacheHistoryMessageCursor[targetId] || '';
       return new Promise((resolve, reject) => {
         fetchHistoryMessagesFromServer({
           targetId,
@@ -78,6 +84,10 @@ const MessageStore = {
               commit('UPDATE_MESSAGE_FROM_SERVER', {
                 key: targetId,
                 messageList: res.messages,
+              });
+              commit('UPDATE_HISTORY_MESSAGE_CURSOR', {
+                key: targetId,
+                cursor: res.cursor,
               });
             }
             resolve(res);
