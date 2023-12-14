@@ -10,10 +10,10 @@
       slot="left"
       size="32"
       shape="square"
-      src="/static/images/new_ui/defaultAvatar.png"
+      :src="navbarAvatar"
     ></u-avatar>
     <view slot="left" class="chat_name">
-      <text class="chat_name_text"> 恭喜发财大吉大利 </text>
+      <text class="chat_name_text"> {{ navigatorName }} </text>
       <text class="presence_status_text">在线</text>
     </view>
     <u-icon
@@ -36,6 +36,63 @@ export default {
     chatType: {
       type: String,
       default: CHAT_TYPE.SINGLE_CHAT,
+    },
+  },
+  data() {
+    return {
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
+      defaultGroupAvatar: '/static/images/new_ui/defaultGroupAvatar.png',
+    };
+  },
+  computed: {
+    chattingId() {
+      return this.$store.getters.chattingId;
+    },
+    chattingChatType() {
+      return this.$store.getters.chattingChatType;
+    },
+    friendUserInfoMap() {
+      return this.$store.state.ContactsStore.friendUserInfoMap;
+    },
+    joinedGroupList() {
+      return this.$store.getters.joinedGroupList;
+    },
+    navbarAvatar() {
+      if (this.chattingChatType === CHAT_TYPE.SINGLE_CHAT) {
+        const userId = this.chattingId;
+        if (
+          this.friendUserInfoMap.has(userId) &&
+          this.friendUserInfoMap.get(userId)?.avatarurl
+        ) {
+          return (
+            this.friendUserInfoMap.get(userId).avatarurl || this.defaultAvatar
+          );
+        } else {
+          return this.defaultAvatar;
+        }
+      }
+      if (this.chattingChatType === CHAT_TYPE.GROUP_CHAT) {
+        return this.defaultGroupAvatar;
+      }
+    },
+    navigatorName() {
+      if (this.chattingChatType === CHAT_TYPE.SINGLE_CHAT) {
+        const userId = this.chattingId;
+        if (
+          this.friendUserInfoMap.has(userId) &&
+          this.friendUserInfoMap.get(userId)?.nickname
+        ) {
+          return this.friendUserInfoMap.get(userId).nickname;
+        } else {
+          return userId;
+        }
+      }
+      if (this.chattingChatType === CHAT_TYPE.GROUP_CHAT) {
+        const group = this.joinedGroupList.find(
+          (group) => group.groupId == this.chattingId
+        );
+        return group.groupName;
+      }
     },
   },
   methods: {
