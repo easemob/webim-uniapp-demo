@@ -44,18 +44,6 @@ export const MESSAGE_STATUS = {
   RECALL: 'recalled',
   FAIL: 'fail',
 };
-export const SESSION_MESSAGE_TYPE = {
-  img: '[图片]',
-  file: '[文件]',
-  audio: '[语音]',
-  loc: '[位置]',
-};
-export const CUSTOM_EVENT_NAME = {
-  USER_CARD: 'userCard',
-};
-export const CUSTOM_TYPE = {
-  [CUSTOM_EVENT_NAME.USER_CARD]: '个人名片',
-};
 export const MESSAGE_TYPE = {
   IMAGE: 'img',
   TEXT: 'txt',
@@ -66,6 +54,19 @@ export const MESSAGE_TYPE = {
   FILE: 'file',
   CUSTOM: 'custom',
   GRAY_INFORM: 'gray_inform', //此类型非SDK正式类型，此类型为自定义的本地插入用于灰色通知类型。
+};
+export const SESSION_MESSAGE_TYPE = {
+  [MESSAGE_TYPE.IMAGE]: '[图片]',
+  [MESSAGE_TYPE.FILE]: '[文件]',
+  [MESSAGE_TYPE.AUDIO]: '[语音]',
+  [MESSAGE_TYPE.LOCATION]: '[位置]',
+  [MESSAGE_TYPE.VIDEO]: '[视频]',
+};
+export const CUSTOM_EVENT_NAME = {
+  USER_CARD: 'userCard',
+};
+export const CUSTOM_TYPE = {
+  [CUSTOM_EVENT_NAME.USER_CARD]: '个人名片',
 };
 
 export const EMOJI = {

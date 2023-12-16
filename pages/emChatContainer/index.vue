@@ -21,17 +21,21 @@
         >如无更多，试试点击加载更多</view
       >
       <view
-        :id="`z-paging-${index}`"
         v-for="(msgBody, index) in dataList"
         :key="msgBody.id"
+        :id="'mid' + msgBody.id"
       >
         <em-message-list-container
+          ref="emMessageListComps"
           v-show="
             isShowMessageItem(msgBody) &&
             msgBody.type !== MESSAGE_TYPE.GRAY_INFORM
           "
           :msgBody="msgBody"
           :isNeedShowMessageTime="isNeedShowMessageTime(msgBody, index)"
+          :quoteMsgId="quoteMsgId"
+          @alertMessagePopup="alertMessagePopup"
+          @scrollToQuoteMessge="scrollToQuoteMessge"
         />
         <!-- 灰色系统通知类型消息 -->
         <em-gray-message-container
@@ -48,6 +52,11 @@
         <em-input-bar-container
           ref="emInputBarComps"
           @resetScrollHeight="resetScrollHeight"
+          :checkedPopupMsgBody="checkedPopupMsgBody"
+        />
+        <em-message-popup
+          ref="emMessagePopupComps"
+          @callReplyMessage="callReplyMessage"
         />
       </template>
     </z-paging>
@@ -60,10 +69,19 @@ import EmChat from '@/components/emChat';
 import EmMessageListContainer from './emMessageListContainer';
 import EmInputBarContainer from './emInputBarContainer';
 import EmGrayMessageContainer from './emGrayMessageContainer';
+import EmMessagePopup from './emMessagePopup';
 import { CHAT_TYPE, MESSAGE_STATUS } from '@/EaseIM/constant';
 import { EVENT_BUS_NAME } from '@/constant';
 import { MESSAGE_TYPE } from '../../EaseIM/constant';
 export default {
+  components: {
+    EmChatNavbar,
+    EmChat,
+    EmMessageListContainer,
+    EmInputBarContainer,
+    EmGrayMessageContainer,
+    EmMessagePopup,
+  },
   data() {
     return {
       MESSAGE_STATUS,
@@ -73,15 +91,11 @@ export default {
       //v-model绑定的这个变量不要在分页请求结束中自己赋值！！！
       dataList: [],
       isLoadingLocalMsgList: false,
+      checkedPopupMsgBody: {}, //当msg popup弹起时选中的消息体
+      quoteMsgId: '',
     };
   },
-  components: {
-    EmChatNavbar,
-    EmChat,
-    EmMessageListContainer,
-    EmInputBarContainer,
-    EmGrayMessageContainer,
-  },
+
   onLoad(option) {
     console.log(option);
     this.targetId = option.targetId;
@@ -284,6 +298,48 @@ export default {
         this.$refs.paging.updatePageScrollTopHeight();
         console.log(this.scrollHeight);
       });
+    },
+    //弹出消息对应popup
+    alertMessagePopup(msgBody) {
+      this.$refs.emMessagePopupComps.alertMessagePopup(msgBody);
+      this.checkedPopupMsgBody = msgBody;
+    },
+    //调起消息回复模式
+    callReplyMessage() {
+      console.log(1111);
+      this.$refs.emInputBarComps.onShowReplyMessageContainer();
+    },
+    //滚动至引用消息所在位置
+    scrollToQuoteMessge(msgQuote) {
+      const { msgID } = msgQuote;
+      if (msgID) {
+        const dom = uni
+          .createSelectorQuery()
+          .in(this)
+          .select('#mid' + msgID);
+        dom
+          .boundingClientRect((data) => {
+            if (data) {
+              this.$refs.paging.scrollIntoViewByNodeTop(data.top, 50);
+              //闪烁该条引用消息
+              this.setQuoteMessageId(msgID);
+            } else {
+              uni.showToast({
+                icon: 'none',
+                title: '没有回复的消息',
+              });
+            }
+          })
+          .exec();
+      }
+    },
+    //设置引用消息ID从而引起消息气泡闪烁
+    setQuoteMessageId(quoteMsgId) {
+      this.quoteMsgId = quoteMsgId;
+      //引起子组件增加闪烁样式后，延时半秒自定清空设置的引用消息id
+      setTimeout(() => {
+        this.quoteMsgId = '';
+      }, 500);
     },
   },
   onUnload() {

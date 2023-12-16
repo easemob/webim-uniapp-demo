@@ -58,3 +58,15 @@
   color: #acb4b9;
   margin: 10px 0 5px 0;
 }
+
+/* 引用消息闪烁 */
+/* 闪烁动画 */
+@keyframes blinkAnimation {
+  50% {
+    background-color: #eff0f1; /* 闪烁颜色 */
+  }
+}
+/* 应用于元素的闪烁效果 */
+.quote_msg_avtive {
+  animation: blinkAnimation 1s; /* 动画持续时间 */
+}

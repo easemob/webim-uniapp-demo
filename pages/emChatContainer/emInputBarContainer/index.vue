@@ -1,5 +1,11 @@
 <template>
   <view class="chat-input-bar-container">
+    <reply-message-container
+      ref="replyMessageContainerComps"
+      v-show="isShowReplyMessageContainer"
+      @onShowReplyMessageContainer="onShowReplyMessageContainer"
+      :checkedPopupMsgBody="checkedPopupMsgBody"
+    />
     <view class="chat-input-bar">
       <image
         class="chat-audio-icon-container"
@@ -62,6 +68,7 @@ import { emMessages } from '@/EaseIM/emApis';
 import RecordAudioContainer from './recordAudioContainer';
 import EmojiPickerContainer from './emojiPickerContainer';
 import MoreFuncContainer from './moreFuncContainer';
+import ReplyMessageContainer from './replyMessageContainer';
 const { sendDisplayMessages } = emMessages();
 export default {
   name: 'chat-input-bar',
@@ -69,6 +76,13 @@ export default {
     RecordAudioContainer,
     EmojiPickerContainer,
     MoreFuncContainer,
+    ReplyMessageContainer,
+  },
+  props: {
+    checkedPopupMsgBody: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -77,6 +91,7 @@ export default {
       isShowAudioMessageContainer: false,
       isShowEmojiIconContainer: false,
       isShowMoreFuncContainer: false,
+      isShowReplyMessageContainer: false,
     };
   },
   mounted() {
@@ -112,8 +127,14 @@ export default {
       this.onCloseAllShowContainer();
     },
     async sendTextMessage() {
-      if (!this.msgContent.length) return;
-      const params = {
+      if (this.msgContent.match(/^\s*$/)) {
+        uni.showToast({
+          title: '请输入内容',
+          icon: 'none',
+        });
+        return;
+      }
+      let params = {
         // 消息类型。
         type: 'txt',
         // 消息内容。
@@ -122,7 +143,15 @@ export default {
         to: this.chattingId,
         // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
         chatType: this.chattingChatType,
+        ext: {},
       };
+      //检测是否存在引用消息
+      if (this.isShowReplyMessageContainer) {
+        params.ext.msgQuote = {};
+        params.ext.msgQuote =
+          this.$refs.replyMessageContainerComps.extractMessageBodyValue();
+        console.log('>>>存在引用', params);
+      }
       try {
         const res = await sendDisplayMessages({ ...params });
         console.log('>>>>>文本消息发送成功', res);
@@ -142,6 +171,8 @@ export default {
       } finally {
         this.msgContent = '';
         this.onCloseAllShowContainer();
+        this.isShowReplyMessageContainer &&
+          (this.isShowReplyMessageContainer = false);
       }
     },
     onShowAudioMessageContainer() {
@@ -161,6 +192,9 @@ export default {
       this.isShowAudioMessageContainer &&
         (this.isShowAudioMessageContainer = false);
       this.isShowEmojiIconContainer && (this.isShowEmojiIconContainer = false);
+    },
+    onShowReplyMessageContainer() {
+      this.isShowReplyMessageContainer = !this.isShowReplyMessageContainer;
     },
     onCloseAllShowContainer() {
       this.isShowAudioMessageContainer = false;

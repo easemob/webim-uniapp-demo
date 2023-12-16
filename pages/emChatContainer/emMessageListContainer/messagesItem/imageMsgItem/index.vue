@@ -29,6 +29,12 @@ export default {
       if (this.msgBody.width > 1000 || this.msgBody.height > 1000) {
         imgSize.width = this.msgBody.width / 10 + 'px';
         imgSize.height = this.msgBody.height / 10 + 'px';
+      } else if (
+        this.msgBody.width > 800 < 1000 ||
+        this.msgBody.height > 800 < 1000
+      ) {
+        imgSize.width = this.msgBody.width / 3 + 'px';
+        imgSize.height = this.msgBody.height / 3 + 'px';
       } else if (this.msgBody.width < 100 || this.msgBody.height < 100) {
         imgSize.width = this.msgBody.width + 'px';
         imgSize.height = this.msgBody.height + 'px';

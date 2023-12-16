@@ -7,13 +7,14 @@
       :class="[
         'message_list_item',
         !isSelf(msgBody) || 'message_list_item_mine',
+        msgBody.id == quoteMsgId && 'quote_msg_avtive',
       ]"
     >
       <!--user avatar -->
       <view class="message_list_item_avatar">
         <u-avatar :src="messageItemAvatar" shape="square" :size="28" />
       </view>
-      <view class="message_list_item_content">
+      <view class="message_list_item_content" @longpress="callMessagePopup">
         <text
           :class="[
             'message_list_item_content_nickname',
@@ -51,6 +52,11 @@
         >
           <user-card-msg-item :msgBody="msgBody" />
         </template>
+        <msg-quote-container
+          v-if="msgBody.ext.msgQuote"
+          :msgQuoteContent="msgBody.ext.msgQuote"
+          @click.native="callScrollToQuoteMsg(msgBody.ext.msgQuote)"
+        />
       </view>
     </view>
   </view>
@@ -63,9 +69,17 @@ import ImageMsgItem from './messagesItem/imageMsgItem';
 import AudioMsgItem from './messagesItem/audioMsgItem';
 import FileMsgItem from './messagesItem/fileMsgItem';
 import UserCardMsgItem from './messagesItem/userCardItem';
+import MsgQuoteContainer from './msgQuoteContainer';
 import { EMClient } from '@/EaseIM';
 export default {
-  inject: ['targetId', 'chatType'],
+  components: {
+    TextMsgItem,
+    ImageMsgItem,
+    AudioMsgItem,
+    FileMsgItem,
+    UserCardMsgItem,
+    MsgQuoteContainer,
+  },
   props: {
     msgBody: {
       type: Object,
@@ -76,14 +90,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    quoteMsgId: {
+      type: String,
+      default: '',
+    },
   },
-  components: {
-    TextMsgItem,
-    ImageMsgItem,
-    AudioMsgItem,
-    FileMsgItem,
-    UserCardMsgItem,
-  },
+
   data() {
     return {
       MESSAGE_TYPE,
@@ -153,9 +165,9 @@ export default {
           this.friendUserInfoMap.has(userId) &&
           this.friendUserInfoMap.get(userId)?.nickname
         ) {
-          return (
-            this.friendUserInfoMap.get(userId).nickname || this.msgBody.from
-          );
+          return this.friendUserInfoMap.get(userId).nickname;
+        } else {
+          return userId;
         }
       }
       if (this.msgBody.chatType === CHAT_TYPE.GROUP_CHAT) {
@@ -166,10 +178,10 @@ export default {
           return (
             groupMemberData[userId]?.nickName ||
             groupMemberData[userId]?.nickname ||
-            this.msgBody.from
+            userId
           );
         } else {
-          return this.msgBody.from;
+          return userId;
         }
       }
     },
@@ -181,6 +193,13 @@ export default {
       console.log('++++++++');
     },
     //TODO 待好友详情页完成，点击userCard消息跳转至用户详情
+    //TODO 点击头像也需要跳转至好友详情页
+    callMessagePopup() {
+      this.$emit('alertMessagePopup', this.msgBody);
+    },
+    callScrollToQuoteMsg(msgQuote) {
+      this.$emit('scrollToQuoteMessge', msgQuote);
+    },
   },
 };
 </script>
