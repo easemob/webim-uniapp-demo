@@ -11,6 +11,7 @@ export const GROUP_MEMEBERS_SHOW_TYPE = {
 export const EVENT_BUS_NAME = {
   EASEIM_MESSAGE_COLLECTION_UPDATE: 'easeim-message-collection-update',
   EASEIM_MESSAGE_COLLECTION_DELETE: 'easeim-message-collection-delete',
+  EASEIM_MESSAGE_COLLECTION_MODIFY: 'easeim-message-collection-modify',
 };
 /* 录音相关 */
 export const RECORD_STATUS = {

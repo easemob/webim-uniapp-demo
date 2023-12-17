@@ -53,7 +53,7 @@
           <user-card-msg-item :msgBody="msgBody" />
         </template>
         <msg-quote-container
-          v-if="msgBody.ext.msgQuote"
+          v-if="msgBody.ext && msgBody.ext.msgQuote"
           :msgQuoteContent="msgBody.ext.msgQuote"
           @click.native="callScrollToQuoteMsg(msgBody.ext.msgQuote)"
         />

@@ -57,6 +57,7 @@
         <em-message-popup
           ref="emMessagePopupComps"
           @callReplyMessage="callReplyMessage"
+          @callEditMessage="callEditMessage"
         />
       </template>
     </z-paging>
@@ -127,6 +128,10 @@ export default {
     uni.$on(
       EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_DELETE,
       this.onDeleteMessage
+    );
+    uni.$on(
+      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_MODIFY,
+      this.onModifyMessage
     );
   },
   computed: {
@@ -269,6 +274,7 @@ export default {
           });
       });
     },
+    //执行新增消息
     appentNewMessage(data) {
       console.log('>>>>>新消息添加', data);
       const { msgBody } = data;
@@ -276,10 +282,23 @@ export default {
         ...msgBody,
       });
     },
+    //监听删除消息更新当前list
     async onDeleteMessage() {
-      console.log('删除消息重新刷新当前列表数据');
       this.isLoadingLocalMsgList = true;
       const res = await this.$refs.paging.setLocalPaging([...this.messageList]);
+    },
+    //监听编辑消息更新item
+    onModifyMessage(data) {
+      /**
+       * @function updateChatRecordData
+       * @description 此方法为自己往插件库中新增的一个方法，主要为更新本地分页数据中已存在的消息体。
+       */
+      //    updateChatRecordData(data) {
+      //   if (!this.useChatRecordMode) return;
+      //   const _index = this.totalData.findIndex((o) => o.id === data.id);
+      //   _index >= 0 && (this.totalData[_index] = data);
+      // }
+      this.$refs.paging.updateChatRecordData(data);
     },
     async onClickLoadMore() {
       try {
@@ -318,8 +337,10 @@ export default {
     },
     //调起消息回复模式
     callReplyMessage() {
-      console.log(1111);
       this.$refs.emInputBarComps.onShowReplyMessageContainer();
+    },
+    callEditMessage(msgBody) {
+      this.$refs.emInputBarComps.onShowEditMessageContainer(msgBody);
     },
     //滚动至引用消息所在位置
     scrollToQuoteMessge(msgQuote) {
@@ -364,6 +385,10 @@ export default {
     uni.$off(
       EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_DELETE,
       this.onDeleteMessage
+    );
+    uni.$off(
+      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_MODIFY,
+      this.onModifyMessage
     );
   },
 };

@@ -357,6 +357,13 @@ export default {
         });
       }
     },
+    //为实现编辑消息新增的一个方法
+    updateChatRecordData(data) {
+      if (!this.useChatRecordMode) return;
+      //   this.isTotalChangeFromAddData = true;
+      const _index = this.totalData.findIndex((o) => o.id === data.id);
+      _index >= 0 && (this.totalData[_index] = data);
+    },
     //设置本地分页数据，请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging作分页处理（若调用了此方法，则上拉加载更多时内部会自动分页，不会触发@query所绑定的事件）
     setLocalPaging(data, success = true) {
       this.isLocalPaging = true;

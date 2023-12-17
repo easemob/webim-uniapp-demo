@@ -93,6 +93,20 @@ export const emMessagesListener = (callback, listenerEventName) => {
     onChannelMessage: function (message) {
       handleReciveAckMessages({ ...message });
     },
+    //监听到有用户修改消息
+    onModifiedMessage: function (message) {
+      let key = getEMKey(
+        EMClient.user,
+        message.from,
+        message.to,
+        message.chatType
+      );
+      store.commit('MODIFY_MESSAGE_FROM_COLLECTION', {
+        key,
+        mid: message.id,
+        message,
+      });
+    },
   };
   EMClient.removeEventHandler(
     listenerEventName || HANDLER_EVENT_NAME.MESSAGES_EVENT

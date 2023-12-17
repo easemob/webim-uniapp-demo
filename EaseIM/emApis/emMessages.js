@@ -1,4 +1,5 @@
 import { EaseSDK, EMClient } from '../index';
+import { MESSAGE_TYPE } from '../constant';
 import { getEMKey } from '@/EaseIM/utils';
 import store from '@/store';
 const emMessages = () => {
@@ -74,10 +75,43 @@ const emMessages = () => {
         });
     });
   };
+  //修改展示类消息【暂只支持文本消息】
+  const modifyDisplayMessages = (messageBody) => {
+    const { msg, to, id, chatType } = messageBody;
+    const textMessage = EaseSDK.message.create({
+      type: MESSAGE_TYPE.TEXT,
+      msg: msg,
+      to: to,
+      chatType: chatType,
+    });
+    const key = getEMKey(
+      EMClient.user,
+      messageBody.from || EMClient.user,
+      messageBody.to,
+      messageBody.chatType
+    );
+    return new Promise((resolve, reject) => {
+      EMClient.modifyMessage({ messageId: id, modifiedMessage: textMessage })
+        .then((res) => {
+          console.log(res.message);
+          store.commit('MODIFY_MESSAGE_FROM_COLLECTION', {
+            key: key,
+            mid: res.message.id,
+            message: { ...res.message },
+          });
+          resolve(res);
+        })
+        .catch((e) => {
+          console.log(e);
+          reject(e);
+        });
+    });
+  };
   return {
     reportMessages,
     fetchHistoryMessagesFromServer,
     sendDisplayMessages,
+    modifyDisplayMessages,
   };
 };
 export default emMessages;

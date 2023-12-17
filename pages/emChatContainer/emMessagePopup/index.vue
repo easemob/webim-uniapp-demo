@@ -28,7 +28,11 @@
           <text class="message_more_func_item_title">回复</text>
         </view>
         <!-- 编辑 -->
-        <view v-if="isSelf" class="message_more_func_item u-border-bottom">
+        <view
+          v-if="isSelf && msgBody.type === MESSAGE_TYPE.TEXT"
+          class="message_more_func_item u-border-bottom"
+          @click="editMessage"
+        >
           <u-icon
             class="message_more_func_item_content_icon"
             size="24"
@@ -139,6 +143,12 @@ export default {
       this.$emit('callReplyMessage');
       this.show = false;
     },
+    //编辑消息
+    editMessage() {
+      this.$emit('callEditMessage');
+      this.show = false;
+    },
+    //弹出二次确认模态框【删除消息】
     alertSencondConfirmModal() {
       this.isShowSencondConfirmModal = true;
       this.show = false;

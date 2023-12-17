@@ -46,6 +46,21 @@ const MessageStore = {
         }
       }
     },
+    MODIFY_MESSAGE_FROM_COLLECTION(state, payload) {
+      const { key, mid, message } = payload;
+      if (state.messageCollection[key]) {
+        const _index = state.messageCollection[key].findIndex(
+          (o) => o.id === mid
+        );
+        _index >= 0 &&
+          state.messageCollection[key].splice(_index, 1, { ...message });
+        console.log('>>>>>找到要修改修改后的消息', _index);
+        if (ConversationStore.state.chattingId === key) {
+          uni.$emit(EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_MODIFY, message);
+        }
+        // Object.assign(res, payload?.message);
+      }
+    },
     UPDATE_MESSAGE_FROM_SERVER(state, payload) {
       const { key, messageList } = payload;
       if (state.messageCollection[key]) {

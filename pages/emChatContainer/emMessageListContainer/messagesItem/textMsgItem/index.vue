@@ -8,6 +8,11 @@
     ]"
   >
     {{ msgBody.msg }}
+    <text
+      :class="isSelf(msgBody) ? 'edited_text_msg' : 'edited_text_msg_other'"
+      v-if="msgBody.modifiedInfo"
+      >已编辑</text
+    >
   </view>
 </template>
 
@@ -114,5 +119,31 @@ export default {
   flex: none;
   order: 0;
   flex-grow: 0;
+}
+.edited_text_msg,
+.edited_text_msg_other {
+  /* 已编辑 */
+  width: 100%;
+  /* 简体中文/文本/超小 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  /* identical to box height, or 127% */
+  text-align: right;
+
+  /* Neutral Special/98 */
+  color: #f8f9fc;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  text-align: right;
+}
+.edited_text_msg_other {
+  color: #5270ad;
+  text-align: left;
 }
 </style>

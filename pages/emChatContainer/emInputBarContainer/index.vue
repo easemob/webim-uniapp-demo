@@ -6,12 +6,18 @@
       @onShowReplyMessageContainer="onShowReplyMessageContainer"
       :checkedPopupMsgBody="checkedPopupMsgBody"
     />
+    <edit-message-container
+      v-show="isShowEditMessageContainer"
+      @onShowEditMessageContainer="onShowEditMessageContainer"
+    />
     <view class="chat-input-bar">
-      <image
-        class="chat-audio-icon-container"
-        @click="onShowAudioMessageContainer"
-        src="/static/images/new_ui/inputbar/audio_click_icon.png"
-      ></image>
+      <template v-if="!isShowEditMessageContainer">
+        <image
+          class="chat-audio-icon-container"
+          @click="onShowAudioMessageContainer"
+          src="/static/images/new_ui/inputbar/audio_click_icon.png"
+        ></image>
+      </template>
       <view class="chat-input-container">
         <input
           class="chat-input"
@@ -24,24 +30,32 @@
           @confirm="sendTextMessage"
         />
       </view>
-      <image
-        class="chat-emoji-icon-container"
-        @click="onShowEmojiIconContainer"
-        src="/static/images/new_ui/inputbar/emoji_click_icon.png"
-      ></image>
-
-      <image
-        class="chat-emoji-icon-container"
-        v-if="msgContent"
-        src="/static/images/new_ui/inputbar/audio_send_icon.png"
-        @click="sendTextMessage"
-      ></image>
-      <image
-        v-else
-        class="chat-emoji-icon-container"
-        src="/static/images/new_ui/inputbar/more_click_icon.png"
-        @click="onShowMoreFuncContainer"
-      ></image>
+      <template v-if="!isShowEditMessageContainer">
+        <image
+          class="chat-emoji-icon-container"
+          @click="onShowEmojiIconContainer"
+          src="/static/images/new_ui/inputbar/emoji_click_icon.png"
+        ></image>
+        <image
+          class="chat-emoji-icon-container"
+          v-if="msgContent"
+          src="/static/images/new_ui/inputbar/audio_send_icon.png"
+          @click="sendTextMessage"
+        ></image>
+        <image
+          v-else
+          class="chat-emoji-icon-container"
+          src="/static/images/new_ui/inputbar/more_click_icon.png"
+          @click="onShowMoreFuncContainer"
+        ></image>
+      </template>
+      <template v-else>
+        <image
+          class="chat-emoji-icon-container"
+          @click="actionModifyMessage"
+          src="/static/images/new_ui/message/send_edit_msg_icon.png"
+        ></image>
+      </template>
     </view>
     <!-- 音频发送板块 -->
     <view v-show="isShowAudioMessageContainer" class="chat-audio-container">
@@ -64,12 +78,14 @@
 </template>
 
 <script>
+import { CHAT_TYPE } from '@/EaseIM/constant';
 import { emMessages } from '@/EaseIM/emApis';
 import RecordAudioContainer from './recordAudioContainer';
 import EmojiPickerContainer from './emojiPickerContainer';
 import MoreFuncContainer from './moreFuncContainer';
 import ReplyMessageContainer from './replyMessageContainer';
-const { sendDisplayMessages } = emMessages();
+import EditMessageContainer from './editMessageContainer';
+const { sendDisplayMessages, modifyDisplayMessages } = emMessages();
 export default {
   name: 'chat-input-bar',
   components: {
@@ -77,6 +93,7 @@ export default {
     EmojiPickerContainer,
     MoreFuncContainer,
     ReplyMessageContainer,
+    EditMessageContainer,
   },
   props: {
     checkedPopupMsgBody: {
@@ -92,6 +109,7 @@ export default {
       isShowEmojiIconContainer: false,
       isShowMoreFuncContainer: false,
       isShowReplyMessageContainer: false,
+      isShowEditMessageContainer: false,
     };
   },
   mounted() {
@@ -126,6 +144,7 @@ export default {
       // #endif
       this.onCloseAllShowContainer();
     },
+    //发送文本消息
     async sendTextMessage() {
       if (this.msgContent.match(/^\s*$/)) {
         uni.showToast({
@@ -145,6 +164,11 @@ export default {
         chatType: this.chattingChatType,
         ext: {},
       };
+      //如果此时为编辑模式则直接return 并调用编辑消息
+      if (this.isShowEditMessageContainer) {
+        this.actionModifyMessage();
+        return;
+      }
       //检测是否存在引用消息
       if (this.isShowReplyMessageContainer) {
         params.ext.msgQuote = {};
@@ -175,6 +199,35 @@ export default {
           (this.isShowReplyMessageContainer = false);
       }
     },
+    //编辑修改已发送文本消息
+    async actionModifyMessage() {
+      const editMessageContent = {
+        msg: this.msgContent,
+        to: this.checkedPopupMsgBody.to,
+        id: this.checkedPopupMsgBody.id,
+        chatType: CHAT_TYPE.SINGLE_CHAT,
+      };
+      try {
+        const res = await modifyDisplayMessages(editMessageContent);
+        console.log('>>>>>>消息修改成功', res);
+      } catch (error) {
+        console.log('>>>>>>修改消息失败', error);
+        if (error?.type === 50) {
+          uni.showToast({
+            icon: 'none',
+            title: '该消息可编辑次数已达上限',
+          });
+        } else {
+          uni.showToast({
+            icon: 'none',
+            title: '消息编辑失败请稍后重试',
+          });
+        }
+      } finally {
+        this.isShowEditMessageContainer = false;
+        this.msgContent = '';
+      }
+    },
     onShowAudioMessageContainer() {
       this.isShowAudioMessageContainer = !this.isShowAudioMessageContainer;
       this.isShowEmojiIconContainer && (this.isShowEmojiIconContainer = false);
@@ -195,6 +248,18 @@ export default {
     },
     onShowReplyMessageContainer() {
       this.isShowReplyMessageContainer = !this.isShowReplyMessageContainer;
+      this.isShowEditMessageContainer &&
+        (this.isShowEditMessageContainer = false);
+      this.onCloseAllShowContainer();
+    },
+    onShowEditMessageContainer() {
+      if (this.isShowEditMessageContainer === false) {
+        this.msgContent = this.checkedPopupMsgBody.msg;
+      }
+      this.isShowEditMessageContainer = !this.isShowEditMessageContainer;
+      this.isShowReplyMessageContainer &&
+        (this.isShowReplyMessageContainer = false);
+      this.onCloseAllShowContainer();
     },
     onCloseAllShowContainer() {
       this.isShowAudioMessageContainer = false;
