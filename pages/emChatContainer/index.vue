@@ -124,6 +124,10 @@ export default {
       EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
       this.appentNewMessage
     );
+    uni.$on(
+      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_DELETE,
+      this.onDeleteMessage
+    );
   },
   computed: {
     joinedGroupList() {
@@ -162,7 +166,7 @@ export default {
       return (msgBody, index) => {
         const { time } = msgBody;
         if (index !== 0) {
-          const lastTime = this.messageList[index - 1].time;
+          const lastTime = this.messageList[index - 1]?.time;
           if (time - lastTime > 50000) {
             return true;
           } else {
@@ -233,6 +237,9 @@ export default {
           console.log('>>>>加载本地已有历史记录。', res);
         }
       }
+      if (from === 2) {
+        return;
+      }
       /* 触顶加载更多消息时获取数据 */
       if (from === 3) {
         console.log('>>>>触顶加载更多');
@@ -268,6 +275,11 @@ export default {
       this.$refs.paging.addChatRecordData({
         ...msgBody,
       });
+    },
+    async onDeleteMessage() {
+      console.log('删除消息重新刷新当前列表数据');
+      this.isLoadingLocalMsgList = true;
+      const res = await this.$refs.paging.setLocalPaging([...this.messageList]);
     },
     async onClickLoadMore() {
       try {
@@ -348,6 +360,10 @@ export default {
     uni.$off(
       EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
       this.appentNewMessage
+    );
+    uni.$off(
+      EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_DELETE,
+      this.onDeleteMessage
     );
   },
 };

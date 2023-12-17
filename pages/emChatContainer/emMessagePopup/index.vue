@@ -37,7 +37,10 @@
           <text class="message_more_func_item_title">编辑</text>
         </view>
         <!-- 删除 -->
-        <view class="message_more_func_item u-border-bottom">
+        <view
+          class="message_more_func_item u-border-bottom"
+          @click="alertSencondConfirmModal"
+        >
           <u-icon
             class="message_more_func_item_content_icon"
             size="24"
@@ -46,7 +49,11 @@
           <text class="message_more_func_item_title">删除</text>
         </view>
         <!-- 撤回 -->
-        <view v-if="isSelf" class="message_more_func_item u-border-bottom">
+        <view
+          v-if="isSelf"
+          class="message_more_func_item u-border-bottom"
+          @click="recallMessage"
+        >
           <u-icon
             class="message_more_func_item_content_icon"
             size="24"
@@ -56,16 +63,33 @@
         </view>
       </view>
     </u-popup>
+    <u-modal
+      :show="isShowSencondConfirmModal"
+      :zoom="true"
+      title="确认删除这条消息？"
+      content="删除后，对方依旧可以看到这条消息。"
+      confirm-text="确认"
+      cancel-text="取消"
+      show-cancel-button
+      @confirm="deleteLocalMessage"
+      @cancel="isShowSencondConfirmModal = false"
+    >
+    </u-modal>
   </view>
 </template>
 
 <script>
-import { MESSAGE_TYPE } from '@/EaseIM/constant';
+import { EMClient } from '@/EaseIM';
+import { getEMKey } from '@/EaseIM/utils';
+import { emAboutAck } from '@/EaseIM/emApis';
+import { MESSAGE_TYPE, MESSAGE_STATUS } from '@/EaseIM/constant';
+const { sendRecallAckMsg } = emAboutAck();
 export default {
   data() {
     return {
       MESSAGE_TYPE,
       show: false,
+      isShowSencondConfirmModal: false,
       msgBody: {},
     };
   },
@@ -115,6 +139,64 @@ export default {
       this.$emit('callReplyMessage');
       this.show = false;
     },
+    alertSencondConfirmModal() {
+      this.isShowSencondConfirmModal = true;
+      this.show = false;
+    },
+    //删除本地消息
+    deleteLocalMessage() {
+      const key = getEMKey(
+        EMClient.user,
+        this.msgBody.from,
+        this.msgBody.to,
+        this.msgBody.chatType
+      );
+      const params = {
+        key: key,
+        mid: this.msgBody.id,
+      };
+      this.$store.commit('DELETE_MESSAGE_FROM_COLLECTION', params);
+      uni.showToast({
+        icon: 'none',
+        title: '删除成功',
+      });
+      this.isShowSencondConfirmModal = false;
+    },
+    //撤回消息
+    async recallMessage() {
+      try {
+        const params = {
+          mid: this.msgBody.id,
+          to: this.msgBody.to,
+          chatType: this.msgBody.chatType,
+        };
+        await sendRecallAckMsg(params);
+        uni.showToast({
+          title: '撤回成功',
+          icon: 'none',
+        });
+        //向消息状态集合缓存中更新该条消息的状态
+        this.$store.commit('UPDATE_MESSAGE_COLLECTION_STATUS', {
+          key: params.mid,
+          status: MESSAGE_STATUS.RECALL,
+        });
+      } catch (error) {
+        console.log('撤回失败', error);
+        if (error?.type === 504) {
+          uni.showToast({
+            title: '已超过可撤回时间',
+            icon: 'none',
+          });
+          return false;
+        }
+        uni.showToast({
+          title: '撤回失败',
+          icon: 'none',
+        });
+      } finally {
+        this.show = false;
+      }
+    },
   },
 };
 </script>
@@ -149,6 +231,29 @@ export default {
 
   /* Neutral/1 */
   color: #171a1c;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+.modal_text_content {
+  /* A message should be a short, complete sentence. */
+
+  width: 308.28px;
+  height: 18px;
+
+  /* 简体中文/标签/中 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  /* identical to box height, or 129% */
+  text-align: center;
+
+  /* Neutral/5 */
+  color: #75828a;
 
   /* Inside auto layout */
   flex: none;

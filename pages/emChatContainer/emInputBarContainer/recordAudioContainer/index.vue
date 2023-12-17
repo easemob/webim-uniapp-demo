@@ -324,6 +324,7 @@ export default {
           to: this.chattingId,
           // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
           chatType: this.chattingChatType,
+          ext: {},
         };
         const res = await sendDisplayMessages({ ...params });
         console.log('>>>>>>已发送', res);

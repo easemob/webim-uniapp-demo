@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { MESSAGE_STATUS } from '../../../../EaseIM/constant';
+import { MESSAGE_STATUS } from '@/EaseIM/constant';
 
 export default {
   props: {

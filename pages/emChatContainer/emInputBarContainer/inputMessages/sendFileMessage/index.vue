@@ -84,6 +84,7 @@ export default {
           // 文件大小。
           file_length: file_length,
         },
+        ext: {},
       };
       // 发送消息。
       console.log('>>>>>要发送的消息params', params);
