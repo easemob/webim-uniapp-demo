@@ -17,15 +17,17 @@
     <template v-if="pinConversationList.length || conversationList.length">
       <!-- 搜索会话列表相关 -->
       <view>
-        <view class="search" v-if="isShowDefaultSearch">
-          <view @tap="openSearch">
-            <icon type="search" size="12"></icon>
-            <text>搜索</text>
+        <view class="search_container" v-if="isShowDefaultSearch">
+          <view class="search_icon_box" @tap="openSearch">
+            <icon type="search" size="22"></icon>
+            <text class="search_text">搜索</text>
           </view>
         </view>
       </view>
-      <view class="search_input" v-if="!isShowDefaultSearch">
+      <view class="searching_container" v-if="!isShowDefaultSearch">
         <u-search
+          class="searching_input"
+          height="36"
           v-model.trim="searchInputKeywords"
           shape="square"
           placeholder="搜索"
@@ -41,12 +43,15 @@
       </view>
       <!-- 展示搜索会话结果List -->
       <template v-if="!isShowDefaultSearch">
-        <u-list v-if="searchResConversationList.length > 0">
+        <u-list
+          v-if="searchResConversationList.length > 0"
+          :height="conversationListHeight"
+        >
           <u-list-item
             v-for="conversationItem in searchResConversationList"
             :key="conversationItem.conversationId"
           >
-            <u-cell>
+            <u-cell @click="entryChatPage(conversationItem)">
               <!-- 头像 -->
               <u-avatar
                 slot="icon"
@@ -111,7 +116,7 @@
       </template>
       <!-- 会话列表展示相关 -->
       <template v-else>
-        <u-list @scrolltolower="scrolltolower">
+        <u-list @scrolltolower="scrolltolower" :height="conversationListHeight">
           <!-- 系统通知 -->
           <u-list-item v-if="lastInformData">
             <u-cell title="系统通知" value="系统通知哈哈哈哈">
@@ -133,7 +138,10 @@
             v-for="(conversationItem, index) in pinConversationList"
             :key="conversationItem.conversationId"
           >
-            <view @longpress="onConversationMoreFunction(conversationItem)">
+            <view
+              @longpress="onConversationMoreFunction(conversationItem)"
+              @click="entryChatPage(conversationItem)"
+            >
               <u-cell>
                 <!-- 头像 -->
                 <u-avatar
@@ -293,6 +301,9 @@ import {
 import swipeDelete from '../../components/swipedelete/swipedelete';
 import { emConversation } from '@/EaseIM/emApis';
 const { sendChannelAck } = emConversation();
+const tabBarHeight = 50;
+const navBarHeight = 44;
+const searchInputHeight = 45;
 export default {
   data() {
     return {
@@ -300,6 +311,7 @@ export default {
       isShowDefaultSearch: true,
       searchResConversationList: [], //开启搜索时的会话列表
       searchInputKeywords: '',
+      conversationListHeight: '100vh',
       defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
       defaultGroupAvatar: '/static/images/new_ui/defaultGroupAvatar.png',
       longPressCheckedConversationItem: {},
@@ -332,7 +344,6 @@ export default {
       ],
     };
   },
-
   components: {
     swipeDelete,
   },
@@ -459,8 +470,18 @@ export default {
       this.$store.dispatch('fetchConversationList');
     }
     uni.hideHomeButton && uni.hideHomeButton();
+    this.setConversationListHeigth();
   },
   methods: {
+    setConversationListHeigth() {
+      uni.getSystemInfo({
+        success: (res) => {
+          this.conversationListHeight =
+            res.windowHeight -
+            (tabBarHeight + navBarHeight + searchInputHeight);
+        },
+      });
+    },
     scrolltolower() {
       console.log('>>>>>>list触底');
     },
@@ -480,17 +501,17 @@ export default {
       }
     },
     //开启搜索模式
-    openSearch: function () {
+    openSearch() {
       this.isShowDefaultSearch = false;
     },
     //取消搜索模式
-    cancelSearch: function () {
+    cancelSearch() {
       this.searchInputKeywords = '';
       this.searchResConversationList = [];
       this.isShowDefaultSearch = true;
     },
     //执行搜索并返回搜索结果
-    actionSearch: function (val) {
+    actionSearch(val) {
       const sourceConversationList = [
         ...this.conversationList,
         ...this.pinConversationList,
@@ -502,13 +523,14 @@ export default {
           (conversatonItem) => {
             const { conversationId, conversationType, lastMessage } =
               conversatonItem;
+            console.log('conversationType', conversationType);
             if (conversationType === CHAT_TYPE.SINGLE_CHAT) {
               if (
                 this.friendUserInfoMap.has(conversatonItem.conversationId) &&
                 this.friendUserInfoMap.get(conversationId)?.nickname
               ) {
                 return (
-                  lastMessage.msg?.indexOf(keyWord) > -1 ||
+                  lastMessage?.msg?.indexOf(keyWord) > -1 ||
                   conversationId?.indexOf(keyWord) > -1 ||
                   this.friendUserInfoMap
                     .get(conversationId)
@@ -522,10 +544,11 @@ export default {
               }
             }
             if (conversationType === CHAT_TYPE.GROUP_CHAT) {
+              console.log('>>>>group chat lastMessage', lastMessage);
               return (
                 conversationId.indexOf(keyWord) > -1 ||
                 this.getGroupName(conversationId).indexOf(keyWord) > -1 ||
-                lastMessage?.msg.indexOf(keyWord) > -1
+                lastMessage?.msg?.indexOf(keyWord) > -1
               );
             }
           }

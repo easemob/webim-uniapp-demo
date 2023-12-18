@@ -74,6 +74,7 @@
       <MoreFuncContainer @onCloseAllShowContainer="onCloseAllShowContainer" />
     </view>
     <view class="chat-input-bar-bottom-placeholder"></view>
+    <!-- <u-safe-bottom></u-safe-bottom> -->
   </view>
 </template>
 

@@ -236,10 +236,12 @@ export default {
         } else {
           /* 设置本地分页，请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging作分页处理 */
           this.isLoadingLocalMsgList = true;
-          const res = await this.$refs.paging.setLocalPaging([
-            ...this.messageList,
-          ]);
-          console.log('>>>>加载本地已有历史记录。', res);
+          this.$refs.paging.setLocalPaging([...this.messageList]);
+          //   setTimeout(() => {
+          //     this.$refs.paging.scrollToBottom();
+          //   }, 300);
+
+          console.log('>>>>加载本地已有历史记录。');
         }
       }
       if (from === 2) {

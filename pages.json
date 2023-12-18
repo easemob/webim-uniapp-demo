@@ -13,7 +13,10 @@
       "path": "pages/home/home",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTextStyle": "white"
+        "navigationBarTextStyle": "white",
+        "app-plus": {
+          "bounce": "none"
+        }
       }
     },
     {
@@ -118,7 +121,10 @@
       "path": "pages/emChatContainer/index",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTextStyle": "white"
+        "navigationBarTextStyle": "white",
+        "app-plus": {
+          "bounce": "none"
+        }
       }
     },
     {

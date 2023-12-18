@@ -1,211 +1,57 @@
-page {
-  width: 100%;
-  overflow: hidden;
-}
-.chat_title {
-  position: fixed;
+.conversation_container {
+  /* height: 100vh; */
   background-color: #fff;
   width: 100%;
-  z-index: 9;
-  top: 0;
-  height: 128rpx;
 }
-.chat_title text {
-  line-height: 96rpx;
-  font-size: 64rpx;
-  font-weight: 400;
-  margin-left: 32rpx;
-}
-
-.search,
-.search_input {
+.search_container {
+  height: 40px;
   width: 100%;
-  height: 88rpx;
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  top: 0;
-  left: 0;
-}
-
-.search {
-  justify-content: space-around;
-}
-.search_input {
-  justify-content: space-around;
-}
-.search view,
-.search_input view {
-  height: 64rpx;
-  line-height: 64rpx;
-  background-color: #f9fafa;
-  border-radius: 4rpx;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  margin: 0 32rpx;
-}
-.search view {
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  background-color: #f1f2f3;
-}
-.search image {
-  display: block;
-  width: 5%;
-  height: 50%;
-}
-.search_input view {
-  padding-left: 24rpx;
-  text-align: left;
-  flex: 1;
-  margin: 0 28rpx 0 32rpx;
-}
-.search icon,
-.search_input icon {
-  display: inline-block;
-  /* margin: 4rpx 12rpx 0; */
-  font-size: 24rpx;
-}
-.search text {
-  font-size: 30rpx;
-  color: #919ba1;
-}
-
-.search_input text {
-  display: inline-block;
-  height: 60rpx;
-  line-height: 60rpx;
-  font-size: 30rpx;
-  color: #0873de;
-  margin-right: 32rpx;
-}
-.search_input input {
-  font-size: 28rpx;
-  width: 90%;
-}
-.chat_list_wraper {
-  padding-bottom: 270rpx;
   box-sizing: border-box;
-  height: 100%;
-  position: fixed;
-  overflow: hidden;
+  padding: 4px;
+  background: #fff;
+  margin-bottom: 5px;
+}
+.searching_container {
+  height: 40px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  background: #fff;
+  margin-bottom: 5px;
 }
 
-.chat_list {
+.search_icon_box {
   width: 100%;
-  height: 128rpx;
-  overflow: hidden;
-}
-.list_box {
-  margin: 0 32rpx;
-  height: 126rpx;
-  border-bottom: 0.5px #e5e5e5 solid;
-  display: flex;
-}
-.list_left {
-  width: 63%;
-  height: 100%;
-  float: left;
+  height: 36px;
+  background: #f1f2f3;
   display: flex;
   flex-direction: row;
   align-items: center;
-  flex: 1;
+  justify-content: center;
+  border-radius: 4px;
 }
-.list_text {
-  width: 60%;
-  height: 100%;
-  float: left;
-  font-size: 28rpx;
-}
-.list_pic {
-  margin-right: 20rpx;
-}
-.list_pic image {
-  display: block;
-  width: 88rpx;
-  height: 88rpx;
-}
-.list_user,
-.list_user2 {
-  font-size: 34rpx;
-  color: #000;
-  position: relative;
-  top: 22rpx;
-  overflow: hidden;
-  width: 350rpx;
-  display: inline-block;
-  text-overflow: ellipsis;
-}
-.list_user2 {
-  top: 40rpx !important;
-}
-.em-msgNum {
-  position: absolute;
-  left: 84rpx;
-  top: 20rpx;
-  min-width: 28rpx;
-  border-radius: 14rpx;
-  background: #f04134;
-  color: #fff;
-  line-height: 28rpx;
-  font-size: 25rpx;
-  text-align: center;
-  padding: 3rpx;
-  z-index: 999;
-}
-.list_word {
-  height: 40rpx;
-  display: block;
-  margin-top: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  position: absolute;
-  width: 70%;
-  font-size: 24rpx;
-  color: #9b9b9b;
-  top: 66rpx;
-}
-.list_right {
-  width: 240rpx;
-  height: 100%;
-  float: right;
-  font-size: 24rpx;
-  text-align: right;
-}
-.list_right text:first-child {
-  display: block;
-  line-height: 60rpx;
-  margin: 12rpx auto auto auto;
-}
-.list_right text:last-child {
-  height: 40rpx;
-  font-size: 26rpx;
-  color: #cfcfcf;
-  display: block;
-  margin-top: 4rpx;
-}
+.search_text {
+  /* Input */
 
-.chat_noChat {
-  text-align: center;
-  font-size: 30rpx;
-  color: #9b9b9b;
-  margin-top: 400rpx;
-}
-.ctbg {
-  width: 138px;
-  height: 106px;
-  display: block;
-  margin: 20rpx auto;
-}
+  width: 32px;
+  height: 22px;
 
-.conversation_container {
-  height: 100vh;
-  background-color: #fff;
-}
+  /* 简体中文/文本/大 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height, or 138% */
 
+  /* Neutral/6 */
+  color: #919ba1;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
 .pinconversation_item {
   background-color: #eaeaea;
 }
