@@ -21,6 +21,14 @@
         {
             "playground" : "custom",
             "type" : "uni-app:app-ios"
+        },
+        {
+            "playground" : "standard",
+            "type" : "uni-app:app-ios_simulator"
+        },
+        {
+            "playground" : "custom",
+            "type" : "uni-app:app-android"
         }
     ]
 }

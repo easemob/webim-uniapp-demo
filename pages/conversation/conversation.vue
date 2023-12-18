@@ -476,9 +476,18 @@ export default {
     setConversationListHeigth() {
       uni.getSystemInfo({
         success: (res) => {
+          //顶部安全区高度
+          const statusBarHeight = res.statusBarHeight;
+          //底部安全区高度
+          const safeAreaBottom = res.safeAreaInsets.bottom;
+          console.log('safeAreaBottom', safeAreaBottom);
           this.conversationListHeight =
             res.windowHeight -
-            (tabBarHeight + navBarHeight + searchInputHeight);
+            (tabBarHeight +
+              navBarHeight +
+              searchInputHeight +
+              statusBarHeight +
+              safeAreaBottom);
         },
       });
     },
