@@ -3,11 +3,7 @@
     <!-- header -->
     <view class="mine_container_header">
       <view class="mine_container_header_avatar">
-        <u-avatar
-          size="100"
-          shape="square"
-          src="/static/images/new_ui/defaultAvatar.png"
-        ></u-avatar>
+        <u-avatar size="100" shape="square" :src="loginUserAvatar"></u-avatar>
       </view>
       <view class="mine_container_header_nickname">
         <u--text
@@ -15,7 +11,7 @@
           lineHeigth="28"
           :bold="true"
           size="20"
-          text="法外狂徒"
+          :text="loginUserNickname"
         ></u--text>
       </view>
       <view class="mine_container_header_sign">
@@ -24,13 +20,14 @@
           color="#464E53"
           size="14"
           lineHeight="18"
-          text="关于uView的取名来由，首字母u来自于uni-app首字母，uni-app是基Vuejs。"
+          align="center"
+          :text="loginUserSign"
         ></u--text>
       </view>
-      <view>
+      <view @click="copyEaseUserId">
         <u--text
           class="header_hxId"
-          text="环信ID：hfp"
+          :text="`环信ID：${loginUserId || ''}`"
           size="12"
           color="#ACB4B9"
           suffixIcon="/static/images/new_ui/mine/copy_icon.png"
@@ -146,19 +143,17 @@
 </template>
 
 <script>
+import { EMClient } from '@/EaseIM';
 import { emConnect } from '@/EaseIM/emApis';
 const { closeEaseIM } = emConnect();
 export default {
   data() {
     return {
+      loginUserId: EMClient.user,
       isShowPresenceSettings: false,
       isShowPresenceCustomModal: false,
       customPresence: '',
-      yourname: '',
-      isIPX: false,
-      phoneNumber: '',
       defaultAvatar: '/static/images/theme2x.png',
-      userInfoFromServer: null,
       actions: [
         {
           name: '在线',
@@ -191,33 +186,56 @@ export default {
 
   components: {},
   props: {},
-  mounted(option) {
-    const { loginUserBaseInfos, loginUserProfiles } =
-      this.$store.state.LoginStore;
-    this.yourname = loginUserBaseInfos?.loginUserId;
-    this.phoneNumber = loginUserBaseInfos?.phoneNumber;
-    this.userInfoFromServer = loginUserProfiles;
-  },
   onShow() {
     uni.hideHomeButton && uni.hideHomeButton();
   },
   computed: {
+    loginUserProfiles() {
+      return this.$store.state.LoginStore.loginUserProfiles;
+    },
     loginUserAvatar() {
-      if (this.userInfoFromServer?.avatarurl) {
-        return this.userInfoFromServer?.avatarurl;
+      if (this.loginUserProfiles.avatarurl) {
+        return this.loginUserProfiles?.avatarurl;
       } else {
         return this.defaultAvatar;
       }
     },
     loginUserNickname() {
-      if (this.userInfoFromServer) {
-        return `${this.userInfoFromServer?.nickname}(${this.yourname})`;
+      if (this.loginUserProfiles.nickname) {
+        return this.loginUserProfiles.nickname;
       } else {
-        return this.yourname;
+        return this.loginUserId;
+      }
+    },
+    loginUserSign() {
+      if (this.loginUserProfiles.sign) {
+        return this.loginUserProfiles.sign;
+      } else {
+        return '无个性，不签名。';
       }
     },
   },
   methods: {
+    //复制环信ID
+    copyEaseUserId() {
+      uni.setClipboardData({
+        data: this.loginUserId,
+        success: (res) => {
+          uni.showToast({
+            title: '已复制',
+            icon: 'none',
+            duration: 1000,
+          });
+        },
+        fail: () => {
+          uni.showToast({
+            title: '复制失败',
+            icon: 'none',
+            duration: 1000,
+          });
+        },
+      });
+    },
     //custom presence
     cancelSettingPresence() {
       this.isShowPresenceCustomModal = false;

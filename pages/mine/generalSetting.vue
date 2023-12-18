@@ -31,6 +31,12 @@ export default {
       isAutoAcceptFriendRequest: false,
     };
   },
+  created() {},
+  methods: {
+    getGenneralConfig() {
+      //acceptInvitationAlways 自定通过好友申请
+    },
+  },
 };
 </script>
 
