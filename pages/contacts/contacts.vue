@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view class="contacts_container">
     <!-- navbar -->
     <u-navbar title="联系人" :placeholder="true" leftIcon="arrow-left">
       <u-avatar
@@ -24,17 +24,17 @@
     <!-- search -->
     <!-- 搜索好友列表相关 -->
     <view>
-      <view class="default_search_container" v-if="isShowDefaultSearch">
-        <view class="search_container" @click="openSearch">
+      <view class="search_container" v-if="isShowDefaultSearch">
+        <view class="search_icon_box" @click="openSearch">
           <u-icon
-            size="18"
+            size="22"
             name="/static/images/new_ui/search_icon.png"
           ></u-icon>
           <text class="search_text">搜索</text>
         </view>
       </view>
       <!-- 好友搜索结果展示 -->
-      <view v-if="!isShowDefaultSearch">
+      <view class="searching_container" v-if="!isShowDefaultSearch">
         <u-search
           v-model.trim="searchInputKeywords"
           shape="square"
@@ -53,9 +53,11 @@
     <!-- 搜索结果list -->
     <template v-if="!isShowDefaultSearch">
       <u-index-list
+        class="index_list_container"
         :index-list="indexList"
         @select="onSelectIndex"
         activeColor="#009EFF"
+        customNavHeight="90"
       >
         <template v-for="(item, index) in searchFriendResultList">
           <u-index-item>
@@ -100,6 +102,7 @@
         :index-list="indexList"
         @select="onSelectIndex"
         activeColor="#009EFF"
+        customNavHeight="90"
       >
         <!-- Contacts -->
         <view slot="header" class="contacts_header_container">
@@ -131,8 +134,11 @@
             </u-cell>
           </u-cell-group>
         </view>
-        <template v-for="(item, index) in sortedContactsList">
-          <u-index-item>
+        <template>
+          <u-index-item
+            v-for="(item, index) in sortedContactsList"
+            :key="index"
+          >
             <u-index-anchor
               :text="indexList[index]"
               bgColor="#FFF"
@@ -180,6 +186,15 @@
 
 <script>
 import { CHAT_TYPE } from '@/EaseIM/constant';
+const indexList = () => {
+  const indexList = [];
+  const charCodeOfA = 'A'.charCodeAt(0);
+  for (let i = 0; i < 26; i++) {
+    indexList.push(String.fromCharCode(charCodeOfA + i));
+  }
+  indexList.push('#');
+  return indexList;
+};
 export default {
   data() {
     return {
@@ -187,7 +202,8 @@ export default {
       searchInputKeywords: '',
       searchFriendResultList: [],
       defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
-      indexList: [],
+      //   indexList: [],
+      indexList: indexList(),
       sortedContactsList: [],
     };
   },
@@ -252,7 +268,6 @@ export default {
   methods: {
     //开启搜索模式
     openSearch() {
-      console.log('>>>>>>');
       this.isShowDefaultSearch = false;
     },
     cancelSearch() {
@@ -265,18 +280,19 @@ export default {
       let searchValue = this.searchInputKeywords;
       let member = this.friendList;
       let serchList = [];
-      member.forEach((friendId, index) => {
-        if (String(friendId).indexOf(searchValue) > -1) {
-          serchList.push(friendId);
+      member.forEach((friendItem) => {
+        if (String(friendItem.userId).indexOf(searchValue) > -1) {
+          serchList.push(friendItem);
         } else if (
-          this.friendUserInfoMap.has(friendId) &&
-          this.friendUserInfoMap.get(friendId)?.nickname
+          this.friendUserInfoMap.has(friendItem.userId) &&
+          this.friendUserInfoMap.get(friendItem.userId)?.nickname
         ) {
           if (
-            this.friendUserInfoMap.get(friendId).nickname.indexOf(searchValue) >
-            -1
+            this.friendUserInfoMap
+              .get(friendItem.userId)
+              .nickname.indexOf(searchValue) > -1
           ) {
-            serchList.push(friendId);
+            serchList.push(friendItem);
           }
         }
       });
@@ -342,11 +358,11 @@ export default {
             }
             params.initial = initial;
             contactsObj[initial].push(params);
-            indexList.push(userId.substring(0, 1).toUpperCase());
+            // indexList.push(userId.substring(0, 1).toUpperCase());
           } else {
             params.initial = '#';
             contactsObj[initial].push({ ...params });
-            indexList.push('#');
+            // indexList.push('#');
           }
         });
       if (type === 'search') {
@@ -354,8 +370,7 @@ export default {
       } else {
         this.sortedContactsList = Object.values(contactsObj);
       }
-
-      this.indexList = [...new Set(indexList)];
+      //   this.indexList = [...new Set(indexList)];
       console.log('contactsList', Object.values(contactsObj));
     },
     onSelectIndex(value) {
