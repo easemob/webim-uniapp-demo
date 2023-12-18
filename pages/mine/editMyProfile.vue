@@ -13,21 +13,21 @@
         >
       </view>
     </u-navbar>
-    <template v-if="editProfileType == 1">
-      <view class="edit_nickname u-border-bottom">
-        <view class="edit_nickname_title">修改昵称</view>
-        <view class="edit_nickname_input">
-          <u-input
-            v-model="profileValue"
-            placeholder="请输入昵称"
-            border="none"
-            :focus="true"
-            inputAlign="right"
-          ></u-input>
-        </view>
-      </view>
+    <!-- 用户昵称 -->
+    <template v-if="editProfileType === PERSONAL_INFO_EDIT_TYPE.NICKNAME">
+      <u-cell title="修改昵称">
+        <u-input
+          slot="value"
+          v-model="profileValue"
+          placeholder="请输入昵称"
+          border="none"
+          :focus="true"
+          inputAlign="right"
+        ></u-input>
+      </u-cell>
     </template>
-    <template v-if="editProfileType == 2">
+    <!-- 个性签名 -->
+    <template v-if="editProfileType === PERSONAL_INFO_EDIT_TYPE.SIGN">
       <view class="edit_sign">
         <u--textarea
           border="none"
@@ -43,32 +43,35 @@
 </template>
 
 <script>
+import { PERSONAL_INFO_EDIT_TYPE } from '@/constant';
 import { emUserInfos } from '@/EaseIM/emApis';
 const { updateUserInfosFromServer } = emUserInfos();
-//16个汉字、32个英文字母
-const regex = /^(?:[\u4e00-\u9fa5]{1,16}|[a-zA-Z]{1,32})$/;
+//32个汉字、32个英文字母
+const regexSign = /^[\u4e00-\u9fa5]{1,32}$/;
+//16个汉字，32个英文字母
+const regexNickname = /^(?:[\u4e00-\u9fa5]{1,16}|[a-zA-Z]{1,32})$/;
 export default {
   data() {
     return {
+      PERSONAL_INFO_EDIT_TYPE,
       profileValue: '',
-      editProfileType: 1,
+      editProfileType: PERSONAL_INFO_EDIT_TYPE.NICKNAME,
     };
   },
   onLoad(options) {
-    console.log('options', options);
-    this.editProfileType = options.editProfileType;
-    if (options.editProfileType == 1) {
+    this.editProfileType = options.editProfileType * 1;
+    if (this.editProfileType === PERSONAL_INFO_EDIT_TYPE.NICKNAME) {
       this.profileValue = this.loginUserProfiles?.nickname || '';
     }
-    if (options.editProfileType == 2) {
+    if (this.editProfileType === PERSONAL_INFO_EDIT_TYPE.SIGN) {
       this.profileValue = this.loginUserProfiles?.sign || '';
     }
   },
   computed: {
     navbarLeftText() {
-      if (this.editProfileType == 1) {
+      if (this.editProfileType === PERSONAL_INFO_EDIT_TYPE.NICKNAME) {
         return '修改昵称';
-      } else if (this.editProfileType == 2) {
+      } else if (this.editProfileType === PERSONAL_INFO_EDIT_TYPE.SIGN) {
         return '修改签名';
       }
     },
@@ -79,22 +82,30 @@ export default {
   methods: {
     async saveProfile() {
       let updatedProfile = {};
-      if (!regex.test(this.profileValue)) {
-        uni.showToast({
-          icon: 'none',
-          title: '最多支持16个汉字或32个字母',
-        });
-        return;
-      }
+
       try {
-        if (this.editProfileType == 1) {
+        if (this.editProfileType === PERSONAL_INFO_EDIT_TYPE.NICKNAME) {
+          if (!regexNickname.test(this.profileValue)) {
+            uni.showToast({
+              icon: 'none',
+              title: '最多支持16个汉字或32个字母',
+            });
+            return;
+          }
           const result = await updateUserInfosFromServer({
             nickname: this.profileValue,
           });
           updatedProfile = { ...result };
           console.log('>>>>>昵称', result);
         }
-        if (this.editProfileType == 2) {
+        if (this.editProfileType === PERSONAL_INFO_EDIT_TYPE.SIGN) {
+          if (!regexNickname.test(this.profileValue)) {
+            uni.showToast({
+              icon: 'none',
+              title: '最多支持32个汉字或32个字母',
+            });
+            return;
+          }
           const result = await updateUserInfosFromServer({
             sign: this.profileValue,
           });
@@ -176,8 +187,5 @@ export default {
   padding: 16px;
   background: #f1f2f3;
   border: 4px;
-}
-::v-deep .uni-textarea-wrapper {
-  background: #f1f2f3;
 }
 </style>

@@ -183,9 +183,6 @@ export default {
       ],
     };
   },
-
-  components: {},
-  props: {},
   onShow() {
     uni.hideHomeButton && uni.hideHomeButton();
   },

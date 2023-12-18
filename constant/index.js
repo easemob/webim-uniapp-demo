@@ -7,7 +7,12 @@ export const GROUP_MEMEBERS_SHOW_TYPE = {
   ADD_NEW_MEMBER: 3, //新增群成员
   DEL_MEMBER: 4, //删除群成员
 };
-
+//个人信息编辑类型
+export const PERSONAL_INFO_EDIT_TYPE = {
+  NICKNAME: 1,
+  SIGN: 2,
+};
+//uni.$emit 事件名称
 export const EVENT_BUS_NAME = {
   EASEIM_MESSAGE_COLLECTION_UPDATE: 'easeim-message-collection-update',
   EASEIM_MESSAGE_COLLECTION_DELETE: 'easeim-message-collection-delete',

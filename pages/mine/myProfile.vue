@@ -17,7 +17,11 @@
           src="/static/images/new_ui/defaultAvatar.png"
         ></u-avatar>
       </u-cell>
-      <u-cell title="昵称" isLink @click="entryEditMyProfile(1)">
+      <u-cell
+        title="昵称"
+        isLink
+        @click="entryEditMyProfile(PERSONAL_INFO_EDIT_TYPE.NICKNAME)"
+      >
         <u--text
           slot="value"
           size="16"
@@ -26,7 +30,11 @@
           align="right"
         ></u--text>
       </u-cell>
-      <u-cell title="个性签名" isLink @click="entryEditMyProfile(2)">
+      <u-cell
+        title="个性签名"
+        isLink
+        @click="entryEditMyProfile(PERSONAL_INFO_EDIT_TYPE.SIGN)"
+      >
         <u--text
           slot="value"
           :lines="1"
@@ -41,9 +49,12 @@
 </template>
 
 <script>
+import { PERSONAL_INFO_EDIT_TYPE } from '@/constant';
 export default {
   data() {
-    return {};
+    return {
+      PERSONAL_INFO_EDIT_TYPE,
+    };
   },
   computed: {
     loginUserInfos() {
