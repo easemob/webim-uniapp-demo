@@ -210,6 +210,9 @@ export default {
   mounted() {
     uni.hideHomeButton && uni.hideHomeButton();
     this.getBrandsList(this.friendList);
+    //该接口可以获取小程序胶囊位置
+    // let menuButtonInfo = uni.getMenuButtonBoundingClientRect();
+    // console.log('menuButtonInfo', menuButtonInfo);
   },
   computed: {
     //好友列表

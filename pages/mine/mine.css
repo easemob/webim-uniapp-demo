@@ -1,5 +1,9 @@
-page {
+/* page {
   background-color: #fff;
+} */
+.mine_container {
+  height: calc(100% - 50px);
+  overflow-y: scroll;
 }
 .mine_container_header {
   margin: 50rpx 0;
