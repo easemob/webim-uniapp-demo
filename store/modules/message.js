@@ -113,13 +113,20 @@ const MessageStore = {
           cursor: cursorMsgId,
         })
           .then((res) => {
-            if (res.messages.length) {
+            const result = Object.assign({}, res);
+            if (result.messages.length) {
+              const filterMessages = result.messages.filter((message) => {
+                if (message) {
+                  return message.type !== MESSAGE_TYPE.CMD;
+                }
+              });
               commit('UPDATE_MESSAGE_FROM_SERVER', {
                 key: targetId,
-                messageList: res.messages,
+                messageList: filterMessages,
               });
+              result.messages = filterMessages;
             }
-            resolve(res);
+            resolve(result);
           })
           .catch((error) => {
             reject(error);

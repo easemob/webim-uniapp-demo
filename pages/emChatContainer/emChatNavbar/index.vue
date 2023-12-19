@@ -13,9 +13,15 @@
       :src="navbarAvatar"
     ></u-avatar>
     <view slot="left" class="chat_name">
-      <text class="chat_name_text"> {{ navigatorName }} </text>
+      <text v-show="!chattingTypingStatus" class="chat_name_text">
+        {{ navigatorName }}
+      </text>
+      <text v-show="chattingTypingStatus" class="chat_name_text"
+        >对方正在输入...</text
+      >
       <text class="presence_status_text">在线</text>
     </view>
+
     <u-icon
       slot="right"
       @click="onRightIconClick"
@@ -50,6 +56,9 @@ export default {
     },
     chattingChatType() {
       return this.$store.getters.chattingChatType;
+    },
+    chattingTypingStatus() {
+      return this.$store.getters.chattingTypingStatus;
     },
     friendUserInfoMap() {
       return this.$store.state.ContactsStore.friendUserInfoMap;

@@ -28,6 +28,7 @@
           placeholder="请输入内容"
           @focus="onInputFocus"
           @confirm="sendTextMessage"
+          @input="onInput"
         />
       </view>
       <template v-if="!isShowEditMessageContainer">
@@ -79,6 +80,7 @@
 </template>
 
 <script>
+import { EMClient } from '@/EaseIM';
 import { CHAT_TYPE } from '@/EaseIM/constant';
 import { emMessages } from '@/EaseIM/emApis';
 import RecordAudioContainer from './recordAudioContainer';
@@ -86,7 +88,9 @@ import EmojiPickerContainer from './emojiPickerContainer';
 import MoreFuncContainer from './moreFuncContainer';
 import ReplyMessageContainer from './replyMessageContainer';
 import EditMessageContainer from './editMessageContainer';
-const { sendDisplayMessages, modifyDisplayMessages } = emMessages();
+import { MESSAGE_TYPE } from '../../../EaseIM/constant';
+const { sendDisplayMessages, sendCommandMessages, modifyDisplayMessages } =
+  emMessages();
 export default {
   name: 'chat-input-bar',
   components: {
@@ -111,6 +115,7 @@ export default {
       isShowMoreFuncContainer: false,
       isShowReplyMessageContainer: false,
       isShowEditMessageContainer: false,
+      isOpenedTypingBeginStatus: false,
     };
   },
   mounted() {
@@ -125,6 +130,7 @@ export default {
       })
       .exec();
     // #endif
+    this.getLocalInputingStatus();
   },
   computed: {
     chattingId() {
@@ -144,6 +150,15 @@ export default {
       });
       // #endif
       this.onCloseAllShowContainer();
+    },
+    onInput() {
+      if (
+        this.isShowEditMessageContainer === false &&
+        this.isOpenedTypingBeginStatus
+      ) {
+        //节流正在输入中信令发送调用 10s发送一次。
+        uni.$u.throttle(this.sendTypingBeginMessage, 10000, true);
+      }
     },
     //发送文本消息
     async sendTextMessage() {
@@ -227,6 +242,29 @@ export default {
       } finally {
         this.isShowEditMessageContainer = false;
         this.msgContent = '';
+      }
+    },
+    //获取当前键入中开启状态
+    getLocalInputingStatus() {
+      const res = uni.getStorageSync(`EM_${EMClient.user}_GENNERAL_CONFIG`);
+      const { isShowInputingStatus } = res || {};
+      this.isOpenedTypingBeginStatus = isShowInputingStatus;
+    },
+    //发送正在键入command
+    async sendTypingBeginMessage() {
+      const params = {
+        type: MESSAGE_TYPE.CMD,
+        // 消息类型。
+        action: 'TypingBegin',
+        // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
+        to: this.chattingId,
+        // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
+        chatType: this.chattingChatType,
+      };
+      try {
+        await sendCommandMessages(params);
+      } catch (error) {
+        console.log('>>>>>发送失败', error);
       }
     },
     onShowAudioMessageContainer() {

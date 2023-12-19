@@ -19,18 +19,43 @@ const ConversationStore = {
   state: {
     chattingId: '', //进入聊天页面聊天中的目标聊天用户信息
     chattingChatType: CHAT_TYPE.SINGLE_CHAT, //当前聊天页面中的聊天类型类型
+    chattingTypingStatus: false, //当前聊天页面中是否正在输入
     pinConversationList: [],
     conversationList: [],
     silentConversationMap: {},
   },
   mutations: {
+    /**
+     * Sets the chatting user info of the current page.
+     * @param {object} payload - The payload contains the target user id and chat type.
+     * @param {string} payload.targetId - The target user id.
+     * @param {CHAT_TYPE} payload.chatType - The chat type.
+     */
     SET_CHATING_USER_INFO: (state, payload) => {
       state.chattingId = payload.targetId || '';
       state.chattingChatType = payload.chatType || CHAT_TYPE.SINGLE_CHAT;
     },
+    /**
+     * Sets the typing status of the current chatting user.
+     * @param {boolean} payload - The typing status.
+     */
+    SET_CHATING_USER_INFO_TYPING_STATUS: (state, payload) => {
+      state.chattingTypingStatus = payload;
+    },
+    /**
+     * Sets the pin conversation list of the current page.
+     * @param {object} state - The state object.
+     * @param {array} pinConversationList - The pin conversation list.
+     */
     SET_PIN_CONVERSATION_LIST: (state, pinConversationList) => {
       state.pinConversationList = [...pinConversationList];
     },
+    /**
+     * Sets the silent conversation map of the current page.
+     * @param {object} state - The state object.
+     * @param {string} type - The type of the action.
+     * @param {object} data - The data contains the conversation id and type.
+     */
     SET_SILENT_CONVERSATION_MAP: (state, payload) => {
       const { type, data } = payload;
       if (type === 'init') {
@@ -353,6 +378,9 @@ const ConversationStore = {
     },
     chattingChatType(state) {
       return state.chattingChatType;
+    },
+    chattingTypingStatus(state) {
+      return state.chattingTypingStatus;
     },
   },
 };

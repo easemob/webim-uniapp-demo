@@ -75,6 +75,20 @@ const emMessages = () => {
         });
     });
   };
+  const sendCommandMessages = (messageBody) => {
+    return new Promise((resolve, reject) => {
+      console.log('messageBody', messageBody);
+      const message = EaseSDK.message.create(messageBody);
+      console.log('>>>>构建的命令消息msg', message);
+      EMClient.send(message)
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  };
   //修改展示类消息【暂只支持文本消息】
   const modifyDisplayMessages = (messageBody) => {
     const { msg, to, id, chatType } = messageBody;
@@ -111,6 +125,7 @@ const emMessages = () => {
     reportMessages,
     fetchHistoryMessagesFromServer,
     sendDisplayMessages,
+    sendCommandMessages,
     modifyDisplayMessages,
   };
 };

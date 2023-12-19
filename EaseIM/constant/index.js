@@ -53,6 +53,7 @@ export const MESSAGE_TYPE = {
   EMOJI: 'emoji',
   FILE: 'file',
   CUSTOM: 'custom',
+  CMD: 'cmd',
   GRAY_INFORM: 'gray_inform', //此类型非SDK正式类型，此类型为自定义的本地插入用于灰色通知类型。
 };
 export const SESSION_MESSAGE_TYPE = {

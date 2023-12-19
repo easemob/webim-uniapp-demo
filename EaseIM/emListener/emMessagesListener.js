@@ -40,6 +40,31 @@ export const emMessagesListener = (callback, listenerEventName) => {
     });
     console.log('>>>>开始处理撤回类型消息', message);
   };
+  //处理command 命令消息
+  const handleReciveCommandMessage = (message) => {
+    console.log('>>>>开始处理命令消息', message);
+    //action TypingBegin
+    const { action, from } = message;
+    switch (action) {
+      //处理对方正在输入状态
+      case 'TypingBegin':
+        {
+          const chattingId = store.getters.chattingId;
+          const chattingTypingStatus = store.getters.chattingTypingStatus;
+          if (from === chattingId && chattingTypingStatus === false) {
+            store.commit('SET_CHATING_USER_INFO_TYPING_STATUS', true);
+            setTimeout(() => {
+              //5s重置输入中的状态
+              store.commit('SET_CHATING_USER_INFO_TYPING_STATUS', false);
+            }, 5000);
+          }
+        }
+        break;
+
+      default:
+        break;
+    }
+  };
   const messagesListenFunc = {
     // 当前用户收到文本消息。
     onTextMessage: function (message) {
@@ -51,7 +76,7 @@ export const emMessagesListener = (callback, listenerEventName) => {
     },
     // 当前用户收到透传消息。
     onCmdMessage: function (message) {
-      handleReciveDisPlayMessages({ ...message });
+      handleReciveCommandMessage({ ...message });
     },
     // 当前用户收到语音消息。
     onAudioMessage: function (message) {
