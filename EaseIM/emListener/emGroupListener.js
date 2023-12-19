@@ -1,5 +1,6 @@
 import { EMClient } from '../index';
 import { getEMKey } from '@/EaseIM/utils';
+import emGroups from '../emApis/emGroups';
 import {
   HANDLER_EVENT_NAME,
   CHAT_TYPE,
@@ -30,6 +31,33 @@ export const emGroupListener = (callback, listenerEventName) => {
       message.chatType
     );
     store.commit('ADD_NEW_GRAY_INFORM_MESSAGE', { key, message });
+  };
+  //自动通过群组邀请
+  const { acceptGroupInvite } = emGroups();
+  const handleAutoAcceptInvitation = async (event) => {
+    console.log('>>>>>自动处理群组邀请', event);
+    const { id: groupId } = event;
+    const res = uni.getStorageSync(`EM_${EMClient.user}_GENNERAL_CONFIG`);
+    const { isAutoAcceptGroupRequest } = res || {};
+    if (!isAutoAcceptGroupRequest) {
+      //未开启则新增一条邀请信息
+      reveiveFriendInvite({ chatType: CHAT_TYPE.GROUP_CHAT, ...event });
+      return;
+    }
+    try {
+      await acceptGroupInvite(EMClient.user, groupId);
+      uni.showToast({
+        icon: 'none',
+        title: '自动加入群组成功',
+        duration: 2000,
+      });
+    } catch (error) {
+      uni.showToast({
+        icon: 'none',
+        title: '自动加入群组失败',
+        duration: 2000,
+      });
+    }
   };
   const groupListenFunc = {
     onGroupEvent: (event) => {
@@ -135,7 +163,7 @@ export const emGroupListener = (callback, listenerEventName) => {
         // 当前用户收到了入群邀请。受邀用户会收到该回调。例如，用户 B 邀请用户 A 入群，则用户 A 会收到该回调。
         case 'inviteToJoin':
           {
-            reveiveFriendInvite({ chatType: CHAT_TYPE.GROUP_CHAT, ...event });
+            handleAutoAcceptInvitation(event);
           }
 
           break;

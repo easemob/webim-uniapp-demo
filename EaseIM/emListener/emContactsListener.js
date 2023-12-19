@@ -14,25 +14,19 @@ export const emContactsListener = (callback, listenerEventName) => {
   console.log('>>>>>好友关系监听挂载');
   //自动通过用户好友申请
   const { acceptContactInvite } = emContacts();
-  const changeFriendList = (type, params) => {
-    if (type === 'INCREMENT') {
-      const param = {
-        remark: null,
-        userId: params.from,
-      };
-      store.commit('SET_FROEND_LIST', param);
-      store.dispatch('fetchFriendUserInfo', params.from);
-    }
-    if (type === 'DECREMENT') {
-      const friendId = params.from;
-      store.commit('DELETE_FRIEND_ITEM', friendId);
-    }
-  };
-  const handleAutoAcceptInvitation = async (fromInviteUserId) => {
+  const handleAutoAcceptInvitation = async (contactsInform) => {
+    const { fromInviteUserId } = contactsInform;
     console.log('>>>>>自动处理好友申请');
     const res = uni.getStorageSync(`EM_${EMClient.user}_GENNERAL_CONFIG`);
     const { isAutoAcceptFriendRequest } = res || {};
-    if (!isAutoAcceptFriendRequest) return;
+    //未开启则新增好友邀请消息
+    if (!isAutoAcceptFriendRequest) {
+      reveiveFriendInvite({
+        chatType: CHAT_TYPE.SINGLE_CHAT,
+        ...contactsInform,
+      });
+      return;
+    }
     try {
       await acceptContactInvite(fromInviteUserId);
       uni.showToast({
@@ -46,6 +40,21 @@ export const emContactsListener = (callback, listenerEventName) => {
         icon: 'none',
         duration: 2000,
       });
+    }
+  };
+  //变更当前好友列表数据
+  const changeFriendList = (type, params) => {
+    if (type === 'INCREMENT') {
+      const param = {
+        remark: null,
+        userId: params.from,
+      };
+      store.commit('SET_FROEND_LIST', param);
+      store.dispatch('fetchFriendUserInfo', params.from);
+    }
+    if (type === 'DECREMENT') {
+      const friendId = params.from;
+      store.commit('DELETE_FRIEND_ITEM', friendId);
     }
   };
   const addNewInformFunc = (params) => {
@@ -84,8 +93,7 @@ export const emContactsListener = (callback, listenerEventName) => {
       callback && callback(contactsInform);
       //   addNewInformFunc({ ...msg });
       //如果本地配置开启了自动通过好友申请，则自动调用同意好友申请
-      handleAutoAcceptInvitation(contactsInform.from);
-      reveiveFriendInvite({ chatType: CHAT_TYPE.SINGLE_CHAT, ...msg });
+      handleAutoAcceptInvitation(contactsInform);
     },
     // 当前用户被其他用户从联系人列表上移除。用户 B 将用户 A 从联系人列表上删除，用户 A 收到该事件。
     onContactDeleted: function (msg) {
