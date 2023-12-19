@@ -108,6 +108,7 @@ const GroupStore = {
   },
   actions: {
     fetchJoinedGroupList: async ({ state, commit }, params) => {
+      //isInit 为是否从头获取
       const { isInit } = params;
       const param = {
         pageNum: isInit ? 0 : params.pageNum,

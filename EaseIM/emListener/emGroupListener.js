@@ -32,6 +32,20 @@ export const emGroupListener = (callback, listenerEventName) => {
     );
     store.commit('ADD_NEW_GRAY_INFORM_MESSAGE', { key, message });
   };
+  //初始化更新当前群组列表
+  const initJoinedGroupList = async () => {
+    try {
+      await store.dispatch('fetchJoinedGroupList', {
+        isInit: true,
+      });
+    } catch (error) {
+      uni.showToast({
+        icon: 'none',
+        title: '初始化群组列表失败',
+        duration: 2000,
+      });
+    }
+  };
   //自动通过群组邀请
   const { acceptGroupInvite } = emGroups();
   const handleAutoAcceptInvitation = async (event) => {
@@ -46,6 +60,7 @@ export const emGroupListener = (callback, listenerEventName) => {
     }
     try {
       await acceptGroupInvite(EMClient.user, groupId);
+      initJoinedGroupList();
       uni.showToast({
         icon: 'none',
         title: '自动加入群组成功',
@@ -59,6 +74,7 @@ export const emGroupListener = (callback, listenerEventName) => {
       });
     }
   };
+
   const groupListenFunc = {
     onGroupEvent: (event) => {
       console.log('>>>>群组事件监听触发', event);
@@ -119,9 +135,7 @@ export const emGroupListener = (callback, listenerEventName) => {
           //强制被拉入群，更新加入的群组列表
           console.log('>>>>被拉入群组当中。');
           setTimeout(() => {
-            store.dispatch('fetchJoinedGroupList', {
-              isInit: true,
-            });
+            initJoinedGroupList();
           }, 1000);
 
           break;
@@ -153,6 +167,9 @@ export const emGroupListener = (callback, listenerEventName) => {
           break;
         // 用户被移出群组。被踢出群组的成员会收到该回调。
         case 'removeMember':
+          {
+            initJoinedGroupList();
+          }
           break;
         // 当前用户的入群邀请被拒绝。邀请人会收到该回调。例如，用户 B 拒绝了用户 A 的入群邀请，用户 A 会收到该回调。
         case 'rejectInvite':
@@ -165,19 +182,24 @@ export const emGroupListener = (callback, listenerEventName) => {
           {
             handleAutoAcceptInvitation(event);
           }
-
           break;
         // 当前用户的入群申请被拒绝。申请人会收到该回调。例如，用户 B 拒绝用户 A 的入群申请后，用户 A 会收到该回调。
         case 'joinPublicGroupDeclined':
           break;
         // 当前用户的入群申请被接受。申请人会收到该回调。例如，用户 B 接受用户 A 的入群申请后，用户 A 会收到该回调。
         case 'acceptRequest':
+          {
+            initJoinedGroupList();
+          }
           break;
         // 当前用户发送入群申请。群主和群管理员会收到该回调。
         case 'requestToJoin':
           break;
         // 群组被解散。群主解散群组时，所有群成员均会收到该回调。
         case 'destroy':
+          {
+            initJoinedGroupList();
+          }
           break;
         // 设置群成员的自定义属性。群组内其他成员均会收到该回调。
         case 'memberAttributesUpdate':
