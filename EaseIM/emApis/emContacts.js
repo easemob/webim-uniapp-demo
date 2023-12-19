@@ -25,7 +25,16 @@ const emContacts = () => {
   };
   const acceptContactInvite = (contactId) => {
     if (contactId) {
-      EMClient.acceptContactInvite(contactId);
+      return new Promise((resolve, reject) => {
+        EMClient.acceptContactInvite(contactId)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+      //   EMClient.acceptContactInvite(contactId);
     }
   };
   const declineContactInvite = (contactId) => {

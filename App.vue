@@ -154,7 +154,7 @@ export default {
     async fetchLoginUserNeedData() {
       await this.$store.dispatch('fetchFriendList');
       //获取好友用户属性
-      await this.$store.dispatch('setFriendUserInfotoMap');
+      await this.$store.dispatch('fetchFriendUserInfoCollection');
       //获取当前登录用户好友信息
       await this.$store.dispatch('fetchLoginUserProfile');
       await this.$store.dispatch('fetchBlockUserList');

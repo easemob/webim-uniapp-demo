@@ -333,17 +333,17 @@ export default {
     friendList() {
       return this.$store.state.ContactsStore.friendList;
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     //好友头像展示
     showFriendAvatar() {
       return (hxId) => {
         if (
-          this.friendUserInfoMap.has(hxId) &&
-          this.friendUserInfoMap.get(hxId)?.avatarurl
+          this.friendUserInfoCollection[hxId] &&
+          this.friendUserInfoCollection[hxId]?.avatarurl
         ) {
-          return this.friendUserInfoMap.get(hxId).avatarurl;
+          return this.friendUserInfoCollection[hxId].avatarurl;
         } else {
           return '/static/images/new_ui/defaultAvatar.png';
         }
@@ -357,10 +357,10 @@ export default {
           return remark;
         }
         if (
-          this.friendUserInfoMap.has(userId) &&
-          this.friendUserInfoMap.get(userId)?.nickname
+          this.friendUserInfoCollection[userId] &&
+          this.friendUserInfoCollection[userId]?.nickname
         ) {
-          return this.friendUserInfoMap.get(userId).nickname;
+          return this.friendUserInfoCollection[userId].nickname;
         } else {
           return userId;
         }

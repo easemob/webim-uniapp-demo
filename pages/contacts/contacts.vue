@@ -219,8 +219,8 @@ export default {
     friendList() {
       return this.$store.state.ContactsStore.friendList;
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     blockUserList() {
       return this.$store.state.ContactsStore.blockUserList;
@@ -241,10 +241,10 @@ export default {
     showFriendAvatar() {
       return (hxId) => {
         if (
-          this.friendUserInfoMap.has(hxId) &&
-          this.friendUserInfoMap.get(hxId)?.avatarurl
+          this.friendUserInfoCollection[hxId] &&
+          this.friendUserInfoCollection[hxId]?.avatarurl
         ) {
-          return this.friendUserInfoMap.get(hxId).avatarurl;
+          return this.friendUserInfoCollection[hxId].avatarurl;
         } else {
           return this.defaultAvatar;
         }
@@ -258,14 +258,19 @@ export default {
           return remark;
         }
         if (
-          this.friendUserInfoMap.has(userId) &&
-          this.friendUserInfoMap.get(userId)?.nickname
+          this.friendUserInfoCollection[userId] &&
+          this.friendUserInfoCollection[userId]?.nickname
         ) {
-          return this.friendUserInfoMap.get(userId).nickname;
+          return this.friendUserInfoCollection[userId].nickname;
         } else {
           return userId;
         }
       };
+    },
+  },
+  watch: {
+    friendList() {
+      this.getBrandsList(this.friendList);
     },
   },
   methods: {
@@ -287,13 +292,13 @@ export default {
         if (String(friendItem.userId).indexOf(searchValue) > -1) {
           serchList.push(friendItem);
         } else if (
-          this.friendUserInfoMap.has(friendItem.userId) &&
-          this.friendUserInfoMap.get(friendItem.userId)?.nickname
+          this.friendUserInfoCollection[friendItem.userId] &&
+          this.friendUserInfoCollection[friendItem.userId]?.nickname
         ) {
           if (
-            this.friendUserInfoMap
-              .get(friendItem.userId)
-              .nickname.indexOf(searchValue) > -1
+            this.friendUserInfoCollection[friendItem.userId].nickname.indexOf(
+              searchValue
+            ) > -1
           ) {
             serchList.push(friendItem);
           }

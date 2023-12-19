@@ -353,11 +353,10 @@ export default {
       return this.$store.getters.sortedPinConversationList;
     },
     conversationList() {
-      console.log('>>>>>>computed conversationlist');
       return this.$store.getters.sortedConversationList;
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     //好友列表
     friendList() {
@@ -365,41 +364,42 @@ export default {
     },
     //会话头像展示
     showConversationAvatar() {
-      return (item) => {
-        if (item.conversationType === CHAT_TYPE.SINGLE_CHAT) {
+      return (conversationItem) => {
+        const { conversationId, conversationType } = conversationItem;
+        if (conversationType === CHAT_TYPE.SINGLE_CHAT) {
           if (
-            this.friendUserInfoMap.has(item.conversationId) &&
-            this.friendUserInfoMap.get(item.conversationId)?.avatarurl
+            this.friendUserInfoCollection[conversationId] &&
+            this.friendUserInfoCollection[conversationId]?.avatarurl
           ) {
-            return this.friendUserInfoMap.get(item.conversationId).avatarurl;
+            return this.friendUserInfoCollection[conversationId].avatarurl;
           } else {
             return this.defaultAvatar;
           }
-        } else if (item.conversationType === CHAT_TYPE.GROUP_CHAT) {
+        } else if (conversationType === CHAT_TYPE.GROUP_CHAT) {
           return this.defaultGroupAvatar;
         }
       };
     },
     //会话name展示
     showConversationName() {
-      return (item) => {
-        if (item.conversationType === CHAT_TYPE.SINGLE_CHAT) {
+      return (conversationItem) => {
+        const { conversationId, conversationType } = conversationItem;
+        if (conversationType === CHAT_TYPE.SINGLE_CHAT) {
           if (
-            this.friendList.find((f) => f.userId === item.conversationId)
-              ?.remark
+            this.friendList.some((f) => f.userId === conversationId)?.remark
           ) {
-            return this.friendList.find((f) => f.userId === item.conversationId)
+            return this.friendList.some((f) => f.userId === conversationId)
               .remark;
           } else if (
-            this.friendUserInfoMap.has(item.conversationId) &&
-            this.friendUserInfoMap.get(item.conversationId)?.nickname
+            this.friendUserInfoCollection[conversationId] &&
+            this.friendUserInfoCollection[conversationId]?.nickname
           ) {
-            return this.friendUserInfoMap.get(item.conversationId).nickname;
+            return this.friendUserInfoCollection[conversationId].nickname;
           } else {
-            return item.conversationId;
+            return conversationId;
           }
-        } else if (item.conversationType === CHAT_TYPE.GROUP_CHAT) {
-          return this.getGroupName(item.conversationId);
+        } else if (conversationType === CHAT_TYPE.GROUP_CHAT) {
+          return this.getGroupName(conversationId);
         }
       };
     },
@@ -535,15 +535,15 @@ export default {
             console.log('conversationType', conversationType);
             if (conversationType === CHAT_TYPE.SINGLE_CHAT) {
               if (
-                this.friendUserInfoMap.has(conversatonItem.conversationId) &&
-                this.friendUserInfoMap.get(conversationId)?.nickname
+                this.friendUserInfoCollection[conversationId] &&
+                this.friendUserInfoCollection[conversationId]?.nickname
               ) {
                 return (
                   lastMessage?.msg?.indexOf(keyWord) > -1 ||
                   conversationId?.indexOf(keyWord) > -1 ||
-                  this.friendUserInfoMap
-                    .get(conversationId)
-                    .nickname?.indexOf(keyWord) > -1
+                  this.friendUserInfoCollection[
+                    conversationId
+                  ].nickname?.indexOf(keyWord) > -1
                 );
               } else {
                 return (
@@ -611,11 +611,9 @@ export default {
           }
         });
         this.isShowMoreFunction = true;
-        console.log('conversationItem++++', conversationItem);
         return;
       }
       this.isShowMoreFunction = false;
-      console.log('>>>>>onLoginPress');
     },
     onSelectClick(item) {
       switch (item.type) {
@@ -640,11 +638,6 @@ export default {
     handlePinConversationItem() {
       const conversationItem = { ...this.longPressCheckedConversationItem };
       conversationItem.isPinned = !conversationItem.isPinned;
-      console.log(
-        '处理置顶>>>>>>>',
-        this.longPressCheckedConversationItem.isPinned,
-        conversationItem.isPinned
-      );
       this.$store.dispatch('pinConversationItem', conversationItem);
     },
     //删除会话
@@ -680,7 +673,6 @@ export default {
         conversationId,
         type: conversationType,
       };
-      console.log('handleConversationSilent silentStatus', silentStatus);
       if (silentStatus) {
         this.$store.dispatch('setConversationSilentMode', {
           ...params,
@@ -730,7 +722,6 @@ export default {
           chatType: conversationType,
         });
       }
-      console.log('>>>>>>>conversationItem', conversationItem);
       uni.navigateTo({
         url: `../emChatContainer/index?targetId=${conversationId}&chatType=${conversationType}`,
       });

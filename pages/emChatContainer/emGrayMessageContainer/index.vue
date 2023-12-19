@@ -97,8 +97,8 @@ export default {
     messageCollectionStatus() {
       return this.$store.getters.messageStatusCollection;
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     groupMembersProfileData() {
       return this.$store.getters.groupMembersProfile;
@@ -155,10 +155,10 @@ export default {
     },
     getFriendNickname(userId) {
       if (
-        this.friendUserInfoMap.has(userId) &&
-        this.friendUserInfoMap.get(userId)?.nickname
+        this.friendUserInfoCollection[userId] &&
+        this.friendUserInfoCollection[userId]?.nickname
       ) {
-        return `“${this.friendUserInfoMap.get(userId).nickname}”`;
+        return `“${this.friendUserInfoCollection[userId].nickname}”`;
       } else {
         return `“${userId}”`;
       }

@@ -104,17 +104,17 @@ export default {
     friendList() {
       return this.$store.state.ContactsStore.friendList;
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     //好友头像展示
     showFriendAvatar() {
       return (hxId) => {
         if (
-          this.friendUserInfoMap.has(hxId) &&
-          this.friendUserInfoMap.get(hxId)?.avatarurl
+          this.friendUserInfoCollection[hxId] &&
+          this.friendUserInfoCollection[hxId]?.avatarurl
         ) {
-          return this.friendUserInfoMap.get(hxId).avatarurl;
+          return this.friendUserInfoCollection[hxId].avatarurl;
         } else {
           return this.defaultAvatar;
         }
@@ -128,10 +128,10 @@ export default {
           return remark;
         }
         if (
-          this.friendUserInfoMap.has(userId) &&
-          this.friendUserInfoMap.get(userId)?.nickname
+          this.friendUserInfoCollection[userId] &&
+          this.friendUserInfoCollection[userId]?.nickname
         ) {
-          return this.friendUserInfoMap.get(userId).nickname;
+          return this.friendUserInfoCollection[userId].nickname;
         } else {
           return userId;
         }
@@ -155,9 +155,10 @@ export default {
       });
     },
     getWaitSendUserInfo(userId) {
-      if (this.friendUserInfoMap.has(userId)) {
-        this.waitSendUserNickname = this.friendUserInfoMap.get(userId).nickname;
-        return this.friendUserInfoMap.get(userId);
+      if (this.friendUserInfoCollection[userId]) {
+        this.waitSendUserNickname =
+          this.friendUserInfoCollection[userId].nickname;
+        return this.friendUserInfoCollection[userId];
       }
     },
     closeWaitSendModal() {

@@ -60,8 +60,8 @@ export default {
     chattingTypingStatus() {
       return this.$store.getters.chattingTypingStatus;
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     joinedGroupList() {
       return this.$store.getters.joinedGroupList;
@@ -70,11 +70,12 @@ export default {
       if (this.chattingChatType === CHAT_TYPE.SINGLE_CHAT) {
         const userId = this.chattingId;
         if (
-          this.friendUserInfoMap.has(userId) &&
-          this.friendUserInfoMap.get(userId)?.avatarurl
+          this.friendUserInfoCollection[userId] &&
+          this.friendUserInfoCollection[userId]?.avatarurl
         ) {
           return (
-            this.friendUserInfoMap.get(userId).avatarurl || this.defaultAvatar
+            this.friendUserInfoCollection[userId].avatarurl ||
+            this.defaultAvatar
           );
         } else {
           return this.defaultAvatar;
@@ -88,10 +89,10 @@ export default {
       if (this.chattingChatType === CHAT_TYPE.SINGLE_CHAT) {
         const userId = this.chattingId;
         if (
-          this.friendUserInfoMap.has(userId) &&
-          this.friendUserInfoMap.get(userId)?.nickname
+          this.friendUserInfoCollection[userId] &&
+          this.friendUserInfoCollection[userId]?.nickname
         ) {
-          return this.friendUserInfoMap.get(userId).nickname;
+          return this.friendUserInfoCollection[userId].nickname;
         } else {
           return userId;
         }

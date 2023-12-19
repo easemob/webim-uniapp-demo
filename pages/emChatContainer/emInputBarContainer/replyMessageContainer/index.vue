@@ -69,8 +69,8 @@ export default {
         this.$store.state.LoginStore.loginUserBaseInfos.loginUserId
       );
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     groupMembersProfileData() {
       return this.$store.getters.groupMembersProfile;
@@ -111,10 +111,10 @@ export default {
       if (this.checkedPopupMsgBody?.chatType === CHAT_TYPE.SINGLE_CHAT) {
         const userId = this.checkedPopupMsgBody.from;
         if (
-          this.friendUserInfoMap.has(userId) &&
-          this.friendUserInfoMap.get(userId)?.nickname
+          this.friendUserInfoCollection[userId] &&
+          this.friendUserInfoCollection[userId]?.nickname
         ) {
-          return this.friendUserInfoMap.get(userId).nickname;
+          return this.friendUserInfoCollection[userId].nickname;
         } else {
           return userId;
         }

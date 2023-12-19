@@ -19,12 +19,18 @@
       </u-cell>
       <u-cell title="自动通过好友申请" label="开启后，在线时自动同意好友申请">
         <view slot="value">
-          <u-switch v-model="isAutoAcceptFriendRequest"></u-switch>
+          <u-switch
+            v-model="isAutoAcceptFriendRequest"
+            @input="saveGenneralConfig"
+          ></u-switch>
         </view>
       </u-cell>
       <u-cell title="自动接收群组邀请" label="开启后，在线时自动接收群组邀请">
         <view slot="value">
-          <u-switch v-model="isAutoAcceptGroupRequest"></u-switch>
+          <u-switch
+            v-model="isAutoAcceptGroupRequest"
+            @input="saveGenneralConfig"
+          ></u-switch>
         </view>
       </u-cell>
     </u-cell-group>
@@ -49,7 +55,6 @@ export default {
     getGenneralConfig() {
       console.log('>>>>>获取当前本地配置');
       const res = uni.getStorageSync(`EM_${EMClient.user}_GENNERAL_CONFIG`);
-      console.log('>?>>>>>>>>res', res);
       const {
         isAutoAcceptFriendRequest,
         isAutoAcceptGroupRequest,

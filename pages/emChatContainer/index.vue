@@ -138,8 +138,8 @@ export default {
     joinedGroupList() {
       return this.$store.state.GroupStore.joinedGroupList;
     },
-    friendUserInfoMap() {
-      return this.$store.state.ContactsStore.friendUserInfoMap;
+    friendUserInfoCollection() {
+      return this.$store.getters.friendUserInfoCollection;
     },
     messageList() {
       return this.$store.state.MessageStore.messageCollection[this.targetId];
@@ -201,7 +201,7 @@ export default {
     },
     getTheIdName(targetId, chatType) {
       if (chatType === CHAT_TYPE.SINGLE_CHAT) {
-        const friendInfo = this.friendUserInfoMap.get(targetId);
+        const friendInfo = this.friendUserInfoCollection[targetId];
         return friendInfo?.nickname || targetId;
       }
       if (chatType === CHAT_TYPE.GROUP_CHAT) {
@@ -209,7 +209,7 @@ export default {
       }
       switch (chatType) {
         case CHAT_TYPE.SINGLE_CHAT:
-          const friendInfo = this.friendUserInfoMap.get(targetId);
+          const friendInfo = this.friendUserInfoCollection[targetId];
           friendInfo?.nickname || targetId;
           break;
         case CHAT_TYPE.GROUP_CHAT:
