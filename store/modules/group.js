@@ -103,7 +103,7 @@ const GroupStore = {
           soureData.affiliationsCount = soureData.affiliationsCount - 1;
         }
       }
-      state.joinedGroupList.splice(_index, 1, soureData);
+      soureData && state.joinedGroupList.splice(_index, 1, soureData);
     },
   },
   actions: {

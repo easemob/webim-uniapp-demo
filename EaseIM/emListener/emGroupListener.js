@@ -154,6 +154,7 @@ export const emGroupListener = (callback, listenerEventName) => {
           break;
         // 有用户加入群组。除了新成员，其他群成员会收到该回调。
         case 'memberPresence':
+          console.log('>>>>memberPresence', groupId);
           store.dispatch('fetchGroupMembersProfile', {
             groupId,
             memberList: [from],

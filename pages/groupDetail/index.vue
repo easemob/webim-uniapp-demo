@@ -47,6 +47,7 @@
       <!-- 群id -->
       <view>
         <u--text
+          @click="copyGroupId"
           class="group_detail_container_header_groupid"
           :text="`群组ID：${groupDetail && groupDetail.groupId}`"
           size="12"
@@ -57,7 +58,10 @@
 
       <!-- 功能面板 -->
       <view class="group_detail_container_header_function_panel">
-        <view class="group_detail_container_header_function_panel_item">
+        <view
+          class="group_detail_container_header_function_panel_item"
+          @click="entryChatPage"
+        >
           <u-icon
             size="32"
             name="/static/images/new_ui/group_detail/chat_Icon.png"
@@ -99,7 +103,7 @@
         @click="entryEditInGroupName"
         title="群名称"
         isLink
-        :value="(groupDetail && groupDetail.name) || '暂无群组名称'"
+        :value="(groupDetail && groupDetail.groupName) || '暂无群组名称'"
       ></u-cell>
       <u-cell
         v-if="
@@ -248,6 +252,27 @@ export default {
           this.actions.splice(_index, 1);
         }
       }
+    },
+    //复制群组ID
+    copyGroupId() {
+      uni.setClipboardData({
+        data: this.groupId,
+        success: (res) => {
+          uni.showToast({
+            title: '已复制',
+            icon: 'none',
+            duration: 1000,
+          });
+        },
+        fail: (e) => {
+          console.log('>>>复制失败', e);
+          uni.showToast({
+            title: '复制失败',
+            icon: 'none',
+            duration: 1000,
+          });
+        },
+      });
     },
     async fetchGroupDetail() {
       const groupId = this.groupId;
@@ -415,6 +440,12 @@ export default {
       const groupDescription = this.groupDetail?.description || '';
       uni.navigateTo({
         url: `../groupDetail/editGroupDescription?groupId=${groupId}&groupDescription=${groupDescription}`,
+      });
+    },
+    //进入聊天页面
+    entryChatPage() {
+      uni.navigateTo({
+        url: `../emChatContainer/index?targetId=${this.groupId}&chatType=${CHAT_TYPE.GROUP_CHAT}`,
       });
     },
   },

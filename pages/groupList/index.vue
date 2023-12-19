@@ -11,7 +11,7 @@
         slot="right"
         size="24"
         name="/static/images/new_ui/contacts/add_contacts.png"
-        @click="entryAddContactsPage"
+        @click="entryGroupCreatePage"
       ></u-icon>
     </u-navbar>
     <!-- 搜索群组列表相关 -->
@@ -131,9 +131,9 @@ export default {
       this.searchGroupListResult = [...searchResult];
     },
     //前往添加联系人页面
-    entryAddContactsPage() {
+    entryGroupCreatePage() {
       uni.navigateTo({
-        url: '../addContacts/index',
+        url: '../groupCreate/index',
       });
     },
     //前往群组详情页面

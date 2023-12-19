@@ -34,6 +34,13 @@
       }
     },
     {
+      "path": "pages/groupCreate/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/groupList/index",
       "style": {
         "navigationStyle": "custom",
