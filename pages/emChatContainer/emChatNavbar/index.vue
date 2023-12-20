@@ -120,9 +120,9 @@ export default {
     //前往好友详情页面
     entryFriendDetail() {
       const friendId = this.targetId;
-      //   uni.navigateTo({
-      //     url: `/pages/friendDetail/friendDetail?targetId=${friendId}`,
-      //   });
+      uni.navigateTo({
+        url: `../contactsDetail/index?userId=${friendId}`,
+      });
     },
     //前往群组详情页面
     entryGroupDetail() {

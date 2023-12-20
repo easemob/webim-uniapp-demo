@@ -11,8 +11,7 @@
     <view>
       <u-list @scrolltolower="scrolltolower">
         <u-list-item v-for="(blockItem, index) in blockUserList" :key="index">
-          <!-- 展示的cell不能为当前聊天中的好友 -->
-          <u-cell>
+          <u-cell @click="entryContactsDetailPage(blockItem)">
             <u-avatar
               slot="icon"
               shape="square"
@@ -80,6 +79,11 @@ export default {
   },
   methods: {
     scrolltolower() {},
+    entryContactsDetailPage(userId) {
+      uni.navigateTo({
+        url: `../contactsDetail/index?userId=${userId}`,
+      });
+    },
   },
 };
 </script>

@@ -1,12 +1,12 @@
 <template>
   <view class="contacts_container">
     <!-- navbar -->
-    <u-navbar title="联系人" :placeholder="true" leftIcon="arrow-left">
+    <u-navbar title="联系人" :placeholder="true">
       <u-avatar
         size="32"
         slot="left"
         shape="square"
-        src="/static/images/new_ui/defaultAvatar.png"
+        :src="loginUserAvatar"
       ></u-avatar>
       <view slot="center">
         <image
@@ -107,7 +107,7 @@
         <!-- Contacts -->
         <view slot="header" class="contacts_header_container">
           <u-cell-group :border="false">
-            <u-cell
+            <!-- <u-cell
               :clickable="true"
               :isLink="true"
               @click="entryNewInvitePage"
@@ -119,7 +119,7 @@
                 max="99"
                 :value="newInviteMsgNum"
               ></u-badge>
-            </u-cell>
+            </u-cell> -->
             <u-cell
               :clickable="true"
               :isLink="true"
@@ -220,6 +220,16 @@ export default {
     // console.log('menuButtonInfo', menuButtonInfo);
   },
   computed: {
+    loginUserProfiles() {
+      return this.$store.state.LoginStore.loginUserProfiles;
+    },
+    loginUserAvatar() {
+      if (this.loginUserProfiles.avatarurl) {
+        return this.loginUserProfiles?.avatarurl;
+      } else {
+        return this.defaultAvatar;
+      }
+    },
     //好友列表
     friendList() {
       return this.$store.state.ContactsStore.friendList;

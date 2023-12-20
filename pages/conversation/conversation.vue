@@ -1,11 +1,11 @@
 <template>
   <view class="conversation_container">
-    <u-navbar title="会话" :placeholder="true" leftIcon="arrow-left">
+    <u-navbar :placeholder="true">
       <u-avatar
         size="32"
         slot="left"
         shape="square"
-        src="/static/images/new_ui/defaultAvatar.png"
+        :src="loginUserAvatar"
       ></u-avatar>
       <view slot="center">
         <image
@@ -347,8 +347,17 @@ export default {
   components: {
     swipeDelete,
   },
-  props: {},
   computed: {
+    loginUserProfiles() {
+      return this.$store.state.LoginStore.loginUserProfiles;
+    },
+    loginUserAvatar() {
+      if (this.loginUserProfiles.avatarurl) {
+        return this.loginUserProfiles?.avatarurl;
+      } else {
+        return this.defaultAvatar;
+      }
+    },
     pinConversationList() {
       return this.$store.getters.sortedPinConversationList;
     },

@@ -12,7 +12,12 @@
     >
       <!--user avatar -->
       <view class="message_list_item_avatar">
-        <u-avatar :src="messageItemAvatar" shape="square" :size="28" />
+        <u-avatar
+          :src="messageItemAvatar"
+          shape="square"
+          :size="28"
+          @click="entryContactsDetailPage"
+        />
       </view>
       <view class="message_list_item_content" @longpress="callMessagePopup">
         <text
@@ -50,7 +55,10 @@
             msgBody.customEvent === CUSTOM_EVENT_NAME.USER_CARD
           "
         >
-          <user-card-msg-item :msgBody="msgBody" />
+          <user-card-msg-item
+            @click.native="entryContactsDetailPage(CUSTOM_EVENT_NAME.USER_CARD)"
+            :msgBody="msgBody"
+          />
         </template>
         <msg-quote-container
           v-if="msgBody.ext && msgBody.ext.msgQuote"
@@ -193,13 +201,28 @@ export default {
       console.log('mid', mid);
       console.log('++++++++');
     },
-    //TODO 待好友详情页完成，点击userCard消息跳转至用户详情
-    //TODO 点击头像也需要跳转至好友详情页
     callMessagePopup() {
       this.$emit('alertMessagePopup', this.msgBody);
     },
     callScrollToQuoteMsg(msgQuote) {
       this.$emit('scrollToQuoteMessge', msgQuote);
+    },
+    //前往联系人详情页面
+    entryContactsDetailPage(type) {
+      if (type === CUSTOM_EVENT_NAME.USER_CARD) {
+        const {
+          customExts: { uid: userId },
+        } = this.msgBody;
+        uni.navigateTo({
+          url: `../contactsDetail/index?userId=${userId}`,
+        });
+      } else {
+        if (this.msgBody.from === EMClient.user) return;
+        const userId = this.msgBody.from;
+        uni.navigateTo({
+          url: `../contactsDetail/index?userId=${userId}`,
+        });
+      }
     },
   },
 };

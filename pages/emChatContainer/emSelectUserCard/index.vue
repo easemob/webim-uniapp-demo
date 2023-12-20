@@ -171,7 +171,7 @@ export default {
       if (!this.chattingId) return;
       const friendInfo = this.getWaitSendUserInfo(this.waitSendUserId);
       const customExtParams = {
-        uid: this.chattingId,
+        uid: this.waitSendUserId,
         ...friendInfo,
       };
       const params = {
