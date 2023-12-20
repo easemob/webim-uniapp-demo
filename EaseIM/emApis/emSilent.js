@@ -21,6 +21,24 @@ const emSilent = () => {
         .catch((err) => reject(err));
     });
   };
+  const getSilentModeForAll = () => {
+    return new Promise((resolve, reject) => {
+      EMClient.getSilentModeForAll()
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((err) => reject(err));
+    });
+  };
+  const setSilentModeForAll = ({ paramType = 0, remindType = 'ALL' }) => {
+    return new Promise((resolve, reject) => {
+      EMClient.setSilentModeForAll({ options: { paramType, remindType } })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((err) => reject(err));
+    });
+  };
   const setSilentModeForConversation = (params) => {
     const { conversationId, type, options } = params;
     return new Promise((resolve, reject) => {
@@ -42,6 +60,8 @@ const emSilent = () => {
     });
   };
   return {
+    getSilentModeForAll,
+    setSilentModeForAll,
     getSilentModeForConversation,
     getSilentModeForConversationList,
     setSilentModeForConversation,
