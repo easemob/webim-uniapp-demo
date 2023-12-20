@@ -15,14 +15,31 @@ const emContacts = () => {
   };
   const removeContactFromServer = (contactId) => {
     if (contactId) {
-      EMClient.deleteContact(contactId);
+      return new Promise((resolve, reject) => {
+        EMClient.deleteContact(contactId)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     }
   };
-  const addContact = (contactId, applyMsg) => {
+  const addContactFromServer = (contactId, applyMsg = '加个好友吧') => {
     if (contactId) {
-      EMClient.addContact(contactId, applyMsg);
+      return new Promise((resolve, reject) => {
+        EMClient.addContact(contactId, applyMsg)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     }
   };
+
   const acceptContactInvite = (contactId) => {
     if (contactId) {
       return new Promise((resolve, reject) => {
@@ -68,10 +85,23 @@ const emContacts = () => {
   };
   const removeUsersFromBlocklist = (userList) => {
     return new Promise((resolve, reject) => {
-      EMClient.removeUsersFromBlocklist({ name: [...userList] })
+      EMClient.removeUserFromBlocklist({ name: [...userList] })
         .then((res) => {
-          const { data } = res;
-          resolve(data);
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
+  const setContactRemarkFromServer = (contactId, remark) => {
+    return new Promise((resolve, reject) => {
+      EMClient.setContactRemark({
+        userId: contactId,
+        remark,
+      })
+        .then((res) => {
+          resolve(res);
         })
         .catch((error) => {
           reject(error);
@@ -81,12 +111,13 @@ const emContacts = () => {
   return {
     fetchContactsListFromServer,
     removeContactFromServer,
+    addContactFromServer,
     acceptContactInvite,
     declineContactInvite,
-    addContact,
     getBlocklistFromServer,
     addUsersToBlocklist,
     removeUsersFromBlocklist,
+    setContactRemarkFromServer,
   };
 };
 export default emContacts;

@@ -152,7 +152,7 @@
 
 <script>
 import { emContacts, emUserInfos, emGroups } from '@/EaseIM/emApis';
-const { addContact } = emContacts();
+const { addContactFromServer } = emContacts();
 const { fetchOtherInfoFromServer } = emUserInfos();
 const { getGroupInfosFromServer, joinPublicGroup } = emGroups();
 export default {
@@ -252,7 +252,7 @@ export default {
         return false;
       }
       try {
-        addContact(userId, '加个好友吧！');
+        addContactFromServer(userId, '加个好友吧！');
         this.$refs.uToast.show({
           message: '已发出好友申请',
         });

@@ -27,6 +27,20 @@
       }
     },
     {
+      "path": "pages/contactsDetail/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/contactsDetail/editContactsRemark",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/newInvite/index",
       "style": {
         "navigationStyle": "custom",

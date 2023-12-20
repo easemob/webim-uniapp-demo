@@ -30,9 +30,11 @@ const ContactsStore = {
       }
     },
     DELETE_FRIEND_ITEM: (state, friendId) => {
-      state.friendList = state.friendList.filter(
-        (item) => item.userId !== friendId
-      );
+      state.friendList.map((item, idnex) => {
+        if (item.userId === friendId) {
+          state.friendList.splice(idnex, 1);
+        }
+      });
     },
     SET_FRIEND_USER_INFO_COLLECTION: (state, friendProfiles) => {
       if (Object.keys(friendProfiles).length) {
@@ -46,7 +48,15 @@ const ContactsStore = {
       }
     },
     SET_BLOCK_USER_LIST: (state, userList) => {
-      state.blockUserList = [...state.blockUserList, ...userList];
+      state.blockUserList = [...userList];
+    },
+    UPDATE_FRIEND_USER_REMARK: (state, { contactId, remark }) => {
+      state.friendList.map((item) => {
+        if (item.userId === contactId) {
+          Vue.set(item, 'remark', remark);
+        }
+      });
+      //   Vue.set(state.friendUserInfoCollection[contactId], 'remark', remark);
     },
   },
   actions: {
@@ -83,6 +93,7 @@ const ContactsStore = {
     async fetchBlockUserList({ commit }) {
       try {
         const userList = await getBlocklistFromServer();
+        console.log('>>>>getBlocklistFromServer', userList);
         commit('SET_BLOCK_USER_LIST', userList);
       } catch (error) {
         console.log('>>>>获取好友黑名单失败', error);

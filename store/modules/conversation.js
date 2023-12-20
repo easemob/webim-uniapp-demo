@@ -222,12 +222,17 @@ const ConversationStore = {
     },
     deleteConversation: async ({ commit }, params) => {
       const { conversationId, conversationType } = params;
-      try {
-        await removeConversationFromServer(conversationId, conversationType);
-        commit('DELETE_CONVERSATION_ITEM', conversationId);
-      } catch (error) {
-        console.log('>>>>会话列表删除失败', error);
-      }
+      return new Promise((resolve, reject) => {
+        removeConversationFromServer(conversationId, conversationType)
+          .then((res) => {
+            commit('DELETE_CONVERSATION_ITEM', conversationId);
+            resolve(res);
+          })
+          .catch((err) => {
+            console.log('>>>>会话列表删除失败', error);
+            reject(err);
+          });
+      });
     },
     sendConversatonReadedAck: async ({ commit }, params) => {
       const { targetId, chatType } = params;
@@ -260,15 +265,15 @@ const ConversationStore = {
     },
     //获取单个会话免打扰状态
     fetchSilentConversation: ({ commit }, params) => {
-      const { groupId, chatType } = params;
+      const { conversationId, chatType } = params;
       return new Promise((resolve, reject) => {
-        getSilentModeForConversation(groupId, chatType)
+        getSilentModeForConversation(conversationId, chatType)
           .then((res) => {
             if (Object.keys(res?.data).length) {
               commit('SET_SILENT_CONVERSATION_MAP', {
                 type: 'setSingleSilentMode',
                 data: {
-                  conversationId: groupId,
+                  conversationId,
                   type: 'NONE',
                 },
               });
@@ -276,7 +281,7 @@ const ConversationStore = {
               commit('SET_SILENT_CONVERSATION_MAP', {
                 type: 'setSingleSilentMode',
                 data: {
-                  conversationId: groupId,
+                  conversationId,
                   type: '',
                 },
               });

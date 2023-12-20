@@ -94,7 +94,7 @@
           @input="changeGroupSilentStatus"
         ></u-switch>
       </u-cell>
-      <u-cell title="清空聊天记录"></u-cell>
+      <u-cell title="清空聊天记录" @click="clearLocalHistroyMessages"></u-cell>
     </u-cell-group>
     <u-cell-group :border="false">
       <u-gap height="10" bgColor="#F1F2F3"></u-gap>
@@ -287,6 +287,11 @@ export default {
         });
       } catch (error) {
         console.log('>>>>群详情获取失败', error);
+        uni.showToast({
+          title: '群详情获取失败',
+          icon: 'none',
+          duration: 1000,
+        });
       }
     },
     async fetchInGroupNickname() {
@@ -316,7 +321,7 @@ export default {
     //获取免打扰状态
     async getGroupSilentStatus() {
       const params = {
-        groupId: this.groupId,
+        conversationId: this.groupId,
         chatType: CHAT_TYPE.GROUP_CHAT,
       };
       try {
@@ -419,6 +424,17 @@ export default {
         this.isShowCofirmModal = false;
       }
     },
+    //清空本地聊天记录
+    clearLocalHistroyMessages() {
+      this.$store.commit('DELETE_MESSAGE_FROM_COLLECTION', {
+        key: this.groupId,
+      });
+      uni.showToast({
+        title: '聊天记录已清空',
+        icon: 'none',
+        duration: 1000,
+      });
+    },
     //进入群内昵称编辑页面
     entryEditInGroupNickname() {
       uni.navigateTo({
@@ -444,6 +460,7 @@ export default {
     },
     //进入聊天页面
     entryChatPage() {
+      if (!this.groupId) return;
       uni.navigateTo({
         url: `../emChatContainer/index?targetId=${this.groupId}&chatType=${CHAT_TYPE.GROUP_CHAT}`,
       });

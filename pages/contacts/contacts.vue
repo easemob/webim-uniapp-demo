@@ -154,6 +154,7 @@
               v-for="(cell, index1) in item"
               :key="cell.initial + cell.userId"
               :border="false"
+              @click="entryContactsDetailPage(cell.userId)"
             >
               <!-- 头像 -->
               <u-avatar
@@ -410,6 +411,12 @@ export default {
     entryBlockMembersPage() {
       uni.navigateTo({
         url: '../blockMembers/index',
+      });
+    },
+    //前往联系人详情页面
+    entryContactsDetailPage(userId) {
+      uni.navigateTo({
+        url: `../contactsDetail/index?userId=${userId}`,
       });
     },
   },

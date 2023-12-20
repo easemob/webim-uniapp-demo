@@ -34,19 +34,26 @@ const MessageStore = {
     },
     DELETE_MESSAGE_FROM_COLLECTION(state, payload) {
       const { key, mid } = payload;
-      if (state.messageCollection[key]) {
-        const _index = state.messageCollection[key].findIndex(
-          (item) => item.id == mid
-        );
-        console.log('>>>>>>找到对应的下标', _index);
-        if (_index >= 0) {
-          state.messageCollection[key].splice(_index, 1);
-          //如果当前会话中Id为消息from，则发布消息列表更新事件。
-          if (ConversationStore.state.chattingId === key) {
-            uni.$emit(EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_DELETE, {
-              mid: mid,
-            });
+      //!现有逻辑如果传了mid，则删除单条，否则置空key。
+      if (mid) {
+        if (state.messageCollection[key]) {
+          const _index = state.messageCollection[key].findIndex(
+            (item) => item.id == mid
+          );
+          console.log('>>>>>>找到对应的下标', _index);
+          if (_index >= 0) {
+            state.messageCollection[key].splice(_index, 1);
+            //如果当前会话中Id为消息from，则发布消息列表更新事件。
+            if (ConversationStore.state.chattingId === key) {
+              uni.$emit(EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_DELETE, {
+                mid: mid,
+              });
+            }
           }
+        }
+      } else {
+        if (state.messageCollection[key]) {
+          Vue.set(state.messageCollection, key, []);
         }
       }
     },

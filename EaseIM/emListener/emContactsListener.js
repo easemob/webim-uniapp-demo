@@ -124,6 +124,7 @@ export const emContactsListener = (callback, listenerEventName) => {
       const msgBody = Object.assign({}, msg);
       msgBody.grayInformType = GRAY_INFORM_TYPE_SINGLE.CONTACT_AGREED;
       addGrayInformMessage(msgBody);
+      changeFriendList('INCREMENT', msgBody);
     },
   };
   EMClient.removeEventHandler(

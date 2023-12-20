@@ -39,6 +39,10 @@ const loginStore = {
       }
     },
   },
-  getters: {},
+  getters: {
+    loginUserProfiles(state) {
+      return state.loginUserProfiles;
+    },
+  },
 };
 export default loginStore;
