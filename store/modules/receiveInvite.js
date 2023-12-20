@@ -4,6 +4,9 @@ const ReceiveInviteStore = {
     receiveInviteList: [],
   },
   mutations: {
+    RESET_RECEIVE_INVITE_STIRE: (state) => {
+      state.receiveInviteList = [];
+    },
     INIT_RECEIVE_INVITE_LIST(state, payload) {
       state.receiveInviteList = uni.getStorageSync(
         `EM_${EMClient.user}_RECEOVE_INVITE_LIST`

@@ -19,6 +19,13 @@ const GroupStore = {
     groupMembersProfile: {},
   },
   mutations: {
+    RESET_GROUP_STORE: (state) => {
+      state.pageNum = 0;
+      state.pageSize = 20;
+      state.joinedGroupList = [];
+      state.joinedGroupTotal = 0;
+      state.groupMembersProfile = {};
+    },
     UPDATE_PAGE_PARAMS: (state, payload) => {
       if (payload.pageNum !== undefined) {
         state.pageNum = payload.pageNum;

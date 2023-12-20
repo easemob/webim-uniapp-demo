@@ -7,6 +7,12 @@ const InformStore = {
     },
   },
   mutations: {
+    RESET_INFORM_STORE: (state) => {
+      state.informData = {
+        contactsInform: [],
+        groupsInform: [],
+      };
+    },
     ADD_NEW_INFORM: (state, payload) => {
       const { informType, inform } = payload;
       inform.time = Date.now();

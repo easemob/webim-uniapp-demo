@@ -10,6 +10,10 @@ const MessageStore = {
     messageStatusCollection: {}, //readed、unread、recalled
   },
   mutations: {
+    RESET_MESSAGE_STORE: (state) => {
+      state.messageCollection = {};
+      state.messageStatusCollection = {};
+    },
     UPDATE_MESSAGE_COLLECTION(state, payload) {
       const { key, message } = payload;
       if (!state.messageCollection[key]) {

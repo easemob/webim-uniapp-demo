@@ -9,6 +9,11 @@ const ContactsStore = {
     blockUserList: [],
   },
   mutations: {
+    RESET_CONTACTS_STORE: (state) => {
+      state.friendList = [];
+      state.friendUserInfoCollection = {};
+      state.blockUserList = [];
+    },
     SET_FROEND_LIST: (state, payload) => {
       if (state.friendList.length === 0) {
         if (Array.isArray(payload)) {

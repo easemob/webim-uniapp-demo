@@ -1,8 +1,6 @@
 import { EMClient } from '@/EaseIM';
 import { emUserInfos } from '@/EaseIM/emApis';
 const { fetchUserInfoWithLoginId } = emUserInfos();
-
-emUserInfos;
 const loginStore = {
   state: {
     loginStatus: false,
@@ -13,6 +11,14 @@ const loginStore = {
     loginUserProfiles: {},
   },
   mutations: {
+    RESET_LOGIN_STORE: (state) => {
+      state.loginStatus = false;
+      state.loginUserBaseInfos = {
+        loginUserId: '',
+        phoneNumber: '',
+      };
+      state.loginUserProfiles = {};
+    },
     SET_LOGIN_STATUS: (state, status) => {
       state.loginStatus = status;
     },

@@ -82,7 +82,11 @@
         ></u-icon>
         <text class="setting_title" slot="title">隐私</text>
       </u-cell>
-      <u-cell isLink @click="entryAboutEasemobPage">
+      <u-cell
+        isLink
+        @click="entryAboutEasemobPage"
+        :value="getEasemobUniAppSDKVersion"
+      >
         <u-icon
           slot="icon"
           size="32"
@@ -95,7 +99,9 @@
     <!-- login -->
     <u-cell-group title="登录">
       <u-cell>
-        <text class="mine_login_title" slot="title"> 退出登录 </text>
+        <text class="mine_login_title" slot="title" @click="logoutEM">
+          退出登录
+        </text>
       </u-cell>
     </u-cell-group>
     <!-- presence -->
@@ -153,7 +159,7 @@ export default {
       isShowPresenceSettings: false,
       isShowPresenceCustomModal: false,
       customPresence: '',
-      defaultAvatar: '/static/images/theme2x.png',
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
       actions: [
         {
           name: '在线',
@@ -210,6 +216,9 @@ export default {
       } else {
         return '无个性，不签名。';
       }
+    },
+    getEasemobUniAppSDKVersion() {
+      return `Easemob UniApp SDK v${EMClient.version}`;
     },
   },
   methods: {
@@ -273,18 +282,21 @@ export default {
     //退出登录
     logoutEM: function () {
       uni.showModal({
-        title: '是否退出登录',
-        success: function (res) {
+        title: '确认退出当前账号？',
+        success: (res) => {
           if (res.confirm) {
-            uni.setStorageSync('INFORM', []);
+            //关闭环信websocket连接。
             closeEaseIM();
+            //reset vuex中缓存数据
+            this.$store.commit('RESET_STORE');
             uni.redirectTo({
               url: '../login/login',
             });
-            //TODO 待处理store中的状态，需要初始化。
           }
         },
       });
+
+      console.log('first');
     },
   },
 };

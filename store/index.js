@@ -21,5 +21,17 @@ const store = new Vuex.Store({
     InformStore,
     ReceiveInviteStore,
   },
+  mutations: {
+    RESET_STORE: (state) => {
+      console.log('>>>>>重置store', store);
+      store.commit('RESET_MESSAGE_STORE');
+      store.commit('RESET_LOGIN_STORE');
+      store.commit('RESET_CONTACTS_STORE');
+      store.commit('RESET_GROUP_STORE');
+      store.commit('RESET_INFORM_STORE');
+      store.commit('RESET_RECEIVE_INVITE_STIRE');
+      store.commit('RESET_CONVERSATION_STORE');
+    },
+  },
 });
 export default store;

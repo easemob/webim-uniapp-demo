@@ -25,6 +25,20 @@ const ConversationStore = {
     silentConversationMap: {},
   },
   mutations: {
+    RESET_CONVERSATION_STORE: (state) => {
+      state.chattingId = '';
+      state.chattingChatType = CHAT_TYPE.SINGLE_CHAT;
+      state.chattingTypingStatus = false;
+      state.pinConversationList = [];
+      state.conversationList = [];
+      state.silentConversationMap = {};
+    },
+    /**
+     * Sets the chatting user info of the current page.
+     * @param {object} payload - The payload contains the target user id and chat type.
+     * @param {string} payload.targetId - The target user id.
+     * @param {CHAT_TYPE} payload.chatType - The chat type.
+     */
     /**
      * Sets the chatting user info of the current page.
      * @param {object} payload - The payload contains the target user id and chat type.
