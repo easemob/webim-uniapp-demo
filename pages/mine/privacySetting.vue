@@ -9,7 +9,7 @@
     >
     </u-navbar>
     <u-cell-group :border="false">
-      <u-cell title="黑名单" isLink>
+      <u-cell title="黑名单" isLink @click="entryBlockMembersPage">
         <text slot="value">{{ blockUserList.length }}</text>
       </u-cell>
     </u-cell-group>
@@ -20,7 +20,15 @@
 export default {
   computed: {
     blockUserList() {
-      return this.$store.state.ContactsStore.blockUserList;
+      return this.$store.getters.blockUserList;
+    },
+  },
+  methods: {
+    //前往黑名单列表页面
+    entryBlockMembersPage() {
+      uni.navigateTo({
+        url: '../blockMembers/index',
+      });
     },
   },
 };

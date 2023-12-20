@@ -91,6 +91,9 @@ const ContactsStore = {
     friendList(state) {
       return state.friendList;
     },
+    blockUserList(state) {
+      return state.blockUserList;
+    },
   },
 };
 export default ContactsStore;

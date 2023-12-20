@@ -128,7 +128,11 @@
               <text slot="title" class="header_title">群聊</text>
               <text slot="value">{{ joinedGroupTotal }}</text>
             </u-cell>
-            <u-cell :clickable="true" :isLink="true">
+            <u-cell
+              :clickable="true"
+              :isLink="true"
+              @click="entryBlockMembersPage"
+            >
               <text slot="title" class="header_title">黑名单</text>
               <text slot="value">{{ blockUserList.length }}</text>
             </u-cell>
@@ -402,10 +406,10 @@ export default {
         url: '../groupList/index',
       });
     },
-    //前往群聊页面
-    entryGroupChatPage() {
+    //前往黑名单列表页面
+    entryBlockMembersPage() {
       uni.navigateTo({
-        url: '../groupChat/index',
+        url: '../blockMembers/index',
       });
     },
   },

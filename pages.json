@@ -34,6 +34,13 @@
       }
     },
     {
+      "path": "pages/blockMembers/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/groupCreate/index",
       "style": {
         "navigationStyle": "custom",
