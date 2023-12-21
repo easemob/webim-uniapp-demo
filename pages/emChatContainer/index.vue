@@ -66,7 +66,6 @@
 
 <script>
 import EmChatNavbar from './emChatNavbar';
-import EmChat from '@/components/emChat';
 import EmMessageListContainer from './emMessageListContainer';
 import EmInputBarContainer from './emInputBarContainer';
 import EmGrayMessageContainer from './emGrayMessageContainer';
@@ -77,7 +76,6 @@ import { MESSAGE_TYPE } from '../../EaseIM/constant';
 export default {
   components: {
     EmChatNavbar,
-    EmChat,
     EmMessageListContainer,
     EmInputBarContainer,
     EmGrayMessageContainer,
