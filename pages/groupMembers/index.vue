@@ -397,7 +397,6 @@ export default {
       this.radiovalue = newVal;
     },
     checkboxChange(newList) {
-      console.log('????????', newList);
       this.checkboxValue = [...newList];
     },
     //操作群组成员

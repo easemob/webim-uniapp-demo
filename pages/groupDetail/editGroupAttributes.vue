@@ -60,6 +60,9 @@ export default {
           icon: 'none',
           duration: 2000,
         });
+        setTimeout(() => {
+          uni.navigateBack();
+        }, 1000);
       } catch (error) {
         console.log('保存设置的群组昵称失败', error);
         uni.showToast({

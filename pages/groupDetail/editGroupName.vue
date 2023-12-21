@@ -55,6 +55,9 @@ export default {
           icon: 'none',
           duration: 2000,
         });
+        setTimeout(() => {
+          uni.navigateBack();
+        }, 1000);
       } catch (error) {
         console.log('>>>>>修改失败', error);
         uni.showToast({
