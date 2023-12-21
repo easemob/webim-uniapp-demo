@@ -235,6 +235,10 @@ export default {
           try {
             const messages = await this.getMoreHistoryMessages();
             this.$refs.paging.complete([...messages]);
+            //补充滚动置底，防止图片消息撑开内容导致，未滚动置底
+            setTimeout(() => {
+              this.$refs.paging.scrollToBottom();
+            }, 500);
           } catch (error) {
             console.log('漫游加载失败', error);
             this.$refs.paging.complete(false);
@@ -243,9 +247,10 @@ export default {
           /* 设置本地分页，请求结束(成功或者失败)调用此方法，将请求的结果传递给z-paging作分页处理 */
           this.isLoadingLocalMsgList = true;
           this.$refs.paging.setLocalPaging([...this.messageList]);
-          //   setTimeout(() => {
-          //     this.$refs.paging.scrollToBottom();
-          //   }, 300);
+          //补充滚动置底，防止图片消息撑开内容导致，未滚动置底
+          setTimeout(() => {
+            this.$refs.paging.scrollToBottom();
+          }, 500);
 
           console.log('>>>>加载本地已有历史记录。');
         }
