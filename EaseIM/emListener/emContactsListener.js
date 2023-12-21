@@ -15,8 +15,7 @@ export const emContactsListener = (callback, listenerEventName) => {
   //自动通过用户好友申请
   const { acceptContactInvite } = emContacts();
   const handleAutoAcceptInvitation = async (contactsInform) => {
-    const { fromInviteUserId } = contactsInform;
-    console.log('>>>>>自动处理好友申请');
+    const { from } = contactsInform;
     const res = uni.getStorageSync(`EM_${EMClient.user}_GENNERAL_CONFIG`);
     const { isAutoAcceptFriendRequest } = res || {};
     //未开启则新增好友邀请消息
@@ -28,7 +27,7 @@ export const emContactsListener = (callback, listenerEventName) => {
       return;
     }
     try {
-      await acceptContactInvite(fromInviteUserId);
+      await acceptContactInvite(from);
       uni.showToast({
         title: '自动通过好友申请',
         icon: 'none',

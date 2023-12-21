@@ -105,7 +105,9 @@
               size="14"
               color="#75828a"
               :lines="1"
-              :text="`${receiceItem.from}：邀请你加入群组【${receiceItem.name}】`"
+              :text="`${receiceItem.from}：邀请你加入群组【${
+                receiceItem.name || receiceItem.id
+              }】`"
             ></u--text>
             <view slot="value">
               <u-button
@@ -163,6 +165,7 @@
                 size="mini"
                 type="primary"
                 text="添加"
+                @click="onAddFriend(receiceItem)"
               ></u-button>
               <u-button
                 v-if="receiceItem.added"
@@ -203,6 +206,7 @@
                 size="mini"
                 type="primary"
                 text="加入"
+                @click="onAddGroup(receiceItem)"
               ></u-button>
               <u-button
                 v-if="receiceItem.added"
@@ -220,7 +224,11 @@
 </template>
 
 <script>
+import { EMClient } from '@/EaseIM';
+import { emContacts, emGroups } from '@/EaseIM/emApis';
 import { CHAT_TYPE } from '@/EaseIM/constant';
+const { acceptContactInvite } = emContacts();
+const { acceptGroupInvite } = emGroups();
 export default {
   data() {
     return {
@@ -263,6 +271,37 @@ export default {
       this.searchInputKeywords = '';
       this.searchNewInviteResultList = [];
       this.isShowDefaultSearch = true;
+    },
+    // 点击添加好友
+    async onAddFriend(item) {
+      const { from: contactsId } = item;
+      console.log('from', item);
+      try {
+        await acceptContactInvite(contactsId);
+        this.$store.commit('UPDATE_RECEIVE_INVITE_LIST', item);
+      } catch (error) {
+        uni.showToast({
+          title: '添加好友失败',
+          icon: 'none',
+        });
+      }
+    },
+    // 点击添加群组
+    async onAddGroup(item) {
+      const { id: groupId } = item;
+      try {
+        await acceptGroupInvite(EMClient.user, groupId);
+        await this.$store.dispatch('fetchJoinedGroupList', {
+          isInit: true,
+        });
+        this.$store.commit('UPDATE_RECEIVE_INVITE_LIST', item);
+      } catch (error) {
+        console.log('error', error);
+        uni.showToast({
+          title: '加入群组失败',
+          icon: 'none',
+        });
+      }
     },
   },
 };
