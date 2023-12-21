@@ -8,7 +8,8 @@
       :autoBack="true"
     >
     </u-navbar>
-    <view>
+    <u-empty v-if="!blockUserList.length" text="黑名单列表为空"> </u-empty>
+    <view v-else>
       <u-list @scrolltolower="scrolltolower">
         <u-list-item v-for="(blockItem, index) in blockUserList" :key="index">
           <u-cell @click="entryContactsDetailPage(blockItem)">

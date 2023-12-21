@@ -19,8 +19,8 @@
           </view>
         </view>
       </u-navbar>
-      <view class="default_search_container">
-        <view class="search_container" @click="isOpenedSearch = true">
+      <view class="search_container">
+        <view class="search_icon_box" @click="isOpenedSearch = true">
           <u-icon
             size="22"
             name="/static/images/new_ui/search_icon.png"
@@ -33,7 +33,7 @@
     <!-- 联系人搜索 -->
     <template v-else>
       <!-- 搜索input -->
-      <view>
+      <view class="searching_container">
         <u-search
           shape="square"
           :focus="true"
