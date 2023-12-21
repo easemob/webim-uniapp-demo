@@ -79,10 +79,11 @@ export default {
     },
     //会话未读数
     allConversationUnReadNum() {
-      return (
-        this.unReadNoticeNum +
-        this.$store.getters.calcAllUnReadNumFromConversation
-      );
+      if (this.$store.getters.calcAllUnReadNumFromConversation >= 99) {
+        return 99;
+      } else {
+        return this.$store.getters.calcAllUnReadNumFromConversation;
+      }
     },
   },
   methods: {
