@@ -153,7 +153,7 @@
             <u-cell
               class="contacts_item_cell"
               v-for="(cell, index1) in item"
-              :key="cell.initial + cell.userId"
+              :key="cell.userId"
               :border="false"
               @click="entryContactsDetailPage(cell.userId)"
             >

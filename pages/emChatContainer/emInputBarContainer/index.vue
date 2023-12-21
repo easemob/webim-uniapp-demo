@@ -59,7 +59,7 @@
       </template>
     </view>
     <!-- 音频发送板块 -->
-    <view v-show="isShowAudioMessageContainer" class="chat-audio-container">
+    <view v-if="isShowAudioMessageContainer" class="chat-audio-container">
       <RecordAudioContainer
         @changeRecordAudioContainer="
           () => (isShowAudioMessageContainer = false)
@@ -67,11 +67,11 @@
       />
     </view>
     <!-- Emoji Icon选择板块 -->
-    <view v-show="isShowEmojiIconContainer" class="chat-emoji-picker-container">
+    <view v-if="isShowEmojiIconContainer" class="chat-emoji-picker-container">
       <EmojiPickerContainer @appendEmojiIcon="appendEmojiIcon" />
     </view>
     <!-- 更多功能选择板块 -->
-    <view v-show="isShowMoreFuncContainer" class="chat-more-icon-container">
+    <view v-if="isShowMoreFuncContainer" class="chat-more-icon-container">
       <MoreFuncContainer @onCloseAllShowContainer="onCloseAllShowContainer" />
     </view>
     <view class="chat-input-bar-bottom-placeholder"></view>

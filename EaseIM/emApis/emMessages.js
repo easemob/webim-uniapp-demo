@@ -64,10 +64,10 @@ const emMessages = () => {
             key,
             message,
           });
-          store.commit('UPDATE_CONVERSATION_ITEM', {
-            conversationId: messageBody.to,
-            lastMessage: message,
-          });
+          //   store.commit('UPDATE_CONVERSATION_ITEM', {
+          //     conversationId: messageBody.to,
+          //     lastMessage: message,
+          //   });
         })
         .catch((err) => {
           reject(err);

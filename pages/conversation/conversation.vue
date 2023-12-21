@@ -134,83 +134,13 @@
             </u-cell>
           </u-list-item> -->
           <!-- 置顶会话列表 -->
-          <u-list-item
-            class="pinconversation_item"
-            v-for="(conversationItem, index) in pinConversationList"
-            :key="conversationItem.conversationId"
-          >
-            <view
-              @longpress="onConversationMoreFunction(conversationItem)"
-              @click="entryChatPage(conversationItem)"
+          <template v-if="pinConversationList.length">
+            <u-list-item
+              v-for="(conversationItem, index) in pinConversationList"
+              :key="conversationItem.conversationId"
             >
-              <u-cell>
-                <!-- 头像 -->
-                <u-avatar
-                  slot="icon"
-                  shape="square"
-                  size="50"
-                  :src="showConversationAvatar(conversationItem)"
-                  customStyle="margin: -3px 5px -3px 0"
-                ></u-avatar>
-                <!-- name -->
-                <view class="conversation_item_title" slot="title">
-                  <u--text
-                    class="conversation_item_title_text"
-                    :lines="1"
-                    :text="showConversationName(conversationItem)"
-                    :suffixIcon="
-                      conversationItemSilentStatus(
-                        conversationItem.conversationId
-                      )
-                        ? '/static/images/new_ui/no_disturbing.png'
-                        : ''
-                    "
-                    iconStyle="margin-left: 2px;"
-                  >
-                  </u--text>
-                </view>
-                <!-- lastmsg -->
-                <u--text
-                  slot="label"
-                  :lines="1"
-                  :text="handleLastMsgContent(conversationItem.lastMessage)"
-                ></u--text>
-                <!-- time&unReadNum -->
-                <view slot="value" class="conversation_item_right">
-                  <view>
-                    <view class="conversation_item_time">{{
-                      handleTime(conversationItem)
-                    }}</view>
-                    <view class="conversation_item_unread">
-                      <u-badge
-                        class="conversation_item_badge"
-                        type="primary"
-                        max="99"
-                        :isDot="
-                          (conversationItemSilentStatus(
-                            conversationItem.conversationId
-                          ) &&
-                            conversationItem.unReadCount > 0) ||
-                          conversationItem.isRead === false
-                        "
-                        :offset="[15, 0]"
-                        :absolute="true"
-                        :value="conversationItem.unReadCount"
-                      ></u-badge>
-                    </view>
-                  </view>
-                </view>
-              </u-cell>
-            </view>
-          </u-list-item>
-          <!-- 普通会话列表 -->
-          <u-list-item
-            class="conversation_item"
-            v-for="(conversationItem, index) in conversationList"
-            :key="conversationItem.conversationId"
-          >
-            <swipe-delete>
               <view
+                class="pinconversation_item"
                 @longpress="onConversationMoreFunction(conversationItem)"
                 @click="entryChatPage(conversationItem)"
               >
@@ -273,7 +203,82 @@
                   </view>
                 </u-cell>
               </view>
-            </swipe-delete>
+            </u-list-item>
+          </template>
+
+          <!-- 普通会话列表 -->
+          <u-list-item
+            class="conversation_item"
+            v-for="(conversationItem, index) in conversationList"
+            :key="conversationItem.conversationId"
+          >
+            <template>
+              <swipe-delete>
+                <view
+                  @longpress="onConversationMoreFunction(conversationItem)"
+                  @click="entryChatPage(conversationItem)"
+                >
+                  <u-cell>
+                    <!-- 头像 -->
+                    <u-avatar
+                      slot="icon"
+                      shape="square"
+                      size="50"
+                      :src="showConversationAvatar(conversationItem)"
+                      customStyle="margin: -3px 5px -3px 0"
+                    ></u-avatar>
+                    <!-- name -->
+                    <view class="conversation_item_title" slot="title">
+                      <u--text
+                        class="conversation_item_title_text"
+                        :lines="1"
+                        :text="showConversationName(conversationItem)"
+                        :suffixIcon="
+                          conversationItemSilentStatus(
+                            conversationItem.conversationId
+                          )
+                            ? '/static/images/new_ui/no_disturbing.png'
+                            : ''
+                        "
+                        iconStyle="margin-left: 2px;"
+                      >
+                      </u--text>
+                    </view>
+                    <!-- lastmsg -->
+                    <u--text
+                      slot="label"
+                      :lines="1"
+                      :text="handleLastMsgContent(conversationItem.lastMessage)"
+                    ></u--text>
+                    <!-- time&unReadNum -->
+                    <view slot="value" class="conversation_item_right">
+                      <view>
+                        <view class="conversation_item_time">{{
+                          handleTime(conversationItem)
+                        }}</view>
+                        <view class="conversation_item_unread">
+                          <u-badge
+                            class="conversation_item_badge"
+                            type="primary"
+                            max="99"
+                            :isDot="
+                              (conversationItemSilentStatus(
+                                conversationItem.conversationId
+                              ) &&
+                                conversationItem.unReadCount > 0) ||
+                              conversationItem.isRead === false
+                            "
+                            :offset="[15, 0]"
+                            :absolute="true"
+                            :value="conversationItem.unReadCount"
+                          ></u-badge>
+                        </view>
+                      </view>
+                    </view>
+                  </u-cell>
+                </view>
+              </swipe-delete>
+            </template>
           </u-list-item>
         </u-list>
         <u-action-sheet

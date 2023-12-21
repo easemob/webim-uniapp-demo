@@ -127,20 +127,26 @@ export default {
       const { chatType, grayInformType, from, to } = this.msgBody;
       if (chatType === CHAT_TYPE.SINGLE_CHAT) {
         let str = GRAY_INFORM_MAP_SINGLE_TEXT[grayInformType];
-        str = str.replace(
-          GRAY_INFORM_TEMPLATE_NAME.USER,
-          this.getFriendNickname(from)
-        );
+        if (str) {
+          return (str = str.replace(
+            GRAY_INFORM_TEMPLATE_NAME.USER,
+            this.getFriendNickname(from)
+          ));
+        }
         return str;
       }
       if (chatType === CHAT_TYPE.GROUP_CHAT) {
         const groupId = to;
         let str = GRAY_INFORM_MAP_GROUP_TEXT[grayInformType];
-        if (str.includes(GRAY_INFORM_TEMPLATE_NAME.GROUP_USER_FROM)) {
-          str = str.replace(
-            GRAY_INFORM_TEMPLATE_NAME.GROUP_USER_FROM,
-            this.getMemberGroupNickname(from, groupId)
-          );
+        if (str) {
+          if (str.includes(GRAY_INFORM_TEMPLATE_NAME.GROUP_USER_FROM)) {
+            return (str = str.replace(
+              GRAY_INFORM_TEMPLATE_NAME.GROUP_USER_FROM,
+              this.getMemberGroupNickname(from, groupId)
+            ));
+          } else {
+            return str;
+          }
         }
         return str;
       }

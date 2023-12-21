@@ -53,7 +53,7 @@
   flex-grow: 0;
 }
 .pinconversation_item {
-  background-color: #eaeaea;
+  background: #eaeaea;
 }
 .conversation_item_title {
   display: flex;

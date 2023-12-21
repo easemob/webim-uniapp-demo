@@ -181,6 +181,14 @@ export default {
       };
     },
   },
+  watch: {
+    messageList() {
+      console.log('>>>>监听到消息列表变化');
+      this.$store.dispatch('updateConversationLastMsg', {
+        conversationId: this.targetId,
+      });
+    },
+  },
   methods: {
     getGroupName(groupid) {
       let groupName = '';

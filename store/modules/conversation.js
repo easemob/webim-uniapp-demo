@@ -2,6 +2,7 @@ import { emConversation, emSilent } from '@/EaseIM/emApis';
 import { EMClient } from '@/EaseIM';
 import { CHAT_TYPE } from '@/EaseIM/constant';
 import Vue from 'vue';
+import MessageStore from './message';
 const {
   fetchPinConversationFromServer,
   pinConversationItem,
@@ -91,6 +92,7 @@ const ConversationStore = {
       const unPinConversationItemIndex = state.conversationList.findIndex(
         (item) => item.conversationId === conversationId
       );
+      console.log('unPinConversationItemIndex', unPinConversationItemIndex);
       if (isPinned) {
         state.pinConversationList.unshift(conversationItem);
         unPinConversationItemIndex > -1 &&
@@ -117,24 +119,33 @@ const ConversationStore = {
       }
     },
     UPDATE_CONVERSATION_ITEM: (state, payload) => {
-      console.log('>>>>更新会话列表');
+      console.log('>>>>更新会话列表', payload);
       const { conversationId, lastMessage } = payload;
       let foundChannel = false;
-      state.conversationList.length &&
-        state.conversationList.forEach((conversationItem) => {
-          if (conversationItem.conversationId === conversationId) {
-            //要更新的lastmsg消息来源不为当前id，且不为正在会话中的id则累加未读数。
-            if (
-              lastMessage.from !== EMClient.user &&
-              state.chattingId !== conversationId
-            ) {
-              conversationItem.unReadCount = conversationItem.unReadCount + 1;
-            }
-            conversationItem.lastMessage = { ...lastMessage };
-            foundChannel = true;
-            return;
-          }
-        });
+
+      const updateConversationItem = (conversationItem) => {
+        if (
+          lastMessage.from !== EMClient.user &&
+          state.chattingId !== conversationId
+        ) {
+          conversationItem.unReadCount += 1;
+        }
+        conversationItem.lastMessage = { ...lastMessage };
+        foundChannel = true;
+      };
+
+      state.conversationList.forEach((conversationItem) => {
+        if (conversationItem.conversationId === conversationId) {
+          updateConversationItem(conversationItem);
+        }
+      });
+
+      state.pinConversationList.forEach((conversationItem) => {
+        if (conversationItem.conversationId === conversationId) {
+          updateConversationItem(conversationItem);
+        }
+      });
+
       if (!foundChannel) {
         console.log('>>>新增会话列表');
         const conversationItem = {
@@ -182,6 +193,22 @@ const ConversationStore = {
     },
   },
   actions: {
+    //主动更新lastMessage
+    updateConversationLastMsg: async ({ commit, dispatch }, payload) => {
+      const { conversationId } = payload;
+      const { messageCollection } = MessageStore.state;
+      //收集conversationId 对应的消息合集。
+      if (messageCollection[conversationId]) {
+        const messagesList = messageCollection[conversationId];
+        const lastMessage = messagesList[0];
+        console.log('>>>>>>执行主动更新对应会话的最后一条数据。', lastMessage);
+        commit('UPDATE_CONVERSATION_ITEM', {
+          conversationId,
+          lastMessage,
+        });
+      }
+      console.log('messageCollection', messageCollection);
+    },
     fetchPinConversationList: async ({ commit }) => {
       try {
         const result = await fetchPinConversationFromServer();
