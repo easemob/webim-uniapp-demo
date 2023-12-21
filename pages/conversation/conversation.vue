@@ -38,6 +38,7 @@
           :clearabled="true"
           :focus="true"
           @search="actionSearch"
+          @input="actionSearch"
           @custom="cancelSearch"
         ></u-search>
       </view>
@@ -118,7 +119,7 @@
       <template v-else>
         <u-list @scrolltolower="scrolltolower" :height="conversationListHeight">
           <!-- 系统通知 -->
-          <u-list-item v-if="lastInformData">
+          <!-- <u-list-item v-if="lastInformData">
             <u-cell title="系统通知" value="系统通知哈哈哈哈">
               <u-avatar
                 slot="icon"
@@ -131,7 +132,7 @@
                 handleTime(lastInformData)
               }}</text>
             </u-cell>
-          </u-list-item>
+          </u-list-item> -->
           <!-- 置顶会话列表 -->
           <u-list-item
             class="pinconversation_item"
@@ -541,7 +542,6 @@ export default {
           (conversatonItem) => {
             const { conversationId, conversationType, lastMessage } =
               conversatonItem;
-            console.log('conversationType', conversationType);
             if (conversationType === CHAT_TYPE.SINGLE_CHAT) {
               if (
                 this.friendUserInfoCollection[conversationId] &&

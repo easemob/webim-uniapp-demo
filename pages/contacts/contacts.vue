@@ -46,6 +46,7 @@
           :clearabled="true"
           :focus="true"
           @search="onSearchContacts"
+          @input="onSearchContacts"
           @custom="cancelSearch"
         ></u-search>
       </view>
@@ -107,19 +108,19 @@
         <!-- Contacts -->
         <view slot="header" class="contacts_header_container">
           <u-cell-group :border="false">
-            <!-- <u-cell
+            <u-cell
               :clickable="true"
               :isLink="true"
               @click="entryNewInvitePage"
             >
-              <text slot="title" class="header_title">系统通知</text>
+              <text slot="title" class="header_title">新邀请</text>
               <u-badge
                 slot="value"
                 type="primary"
                 max="99"
                 :value="newInviteMsgNum"
               ></u-badge>
-            </u-cell> -->
+            </u-cell>
             <u-cell
               :clickable="true"
               :isLink="true"
@@ -207,8 +208,8 @@ export default {
       searchInputKeywords: '',
       searchFriendResultList: [],
       defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
-      //   indexList: [],
-      indexList: indexList(),
+      indexList: [],
+      //   indexList: indexList(),
       sortedContactsList: [],
     };
   },
@@ -381,11 +382,11 @@ export default {
             }
             params.initial = initial;
             contactsObj[initial].push(params);
-            // indexList.push(userId.substring(0, 1).toUpperCase());
+            indexList.push(userId.substring(0, 1).toUpperCase());
           } else {
             params.initial = '#';
             contactsObj[initial].push({ ...params });
-            // indexList.push('#');
+            indexList.push('#');
           }
         });
       if (type === 'search') {
@@ -393,7 +394,7 @@ export default {
       } else {
         this.sortedContactsList = Object.values(contactsObj);
       }
-      //   this.indexList = [...new Set(indexList)];
+      this.indexList = [...new Set(indexList)];
       console.log('contactsList', Object.values(contactsObj));
     },
     onSelectIndex(value) {
