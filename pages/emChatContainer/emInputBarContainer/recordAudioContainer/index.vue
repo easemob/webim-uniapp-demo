@@ -101,6 +101,7 @@ export default {
     },
 
     //web平台采集音频录音
+    //#ifdef WEB
     executeWebAudioRecord() {
       import('../../../../recorderCore/src/recorder-core').then((Recorder) => {
         require('../../../../recorderCore/src/engine/mp3');
@@ -132,6 +133,7 @@ export default {
         );
       });
     },
+    // #endif
     requestMiniProgramAuthorization() {
       const onSuccess = (res) => {
         this.initStartRecord();
