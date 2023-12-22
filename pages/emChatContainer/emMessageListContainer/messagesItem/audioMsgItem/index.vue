@@ -60,7 +60,9 @@ export default {
     this.innerAudioContext = uni.createInnerAudioContext({
       obeyMuteSwitch: false,
     });
-    this.innerAudioContext.onPlay();
+    this.innerAudioContext.onPlay(() => {
+      console.log('>>>>>播放中');
+    });
     this.innerAudioContext.onEnded(() => {
       this.$emit('onClickPlayAudio', '');
     });
@@ -82,11 +84,11 @@ export default {
         },
 
         success: (res) => {
+          console.log('>>>>>成功拿到播放地址', res);
           const tempFilePath = res.tempFilePath;
           this.innerAudioContext.src = tempFilePath;
-          if (this.innerAudioContext?.src) {
-            this.innerAudioContext.play();
-          }
+          console.log(this.innerAudioContext.src);
+          this.innerAudioContext.play();
         },
 
         fail: (e) => {
@@ -101,6 +103,7 @@ export default {
     playAudioMessage() {
       const { id } = this.msgBody;
       this.formatAudioToMp3();
+      console.log('>>>>>通知进行播放');
       this.$emit('onClickPlayAudio', id);
     },
   },
