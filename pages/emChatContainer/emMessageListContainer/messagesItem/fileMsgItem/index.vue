@@ -7,7 +7,7 @@
     @tap="previewFile"
   >
     <view class="file_msg_content">
-      <text class="name">
+      <text class="name u-line-1">
         {{ msgBody.filename || msgBody.body.filename }}
       </text>
       <text class="size">{{
@@ -72,36 +72,66 @@ export default {
       });
     },
     downloadFile() {
-      let _this = this;
       // 下载完存储filePath，下次预览直接访问
+      console.log('this.msgBody?.url', this.msgBody?.url);
       uni.downloadFile({
         url: `${this.msgBody?.url}`,
-        success: function (res) {
+        success: (res) => {
           let filePath = res.tempFilePath;
-          uni.saveFile({
-            tempFilePath: filePath,
-            success: function (res) {
-              let savedFilePath = res.savedFilePath;
-              _this.storageFilePath({
-                id: _this.msg.id,
-                path: savedFilePath,
-              });
-              _this.openFile(savedFilePath);
-            },
-            fail: function (e) {
-              uni.hideLoading();
-              uni.showToast({
-                icon: 'none',
-                title: '保存失败',
-              });
-            },
-          });
+          // #ifdef MP-WEIXIN  || MP-TOUTIAO || MP-QQ
+          this.saveFileUseManager(filePath);
+          // #endif
+          // #ifndef MP-WEIXIN  || MP-TOUTIAO || MP-QQ
+          this.saveFile(filePath);
+          // #endif
         },
-        fail: () => {
+        fail: (err) => {
+          console.log('>>>>>文件下载失败', err);
           uni.hideLoading();
           uni.showToast({
             icon: 'none',
             title: '失败请重新下载',
+          });
+        },
+      });
+    },
+    saveFile(filePath) {
+      uni.saveFile({
+        tempFilePath: filePath,
+        success: (res) => {
+          let savedFilePath = res.savedFilePath;
+          this.storageFilePath({
+            id: this.msgBody.id,
+            path: savedFilePath,
+          });
+          this.openFile(savedFilePath);
+        },
+        fail: function (e) {
+          uni.hideLoading();
+          uni.showToast({
+            icon: 'none',
+            title: '保存失败',
+          });
+        },
+      });
+    },
+    saveFileUseManager(filePath) {
+      console.log('>>>>小程序保存文件调用');
+      uni.getFileSystemManager().saveFile({
+        tempFilePath: filePath,
+        success: (res) => {
+          let savedFilePath = res.savedFilePath;
+          console.log('>>>>>小程序savedFilePath', savedFilePath);
+          this.storageFilePath({
+            id: this.msgBody.id,
+            path: res.filePath,
+          });
+          this.openFile(savedFilePath);
+        },
+        fail: (e) => {
+          uni.showToast({
+            title: '下载失败',
+            icon: 'none',
           });
         },
       });
@@ -136,7 +166,7 @@ export default {
         key: ATTACH_KEY,
         success: (res) => {
           let dt = res.data || {};
-          let path = dt[this.msg.id];
+          let path = dt[this.msgBody.id];
           if (path) {
             this.openFile(path);
           } else {
