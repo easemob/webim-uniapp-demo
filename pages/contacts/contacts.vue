@@ -375,6 +375,7 @@ export default {
           const params = {};
           params.userId = userId;
           params.remark = remark;
+          console.log('friendItem', friendItem);
           if (reg.test(userId.substring(0, 1))) {
             const initial = userId.substring(0, 1).toUpperCase();
             if (!contactsObj[initial]) {
@@ -384,7 +385,11 @@ export default {
             contactsObj[initial].push(params);
             indexList.push(userId.substring(0, 1).toUpperCase());
           } else {
-            params.initial = '#';
+            const initial = '#';
+            params.initial = initial;
+            if (!contactsObj[initial]) {
+              contactsObj[initial] = [];
+            }
             contactsObj[initial].push({ ...params });
             indexList.push('#');
           }
