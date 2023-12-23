@@ -1,99 +1,77 @@
-.login {
-	width: 100%;
-	height: 100%;
-	background-color: #ffffff;
-	position: fixed;
-	background-size: contain;
+.login_container {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  position: fixed;
+  background-size: contain;
 }
-.bg-img{
-	position: absolute;
-	z-index: -1;
-	width: 100%;
-	height: 100%;
+.login_header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 120rpx;
 }
 .login_title {
-	text-align: center;
-	margin-top: 60rpx;
+  /* 环信IM Demo */
+  width: 152px;
+  height: 28px;
+  font-family: Noto Sans SC;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #009eff;
 }
-.login_title text{
-	font-size: 64rpx;
-	font-weight: 400;
-	line-height: 96rpx;
+.login_input_container {
+  width: 80%;
+  margin: 50px auto;
 }
-.login_user, .login_pwd, .login_btn {
-	display: flex;
-	position: relative;
-}
-.login_user input, .login_pwd input {
-	height: 96rpx;
-	background-color: #ffffff;
-	border: 2rpx solid #999999;
-	border-radius: 57px;
-	box-sizing: border-box;
-	padding: 0 32rpx;
-	font-size: 34rpx;
-	color: #000;
-	margin: 0 64rpx;
-	display: inline-block;
-	flex: 1;
-}
-.login_sms{
-	position: absolute;
-	right: 112rpx;
-	top: 32rpx;
-	color: #009FFF;
-	font-size: 14px;
-	cursor: pointer;
-	height: 96rpx;
-	line-height: 96rpx;
-	z-index: 9;
-	user-select: none;
-}
-.login_user input {
-	margin-top: 80rpx
-}
-.login_pwd input {
-	margin-top: 32rpx;
-	padding-right: 100rpx;
-}
-.login_btn button{
-	flex: 1;
-	height: 96rpx;
-	margin: 100rpx 64rpx 0;
-	border-radius: 57px;
-	line-height: 96rpx;
-	color: rgb(255,255,255);
-	background: linear-gradient(90deg, #04AEF0 0%, #5A5DD0 100%);
-	font-size: 34rpx;
-}
-.login_text {
-	display: flex;
-	justify-content: space-between;
-	text-align: center;
-  position: relative;
-	padding: 0 50rpx;
-  top: 300rpx;
-}
+/* .login_phone_number,
+.login_auth_code {
+  height: 48px;
+  background: #f1f2f3;
+  margin: 10px 0;
+} */
 
-.login_text navigator {
-	font-size: 24rpx;
-	color: #ffffff;
-	display: inline-block;
+.login_btn {
+  height: 48px;
 }
+.agree_pricay_policy {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  /* 同意 */
+  /* 中文/次级标题/小 */
+  font-family: 'Noto Sans SC';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  /* identical to box height, or 143% */
+  display: flex;
+  align-items: center;
+  text-align: center;
 
-.btn_hover {
-	background-color: #94999c;
-}
-.nameFocus input, .psdFocus input{
-	border: 3rpx solid #0873DE;
-	box-sizing: border-box;
-}
-.psdIcon{
-	position: absolute;
-    width: 24px;
-    height: 24px;
-	right: 90rpx;
-	top: 58rpx;
-	z-index: 2;
-}
+  /* color_neutral/3 */
+  color: #464e53;
 
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+.pricay_policy_container {
+  margin-left: 10px;
+}
+.pricay_policy_link {
+  color: #009eff;
+  text-decoration: none;
+}
+::v-deep .uni-checkbox-input {
+  width: 20px;
+  height: 20px;
+}

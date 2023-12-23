@@ -1,67 +1,105 @@
 <template>
-  <view>
-    <view class="login">
-      <image src="/static/images/loginBg.jpg" class="bg-img"></image>
-      <view class="login_title">
-        <image
-          src="/static/images/loginIcon.png"
-          style="width: 100px; height: 100px"
-        ></image>
-      </view>
-      <view :class="'login_user ' + nameFocus">
-        <input
-          v-model="name"
-          type="text"
-          :placeholder="usePwdLogin ? '请输入用户名' : '请输入手机号'"
-          placeholder-style="color:rgb(173,185,193)"
-          @input="bindUsername"
-          @focus="onFocusName"
-          @blur="onBlurName"
-        />
-      </view>
-
-      <view :class="'login_pwd ' + psdFocus" v-if="usePwdLogin">
-        <input
-          v-model="psd"
-          type="text"
-          :password="!showPassword"
-          placeholder="请输入密码"
-          placeholder-style="color:rgb(173,185,193)"
-          @input="bindPassword"
-          @focus="onFocusPsd"
-          @blur="onBlurPsd"
-        />
-        <image
-          class="psdIcon"
-          :src="
-            showPassword
-              ? '/static/images/eye.png'
-              : '/static/images/eye-fill.png'
-          "
-          @tap="showPassword = !showPassword"
-        ></image>
-      </view>
-
-      <view class="login_pwd" v-else>
-        <input
-          type="text"
-          placeholder="请输入验证码"
-          hover-class="input-hover"
-          placeholder-style="color:rgb(173,185,193)"
-          @input="bindPassword"
-        />
-        <view class="login_sms" @click="getSmsCode">{{ btnText }}</view>
-      </view>
-
-      <view class="login_btn">
-        <button hover-class="btn_hover" @click="loginEaseIM">登录</button>
-      </view>
-
-      <!-- <view class="login_text">
-		<navigator url="../register/register" open-type="redirect">账号注册</navigator>
-		<navigator url="../resetpassword/resetpassword" open-type="redirect">找回密码</navigator>
-		<navigator url="../login_token/login_token" open-type="redirect" hover-class="navigator-hover">使用Token登录</navigator>
-	</view> -->
+  <view class="login_container">
+    <view class="login_header">
+      <image
+        src="/static/images/new_ui/logo.png"
+        style="width: 100px; height: 100px"
+      ></image>
+      <text class="login_title">环信IM Demo</text>
+    </view>
+    <!-- login phone number -->
+    <view class="login_input_container">
+      <!-- 原本是单独写输入框样式，但是小程序上不生效因此只能在customStyle中定义 -->
+      <template v-if="usePhoneNumberLogin">
+        <u-input
+          class="login_phone_number"
+          placeholder="输入手机号"
+          v-model="loginPhoneNumber"
+          clearable
+          border="false"
+          :customStyle="{
+            padding: '0 15px',
+            height: '48px',
+            backgroundColor: '#f1f2f3',
+            margin: '10px 0',
+          }"
+        ></u-input>
+        <u-input
+          class="login_auth_code"
+          placeholder="输入验证码"
+          v-model="loginAuthCode"
+          clearable
+          border="false"
+          :customStyle="{
+            padding: '0 5px 0 15px',
+            height: '48px',
+            backgroundColor: '#f1f2f3',
+            margin: '10px 0',
+          }"
+        >
+          <template slot="suffix">
+            <u-code
+              ref="uCode"
+              @change="codeChange"
+              seconds="60"
+              changeText="X秒重新获取"
+            ></u-code>
+            <u-button
+              @tap="getAuthSmsCode"
+              :text="tips"
+              type="primary"
+            ></u-button>
+          </template>
+        </u-input>
+      </template>
+      <template v-if="!usePhoneNumberLogin">
+        <u-input
+          placeholder="输入环信ID"
+          v-model="loginEaseIMId"
+          clearable
+          border="false"
+          :customStyle="{
+            padding: '0 15px',
+            height: '48px',
+            backgroundColor: '#f1f2f3',
+            margin: '10px 0',
+          }"
+        ></u-input>
+        <u-input
+          password
+          placeholder="输入环信密码"
+          v-model="loginEaseIMPassword"
+          clearable
+          border="false"
+          :customStyle="{
+            padding: '0 15px',
+            height: '48px',
+            backgroundColor: '#f1f2f3',
+            margin: '10px 0',
+          }"
+        ></u-input>
+      </template>
+      <u-button
+        class="login_btn"
+        type="primary"
+        @click="loginEaseIM"
+        text="登录"
+      ></u-button>
+      <!-- 同意隐私政策 -->
+      <label class="agree_pricay_policy" key="agree">
+        <view class="checkbox_icon">
+          <checkbox-group @change="agreePrivacyPolicyChange">
+            <checkbox
+              value="agree"
+              :checked="agreePrivacyPolicy"
+              borderColor="#464E53"
+            />
+          </checkbox-group>
+        </view>
+        <view class="pricay_policy_container"
+          >同意<text class="pricay_policy_link">《隐私政策》</text></view
+        >
+      </label>
     </view>
   </view>
 </template>
@@ -69,65 +107,52 @@
 <script>
 import { emConnect } from '@/EaseIM/emApis';
 const { loginWithPassword, loginWithAccessToken } = emConnect();
-let runAnimation = true;
-let times = 60;
-let timer;
 export default {
   data() {
     return {
-      usePwdLogin: true, //是否用户名+手机号方式登录
-      name: 'pfh',
-      psd: '1',
-      grant_type: 'password',
-      psdFocus: '',
-      nameFocus: '',
-      showPassword: false,
-      type: 'text',
-      btnText: '获取验证码',
+      usePhoneNumberLogin: false, //是否手机号方式登录
+      /* 用户名验证码方式登录 */
+      loginPhoneNumber: '',
+      loginAuthCode: '',
+      tips: '',
+      /* 环信ID环信密码登录 */
+      loginEaseIMId: '',
+      loginEaseIMPassword: '',
+      /* 隐私政策 */
+      agreePrivacyPolicy: false,
     };
   },
 
   methods: {
-    bindUsername: function (e) {
-      this.name = e.detail.value;
+    codeChange(text) {
+      this.tips = text;
     },
-    bindPassword: function (e) {
-      this.psd = e.detail.value;
-    },
-    onFocusPsd: function () {
-      this.psdFocus = 'psdFocus';
-    },
-    onBlurPsd: function () {
-      this.psdFocus = '';
-    },
-    onFocusName: function () {
-      this.nameFocus = 'nameFocus';
-    },
-    onBlurName: function () {
-      this.nameFocus = '';
+    agreePrivacyPolicyChange(value) {
+      this.agreePrivacyPolicy = !this.agreePrivacyPolicy;
+      console.log('>>>>>', value);
     },
     //获取短信验证码
-    getSmsCode: function () {
-      if (this.btnText != '获取验证码') return;
-      if (this.name == '') {
+    async getAuthSmsCode() {
+      if (this.loginPhoneNumber == '') {
         return uni.showToast({ title: '请输入手机号！', icon: 'none' });
       }
-      const self = this;
-      // 发送短信验证码
-      uni.request({
-        url: `https://a1.easemob.com/inside/app/sms/send/${this.name}`,
-        header: {
-          'content-type': 'application/json',
-        },
-        method: 'POST',
-        data: {
-          phoneNumber: this.name,
-        },
-        success(res) {
-          console.log('res', res);
+      if (this.$refs.uCode.canGetCode) {
+        console.log(this.loginPhoneNumber);
+        try {
+          const result = await uni.request({
+            url: `https://a1.easemob.com/inside/app/sms/send/${this.loginPhoneNumber}`,
+            header: {
+              'content-type': 'application/json',
+            },
+            method: 'POST',
+            data: {
+              phoneNumber: this.loginPhoneNumber,
+            },
+          });
+          const res = result[1];
           if (res.statusCode == 200) {
             uni.showToast({ title: '短信发送成功！', icon: 'none' });
-            self.countDown();
+            this.$refs.uCode.start();
           } else if (res.statusCode == 400) {
             if (res.data.errorInfo == 'phone number illegal') {
               uni.showToast({ title: '请输入正确的手机号！', icon: 'none' });
@@ -144,41 +169,22 @@ export default {
               uni.showToast({ title: res.data.errorInfo, icon: 'none' });
             }
           }
-        },
-        fail(error) {
+        } catch (error) {
           uni.showToast({ title: '短信发送失败！', icon: 'none' });
-        },
-      });
-    },
-    //验证码倒计时
-    countDown: function () {
-      timer && clearTimeout(timer);
-      timer = setTimeout(() => {
-        times--;
-        this.setData({
-          btnText: times,
-        });
-        if (times === 0) {
-          times = 60;
-          this.setData({
-            btnText: '获取验证码',
-          });
-          return clearTimeout(timer);
         }
-        this.countDown();
-      }, 1000);
+      }
     },
     async loginEaseIM() {
-      if (this.usePwdLogin) {
-        if (!this.name) {
+      if (!this.usePhoneNumberLogin) {
+        if (!this.loginEaseIMId) {
           uni.showToast({
             title: '请输入用户ID！',
             icon: 'none',
           });
           return;
-        } else if (!this.psd) {
+        } else if (!this.loginEaseIMPassword) {
           uni.showToast({
-            title: '请输入验证码！',
+            title: '请输入用户密码！',
             icon: 'none',
           });
           return;
@@ -189,13 +195,13 @@ export default {
         });
         this.loginWithUserId();
       } else {
-        if (!this.name) {
+        if (!this.loginPhoneNumber) {
           uni.showToast({
             title: '请输入手机号！',
             icon: 'none',
           });
           return;
-        } else if (!this.psd) {
+        } else if (!this.loginAuthCode) {
           uni.showToast({
             title: '请输入验证码！',
             icon: 'none',
@@ -206,6 +212,13 @@ export default {
       }
     },
     async loginWithPhoneNumber() {
+      if (!this.agreePrivacyPolicy) {
+        uni.showToast({
+          title: '请同意隐私政策！',
+          icon: 'none',
+        });
+        return;
+      }
       try {
         let res = await uni.request({
           url: 'https://a1.easemob.com/inside/app/user/login/V2',
@@ -214,22 +227,17 @@ export default {
           },
           method: 'POST',
           data: {
-            phoneNumber: this.name,
-            smsCode: this.psd,
+            phoneNumber: this.loginPhoneNumber,
+            smsCode: this.loginAuthCode,
           },
         });
         console.log('>>>>>>>接口请求成功', res);
         if (res[1].statusCode == 200) {
           const { phoneNumber, token, chatUserName } = res[1].data;
           await loginWithAccessToken(chatUserName, token);
-          console.log('this.$store', this.$store);
           this.$store.commit('SET_LOGIN_USER_BASE_INFOS', {
             loginUserId: chatUserName,
             phoneNumber: phoneNumber,
-          });
-          uni.setStorage({
-            key: 'myUsername',
-            data: chatUserName,
           });
           this.setUserTokenToStorage(chatUserName, token);
         } else if (res[1].statusCode == 400) {
@@ -283,17 +291,25 @@ export default {
       }
     },
     async loginWithUserId() {
+      if (!this.agreePrivacyPolicy) {
+        uni.showToast({
+          title: '请同意隐私政策！',
+          icon: 'none',
+        });
+        return;
+      }
       try {
-        const res = await loginWithPassword(this.name, this.psd);
-        uni.setStorage({
-          key: 'myUsername',
-          data: this.name.toLowerCase(),
-        });
-
+        const res = await loginWithPassword(
+          this.loginEaseIMId,
+          this.loginEaseIMPassword
+        );
         this.$store.commit('SET_LOGIN_USER_BASE_INFOS', {
-          loginUserId: this.name,
+          loginUserId: this.loginEaseIMId,
         });
-        this.setUserTokenToStorage(this.name.toLowerCase(), res.accessToken);
+        this.setUserTokenToStorage(
+          this.loginEaseIMId.toLowerCase(),
+          res.accessToken
+        );
       } catch (error) {
         console.log('>>>>>>', error);
         uni.showToast({
@@ -301,8 +317,8 @@ export default {
           icon: 'none',
         });
       } finally {
-        this.name = '';
-        this.psd = '';
+        this.loginEaseIMId = '';
+        this.loginEaseIMPassword = '';
       }
     },
     setUserTokenToStorage(userId, token) {
@@ -315,6 +331,6 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 @import './login.css';
 </style>
