@@ -1,5 +1,5 @@
 import { EMClient } from '../index';
-import emConnect from '../imApis/emConnect';
+import emConnect from '../emApis/emConnect';
 const { loginWithAccessToken, closeEaseIM } = emConnect();
 const emHandleReconnect = () => {
   const getEMClientSocketState = () => {
@@ -9,10 +9,8 @@ const emHandleReconnect = () => {
   const actionEMReconnect = () => {
     closeEaseIM();
     setTimeout(() => {
-      const loginUserId = uni.getStorageSync('myUsername');
-      const loginUserToken =
-        loginUserId && uni.getStorageSync(`EM_${loginUserId}_TOKEN`);
-      loginWithAccessToken(loginUserId, loginUserToken.token);
+      const loginInfos = uni.getStorageSync(`EM_LOGIN_INFOS`);
+      loginWithAccessToken(loginInfos.userId, loginInfos.token);
     }, 300);
   };
   return {

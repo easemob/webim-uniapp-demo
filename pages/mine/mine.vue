@@ -292,6 +292,8 @@ export default {
             uni.redirectTo({
               url: '../login/login',
             });
+            //清除本地缓存登录用户信息
+            uni.removeStorageSync('EM_LOGIN_INFOS');
           }
         },
       });

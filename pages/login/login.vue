@@ -239,7 +239,7 @@ export default {
             loginUserId: chatUserName,
             phoneNumber: phoneNumber,
           });
-          this.setUserTokenToStorage(chatUserName, token);
+          this.setEMUserLoginInfosToStorage(chatUserName, token);
         } else if (res[1].statusCode == 400) {
           if (res.data.errorInfo) {
             switch (res.data.errorInfo) {
@@ -306,7 +306,7 @@ export default {
         this.$store.commit('SET_LOGIN_USER_BASE_INFOS', {
           loginUserId: this.loginEaseIMId,
         });
-        this.setUserTokenToStorage(
+        this.setEMUserLoginInfosToStorage(
           this.loginEaseIMId.toLowerCase(),
           res.accessToken
         );
@@ -321,10 +321,10 @@ export default {
         this.loginEaseIMPassword = '';
       }
     },
-    setUserTokenToStorage(userId, token) {
+    setEMUserLoginInfosToStorage(userId, token) {
       const params = {
-        key: `EM_${userId}_TOKEN`,
-        data: { token: token },
+        key: `EM_LOGIN_INFOS`,
+        data: { userId: userId, token: token },
       };
       uni.setStorage({ ...params });
     },

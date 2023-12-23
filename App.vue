@@ -3,89 +3,12 @@ import { EMClient } from '@/EaseIM';
 import { emConnectListener, emMountGlobalListener } from '@/EaseIM/emListener';
 import { emConnect } from '@/EaseIM/emApis';
 import { CONNECT_CALLBACK_TYPE, HANDLER_EVENT_NAME } from '@/EaseIM/constant';
+import { emHandleReconnect } from '@/EaseIM/utils';
 export default {
-  globalData: {
-    phoneNumber: '',
-    unReadMessageNum: 0,
-    userInfo: null,
-    userInfoFromServer: null, //用户属性从环信服务器获取
-    friendUserInfoMap: new Map(), //好友属性
-    saveFriendList: [],
-    saveGroupInvitedList: [],
-    isIPX: false, //是否为iphone X
-    conn: {
-      closed: false,
-      curOpenOpt: {},
-
-      open(opt) {
-        uni.showLoading({
-          title: '正在初始化客户端..',
-          mask: true,
-        });
-        this.curOpenOpt = opt;
-        WebIM.conn
-          .open(opt)
-          .then(() => {
-            //token获取成功，即可开始请求用户属性。
-            disp.fire('em.mian.profile.update');
-            disp.fire('em.mian.friendProfile.update');
-          })
-          .catch((err) => {
-            console.log('>>>>>token获取失败', err);
-          });
-        this.closed = false;
-      },
-
-      reopen() {
-        if (this.closed) {
-          //this.open(this.curOpenOpt);
-          WebIM.conn.open(this.curOpenOpt);
-          this.closed = false;
-        }
-      },
-    },
-    onLoginSuccess: function (myName) {
-      uni.hideLoading();
-      uni.redirectTo({
-        url: '../conversation/conversation?myName=' + myName,
-      });
-    },
-
-    getUserInfo(cb) {
-      var me = this;
-
-      if (this.userInfo) {
-        typeof cb == 'function' && cb(this.userInfo);
-      } else {
-        // 调用登录接口
-        uni.login({
-          success() {
-            uni.getUserInfo({
-              success(res) {
-                me.userInfo = res.userInfo;
-                typeof cb == 'function' && cb(me.userInfo);
-              },
-            });
-          },
-        });
-      }
-    },
-    checkIsIPhoneX: function () {
-      const me = this;
-      uni.getSystemInfo({
-        success: function (res) {
-          // 根据 model 进行判断
-          if (res.model && res.model.search('iPhone X') != -1) {
-            me.isIPX = true;
-          }
-        },
-      });
-    },
-  },
   onLaunch() {
     //传给监听callback回调
     const connectedCallback = (type) => {
-      console.log('>>>>>连接成功回调', type);
+      console.log('>>>>>IM连接回调', type);
       if (type === CONNECT_CALLBACK_TYPE.CONNECT_CALLBACK) {
         this.onConnectedSuccess();
       }
@@ -100,6 +23,7 @@ export default {
     emConnectListener(connectedCallback);
     /* 全局类型监听集合、消息、联系人、群组等... */
     emMountGlobalListener();
+    this.handleAutoLoginEaseIM();
   },
   computed: {
     loginStoreStatus() {
@@ -115,19 +39,20 @@ export default {
       const finalLoginUserId = loginUserId || EMClient.user;
       if (!this.loginStoreStatus) {
         this.fetchLoginUserNeedData();
+        uni.hideLoading();
+        console.log('>>>>>>开始跳转至会话列表页面');
+        uni.redirectTo({
+          url: '../home/home?myName=' + finalLoginUserId,
+        });
       }
       this.$store.commit('SET_LOGIN_USER_BASE_INFOS', {
         loginUserId: finalLoginUserId,
       });
       this.$store.commit('SET_LOGIN_STATUS', true);
-      uni.hideLoading();
-      console.log('>>>>>>开始跳转至会话列表页面');
-      uni.redirectTo({
-        url: '../home/home?myName=' + finalLoginUserId,
-      });
     },
     onDisconnect() {
       const { closeEaseIM } = emConnect();
+      const { actionEMReconnect } = emHandleReconnect();
       //断开回调触发后，如果业务登录状态为true则说明异常断开需要重新登录
       if (!this.loginStatus) {
         uni.showToast({
@@ -140,8 +65,9 @@ export default {
         });
         closeEaseIM();
       } else {
+        console.log('>>>>>需执行重登逻辑');
         //执行通过token进行重新登录
-        // actionEMReconnect();
+        actionEMReconnect();
       }
     },
     onReconnecting() {
@@ -168,6 +94,13 @@ export default {
       await this.$store.dispatch('fetchJoinedGroupList', {
         isInit: true,
       });
+    },
+    //自动登录
+    handleAutoLoginEaseIM() {
+      const { actionEMReconnect } = emHandleReconnect();
+      const loginInfos = uni.getStorageSync(`EM_LOGIN_INFOS`);
+      if (!loginInfos) return;
+      actionEMReconnect();
     },
   },
 };
