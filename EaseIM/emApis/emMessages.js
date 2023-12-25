@@ -58,12 +58,14 @@ const emMessages = () => {
       console.log('>>>>构建的消息msg', message);
       EMClient.send(message)
         .then((res) => {
-          resolve(res);
-          message.id = res.serverMsgId;
+          const { message: resMessage } = res;
+          //   message.id = res.serverMsgId;
+          console.log('>>>>>res更新后的消息体', res);
           store.commit('UPDATE_MESSAGE_COLLECTION', {
             key,
-            message,
+            message: resMessage,
           });
+          resolve(res);
           //   store.commit('UPDATE_CONVERSATION_ITEM', {
           //     conversationId: messageBody.to,
           //     lastMessage: message,
