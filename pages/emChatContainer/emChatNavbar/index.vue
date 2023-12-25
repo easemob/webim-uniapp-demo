@@ -101,7 +101,11 @@ export default {
         const group = this.joinedGroupList.find(
           (group) => group.groupId == this.chattingId
         );
-        return group.groupName;
+        if (group) {
+          return group.groupName || group.groupId;
+        } else {
+          return this.chattingId;
+        }
       }
     },
   },
