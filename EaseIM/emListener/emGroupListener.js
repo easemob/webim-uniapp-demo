@@ -195,6 +195,7 @@ export const emGroupListener = (callback, listenerEventName) => {
           break;
         // 当前用户发送入群申请。群主和群管理员会收到该回调。
         case 'requestToJoin':
+          console.log('>>>>>requestToJoin', event);
           break;
         // 群组被解散。群主解散群组时，所有群成员均会收到该回调。
         case 'destroy':
