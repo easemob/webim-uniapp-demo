@@ -25,8 +25,10 @@
           :cursor-spacing="cursorSpacing"
           confirm-type="send"
           type="text"
+          :always-embed="true"
           placeholder="请输入内容"
           @focus="onInputFocus"
+          @blur="onInputBlur"
           @confirm="sendTextMessage"
           @input="onInput"
         />
@@ -144,11 +146,14 @@ export default {
     onInputFocus() {
       // input focus的时候重新设置一下input内容以修复在微信小程序&QQ小程序中input focus后位置偏移的bug
       // #ifdef MP-WEIXIN || MP-QQ
-      this.msgContent += ' ';
-      this.$nextTick(() => {
-        this.msgContent = this.msgContent.slice(0, -1);
-      });
+      //   this.msgContent += ' ';
+      //   this.$nextTick(() => {
+      //     this.msgContent = this.msgContent.slice(0, -1);
+      //   });
       // #endif
+      //   this.onCloseAllShowContainer();
+    },
+    onInputBlur() {
       this.onCloseAllShowContainer();
     },
     onInput() {
