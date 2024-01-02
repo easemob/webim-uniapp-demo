@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view class="home_container">
     <template v-if="isActiveComps === 'conversation'">
       <Conversation />
     </template>
