@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view class="contacts_container">
     <view>
       <view class="search" v-if="contactsState.search_btn">
         <view @tap="openSearch">
@@ -9,25 +9,18 @@
       </view>
     </view>
 
-    <view class="main_body">
+    <view>
       <view>
         <!-- 左侧列表内容部分 -->
         <scroll-view
-          :class="
-            'content ' +
-            (contactsState.gotop
-              ? contactsState.isIPX
-                ? 'goTopX'
-                : 'goTop'
-              : 'goback')
-          "
+          class="main_body"
           enable-back-to-top
           :scroll-into-view="contactsState.toView"
           scroll-y="true"
           scroll-with-animation="true"
-          :style="
-            'padding-bottom: ' + (contactsState.isIPX ? '270rpx' : '226rpx')
-          "
+          :style="{
+            height: contactsState.scrollViewHeight,
+          }"
         >
           <!-- search -->
 
@@ -126,7 +119,7 @@
 </template>
 
 <script setup>
-import { reactive, computed, watchEffect } from 'vue';
+import { reactive, computed, watchEffect, onMounted } from 'vue';
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app';
 import swipeDelete from '@/components/swipedelete/swipedelete';
 /* stores */
@@ -147,7 +140,8 @@ const contactsState = reactive({
   isActive: null,
   listMain: [],
   listTitles: [],
-  toView: 'inToView0',
+  scrollViewHeight: '100vh',
+  toView: '',
   oHeight: [],
   scroolHeight: 0,
   show_clear: false,
@@ -202,6 +196,7 @@ const scrollToViewFn = (e) => {
     if (contactsState.listMain[i].id === _id) {
       contactsState.isActive = _id;
       contactsState.toView = 'inToView' + _id;
+      console.log('first');
       uni.pageScrollTo({
         selector: `#inToView${_id}`,
         duration: 300,
@@ -384,9 +379,17 @@ const entryGroups = () => {
     url: '../groups/groups',
   });
 };
-onShow(() => {
+const setScrollViewHeight = () => {
+  const sys = uni.getSystemInfoSync();
+  console.log('>>>>sys', sys);
+  contactsState.scrollViewHeight = `${sys.windowHeight - 100}px`;
+  //   contactsState.scrollViewHeight = `200px`;
+};
+onMounted(() => {
+  console.log(11111);
   uni.hideHomeButton && uni.hideHomeButton();
   contactsState.isIPX = true;
+  setScrollViewHeight();
 });
 </script>
 <style>
