@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"easemob-websdk@^4.3.0":
-  "integrity" "sha512-OwYsRTOjZMRmDVrVkB4L2N/CTqHJaQFIUO86nHohzv0ReBV6BNS3yaDghkZujfvAxy1O4F1LPOJ3wNx/kWJeTg=="
-  "resolved" "https://registry.npmjs.org/easemob-websdk/-/easemob-websdk-4.3.0.tgz"
-  "version" "4.3.0"
+"easemob-websdk@^4.4.1":
+  "integrity" "sha512-sPWQBiulZ4xrP/Ui7r6PUqUE1NiSvrpTeL4lwIfXPRUMmpIriziIt+vsdkRJf4FO4t4s0z/W2tEILnsUcu8lcQ=="
+  "resolved" "https://registry.npmjs.org/easemob-websdk/-/easemob-websdk-4.4.1.tgz"
+  "version" "4.4.1"
