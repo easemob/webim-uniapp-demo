@@ -19,7 +19,7 @@
       <text v-show="chattingTypingStatus" class="chat_name_text"
         >对方正在输入...</text
       >
-      <text class="presence_status_text">在线</text>
+      <text class="presence_status_text">{{ presenceStatus }}</text>
     </view>
 
     <u-icon
@@ -32,12 +32,12 @@
 </template>
 
 <script>
-import { CHAT_TYPE } from '@/EaseIM/constant';
+import { CHAT_TYPE } from "@/EaseIM/constant";
 export default {
   props: {
     targetId: {
       type: String,
-      default: '',
+      default: "",
     },
     chatType: {
       type: String,
@@ -46,13 +46,16 @@ export default {
   },
   data() {
     return {
-      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
-      defaultGroupAvatar: '/static/images/new_ui/defaultGroupAvatar.png',
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
+      defaultGroupAvatar: "/static/images/new_ui/defaultGroupAvatar.png",
     };
   },
   computed: {
     chattingId() {
       return this.$store.getters.chattingId;
+    },
+    loginUserPresence() {
+      return this.$store.state.ContactsStore.subscribeStatusInfoMap;
     },
     chattingChatType() {
       return this.$store.getters.chattingChatType;
@@ -108,6 +111,29 @@ export default {
         }
       }
     },
+    presenceStatus() {
+      const presenceInfo = this.loginUserPresence[this.chattingId];
+      if (presenceInfo) {
+        const statusDetails = presenceInfo.statusDetails;
+        let isOnline = false;
+
+        for (const item of statusDetails) {
+          if (item.status === 1) {
+            isOnline = true;
+            break;
+          }
+        }
+        if (isOnline) {
+          if (presenceInfo.ext && presenceInfo.ext !== "") {
+            return presenceInfo.ext;
+          } else {
+            return "我在线";
+          }
+        } else {
+          return "我离线";
+        }
+      }
+    },
   },
   methods: {
     onArrowLeftBackClick() {
@@ -133,7 +159,7 @@ export default {
       const groupId = this.targetId;
       if (groupId) {
         uni.navigateTo({
-          url: '../groupDetail/index?groupId=' + groupId,
+          url: "../groupDetail/index?groupId=" + groupId,
         });
       }
     },
@@ -160,7 +186,7 @@ export default {
   height: 22px;
 
   /* 简体中文/次级标题/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -181,13 +207,13 @@ export default {
 .presence_status_text {
   /* Subtitle */
 
-  width: 22px;
+  width: 100px;
   height: 14px;
   left: 40px;
   top: 22px;
 
   /* 简体中文/文本/超小 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
   font-size: 11px;

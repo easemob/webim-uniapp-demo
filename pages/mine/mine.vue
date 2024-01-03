@@ -44,7 +44,7 @@
           isLink
         ></u-icon>
         <text class="setting_title" slot="title">在线状态</text>
-        <text class="setting_value" slot="value">在线</text>
+        <text class="setting_value" slot="value">{{ presenceStatus }}</text>
       </u-cell>
       <u-cell isLink @click="entryProfilePage">
         <u-icon
@@ -110,6 +110,7 @@
       @close="isShowPresenceSettings = false"
       :actions="actions"
       cancelText="取消"
+      @select="presenceClick"
       :safeAreaInsetBottom="true"
       round="16"
     >
@@ -149,42 +150,43 @@
 </template>
 
 <script>
-import { EMClient } from '@/EaseIM';
-import { emConnect } from '@/EaseIM/emApis';
+import { EMClient } from "@/EaseIM";
+import { emConnect, emPresence } from "@/EaseIM/emApis";
 const { closeEaseIM } = emConnect();
+const { publishPresence } = emPresence();
 export default {
   data() {
     return {
       loginUserId: EMClient.user,
       isShowPresenceSettings: false,
       isShowPresenceCustomModal: false,
-      customPresence: '',
-      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
+      customPresence: "",
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
       actions: [
         {
-          name: '在线',
-          color: '#009EFF',
-          fontSize: '16px',
+          name: "在线",
+          color: "#009EFF",
+          fontSize: "16px",
         },
         {
-          name: '忙碌',
-          color: '#009EFF',
-          fontSize: '16px',
+          name: "忙碌",
+          color: "#009EFF",
+          fontSize: "16px",
         },
         {
-          name: '离开',
-          color: '#009EFF',
-          fontSize: '16px',
+          name: "离开",
+          color: "#009EFF",
+          fontSize: "16px",
         },
         {
-          name: '请勿打扰',
-          color: '#009EFF',
-          fontSize: '16px',
+          name: "请勿打扰",
+          color: "#009EFF",
+          fontSize: "16px",
         },
         {
-          name: '自定义',
-          color: '#009EFF',
-          fontSize: '16px',
+          name: "自定义",
+          color: "#009EFF",
+          fontSize: "16px",
         },
       ],
     };
@@ -195,6 +197,9 @@ export default {
   computed: {
     loginUserProfiles() {
       return this.$store.state.LoginStore.loginUserProfiles;
+    },
+    loginUserPresence() {
+      return this.$store.state.ContactsStore.loginUserPresenceInfoMap;
     },
     loginUserAvatar() {
       if (this.loginUserProfiles.avatarurl) {
@@ -214,11 +219,34 @@ export default {
       if (this.loginUserProfiles.sign) {
         return this.loginUserProfiles.sign;
       } else {
-        return '无个性，不签名。';
+        return "无个性，不签名。";
       }
     },
     getEasemobUniAppSDKVersion() {
       return `Easemob UniApp SDK v${EMClient.version}`;
+    },
+    presenceStatus() {
+      const presenceInfo = this.loginUserPresence;
+      if (Object.values(presenceInfo).includes(this.loginUserId)) {
+        const statusDetails = presenceInfo.statusDetails;
+        let isOnline = false;
+        for (const item of statusDetails) {
+          if (item.status === 1) {
+            isOnline = true;
+            break;
+          }
+        }
+        if (isOnline) {
+          if (presenceInfo.ext && presenceInfo.ext !== "") {
+            return presenceInfo.ext;
+          } else {
+            return "我在线";
+          }
+        } else {
+          return "我离线";
+        }
+      }
+      return "滋滋"; // 如果没有找到用户的在线状态，默认返回 "滋滋"
     },
   },
   methods: {
@@ -228,15 +256,15 @@ export default {
         data: this.loginUserId,
         success: (res) => {
           uni.showToast({
-            title: '已复制',
-            icon: 'none',
+            title: "已复制",
+            icon: "none",
             duration: 1000,
           });
         },
         fail: () => {
           uni.showToast({
-            title: '复制失败',
-            icon: 'none',
+            title: "复制失败",
+            icon: "none",
             duration: 1000,
           });
         },
@@ -245,64 +273,73 @@ export default {
     //custom presence
     cancelSettingPresence() {
       this.isShowPresenceCustomModal = false;
-      this.customPresence = '';
+      this.customPresence = "";
     },
     confirmSettingPresence() {
+      publishPresence(this.customPresence);
       this.isShowPresenceCustomModal = false;
-      this.customPresence = '';
+      this.customPresence = "";
     },
     entryProfilePage() {
       uni.navigateTo({
-        url: '../mine/myProfile',
+        url: "../mine/myProfile",
       });
+    },
+    // 点击设置presence
+    presenceClick(e) {
+      if (e.name === "自定义") {
+        this.isShowPresenceCustomModal = true;
+      } else {
+        publishPresence(e.name);
+      }
     },
     //跳转至通用设置
     entryGeneralSettingPage() {
       uni.navigateTo({
-        url: '../mine/generalSetting',
+        url: "../mine/generalSetting",
       });
     },
     //跳转至消息免打扰设置
     entryNoDistrubingSettingPage() {
       uni.navigateTo({
-        url: '../mine/noDisturbingSetting',
+        url: "../mine/noDisturbingSetting",
       });
     },
     //跳转至隐私设置
     entryPrivacySettingPage() {
       uni.navigateTo({
-        url: '../mine/privacySetting',
+        url: "../mine/privacySetting",
       });
     },
     entryAboutEasemobPage() {
       uni.navigateTo({
-        url: '../mine/aboutEasemob',
+        url: "../mine/aboutEasemob",
       });
     },
     //退出登录
     logoutEM: function () {
       uni.showModal({
-        title: '确认退出当前账号？',
+        title: "确认退出当前账号？",
         success: (res) => {
           if (res.confirm) {
             //关闭环信websocket连接。
             closeEaseIM();
             //reset vuex中缓存数据
-            this.$store.commit('RESET_STORE');
+            this.$store.commit("RESET_STORE");
             uni.redirectTo({
-              url: '../login/login',
+              url: "../login/login",
             });
             //清除本地缓存登录用户信息
-            uni.removeStorageSync('EM_LOGIN_INFOS');
+            uni.removeStorageSync("EM_LOGIN_INFOS");
           }
         },
       });
 
-      console.log('first');
+      console.log("first");
     },
   },
 };
 </script>
 <style>
-@import './mine.css';
+@import "./mine.css";
 </style>

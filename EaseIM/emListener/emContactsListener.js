@@ -1,17 +1,17 @@
-import { EMClient } from '../index';
-import { getEMKey } from '@/EaseIM/utils';
-import emContacts from '../emApis/emContacts';
+import { EMClient } from "../index";
+import { getEMKey } from "@/EaseIM/utils";
+import emContacts from "../emApis/emContacts";
 import {
   HANDLER_EVENT_NAME,
   CHAT_TYPE,
   INFORM_TYPE,
   MESSAGE_TYPE,
   GRAY_INFORM_TYPE_SINGLE,
-} from '../constant';
-import store from '@/store';
+} from "../constant";
+import store from "@/store";
 
 export const emContactsListener = (callback, listenerEventName) => {
-  console.log('>>>>>好友关系监听挂载');
+  console.log(">>>>>好友关系监听挂载");
   //自动通过用户好友申请
   const { acceptContactInvite } = emContacts();
   const handleAutoAcceptInvitation = async (contactsInform) => {
@@ -29,42 +29,45 @@ export const emContactsListener = (callback, listenerEventName) => {
     try {
       await acceptContactInvite(from);
       uni.showToast({
-        title: '自动通过好友申请',
-        icon: 'none',
+        title: "自动通过好友申请",
+        icon: "none",
         duration: 2000,
       });
     } catch (error) {
       uni.showToast({
-        title: '自动通过好友申请失败',
-        icon: 'none',
+        title: "自动通过好友申请失败",
+        icon: "none",
         duration: 2000,
       });
     }
   };
   //变更当前好友列表数据
   const changeFriendList = (type, params) => {
-    if (type === 'INCREMENT') {
+    if (type === "INCREMENT") {
       const param = {
         remark: null,
         userId: params.from,
       };
-      store.commit('SET_FROEND_LIST', param);
-      store.dispatch('fetchFriendUserInfo', params.from);
+      store.commit("SET_FROEND_LIST", param);
+      store.dispatch("fetchFriendUserInfo", params.from);
+      store.dispatch("subscribePresenceStatus", params.from);
     }
-    if (type === 'DECREMENT') {
+    if (type === "DECREMENT") {
       const friendId = params.from;
-      store.commit('DELETE_FRIEND_ITEM', friendId);
+      store.commit("DELETE_FRIEND_ITEM", friendId);
+      store.dispatch("unsubscribePresenceStatus", friendId);
+      store.commit("DELETE_PRESENCE_ITEM", friendId);
     }
   };
   const addNewInformFunc = (params) => {
-    store.commit('ADD_NEW_INFORM', {
+    store.commit("ADD_NEW_INFORM", {
       informType: INFORM_TYPE.CONTACTS,
       inform: params,
     });
   };
   //处理新邀请更新至邀请信息缓存store
   const reveiveFriendInvite = (params) => {
-    store.commit('ADD_NEW_RECEIVE_INVITE_MSG', params);
+    store.commit("ADD_NEW_RECEIVE_INVITE_MSG", params);
   };
   //构造inform消息体
   const addGrayInformMessage = (params) => {
@@ -83,7 +86,7 @@ export const emContactsListener = (callback, listenerEventName) => {
       message.to,
       message.chatType
     );
-    store.commit('ADD_NEW_GRAY_INFORM_MESSAGE', { key, message });
+    store.commit("ADD_NEW_GRAY_INFORM_MESSAGE", { key, message });
   };
   const contactsListenFunc = {
     // 当前用户收到好友请求。用户 B 向用户 A 发送好友请求，用户 A 收到该事件。
@@ -98,7 +101,7 @@ export const emContactsListener = (callback, listenerEventName) => {
     onContactDeleted: function (msg) {
       callback && callback(msg);
       addNewInformFunc(msg);
-      changeFriendList('DECREMENT', msg);
+      changeFriendList("DECREMENT", msg);
     },
     // 当前用户新增了联系人。用户 B 向用户 A 发送好友请求，用户 A 同意该请求，用户 A 收到该事件，而用户 B 收到 `onContactAgreed` 事件。
     onContactAdded: function (msg) {
@@ -109,7 +112,7 @@ export const emContactsListener = (callback, listenerEventName) => {
       //增加聊天页内灰色通知消息
       addGrayInformMessage(msgBody);
       //更新好友列表
-      changeFriendList('INCREMENT', msgBody);
+      changeFriendList("INCREMENT", msgBody);
     },
     // 当前用户发送的好友请求被拒绝。用户 A 向用户 B 发送好友请求，用户 B 收到好友请求后，拒绝加好友，则用户 A 收到该事件。
     onContactRefuse: function (msg) {
@@ -123,7 +126,7 @@ export const emContactsListener = (callback, listenerEventName) => {
       const msgBody = Object.assign({}, msg);
       msgBody.grayInformType = GRAY_INFORM_TYPE_SINGLE.CONTACT_AGREED;
       addGrayInformMessage(msgBody);
-      changeFriendList('INCREMENT', msgBody);
+      changeFriendList("INCREMENT", msgBody);
     },
   };
   EMClient.removeEventHandler(

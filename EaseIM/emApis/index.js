@@ -6,6 +6,7 @@ import emAboutAck from './emAboutAck';
 import emConversation from './emConversation';
 import emMessages from './emMessages';
 import emSilent from './emSilent';
+import emPresence from './emPresence';
 export {
   emConnect,
   emUserInfos,
@@ -15,4 +16,5 @@ export {
   emConversation,
   emMessages,
   emSilent,
+  emPresence
 };
