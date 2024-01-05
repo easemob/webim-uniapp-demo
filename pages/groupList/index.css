@@ -4,6 +4,16 @@
   display: flex;
   justify-content: center;
 }
+.u-nav-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  /* opacity: 0.8; */
+}
 .search_container {
   width: 95%;
   height: 72rpx;

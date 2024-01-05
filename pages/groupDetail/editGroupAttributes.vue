@@ -1,5 +1,6 @@
 <template>
   <view>
+    <!-- #ifdef H5 || APP-PLUS -->
     <u-navbar
       :safeAreaInsetTop="true"
       :placeholder="true"
@@ -14,6 +15,34 @@
         >
       </view>
     </u-navbar>
+    <!-- #endif -->
+    <!-- #ifndef H5 || APP-PLUS-->
+    <u-navbar :safeAreaInsetTop="true" :placeholder="true" :fixed="true">
+      <view class="u-nav-slot" slot="left">
+        <u-icon
+          name="arrow-left"
+          label="取消"
+          size="16"
+          @click="onArrowLeftBackClick"
+        ></u-icon>
+
+        <u-line
+          direction="column"
+          :hairline="false"
+          length="12"
+          margin="0 5px"
+        ></u-line>
+        <view slot="right" @click="saveInGroupNickname">
+          <text
+            :class="[
+              groupNicknameValue ? 'edit_save_btn' : 'edit_save_btn_gray',
+            ]"
+            >确认</text
+          >
+        </view>
+      </view>
+    </u-navbar>
+    <!-- #endif -->
     <view class="edit_nickname u-border-bottom">
       <view class="edit_nickname_title">我在本群的昵称</view>
       <view class="edit_nickname_input">
@@ -30,14 +59,14 @@
 </template>
 
 <script>
-import { EMClient } from '@/EaseIM';
-import { emGroups } from '@/EaseIM/emApis';
+import { EMClient } from "@/EaseIM";
+import { emGroups } from "@/EaseIM/emApis";
 const { setSingleGroupAttributesFromServer } = emGroups();
 export default {
   data() {
     return {
-      groupId: '',
-      groupNicknameValue: '',
+      groupId: "",
+      groupNicknameValue: "",
     };
   },
   onLoad(option) {
@@ -45,6 +74,9 @@ export default {
     this.groupNicknameValue = option.inGroupNickname;
   },
   methods: {
+    onArrowLeftBackClick() {
+      uni.navigateBack();
+    },
     //保存设置的群内昵称属性
     async saveInGroupNickname() {
       try {
@@ -56,18 +88,18 @@ export default {
           },
         });
         uni.showToast({
-          title: '修改成功',
-          icon: 'none',
+          title: "修改成功",
+          icon: "none",
           duration: 2000,
         });
         setTimeout(() => {
           uni.navigateBack();
         }, 1000);
       } catch (error) {
-        console.log('保存设置的群组昵称失败', error);
+        console.log("保存设置的群组昵称失败", error);
         uni.showToast({
-          title: '保存设置的群组昵称失败',
-          icon: 'none',
+          title: "保存设置的群组昵称失败",
+          icon: "none",
           duration: 2000,
         });
       }
@@ -77,6 +109,16 @@ export default {
 </script>
 
 <style scoped>
+.u-nav-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  /* opacity: 0.8; */
+}
 .edit_nickname {
   width: 95%;
   height: 54px;
@@ -90,7 +132,7 @@ export default {
   height: 22px;
   left: 16px;
   /* 简体中文/次级标题/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -104,13 +146,13 @@ export default {
 .edit_save_btn,
 .edit_save_btn_gray {
   /* label_text */
-  height: 18px;
+  height: 15px;
   /* 简体中文/标签/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 15px;
+  line-height: 15px;
   /* identical to box height, or 129% */
   display: flex;
   align-items: center;
@@ -125,6 +167,6 @@ export default {
   flex-grow: 0;
 }
 .edit_save_btn_gray {
-  color: #acb4b9;
+  color: #606266;
 }
 </style>

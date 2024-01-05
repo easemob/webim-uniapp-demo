@@ -160,13 +160,13 @@ export default {
 .edit_save_btn,
 .edit_save_btn_gray {
   /* label_text */
-  height: 18px;
+  height: 15px;
   /* 简体中文/标签/中 */
   font-family: 'PingFang SC';
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 15px;
+  line-height: 15px;
   /* identical to box height, or 129% */
   display: flex;
   align-items: center;
@@ -181,7 +181,7 @@ export default {
   flex-grow: 0;
 }
 .edit_save_btn_gray {
-  color: #acb4b9;
+  color: #606266;
 }
 .edit_sign {
   padding: 16px;

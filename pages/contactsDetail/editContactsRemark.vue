@@ -167,6 +167,6 @@ export default {
   flex-grow: 0;
 }
 .edit_save_btn_gray {
-  color: #acb4b9;
+  color: #606266;
 }
 </style>

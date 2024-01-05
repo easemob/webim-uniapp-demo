@@ -1,5 +1,6 @@
 <template>
   <view>
+    <!-- #ifdef H5 || APP-PLUS -->
     <u-navbar
       :safeAreaInsetTop="true"
       :placeholder="true"
@@ -42,7 +43,7 @@
           ]"
         >
           {{
-            checkboxValue.length ? `添加（${checkboxValue.length}）` : '添加'
+            checkboxValue.length ? `添加（${checkboxValue.length}）` : "添加"
           }}
         </text>
       </template>
@@ -77,6 +78,112 @@
         >
       </template>
     </u-navbar>
+    <!-- #endif -->
+    <!-- #ifndef H5 || APP-PLUS-->
+    <u-navbar :safeAreaInsetTop="true" :placeholder="true" :fixed="true">
+      <view class="u-nav-slot" slot="left">
+        <u-icon
+          name="arrow-left"
+          :label="navbarLeftText"
+          size="16"
+          @click="onArrowLeftBackClick"
+        ></u-icon>
+
+        <!-- 群成员right -->
+        <template
+          v-if="
+            groupMembersShowType === GROUP_MEMEBERS_SHOW_TYPE.READ_ONLY &&
+            memberPermissionCheck
+          "
+        >
+          <u-line
+            direction="column"
+            :hairline="false"
+            length="12"
+            margin="0 5px"
+          ></u-line>
+          <u-icon
+            size="24"
+            name="/static/images/new_ui/contacts/add_contacts.png"
+            @click="
+              handleInGroupMembers(GROUP_MEMEBERS_SHOW_TYPE.ADD_NEW_MEMBER)
+            "
+          ></u-icon>
+          <u-icon
+            size="24"
+            name="/static/images/new_ui/contacts/del_contacts.png"
+            @click="handleInGroupMembers(GROUP_MEMEBERS_SHOW_TYPE.DEL_MEMBER)"
+          ></u-icon>
+        </template>
+        <!-- 添加群成员right -->
+        <template
+          v-if="
+            groupMembersShowType === GROUP_MEMEBERS_SHOW_TYPE.ADD_NEW_MEMBER &&
+            memberPermissionCheck
+          "
+        >
+          <u-line
+            direction="column"
+            :hairline="false"
+            length="12"
+            margin="0 5px"
+          ></u-line>
+          <text
+            @click="actionAddNewGroupMembers"
+            :class="[
+              checkboxValue.length ? 'edit_save_btn' : 'edit_save_btn_gray',
+            ]"
+          >
+            {{
+              checkboxValue.length ? `添加（${checkboxValue.length}）` : "添加"
+            }}
+          </text>
+        </template>
+        <!-- 删除群成员right -->
+        <template
+          v-if="
+            groupMembersShowType === GROUP_MEMEBERS_SHOW_TYPE.DEL_MEMBER &&
+            memberPermissionCheck
+          "
+        >
+          <u-line
+            direction="column"
+            :hairline="false"
+            length="12"
+            margin="0 5px"
+          ></u-line>
+          <text
+            @click="setGroupMembersModalContent"
+            :class="[
+              checkboxValue.length > 0
+                ? 'edit_delete_btn'
+                : 'edit_save_btn_gray',
+            ]"
+            >删除（{{ checkboxValue.length }}）</text
+          >
+        </template>
+        <!-- 转让群成员right -->
+        <template
+          v-if="
+            groupMembersShowType === GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER &&
+            memberPermissionCheck
+          "
+        >
+          <u-line
+            direction="column"
+            :hairline="false"
+            length="12"
+            margin="0 5px"
+          ></u-line>
+          <text
+            @click="setGroupMembersModalContent"
+            :class="[radiovalue ? 'edit_save_btn' : 'edit_save_btn_gray']"
+            >确认</text
+          >
+        </template>
+      </view>
+    </u-navbar>
+    <!-- #endif -->
     <!-- 群成员list -->
     <view>
       <u-list @scrolltolower="scrolltolower">
@@ -138,7 +245,7 @@
             >
               <u-cell>
                 <u-checkbox
-                  v-show="isShowCheckbox"
+                  v-if="isShowCheckbox"
                   slot="icon"
                   :name="friendItem.userId"
                   :disabled="friendItem.disabled"
@@ -174,7 +281,7 @@
             >
               <u-cell>
                 <u-checkbox
-                  v-show="isShowCheckbox"
+                  v-if="isShowCheckbox"
                   slot="icon"
                   :name="key"
                   :disabled="key === loginUserId || key === getGroupOwner"
@@ -219,10 +326,10 @@
  * 目前该页面为三个核心功能：转让群主、添加群组成员、移出群组成员
  * 后续添加删除群组管理员、群组黑名单、群组禁言列表，可拆分多个组件。
  */
-import { EMClient } from '@/EaseIM';
-import { GROUP_ROLE_TYPE, GROUP_ROLE_TYPE_NAME } from '@/EaseIM/constant';
-import { emGroups } from '@/EaseIM/emApis';
-import { GROUP_MEMEBERS_SHOW_TYPE } from '@/constant';
+import { EMClient } from "@/EaseIM";
+import { GROUP_ROLE_TYPE, GROUP_ROLE_TYPE_NAME } from "@/EaseIM/constant";
+import { emGroups } from "@/EaseIM/emApis";
+import { GROUP_MEMEBERS_SHOW_TYPE } from "@/constant";
 const { listGroupMembersFromServer, inviteUsersToGroup } = emGroups();
 export default {
   data() {
@@ -232,18 +339,18 @@ export default {
       GROUP_ROLE_TYPE_NAME,
       pageNum: 1,
       pageSize: 10,
-      groupId: '',
+      groupId: "",
       groupMembersShowType: GROUP_MEMEBERS_SHOW_TYPE.READ_ONLY,
       groupRole: 0,
       /* radio */
       isShowRadio: false,
-      radiovalue: '',
+      radiovalue: "",
       /* checkbox */
       isShowCheckbox: false,
       checkboxValue: [],
       /* modal */
       isShowGroupMembersModal: false,
-      groupMembersModalContent: '',
+      groupMembersModalContent: "",
       mergedFriendList: [],
     };
   },
@@ -251,7 +358,7 @@ export default {
     this.groupId = options.groupId;
     this.groupRole = options.groupRole * 1;
     this.groupMembersShowType = options.groupMembersShowType * 1;
-    console.log('>>>>groupMembersProfileList', this.groupMembersProfileData);
+    console.log(">>>>groupMembersProfileList", this.groupMembersProfileData);
     if (
       options.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER
     ) {
@@ -264,22 +371,22 @@ export default {
   },
   computed: {
     navbarLeftText() {
-      let text = '';
+      let text = "";
       switch (this.groupMembersShowType) {
         case GROUP_MEMEBERS_SHOW_TYPE.READ_ONLY:
-          text = '群成员';
+          text = "群成员";
           break;
         case GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER:
-          text = '选择新群主 ';
+          text = "选择新群主 ";
           break;
         case GROUP_MEMEBERS_SHOW_TYPE.ADD_NEW_MEMBER:
-          text = '添加群成员';
+          text = "添加群成员";
           break;
         case GROUP_MEMEBERS_SHOW_TYPE.DEL_MEMBER:
-          text = '删除群成员';
+          text = "删除群成员";
           break;
         default:
-          text = '群成员';
+          text = "群成员";
           break;
       }
       return text;
@@ -291,7 +398,7 @@ export default {
       const inGroupOwner = this.$store.getters.joinedGroupList.find(
         (item) => item.groupId === this.groupId
       )?.owner;
-      console.log('inGroupOwner', inGroupOwner);
+      console.log("inGroupOwner", inGroupOwner);
       return inGroupOwner;
     },
     memberPermissionCheck() {
@@ -325,7 +432,7 @@ export default {
         if (groupMemberItem?.avatarurl) {
           return groupMemberItem.avatarurl;
         } else {
-          return '/static/images/new_ui/defaultAvatar.png';
+          return "/static/images/new_ui/defaultAvatar.png";
         }
       };
     },
@@ -345,7 +452,7 @@ export default {
         ) {
           return this.friendUserInfoCollection[hxId].avatarurl;
         } else {
-          return '/static/images/new_ui/defaultAvatar.png';
+          return "/static/images/new_ui/defaultAvatar.png";
         }
       };
     },
@@ -368,6 +475,9 @@ export default {
     },
   },
   methods: {
+    onArrowLeftBackClick() {
+      uni.navigateBack();
+    },
     async fetchInGroupMembers() {
       if (!this.groupId) return;
       const params = {
@@ -375,12 +485,12 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
       };
-      console.log('>>>>>开始调用params', params);
+      console.log(">>>>>开始调用params", params);
 
       const result = await listGroupMembersFromServer({ ...params });
 
       const memberList = result.map((item) => item.member || item.owner);
-      this.$store.dispatch('fetchGroupMembersProfile', {
+      this.$store.dispatch("fetchGroupMembersProfile", {
         groupId: this.groupId,
         memberList,
       });
@@ -393,7 +503,7 @@ export default {
       } catch (error) {}
     },
     radioChange(newVal) {
-      console.log('>>>>>>>>radioChange', newVal);
+      console.log(">>>>>>>>radioChange", newVal);
       this.radiovalue = newVal;
     },
     checkboxChange(newList) {
@@ -413,7 +523,7 @@ export default {
     setGroupMembersModalContent() {
       if (this.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.DEL_MEMBER) {
         if (!this.checkboxValue.length) return;
-        let content = '';
+        let content = "";
         //组建modal内容
         if (this.checkboxValue.length == 1) {
           content = this.getMemberGroupNickname(this.checkboxValue[0]);
@@ -450,7 +560,7 @@ export default {
         this.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER &&
         this.radiovalue
       ) {
-        let content = '';
+        let content = "";
         content = this.getMemberGroupNickname(this.radiovalue);
         this.groupMembersModalContent = `确认转让群主身份给“${content}”？`;
         this.$nextTick(() => {
@@ -469,7 +579,7 @@ export default {
       if (
         this.groupMembersShowType == GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER
       ) {
-        this.radiovalue = '';
+        this.radiovalue = "";
         this.isShowGroupMembersModal = false;
       }
     },
@@ -486,7 +596,7 @@ export default {
     },
     //获取用户对应群组昵称
     getMemberGroupNickname(emId) {
-      let nickname = '';
+      let nickname = "";
       nickname =
         this.groupMembersProfileData[emId]?.nickName ||
         this.groupMembersProfileData[emId]?.nickname ||
@@ -497,20 +607,20 @@ export default {
     async actionDeleteInGroupMembers() {
       const memberList = this.checkboxValue;
       try {
-        await this.$store.dispatch('deleteInGroupMembers', {
+        await this.$store.dispatch("deleteInGroupMembers", {
           groupId: this.groupId,
           memberList,
         });
         uni.showToast({
-          title: '删除成功',
-          icon: 'success',
+          title: "删除成功",
+          icon: "success",
           duration: 2000,
         });
       } catch (error) {
-        console.log('>>>>>删除失败', error);
+        console.log(">>>>>删除失败", error);
         uni.showToast({
-          title: '删除失败',
-          icon: 'none',
+          title: "删除失败",
+          icon: "none",
           duration: 2000,
         });
       } finally {
@@ -523,23 +633,23 @@ export default {
     async actionTransferGroupOwner() {
       if (!this.groupId && !this.radiovalue) return;
       try {
-        await this.$store.dispatch('transferGroupOwners', {
+        await this.$store.dispatch("transferGroupOwners", {
           groupId: this.groupId,
           newOwner: this.radiovalue,
         });
         uni.showToast({
-          icon: 'none',
-          title: '已转让',
+          icon: "none",
+          title: "已转让",
           duration: 2000,
         });
         setTimeout(() => {
           uni.navigateBack();
         }, 1000);
       } catch (error) {
-        console.log('>>>>转让失败', error);
+        console.log(">>>>转让失败", error);
         uni.showToast({
-          icon: 'none',
-          title: '转让失败，请重新操作',
+          icon: "none",
+          title: "转让失败，请重新操作",
           duration: 2000,
         });
       }
@@ -560,7 +670,7 @@ export default {
           }
         });
       this.mergedFriendList = friendList;
-      console.log('>>>>>mergeFriendsData', friendList, groupMemberList);
+      console.log(">>>>>mergeFriendsData", friendList, groupMemberList);
     },
     //执行添加新群成员
     async actionAddNewGroupMembers() {
@@ -571,25 +681,25 @@ export default {
       try {
         await inviteUsersToGroup(params.groupId, params.users);
         uni.showToast({
-          icon: 'none',
-          title: '群组邀请已发出',
+          icon: "none",
+          title: "群组邀请已发出",
           duration: 2000,
         });
         setTimeout(() => {
           uni.navigateBack();
         }, 1000);
       } catch (error) {
-        console.log('>>>>>error', error);
-        if (error?.data?.error_description.includes('already')) {
+        console.log(">>>>>error", error);
+        if (error?.data?.error_description.includes("already")) {
           uni.showToast({
-            icon: 'none',
-            title: '邀请用户已存在该群',
+            icon: "none",
+            title: "邀请用户已存在该群",
             duration: 2000,
           });
         } else {
           uni.showToast({
-            icon: 'none',
-            title: '群组邀请失败',
+            icon: "none",
+            title: "群组邀请失败",
             duration: 2000,
           });
         }
@@ -603,17 +713,27 @@ export default {
 </script>
 
 <style scoped>
+.u-nav-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  opacity: 0.8;
+}
 .edit_save_btn,
 .edit_save_btn_gray,
 .edit_delete_btn {
   /* label_text */
-  height: 18px;
+  height: 15px;
   /* 简体中文/标签/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 15px;
+  line-height: 15px;
   /* identical to box height, or 129% */
   display: flex;
   align-items: center;
@@ -631,7 +751,7 @@ export default {
   color: #ff002b;
 }
 .edit_save_btn_gray {
-  color: #acb4b9;
+  color: #606266;
 }
 .group_members_modal_content {
   /* A Short Title Is Best */
@@ -640,7 +760,7 @@ export default {
   height: 52px;
 
   /* 简体中文/次级标题/大 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
   font-size: 18px;

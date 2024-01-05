@@ -1,5 +1,6 @@
 <template>
   <view>
+    <!-- #ifdef H5 || APP-PLUS -->
     <u-navbar
       :safeAreaInsetTop="true"
       :placeholder="true"
@@ -20,10 +21,46 @@
         {{
           createGroupOptions.members.length
             ? `创建（${createGroupOptions.members.length}）`
-            : '下一步'
+            : "下一步"
         }}
       </text>
     </u-navbar>
+    <!-- #endif -->
+    <!-- #ifndef H5 || APP-PLUS-->
+    <u-navbar :safeAreaInsetTop="true" :placeholder="true" :fixed="true">
+      <view class="u-nav-slot" slot="left">
+        <u-icon
+          name="arrow-left"
+          label="取消"
+          size="16"
+          @click="onArrowLeftBackClick"
+        ></u-icon>
+
+        <u-line
+          direction="column"
+          :hairline="false"
+          length="12"
+          margin="0 5px"
+        ></u-line>
+        <!-- 添加群成员right -->
+        <text
+          @click="actionCreateNewGroup"
+          :class="[
+            createGroupOptions.members.length
+              ? 'edit_save_btn'
+              : 'edit_save_btn_gray',
+          ]"
+        >
+          {{
+            createGroupOptions.members.length
+              ? `创建（${createGroupOptions.members.length}）`
+              : "下一步"
+          }}
+        </text>
+      </view>
+    </u-navbar>
+    <!-- #endif -->
+
     <u-list @scrolltolower="scrolltolower">
       <u-checkbox-group
         v-model="createGroupOptions.members"
@@ -55,15 +92,15 @@
 </template>
 
 <script>
-import { CHAT_TYPE } from '@/EaseIM/constant';
-import { emGroups } from '@/EaseIM/emApis';
+import { CHAT_TYPE } from "@/EaseIM/constant";
+import { emGroups } from "@/EaseIM/emApis";
 const { createNewGroup } = emGroups();
 export default {
   data() {
     return {
       createGroupOptions: {
-        groupname: '群聊', //群组名称。
-        desc: '这是一个私有群', //群组描述。
+        groupname: "群聊", //群组名称。
+        desc: "这是一个私有群", //群组描述。
         members: [], //群成员的用户 ID 组成的数组，不包含群主的用户 ID。
         public: false, //是否为公开群
         allowinvites: false, //是否允许普通群成员邀请人入群
@@ -89,7 +126,7 @@ export default {
         ) {
           return this.friendUserInfoCollection[hxId].avatarurl;
         } else {
-          return '/static/images/new_ui/defaultAvatar.png';
+          return "/static/images/new_ui/defaultAvatar.png";
         }
       };
     },
@@ -112,18 +149,21 @@ export default {
     },
   },
   methods: {
+    onArrowLeftBackClick() {
+      uni.navigateBack();
+    },
     checkboxChange(newList) {
       this.createGroupOptions.members = [...newList];
     },
     async actionCreateNewGroup() {
       try {
         await createNewGroup(this.createGroupOptions);
-        await this.$store.dispatch('fetchJoinedGroupList', {
+        await this.$store.dispatch("fetchJoinedGroupList", {
           isInit: true,
         });
         uni.showToast({
           title: `【${this.createGroupOptions.groupname}】群创建成功`,
-          icon: 'none',
+          icon: "none",
           duration: 1000,
         });
         setTimeout(() => {
@@ -133,8 +173,8 @@ export default {
         }, 1000);
       } catch {
         uni.showToast({
-          title: '创建群失败',
-          icon: 'none',
+          title: "创建群失败",
+          icon: "none",
         });
       }
     },
@@ -144,16 +184,26 @@ export default {
 </script>
 
 <style scoped>
+.u-nav-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  opacity: 0.8;
+}
 .edit_save_btn,
 .edit_save_btn_gray {
   /* label_text */
-  height: 18px;
+  height: 15px;
   /* 简体中文/标签/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 15px;
+  line-height: 15px;
   /* identical to box height, or 129% */
   display: flex;
   align-items: center;
@@ -168,6 +218,6 @@ export default {
   flex-grow: 0;
 }
 .edit_save_btn_gray {
-  color: #acb4b9;
+  color: #606266;
 }
 </style>
