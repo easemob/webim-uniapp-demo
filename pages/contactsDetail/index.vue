@@ -1,5 +1,6 @@
 <template>
   <view class="contacts_detail_container">
+    <!-- #ifdef H5 || APP-PLUS -->
     <u-navbar
       :safeAreaInsetTop="true"
       :placeholder="true"
@@ -14,6 +15,32 @@
         @click="isShowMoreActionSheet = true"
       ></u-icon>
     </u-navbar>
+    <!-- #endif -->
+    <!-- #ifndef H5 || APP-PLUS-->
+
+    <u-navbar :safeAreaInsetTop="true" :placeholder="true" :fixed="true">
+      <view class="u-nav-slot" slot="left">
+        <u-icon
+          name="arrow-left"
+          size="20"
+          @click="onArrowLeftBackClick"
+        ></u-icon>
+        <u-line
+          direction="column"
+          :hairline="false"
+          length="16"
+          margin="0 5px"
+        ></u-line>
+        <u-icon
+          v-show="isFriend"
+          size="36"
+          name="/static/images/new_ui/more_icon.png"
+          @click="isShowMoreActionSheet = true"
+        ></u-icon>
+      </view>
+    </u-navbar>
+
+    <!-- #endif -->
     <!-- header -->
     <view class="contacts_detail_container_header">
       <!-- 联系人头像 -->
@@ -132,9 +159,9 @@
 </template>
 
 <script>
-import { EMClient } from '@/EaseIM';
-import { emContacts } from '@/EaseIM/emApis';
-import { CHAT_TYPE } from '@/EaseIM/constant';
+import { EMClient } from "@/EaseIM";
+import { emContacts } from "@/EaseIM/emApis";
+import { CHAT_TYPE } from "@/EaseIM/constant";
 const {
   addContactFromServer,
   removeContactFromServer,
@@ -147,21 +174,21 @@ export default {
       contactsSilentStatus: false,
       isInBlockList: false,
       isShowMoreActionSheet: false,
-      contactsUserId: '',
+      contactsUserId: "",
       actions: [
         {
-          type: 'DELETE_CONTACTS',
-          name: '删除联系人',
-          color: '#FF002B',
-          fontSize: '16',
+          type: "DELETE_CONTACTS",
+          name: "删除联系人",
+          color: "#FF002B",
+          fontSize: "16",
         },
       ],
       isShowCofirmModal: false,
       modalShowContent: {
-        title: '确认删除联系人？',
-        content: '确认该用户，同时删除该联系人的聊天记录。',
+        title: "确认删除联系人？",
+        content: "确认该用户，同时删除该联系人的聊天记录。",
       },
-      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
     };
   },
   onLoad(option) {
@@ -215,11 +242,14 @@ export default {
       return (
         this.friendList?.filter(
           (item) => item.userId === this.contactsUserId
-        )[0]?.remark || '暂无备注'
+        )[0]?.remark || "暂无备注"
       );
     },
   },
   methods: {
+    onArrowLeftBackClick() {
+      uni.navigateBack();
+    },
     //添加联系人
     async addNewContact() {
       try {
@@ -228,15 +258,15 @@ export default {
         }】申请加您为好友！`;
         await addContactFromServer(this.contactsUserId, applymsg);
         uni.showToast({
-          title: '好友申请已发出',
-          icon: 'none',
+          title: "好友申请已发出",
+          icon: "none",
           duration: 2000,
         });
       } catch (error) {
-        console.log('error', error);
+        console.log("error", error);
         uni.showToast({
-          title: '好友申请失败',
-          icon: 'none',
+          title: "好友申请失败",
+          icon: "none",
           duration: 2000,
         });
       }
@@ -245,21 +275,21 @@ export default {
     async deleteContact() {
       try {
         await removeContactFromServer(this.contactsUserId);
-        await this.$store.dispatch('deleteConversation', {
+        await this.$store.dispatch("deleteConversation", {
           conversationId: this.contactsUserId,
           type: CHAT_TYPE.SINGLE_CHAT,
         });
         this.clearLocalHistroyMessages();
         uni.showToast({
-          title: '删除成功',
-          icon: 'none',
+          title: "删除成功",
+          icon: "none",
           duration: 2000,
         });
-        this.$store.commit('DELETE_FRIEND_ITEM', this.contactsUserId);
+        this.$store.commit("DELETE_FRIEND_ITEM", this.contactsUserId);
       } catch (error) {
         uni.showToast({
-          title: '删除失败',
-          icon: 'none',
+          title: "删除失败",
+          icon: "none",
           duration: 2000,
         });
       } finally {
@@ -267,11 +297,11 @@ export default {
       }
     },
     onSelectClick(item) {
-      if (item.type === 'DELETE_CONTACTS') {
+      if (item.type === "DELETE_CONTACTS") {
         if (this.friendUserInfoCollection[this.contactsUserId]?.nickname) {
           const contactsNickname =
             this.friendUserInfoCollection[this.contactsUserId]?.nickname;
-          console.log('contactsNickname', contactsNickname);
+          console.log("contactsNickname", contactsNickname);
           this.modalShowContent.content = `确认删除【${contactsNickname}】，同时删除该联系人的聊天记录？`;
         }
         this.$nextTick(() => {
@@ -289,16 +319,16 @@ export default {
         data: this.contactsUserId,
         success: (res) => {
           uni.showToast({
-            title: '已复制',
-            icon: 'none',
+            title: "已复制",
+            icon: "none",
             duration: 1000,
           });
         },
         fail: (e) => {
-          console.log('>>>复制失败', e);
+          console.log(">>>复制失败", e);
           uni.showToast({
-            title: '复制失败',
-            icon: 'none',
+            title: "复制失败",
+            icon: "none",
             duration: 1000,
           });
         },
@@ -307,12 +337,12 @@ export default {
     //获取用户属性
     async fetchContactsDetail() {
       try {
-        this.$store.dispatch('fetchFriendUserInfo', this.contactsUserId);
+        this.$store.dispatch("fetchFriendUserInfo", this.contactsUserId);
       } catch (error) {
-        console.log('>>>>联系人属性获取失败', error);
+        console.log(">>>>联系人属性获取失败", error);
         uni.showToast({
-          title: '联系人属性获取失败',
-          icon: 'none',
+          title: "联系人属性获取失败",
+          icon: "none",
           duration: 1000,
         });
       }
@@ -331,24 +361,24 @@ export default {
         if (status) {
           await addUsersToBlocklist([this.contactsUserId]);
           uni.showToast({
-            title: '已拉黑',
-            icon: 'none',
+            title: "已拉黑",
+            icon: "none",
             duration: 1000,
           });
         } else {
           await removeUsersFromBlocklist([this.contactsUserId]);
           uni.showToast({
-            title: '已解除拉黑',
-            icon: 'none',
+            title: "已解除拉黑",
+            icon: "none",
             duration: 1000,
           });
         }
-        this.$store.dispatch('fetchBlockUserList');
+        this.$store.dispatch("fetchBlockUserList");
       } catch (error) {
-        console.log('>>>>拉黑动作变更失败', error);
+        console.log(">>>>拉黑动作变更失败", error);
         uni.showToast({
-          icon: 'none',
-          title: '黑名单操作失败',
+          icon: "none",
+          title: "黑名单操作失败",
           duration: 1000,
         });
       }
@@ -360,16 +390,16 @@ export default {
         chatType: CHAT_TYPE.SINGLE_CHAT,
       };
       try {
-        const res = await this.$store.dispatch('fetchSilentConversation', {
+        const res = await this.$store.dispatch("fetchSilentConversation", {
           ...params,
         });
-        if (Object.keys(res).length && res.type === 'NONE') {
+        if (Object.keys(res).length && res.type === "NONE") {
           this.contactsSilentStatus = true;
         } else {
           this.contactsSilentStatus = false;
         }
       } catch (error) {
-        console.log('>>>>>获取免打扰状态失败', error);
+        console.log(">>>>>获取免打扰状态失败", error);
       }
     },
     //变更免打扰状态
@@ -381,25 +411,25 @@ export default {
       if (status) {
         (params.options = {
           paramType: 0,
-          remindType: 'NONE',
+          remindType: "NONE",
         }),
-          this.$store.dispatch('setConversationSilentMode', {
+          this.$store.dispatch("setConversationSilentMode", {
             ...params,
           });
       } else {
-        this.$store.dispatch('setConversationSilentMode', {
+        this.$store.dispatch("setConversationSilentMode", {
           ...params,
         });
       }
     },
     //清空本地聊天记录
     clearLocalHistroyMessages() {
-      this.$store.commit('DELETE_MESSAGE_FROM_COLLECTION', {
+      this.$store.commit("DELETE_MESSAGE_FROM_COLLECTION", {
         key: this.contactsUserId,
       });
       uni.showToast({
-        title: '聊天记录已清空',
-        icon: 'none',
+        title: "聊天记录已清空",
+        icon: "none",
         duration: 1000,
       });
     },
@@ -422,5 +452,5 @@ export default {
 </script>
 
 <style scoped>
-@import './index.css';
+@import "./index.css";
 </style>

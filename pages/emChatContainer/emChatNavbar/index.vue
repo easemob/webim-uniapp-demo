@@ -1,4 +1,5 @@
 <template>
+  <!-- #ifdef H5 || APP-PLUS -->
   <u-navbar :placeholder="true">
     <u-icon
       slot="left"
@@ -29,6 +30,45 @@
       name="/static/images/new_ui/more_icon.png"
     ></u-icon>
   </u-navbar>
+  <!-- #endif -->
+  <!-- #ifndef H5 || APP-PLUS-->
+  <u-navbar :placeholder="true">
+    <view class="u-nav-slot" slot="left">
+      <u-icon
+        slot="left"
+        size="20"
+        name="arrow-left"
+        @click="onArrowLeftBackClick"
+      ></u-icon>
+      <u-avatar
+        slot="left"
+        size="32"
+        shape="square"
+        :src="navbarAvatar"
+      ></u-avatar>
+      <view slot="left" class="chat_name">
+        <text v-show="!chattingTypingStatus" class="chat_name_text">
+          {{ navigatorName }}
+        </text>
+        <text v-show="chattingTypingStatus" class="chat_name_text"
+          >对方正在输入...</text
+        >
+        <text class="presence_status_text">{{ presenceStatus }}</text>
+      </view>
+      <u-line
+        direction="column"
+        :hairline="false"
+        length="12"
+        margin="0 5px"
+      ></u-line>
+      <u-icon
+        @click="onRightIconClick"
+        size="36"
+        name="/static/images/new_ui/more_icon.png"
+      ></u-icon>
+    </view>
+  </u-navbar>
+  <!-- #endif -->
 </template>
 
 <script>
@@ -127,10 +167,10 @@ export default {
           if (presenceInfo.ext && presenceInfo.ext !== "") {
             return presenceInfo.ext;
           } else {
-            return "我在线";
+            return "在线";
           }
         } else {
-          return "我离线";
+          return "离线";
         }
       }
     },
@@ -168,12 +208,22 @@ export default {
 </script>
 
 <style scoped>
+.u-nav-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  /* opacity: 0.8; */
+}
 .chat_name {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   /* align-items: center; */
-  width: 169px;
+  width: 150px;
   height: 36px;
   margin-left: 10px;
 }

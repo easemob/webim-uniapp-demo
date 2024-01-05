@@ -1,5 +1,6 @@
 <template>
   <view class="group_detail_container">
+    <!-- #ifdef H5 || APP-PLUS -->
     <u-navbar
       :safeAreaInsetTop="true"
       :placeholder="true"
@@ -13,6 +14,29 @@
         @click="isShowMoreActionSheet = true"
       ></u-icon>
     </u-navbar>
+    <!-- #endif -->
+    <!-- #ifndef H5 || APP-PLUS-->
+    <u-navbar :safeAreaInsetTop="true" :placeholder="true" :fixed="true">
+      <view class="u-nav-slot" slot="left">
+        <u-icon
+          name="arrow-left"
+          size="20"
+          @click="onArrowLeftBackClick"
+        ></u-icon>
+        <u-line
+          direction="column"
+          :hairline="false"
+          length="16"
+          margin="0 5px"
+        ></u-line>
+        <u-icon
+          size="36"
+          name="/static/images/new_ui/more_icon.png"
+          @click="isShowMoreActionSheet = true"
+        ></u-icon>
+      </view>
+    </u-navbar>
+    <!-- #endif -->
     <!-- header -->
     <view class="group_detail_container_header">
       <!-- 群头像 -->
@@ -141,14 +165,14 @@
 </template>
 
 <script>
-import { EMClient } from '@/EaseIM';
-import { emGroups } from '@/EaseIM/emApis';
-import { GROUP_MEMEBERS_SHOW_TYPE } from '@/constant';
+import { EMClient } from "@/EaseIM";
+import { emGroups } from "@/EaseIM/emApis";
+import { GROUP_MEMEBERS_SHOW_TYPE } from "@/constant";
 import {
   CHAT_TYPE,
   GROUP_ROLE_TYPE,
   GROUP_ROLE_TYPE_NAME,
-} from '@/EaseIM/constant';
+} from "@/EaseIM/constant";
 const {
   getGroupInfosFromServer,
   getSingleGroupAttributesFromServer,
@@ -169,28 +193,28 @@ export default {
       actions: [
         {
           type: ACTIONS_TYPE.EXIT_GROUP,
-          name: '退出群组',
-          color: '#FF002B',
-          fontSize: '16',
+          name: "退出群组",
+          color: "#FF002B",
+          fontSize: "16",
         },
       ],
-      groupId: '',
+      groupId: "",
       //   groupDetail: {},
-      inGroupNickname: '',
+      inGroupNickname: "",
       groupSilentStatus: false,
       isShowCofirmModal: false,
       modalShowContent: {
         [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.MEMBER]]: {
-          title: '确认退出群聊？',
-          content: '确认退出群组，同时删除该群组的聊天记录。',
+          title: "确认退出群聊？",
+          content: "确认退出群组，同时删除该群组的聊天记录。",
         },
         [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.ADMIN]]: {
-          title: '确认退出群聊？',
-          content: '确认退出群组，同时删除该群组的聊天记录。',
+          title: "确认退出群聊？",
+          content: "确认退出群组，同时删除该群组的聊天记录。",
         },
         [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]]: {
-          title: '确认解散群聊？',
-          content: '确认解散群组，同时删除该群组的聊天记录。',
+          title: "确认解散群聊？",
+          content: "确认解散群组，同时删除该群组的聊天记录。",
         },
       },
     };
@@ -225,28 +249,31 @@ export default {
       this.getGroupSilentStatus();
     }
     this.initActions();
-    console.log('>>>当前role', this.groupRole);
+    console.log(">>>当前role", this.groupRole);
   },
   methods: {
+    onArrowLeftBackClick() {
+      uni.navigateBack();
+    },
     initActions() {
       const _index = this.actions.findIndex(
         (item) => item.type === ACTIONS_TYPE.TRANSFER_OWNER
       );
-      console.log('_index', _index);
+      console.log("_index", _index);
 
       if (this.groupRole === GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]) {
-        this.actions[0].name = '解散群组';
+        this.actions[0].name = "解散群组";
         this.actions[0].type = ACTIONS_TYPE.DESTORY_GROUP;
         if (_index === -1) {
           this.actions.push({
             type: ACTIONS_TYPE.TRANSFER_OWNER,
-            name: '转让群主',
-            color: '#009EFF',
-            fontSize: '16',
+            name: "转让群主",
+            color: "#009EFF",
+            fontSize: "16",
           });
         }
       } else {
-        this.actions[0].name = '退出群组';
+        this.actions[0].name = "退出群组";
         this.actions[0].type = ACTIONS_TYPE.EXIT_GROUP;
         if (_index > -1) {
           this.actions.splice(_index, 1);
@@ -259,16 +286,16 @@ export default {
         data: this.groupId,
         success: (res) => {
           uni.showToast({
-            title: '已复制',
-            icon: 'none',
+            title: "已复制",
+            icon: "none",
             duration: 1000,
           });
         },
         fail: (e) => {
-          console.log('>>>复制失败', e);
+          console.log(">>>复制失败", e);
           uni.showToast({
-            title: '复制失败',
-            icon: 'none',
+            title: "复制失败",
+            icon: "none",
             duration: 1000,
           });
         },
@@ -282,14 +309,14 @@ export default {
         data = {
           ...result[0],
         };
-        this.$store.commit('UPDATE_JOINED_GROUP_DATA', {
+        this.$store.commit("UPDATE_JOINED_GROUP_DATA", {
           groupDetail: data,
         });
       } catch (error) {
-        console.log('>>>>群详情获取失败', error);
+        console.log(">>>>群详情获取失败", error);
         uni.showToast({
-          title: '群详情获取失败',
-          icon: 'none',
+          title: "群详情获取失败",
+          icon: "none",
           duration: 1000,
         });
       }
@@ -306,7 +333,7 @@ export default {
           this.inGroupNickname = result.data.nickName;
         }
       } catch (error) {
-        console.log('>>>>获取群成员昵称失败', error);
+        console.log(">>>>获取群成员昵称失败", error);
       }
     },
     //进入群组成员页面
@@ -325,21 +352,21 @@ export default {
         chatType: CHAT_TYPE.GROUP_CHAT,
       };
       try {
-        const res = await this.$store.dispatch('fetchSilentConversation', {
+        const res = await this.$store.dispatch("fetchSilentConversation", {
           ...params,
         });
-        if (Object.keys(res).length && res.type === 'NONE') {
+        if (Object.keys(res).length && res.type === "NONE") {
           this.groupSilentStatus = true;
         } else {
           this.groupSilentStatus = false;
         }
       } catch (error) {
-        console.log('>>>>>获取免打扰状态失败', error);
+        console.log(">>>>>获取免打扰状态失败", error);
       }
     },
     //修改免打扰状态
     changeGroupSilentStatus(status) {
-      console.log('>>>>>>修改免打��状态', status);
+      console.log(">>>>>>修改免打��状态", status);
       const params = {
         conversationId: this.groupId,
         type: CHAT_TYPE.GROUP_CHAT,
@@ -347,21 +374,21 @@ export default {
       if (status) {
         (params.options = {
           paramType: 0,
-          remindType: 'NONE',
+          remindType: "NONE",
         }),
-          this.$store.dispatch('setConversationSilentMode', {
+          this.$store.dispatch("setConversationSilentMode", {
             ...params,
           });
       } else {
-        this.$store.dispatch('setConversationSilentMode', {
+        this.$store.dispatch("setConversationSilentMode", {
           ...params,
         });
       }
     },
     onSelectClick(item) {
-      console.log('>>>>>>>已选择', item);
+      console.log(">>>>>>>已选择", item);
       if (item.type === ACTIONS_TYPE.TRANSFER_OWNER) {
-        console.log('>>>>>>跳转至转让群主');
+        console.log(">>>>>>跳转至转让群主");
         const groupId = this.groupId;
         const groupMembersShowType = GROUP_MEMEBERS_SHOW_TYPE.TRANSFER_OWNER;
         const groupRole = this.groupRole;
@@ -378,7 +405,7 @@ export default {
     },
     //确认模态框
     onConfirmModal() {
-      console.log('>>>>>确认弹出框', this.actions[0].type);
+      console.log(">>>>>确认弹出框", this.actions[0].type);
       if (this.actions[0].type === ACTIONS_TYPE.DESTORY_GROUP) {
         this.destroyGroup();
       }
@@ -392,14 +419,14 @@ export default {
       if (!groupId) return;
       try {
         await leaveGroupFromServer(groupId);
-        this.$store.commit('DELETE_JOINEND_GROUP', groupId);
-        this.$store.commit('DELETE_CONVERSATION_ITEM', groupId);
+        this.$store.commit("DELETE_JOINEND_GROUP", groupId);
+        this.$store.commit("DELETE_CONVERSATION_ITEM", groupId);
         uni.navigateBack();
       } catch (error) {
-        console.log('>>>>退出群组失败', error);
+        console.log(">>>>退出群组失败", error);
         uni.showToast({
-          title: '退出群组失败',
-          icon: 'none',
+          title: "退出群组失败",
+          icon: "none",
         });
       } finally {
         this.isShowCofirmModal = false;
@@ -411,14 +438,14 @@ export default {
       if (!groupId) return;
       try {
         await destroyGroupFromServer(groupId);
-        this.$store.commit('DELETE_JOINEND_GROUP', groupId);
-        this.$store.commit('DELETE_CONVERSATION_ITEM', groupId);
+        this.$store.commit("DELETE_JOINEND_GROUP", groupId);
+        this.$store.commit("DELETE_CONVERSATION_ITEM", groupId);
         uni.navigateBack();
       } catch (error) {
-        console.log('>>>>解散群组失败', error);
+        console.log(">>>>解散群组失败", error);
         uni.showToast({
-          title: '解散群组失败',
-          icon: 'none',
+          title: "解散群组失败",
+          icon: "none",
         });
       } finally {
         this.isShowCofirmModal = false;
@@ -426,12 +453,12 @@ export default {
     },
     //清空本地聊天记录
     clearLocalHistroyMessages() {
-      this.$store.commit('DELETE_MESSAGE_FROM_COLLECTION', {
+      this.$store.commit("DELETE_MESSAGE_FROM_COLLECTION", {
         key: this.groupId,
       });
       uni.showToast({
-        title: '聊天记录已清空',
-        icon: 'none',
+        title: "聊天记录已清空",
+        icon: "none",
         duration: 1000,
       });
     },
@@ -444,8 +471,8 @@ export default {
     //进入群组名称修改页面
     entryEditInGroupName() {
       const groupId = this.groupId;
-      const groupName = this.groupDetail?.name || '';
-      console.log('this.groupDetail?', groupName);
+      const groupName = this.groupDetail?.name || "";
+      console.log("this.groupDetail?", groupName);
       uni.navigateTo({
         url: `../groupDetail/editGroupName?groupId=${groupId}&groupName=${groupName}`,
       });
@@ -453,7 +480,7 @@ export default {
     //进入群组详情修改页面
     entryEditInGroupDescription() {
       const groupId = this.groupId;
-      const groupDescription = this.groupDetail?.description || '';
+      const groupDescription = this.groupDetail?.description || "";
       uni.navigateTo({
         url: `../groupDetail/editGroupDescription?groupId=${groupId}&groupDescription=${groupDescription}`,
       });
@@ -470,5 +497,5 @@ export default {
 </script>
 
 <style scoped>
-@import './index.css';
+@import "./index.css";
 </style>

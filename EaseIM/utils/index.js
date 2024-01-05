@@ -8,5 +8,5 @@ export {
   getEMKey,
   convertGroupDetailsToGroupList,
   emHandleReconnect,
-  handlePresence
+  handlePresence,
 };

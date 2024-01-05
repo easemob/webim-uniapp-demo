@@ -7,6 +7,16 @@
   width: 98px;
   height: 22px;
 }
+.u-nav-slot {
+  display:  flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+
+}
 .contacts_header_container {
   background: #fff;
 }

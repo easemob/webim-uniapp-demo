@@ -1,6 +1,7 @@
 <template>
   <view>
     <view>
+      <!-- #ifdef H5 || APP-PLUS -->
       <u-navbar
         :safeAreaInsetTop="true"
         :placeholder="true"
@@ -15,6 +16,32 @@
           >
         </view>
       </u-navbar>
+      <!-- #endif -->
+      <!-- #ifndef H5 || APP-PLUS-->
+      <u-navbar :safeAreaInsetTop="true" :placeholder="true" :fixed="true">
+        <view class="u-nav-slot" slot="left">
+          <u-icon
+            name="arrow-left"
+            label="取消"
+            size="16"
+            @click="onArrowLeftBackClick"
+          ></u-icon>
+
+          <u-line
+            direction="column"
+            :hairline="false"
+            length="12"
+            margin="0 5px"
+          ></u-line>
+          <view @click="saveContactsRemark">
+            <text
+              :class="[contactsRemark ? 'edit_save_btn' : 'edit_save_btn_gray']"
+              >确认</text
+            >
+          </view>
+        </view>
+      </u-navbar>
+      <!-- #endif -->
       <view class="edit_nickname u-border-bottom">
         <view class="edit_nickname_title">设置备注</view>
         <view class="edit_nickname_input">
@@ -32,13 +59,13 @@
 </template>
 
 <script>
-import { emContacts } from '@/EaseIM/emApis';
+import { emContacts } from "@/EaseIM/emApis";
 const { setContactRemarkFromServer } = emContacts();
 export default {
   data() {
     return {
-      contactsUserId: '',
-      contactsRemark: '',
+      contactsUserId: "",
+      contactsRemark: "",
     };
   },
   onLoad(option) {
@@ -46,13 +73,16 @@ export default {
     this.contactsRemark = option?.contactsRemark;
   },
   methods: {
+    onArrowLeftBackClick() {
+      uni.navigateBack();
+    },
     async saveContactsRemark() {
       if (!this.contactsUserId || !this.contactsRemark) return;
       //好友备注不能超过100个字符
       if (this.contactsRemark.length > 100) {
         uni.showToast({
-          title: '备注不能超过100个字符',
-          icon: 'none',
+          title: "备注不能超过100个字符",
+          icon: "none",
           duration: 2000,
         });
         return;
@@ -61,15 +91,15 @@ export default {
         const contactId = this.contactsUserId;
         const remark = this.contactsRemark;
         await setContactRemarkFromServer(contactId, remark);
-        this.$store.commit('UPDATE_FRIEND_USER_REMARK', { contactId, remark });
+        this.$store.commit("UPDATE_FRIEND_USER_REMARK", { contactId, remark });
         uni.navigateBack({
           delta: 1,
         });
       } catch (error) {
-        console.log('好友备注修改失败', error);
+        console.log("好友备注修改失败", error);
         uni.showToast({
-          title: '联系人备注修改失败',
-          icon: 'none',
+          title: "联系人备注修改失败",
+          icon: "none",
           duration: 2000,
         });
       }
@@ -79,6 +109,16 @@ export default {
 </script>
 
 <style scoped>
+.u-nav-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  opacity: 0.8;
+}
 .edit_nickname {
   width: 95%;
   height: 54px;
@@ -92,7 +132,7 @@ export default {
   height: 22px;
   left: 16px;
   /* 简体中文/次级标题/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -106,13 +146,13 @@ export default {
 .edit_save_btn,
 .edit_save_btn_gray {
   /* label_text */
-  height: 18px;
+  height: 15px;
   /* 简体中文/标签/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 15px;
+  line-height: 15px;
   /* identical to box height, or 129% */
   display: flex;
   align-items: center;

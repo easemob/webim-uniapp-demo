@@ -7,6 +7,16 @@
   /* justify-content: center; */
   align-items: center;
 }
+.u-nav-slot {
+  display:  flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  opacity: 0.8;
+}
 .contacts_detail_container_header_avatar {
   margin: 20rpx 0;
 }

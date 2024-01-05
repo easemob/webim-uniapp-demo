@@ -240,13 +240,13 @@ export default {
           if (presenceInfo.ext && presenceInfo.ext !== "") {
             return presenceInfo.ext;
           } else {
-            return "我在线";
+            return "在线";
           }
         } else {
-          return "我离线";
+          return "离线";
         }
       }
-      return "滋滋"; // 如果没有找到用户的在线状态，默认返回 "滋滋"
+      return ""; // 如果没有找到用户的在线状态，默认返回 "滋滋"
     },
   },
   methods: {

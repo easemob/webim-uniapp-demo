@@ -1,13 +1,10 @@
 <template>
   <view class="contacts_container">
     <!-- navbar -->
+    <!-- #ifdef H5 || APP-PLUS -->
     <u-navbar title="联系人" :placeholder="true">
-      <u-avatar
-        size="32"
-        slot="left"
-        shape="square"
-        :src="loginUserAvatar"
-      ></u-avatar>
+      <u-avatar size="32" slot="left" shape="square" :src="loginUserAvatar">
+      </u-avatar>
       <view slot="center">
         <image
           class="contacts_navbar_center"
@@ -21,6 +18,34 @@
         @click="entryAddContactsPage"
       ></u-icon>
     </u-navbar>
+    <!-- #endif -->
+    <!-- #ifndef H5 || APP-PLUS-->
+    <u-navbar title="联系人" :placeholder="true">
+      <view class="u-nav-slot" slot="left">
+        <u-avatar size="32" shape="square" :src="loginUserAvatar"> </u-avatar>
+        <u-line
+          direction="column"
+          :hairline="false"
+          length="16"
+          margin="0 8px"
+        ></u-line>
+        <u-icon
+          size="24"
+          name="/static/images/new_ui/contacts/add_contacts.png"
+          @click="entryAddContactsPage"
+        ></u-icon>
+      </view>
+
+      <view slot="center">
+        <image
+          class="contacts_navbar_center"
+          src="/static/images/new_ui/contacts_log.png"
+        />
+      </view>
+      
+    </u-navbar>
+
+    <!-- #endif -->
     <!-- search -->
     <!-- 搜索好友列表相关 -->
     <view>
@@ -191,23 +216,23 @@
 </template>
 
 <script>
-import { CHAT_TYPE } from '@/EaseIM/constant';
+import { CHAT_TYPE } from "@/EaseIM/constant";
 const indexList = () => {
   const indexList = [];
-  const charCodeOfA = 'A'.charCodeAt(0);
+  const charCodeOfA = "A".charCodeAt(0);
   for (let i = 0; i < 26; i++) {
     indexList.push(String.fromCharCode(charCodeOfA + i));
   }
-  indexList.push('#');
+  indexList.push("#");
   return indexList;
 };
 export default {
   data() {
     return {
       isShowDefaultSearch: true,
-      searchInputKeywords: '',
+      searchInputKeywords: "",
       searchFriendResultList: [],
-      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
       indexList: [],
       //   indexList: indexList(),
       sortedContactsList: [],
@@ -217,8 +242,8 @@ export default {
     uni.hideHomeButton && uni.hideHomeButton();
     this.getBrandsList(this.friendList);
     //该接口可以获取小程序胶囊位置
-    // let menuButtonInfo = uni.getMenuButtonBoundingClientRect();
-    // console.log('menuButtonInfo', menuButtonInfo);
+    let menuButtonInfo = uni.getMenuButtonBoundingClientRect();
+    console.log("menuButtonInfo", menuButtonInfo);
   },
   computed: {
     loginUserProfiles() {
@@ -296,7 +321,7 @@ export default {
     },
     cancelSearch() {
       this.isShowDefaultSearch = true;
-      this.searchInputKeywords = '';
+      this.searchInputKeywords = "";
       this.searchFriendResultList = [];
       this.getBrandsList(this.friendList);
     },
@@ -320,16 +345,16 @@ export default {
           }
         }
       });
-      this.getBrandsList(serchList, 'search');
+      this.getBrandsList(serchList, "search");
     },
     //删除好友
     //二次确认&执行删除
     async deleteFriend(event) {
-      console.log('>>>>执行删除好友', event);
+      console.log(">>>>执行删除好友", event);
       const { name: delFriendId } = event;
       const res = await uni.showModal({
-        title: '确认删除？+ delFriendId',
-        confirmText: '删除',
+        title: "确认删除？+ delFriendId",
+        confirmText: "删除",
       });
       if (res.confirm) {
         removeContactFromServer(delFriendId);
@@ -340,13 +365,13 @@ export default {
     //前往系统通知页面
     entryTabNnotificationPage: function () {
       uni.navigateTo({
-        url: '../notification/notification',
+        url: "../notification/notification",
       });
     },
     //前往群组页面
     entryGroupsPage: function () {
       uni.navigateTo({
-        url: '../groups/groups?myName=' + this.myName,
+        url: "../groups/groups?myName=" + this.myName,
       });
     },
     //前往单聊页面
@@ -359,7 +384,7 @@ export default {
     //前往添加好友页面
     entryAddNewFreiend: function (event) {
       uni.navigateTo({
-        url: '../addNewFriend/addNewFriend',
+        url: "../addNewFriend/addNewFriend",
       });
     },
     //构建indexList
@@ -375,7 +400,7 @@ export default {
           const params = {};
           params.userId = userId;
           params.remark = remark;
-          console.log('friendItem', friendItem);
+          console.log("friendItem", friendItem);
           if (reg.test(userId.substring(0, 1))) {
             const initial = userId.substring(0, 1).toUpperCase();
             if (!contactsObj[initial]) {
@@ -385,48 +410,48 @@ export default {
             contactsObj[initial].push(params);
             indexList.push(userId.substring(0, 1).toUpperCase());
           } else {
-            const initial = '#';
+            const initial = "#";
             params.initial = initial;
             if (!contactsObj[initial]) {
               contactsObj[initial] = [];
             }
             contactsObj[initial].push({ ...params });
-            indexList.push('#');
+            indexList.push("#");
           }
         });
-      if (type === 'search') {
+      if (type === "search") {
         this.searchFriendResultList = Object.values(contactsObj);
       } else {
         this.sortedContactsList = Object.values(contactsObj);
       }
       this.indexList = [...new Set(indexList)];
-      console.log('contactsList', Object.values(contactsObj));
+      console.log("contactsList", Object.values(contactsObj));
     },
     onSelectIndex(value) {
-      console.log('>>>>>>>', value);
+      console.log(">>>>>>>", value);
     },
     //前往添加联系人页面
     entryAddContactsPage() {
       uni.navigateTo({
-        url: '../addContacts/index',
+        url: "../addContacts/index",
       });
     },
     //前往新邀请页面
     entryNewInvitePage() {
       uni.navigateTo({
-        url: '../newInvite/index',
+        url: "../newInvite/index",
       });
     },
     //前往群组列表页面
     entryGroupListPage() {
       uni.navigateTo({
-        url: '../groupList/index',
+        url: "../groupList/index",
       });
     },
     //前往黑名单列表页面
     entryBlockMembersPage() {
       uni.navigateTo({
-        url: '../blockMembers/index',
+        url: "../blockMembers/index",
       });
     },
     //前往联系人详情页面
@@ -439,5 +464,5 @@ export default {
 };
 </script>
 <style>
-@import './contacts.css';
+@import "./contacts.css";
 </style>
