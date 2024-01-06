@@ -13,7 +13,7 @@ import {
   computed,
   onUnmounted,
 } from 'vue';
-import EmChat from '@/components/emChat';
+import EmChat from '@/components/emChat/emChat';
 import { onNavigationBarButtonTap } from '@dcloudio/uni-app';
 import { useContactsStore } from '@/stores/contacts';
 import { useGroupStore } from '@/stores/group';
@@ -33,7 +33,6 @@ const props = defineProps({
 });
 
 const { targetId, chatType } = toRefs(reactive(props));
-console.log(targetId, chatType);
 provide('targetId', readonly(targetId));
 provide('chatType', readonly(chatType));
 
@@ -46,7 +45,6 @@ const getGroupName = (groupid) => {
   if (joinedGroupList.length) {
     joinedGroupList.forEach((item) => {
       if (item.groupid === groupid) {
-        console.log(item.groupname);
         return (groupName = item.groupname);
       }
     });
@@ -84,7 +82,6 @@ onNavigationBarButtonTap(() => {
 //处理离开聊天组件清除当前会话中id信息
 const conversationStore = useConversationStore();
 onUnmounted(() => {
-  console.log('>>>聊天组件卸载');
   conversationStore.setChattingUserId('');
 });
 </script>

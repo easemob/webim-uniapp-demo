@@ -1,0 +1,88 @@
+.input_bar_container {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  min-height: 80px;
+  background-color: #f2f2f2;
+  border-top: 1px solid rgba(0 0 0 0.5);
+  z-index: 99;
+}
+.func_bottom_bar {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+.func_icon > image {
+  width: 35px;
+  height: 35px;
+  display: inline-block;
+}
+.func_file_box {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.func_file_box image {
+  width: 35px;
+  height: 35px;
+  display: inline-block;
+}
+.showFunModal {
+  width: 100%;
+  height: 210px;
+  /* padding-top: 10px; */
+  background-color: #f2f2f2;
+}
+.other_func {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.other_func_item {
+  flex-basis: 25%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.other_func image {
+  width: 58px;
+  height: 58px;
+  display: block;
+  margin-bottom: 5px;
+}
+.account_box {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 4px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.open_emoji,
+.menu_wrap,
+.open_camera,
+.v-record {
+  padding: 25rpx;
+  text-align: center;
+  color: #b7b7b7;
+  font-size: 13px;
+}
+
+.v-record .icon-record {
+  width: 18rpx;
+  height: 40rpx;
+}
+.v-record {
+  margin-left: 48rpx;
+}

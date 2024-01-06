@@ -97,6 +97,11 @@
                   }}</text>
                   <text
                     class="list_word"
+                    v-if="item.lastMessage.type == 'inform'"
+                    >{{ item.lastMessage.msg }}</text
+                  >
+                  <text
+                    class="list_word"
                     v-if="item.lastMessage.type == MESSAGE_TYPE.TEXT"
                     >{{ item.lastMessage.msg }}</text
                   >
@@ -197,7 +202,6 @@ const getGroupName = (groupid) => {
   if (joinedGroupList.length) {
     joinedGroupList.forEach((item) => {
       if (item.groupid === groupid) {
-        console.log(item.groupname);
         return (groupName = item.groupname);
       }
     });
@@ -320,7 +324,6 @@ const deleteConversation = async (eventItem) => {
     console.log('删除失败', error);
   }
 };
-
 /* 搜索会话相关逻辑 */
 //开启搜索模式
 const openSearch = () => {

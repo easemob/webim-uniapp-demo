@@ -1,0 +1,39 @@
+<template>
+	<Agora-RTC-SurfaceView :zOrderMediaOverlay="zOrderMediaOverlay" :zOrderOnTop="zOrderOnTop" :renderMode="renderMode"
+	 :data="{uid:uid, channelId:channelId}" :mirrorMode="mirrorMode"></Agora-RTC-SurfaceView>
+</template>
+
+<script>
+	import {
+		VideoRenderMode,
+		VideoMirrorMode
+	} from './common/Enums';
+
+	export default {
+		name: 'RtcSurfaceView',
+		props: {
+			zOrderMediaOverlay: {
+				type: Boolean,
+				default: false
+			},
+			zOrderOnTop: {
+				type: Boolean,
+				default: false
+			},
+			renderMode: {
+				type: Number,
+				default: VideoRenderMode.Hidden
+			},
+			uid: Number,
+			channelId: String,
+			mirrorMode: {
+				type: Number,
+				default: VideoMirrorMode.Auto
+			}
+		},
+	}
+</script>
+
+<style>
+
+</style>

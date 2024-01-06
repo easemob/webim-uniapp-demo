@@ -1,6 +1,7 @@
 {
   "pages": [
     //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+
     {
       "path": "pages/login/login",
       "style": {
@@ -121,8 +122,8 @@
       "style": {
         "navigationBarTitleText": "emChat",
         "backgroundTextStyle": "dark",
-        "enablePullDownRefresh": true,
         "app-plus": {
+          "bounce": "none",
           "titleNView": {
             "buttons": [
               {
@@ -135,7 +136,42 @@
           }
         }
       }
+    },
+    // #ifdef APP-PLUS
+    {
+      "path": "pages/emCallKitPages/alertScreen",
+      "style": {
+        "app-plus": {
+          "titleNView": false
+        }
+      }
+    },
+    {
+      "path": "pages/emCallKitPages/singleCall",
+      "style": {
+        "app-plus": {
+          "titleNView": false
+        }
+      }
+    },
+    {
+      "path": "pages/emCallKitPages/multiCall",
+      "style": {
+        "app-plus": {
+          "titleNView": false
+        }
+      }
+    },
+    {
+      "path": "pages/emCallKitPages/inviteMembers",
+      "style": {
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black",
+        "backgroundTextStyle": "light",
+        "navigationBarTitleText": "邀请更多"
+      }
     }
+    // #endif
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

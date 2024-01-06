@@ -1,0 +1,168 @@
+/*.chat-bg{
+	position:fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+	top: 50px;
+}*/
+.scroll_view,
+.scroll_view_change {
+  /* width: 100%;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 170rpx; */
+  background-color: #fafafa;
+  padding-bottom: 100rpx;
+}
+
+.scroll_view_X,
+.scroll_view_change_X {
+  padding-bottom: 230rpx;
+}
+
+.tips {
+  position: fixed;
+  top: 200px;
+  left: 40px;
+  right: 40px;
+  color: rgba(187, 187, 187, 0.433);
+}
+.message {
+  width: 100%;
+  height: auto;
+  position: relative;
+}
+
+.gray_inform {
+  margin: 14rpx 0;
+  text-align: center;
+}
+
+.gray_inform_text {
+  display: inline-block;
+  padding: 6rpx 20rpx 0 20rpx;
+  font-size: 24rpx;
+  color: #bbb;
+  line-height: 28rpx;
+  border-radius: 4rpx;
+}
+
+.user .user-text {
+  margin: auto 100rpx 8rpx;
+  font-size: 20rpx;
+  color: #dcdcdc;
+  display: block;
+}
+
+.avatar {
+  width: 72rpx;
+  height: 72rpx;
+  margin: 0 20rpx 0 0;
+  border-radius: 6rpx;
+  float: left;
+}
+
+.msg {
+  display: inline-block;
+  padding: 20rpx;
+  max-width: calc(85% - 80rpx);
+  min-height: 40rpx;
+  font-size: 24rpx;
+  /*overflow: hidden;*/
+  text-align: left;
+  word-break: break-all;
+  background-color: #fff;
+  border-radius: 26rpx;
+  position: relative;
+  margin-top: 24rpx;
+}
+
+.msg .msg_poprightarrow {
+  position: absolute;
+  right: -10rpx;
+  height: 18rpx;
+  width: 18rpx;
+  margin-top: -10rpx;
+}
+
+.msg .msg_popleftarrow {
+  position: absolute;
+  left: -14rpx;
+  height: 18rpx;
+  width: 18rpx;
+  margin-top: -10rpx;
+}
+
+.msg .msg-text {
+  line-height: 40rpx;
+  font-size: 32rpx;
+  margin: 0;
+}
+.usercard_mian {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.usercard_mian {
+  margin-bottom: 10rpx;
+}
+.usercard_mian image {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 10rpx;
+}
+/*.msg:before {
+	content: " ";
+	position: absolute;
+	top: 9px;
+	right: 100%;
+	border: 6px solid transparent;
+	border-right-color: #EDEDED;
+}*/
+.main {
+  margin: 0 25rpx;
+  padding-bottom: 70rpx;
+}
+.self {
+  text-align: right;
+}
+
+.self .avatar {
+  float: right;
+  margin: 0 0 0 20rpx;
+}
+
+.user {
+  position: relative;
+  bottom: -30rpx;
+}
+
+.self .msg {
+  background-color: #0873de;
+  color: #fff;
+}
+
+.self .msg:before {
+  right: inherit;
+  left: 100%;
+  border-right-color: transparent;
+  border-left-color: #b2e281;
+}
+
+.template {
+  display: inline;
+}
+.err {
+  width: 32rpx;
+  height: 32rpx;
+  position: absolute;
+  left: -40rpx;
+}
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
