@@ -45,9 +45,24 @@
           />
         </template>
         <!-- 附件消息 -->
+
         <template v-if="msgBody.type === MESSAGE_TYPE.FILE">
+          <!-- #ifdef H5 || APP-PLUS -->
           <file-msg-item :msgBody="msgBody" />
+          <!-- #endif -->
+          <!-- #ifndef H5 || APP-PLUS-->
+          <text
+            :class="[
+              'text_msg_contatiner',
+              isSelf(msgBody)
+                ? 'text_msg_contatiner_mine'
+                : 'text_msg_contatiner_other',
+            ]"
+            >【该类型消息暂不支持展示】</text
+          >
+          <!-- #endif -->
         </template>
+
         <!-- 个人名片 -->
         <template
           v-if="
@@ -71,14 +86,14 @@
 </template>
 
 <script>
-import { MESSAGE_TYPE, CUSTOM_EVENT_NAME, CHAT_TYPE } from '@/EaseIM/constant';
-import TextMsgItem from './messagesItem/textMsgItem';
-import ImageMsgItem from './messagesItem/imageMsgItem';
-import AudioMsgItem from './messagesItem/audioMsgItem';
-import FileMsgItem from './messagesItem/fileMsgItem';
-import UserCardMsgItem from './messagesItem/userCardItem';
-import MsgQuoteContainer from './msgQuoteContainer';
-import { EMClient } from '@/EaseIM';
+import { MESSAGE_TYPE, CUSTOM_EVENT_NAME, CHAT_TYPE } from "@/EaseIM/constant";
+import TextMsgItem from "./messagesItem/textMsgItem";
+import ImageMsgItem from "./messagesItem/imageMsgItem";
+import AudioMsgItem from "./messagesItem/audioMsgItem";
+import FileMsgItem from "./messagesItem/fileMsgItem";
+import UserCardMsgItem from "./messagesItem/userCardItem";
+import MsgQuoteContainer from "./msgQuoteContainer";
+import { EMClient } from "@/EaseIM";
 export default {
   components: {
     TextMsgItem,
@@ -100,7 +115,7 @@ export default {
     },
     quoteMsgId: {
       type: String,
-      default: '',
+      default: "",
     },
   },
 
@@ -108,8 +123,8 @@ export default {
     return {
       MESSAGE_TYPE,
       CUSTOM_EVENT_NAME,
-      playAudioMid: '',
-      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
+      playAudioMid: "",
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
     };
   },
   computed: {
@@ -198,14 +213,14 @@ export default {
   methods: {
     onClickPlayAudio(mid) {
       this.playAudioMid = mid;
-      console.log('mid', mid);
-      console.log('++++++++');
+      console.log("mid", mid);
+      console.log("++++++++");
     },
     callMessagePopup() {
-      this.$emit('alertMessagePopup', this.msgBody);
+      this.$emit("alertMessagePopup", this.msgBody);
     },
     callScrollToQuoteMsg(msgQuote) {
-      this.$emit('scrollToQuoteMessge', msgQuote);
+      this.$emit("scrollToQuoteMessge", msgQuote);
     },
     //前往联系人详情页面
     entryContactsDetailPage(type) {
@@ -229,5 +244,5 @@ export default {
 </script>
 
 <style scoped>
-@import './index.css';
+@import "./index.css";
 </style>
