@@ -21,7 +21,6 @@
       <text>相机</text>
     </view>
     <!-- 文件 -->
-    <!-- #ifdef H5 || APP-PLUS -->
     <view class="more_func_item">
       <SendFileMessage
         ref="fileComps"
@@ -36,10 +35,6 @@
       </SendFileMessage>
       <text>文件</text>
     </view>
-    <!-- #endif -->
-    <!-- #ifndef H5 || APP-PLUS-->
-    <view></view>
-    <!-- #endif -->
     <!-- 名片 -->
     <view class="more_func_item" @click="entrySelectUserCard">
       <view class="more_func_item_icon">
@@ -58,8 +53,8 @@
 </template>
 
 <script>
-import SendImageMessage from "../inputMessages/sendImageMessage";
-import SendFileMessage from "../inputMessages/sendFileMessage";
+import SendImageMessage from '../inputMessages/sendImageMessage';
+import SendFileMessage from '../inputMessages/sendFileMessage';
 export default {
   components: { SendImageMessage, SendFileMessage },
   data() {
@@ -67,18 +62,18 @@ export default {
   },
   methods: {
     openPhotoAlbum(type) {
-      if (type === "camera") {
+      if (type === 'camera') {
         this.$refs.imageComps.openCamera();
-      } else if (type === "album") {
+      } else if (type === 'album') {
         this.$refs.imageComps.openPhotoAlbum();
       }
     },
     onCloseAllShowContainer() {
-      this.$emit("onCloseAllShowContainer");
+      this.$emit('onCloseAllShowContainer');
     },
     entrySelectUserCard() {
       uni.navigateTo({
-        url: "../emChatContainer/emSelectUserCard/index",
+        url: '../emChatContainer/emSelectUserCard/index',
       });
       this.onCloseAllShowContainer();
     },
@@ -87,5 +82,5 @@ export default {
 </script>
 
 <style scoped>
-@import "./index.css";
+@import './index.css';
 </style>
