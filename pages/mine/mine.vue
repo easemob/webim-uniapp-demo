@@ -120,17 +120,32 @@
       title="自定义在线状态"
       widt="340px"
     >
+      <!-- #ifdef H5 || APP-PLUS -->
       <view class="presence_modal_content" slot="default">
         <u--textarea
           v-model="customPresence"
           height="20"
           placeholder="请填写"
           maxlength="16"
-          border="none"
+          border="surround"
         >
         </u--textarea>
         <text class="textarea_count">{{ customPresence.length }}/16</text>
       </view>
+      <!-- #endif -->
+      <!-- #ifndef H5 || APP-PLUS-->
+      <view class="presence_modal_content" slot="default" style="width: 100%;">
+        <u-input
+          v-model="customPresence"
+          height="20"
+          placeholder="请填写"
+          maxlength="16"
+          border="surround"
+        >
+        </u-input>
+        <text class="textarea_count">{{ customPresence.length }}/16</text>
+      </view>
+      <!-- #endif -->
       <view class="presence_modal_footer" slot="confirmButton">
         <u-button
           customStyle="width:148px;"
