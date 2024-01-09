@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { emoji } from '@/constant';
+import { emoji } from "@/constant";
 export default {
   data() {
     return {
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     handleClick(emoji) {
-      this.$emit('appendEmojiIcon', emoji);
+      this.$emit("appendEmojiIcon", emoji);
     },
   },
 };
@@ -35,16 +35,17 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  padding: 10px 5px;
+  justify-content: space-between;
+  align-items: center;
 }
 .emoji-item {
-  width: 36px;
-  height: 36px;
+  width: 10%;
+  height: 37px;
   font-size: 26px;
-  flex-basis: 25%;
   display: inline-block;
   text-align: center;
   line-height: 36px;
   box-sizing: border-box;
 }
+
 </style>
