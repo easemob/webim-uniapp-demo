@@ -47,20 +47,7 @@
         <!-- 附件消息 -->
 
         <template v-if="msgBody.type === MESSAGE_TYPE.FILE">
-          <!-- #ifdef H5 || APP-PLUS -->
           <file-msg-item :msgBody="msgBody" />
-          <!-- #endif -->
-          <!-- #ifndef H5 || APP-PLUS-->
-          <text
-            :class="[
-              'text_msg_contatiner',
-              isSelf(msgBody)
-                ? 'text_msg_contatiner_mine'
-                : 'text_msg_contatiner_other',
-            ]"
-            >【该类型消息暂不支持展示】</text
-          >
-          <!-- #endif -->
         </template>
 
         <!-- 个人名片 -->
@@ -144,6 +131,7 @@ export default {
         return this.$u.timeFrom(time);
       };
     },
+
     friendUserInfoCollection() {
       return this.$store.getters.friendUserInfoCollection;
     },
