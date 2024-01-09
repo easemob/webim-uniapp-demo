@@ -1,6 +1,6 @@
 <template>
   <view>
-    <text v-show="isNeedShowMessageTime" class="message_time">{{
+    <text v-if="isNeedShowMessageTime" class="message_time">{{
       messageTime(msgBody.time)
     }}</text>
     <view
