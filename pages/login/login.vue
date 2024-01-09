@@ -110,7 +110,7 @@ const { loginWithPassword, loginWithAccessToken } = emConnect();
 export default {
   data() {
     return {
-      usePhoneNumberLogin: false, //是否手机号方式登录
+      usePhoneNumberLogin: true, //是否手机号方式登录
       /* 用户名验证码方式登录 */
       loginPhoneNumber: '',
       loginAuthCode: '',
