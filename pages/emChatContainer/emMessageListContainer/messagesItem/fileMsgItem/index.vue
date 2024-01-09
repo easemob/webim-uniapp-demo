@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import formatFileSize from '@/utils/formatFileSize';
-const ATTACH_KEY = 'filePathCache';
+import formatFileSize from "@/utils/formatFileSize";
+const ATTACH_KEY = "filePathCache";
 export default {
   props: {
     msgBody: {
@@ -73,10 +73,11 @@ export default {
     },
     downloadFile() {
       // 下载完存储filePath，下次预览直接访问
-      console.log('this.msgBody?.url', this.msgBody?.url);
+      console.log("this.msgBody?.url", this.msgBody?.url);
       uni.downloadFile({
         url: `${this.msgBody?.url}`,
         success: (res) => {
+          console.log("downloadFile", res);
           let filePath = res.tempFilePath;
           // #ifdef MP-WEIXIN  || MP-TOUTIAO || MP-QQ
           this.saveFileUseManager(filePath);
@@ -86,11 +87,11 @@ export default {
           // #endif
         },
         fail: (err) => {
-          console.log('>>>>>文件下载失败', err);
+          console.log(">>>>>文件下载失败", err);
           uni.hideLoading();
           uni.showToast({
-            icon: 'none',
-            title: '失败请重新下载',
+            icon: "none",
+            title: "失败请重新下载",
           });
         },
       });
@@ -109,29 +110,35 @@ export default {
         fail: function (e) {
           uni.hideLoading();
           uni.showToast({
-            icon: 'none',
-            title: '保存失败',
+            icon: "none",
+            title: "保存失败",
           });
         },
       });
     },
     saveFileUseManager(filePath) {
-      console.log('>>>>小程序保存文件调用');
-      uni.getFileSystemManager().saveFile({
-        tempFilePath: filePath,
-        success: (res) => {
-          let savedFilePath = res.savedFilePath;
-          console.log('>>>>>小程序savedFilePath', savedFilePath);
+      console.log(">>>>小程序保存文件调用", filePath);
+      const fileExtension =
+        this.msgBody.filename.split(".").pop() ||
+        this.msgBody.body.filename.split(".").pop();
+      const savedFilePath =
+        uni.env.USER_DATA_PATH + "/document." + fileExtension;
+
+      uni.getFileSystemManager().copyFile({
+        srcPath: filePath,
+        destPath: savedFilePath,
+        success: () => {
+          console.log(">>>>>小程序savedFilePath", savedFilePath);
           this.storageFilePath({
             id: this.msgBody.id,
-            path: res.filePath,
+            path: savedFilePath,
           });
           this.openFile(savedFilePath);
         },
         fail: (e) => {
           uni.showToast({
-            title: '下载失败',
-            icon: 'none',
+            title: "下载失败",
+            icon: "none",
           });
         },
       });
@@ -144,7 +151,7 @@ export default {
         },
         fail(e) {
           uni.showToast({
-            title: '暂不支持此类型',
+            title: "暂不支持此类型",
             duration: 2000,
           });
           uni.hideLoading();
@@ -153,11 +160,11 @@ export default {
     },
     previewFile() {
       let sysInfo = uni.getSystemInfoSync();
-      if (sysInfo.uniPlatform === 'web') {
+      if (sysInfo.uniPlatform === "web") {
         uni.showToast({
-          title: 'H5暂不支持预览文件消息',
+          title: "H5暂不支持预览文件消息",
           duration: 2000,
-          icon: 'none',
+          icon: "none",
         });
         return;
       }
@@ -219,7 +226,7 @@ export default {
   height: 24px;
 
   /* 简体中文/次级标题/中 */
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -227,7 +234,7 @@ export default {
 }
 .file_msg_content .size {
   /* Alphabet/Body/Medium */
-  font-family: 'SF Pro';
+  font-family: "SF Pro";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
