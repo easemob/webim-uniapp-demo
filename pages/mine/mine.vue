@@ -108,7 +108,7 @@
     <u-action-sheet
       :show="isShowPresenceSettings"
       @close="isShowPresenceSettings = false"
-      :actions="actions"
+      :actions="presenceList"
       cancelText="取消"
       @select="presenceClick"
       :safeAreaInsetBottom="true"
@@ -134,7 +134,7 @@
       </view>
       <!-- #endif -->
       <!-- #ifndef H5 || APP-PLUS-->
-      <view class="presence_modal_content" slot="default" style="width: 100%;">
+      <view class="presence_modal_content" slot="default" style="width: 100%">
         <u-input
           v-model="customPresence"
           height="20"
@@ -177,29 +177,34 @@ export default {
       isShowPresenceCustomModal: false,
       customPresence: "",
       defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
-      actions: [
+      presenceList: [
         {
           name: "在线",
+          type: 0,
           color: "#009EFF",
           fontSize: "16px",
         },
         {
-          name: "忙碌",
+          name: "离线",
+          type: 1,
           color: "#009EFF",
           fontSize: "16px",
         },
         {
           name: "离开",
+          type: 2,
           color: "#009EFF",
           fontSize: "16px",
         },
         {
           name: "请勿打扰",
+          type: 3,
           color: "#009EFF",
           fontSize: "16px",
         },
         {
           name: "自定义",
+          type: 4,
           color: "#009EFF",
           fontSize: "16px",
         },
@@ -252,8 +257,19 @@ export default {
           }
         }
         if (isOnline) {
-          if (presenceInfo.ext && presenceInfo.ext !== "") {
-            return presenceInfo.ext;
+          if (presenceInfo.ext) {
+            switch (presenceInfo.ext) {
+              case "Cloaking":
+                return "请勿打扰";
+              case "Online":
+                return "在线";
+              case "Leave":
+                return "离开";
+              case "Offline":
+                return "离线";
+              default:
+                return presenceInfo.ext;
+            }
           } else {
             return "在线";
           }
@@ -302,10 +318,25 @@ export default {
     },
     // 点击设置presence
     presenceClick(e) {
-      if (e.name === "自定义") {
+      if (e.type === 4) {
         this.isShowPresenceCustomModal = true;
       } else {
-        publishPresence(e.name);
+        let presenceValue = "";
+        switch (e.type) {
+          case 0:
+            presenceValue = "Online";
+            break;
+          case 1:
+            presenceValue = "Offline";
+            break;
+          case 2:
+            presenceValue = "Leave";
+            break;
+          case 3:
+            presenceValue = "Cloaking";
+            break;
+        }
+        publishPresence(presenceValue);
       }
     },
     //跳转至通用设置
