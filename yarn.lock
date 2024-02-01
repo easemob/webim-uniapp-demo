@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-easemob-websdk@^4.4.1:
+easemob-websdk@latest:
   version "4.4.1"
-  resolved "https://registry.npmmirror.com/easemob-websdk/-/easemob-websdk-4.4.1.tgz#e90bf988f23673fa83d12eea510a0a17501b6d3b"
+  resolved "https://registry.npmjs.org/easemob-websdk/-/easemob-websdk-4.4.1.tgz"
   integrity sha512-sPWQBiulZ4xrP/Ui7r6PUqUE1NiSvrpTeL4lwIfXPRUMmpIriziIt+vsdkRJf4FO4t4s0z/W2tEILnsUcu8lcQ==
