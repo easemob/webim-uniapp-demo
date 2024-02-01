@@ -213,7 +213,7 @@
             :key="conversationItem.conversationId"
           >
             <template>
-              <swipe-delete>
+              <swipe-delete @deleteChatItem="handleDelete(conversationItem)">
                 <view
                   @longpress="onConversationMoreFunction(conversationItem)"
                   @click="entryChatPage(conversationItem)"
@@ -488,6 +488,27 @@ export default {
     this.setConversationListHeigth();
   },
   methods: {
+    handleDelete(conversationItem){
+      uni.showModal({
+        title: '确认删除？',
+        confirmText: '删除',
+        success: async (res) => {
+          if (res.confirm) {
+            this.$store.dispatch('deleteConversation', {
+              ...conversationItem,
+            });
+          }
+        },
+        fail: function (err) {
+          uni.showToast({
+            title: '删除失败',
+            icon: 'none',
+            duration: 2000,
+          });
+          console.log('删除失败', err);
+        },
+      });
+    },
     setConversationListHeigth() {
       uni.getSystemInfo({
         success: (res) => {

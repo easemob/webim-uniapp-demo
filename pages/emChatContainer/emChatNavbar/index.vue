@@ -163,9 +163,21 @@ export default {
             break;
           }
         }
+
         if (isOnline) {
-          if (presenceInfo.ext && presenceInfo.ext !== "") {
-            return presenceInfo.ext;
+          if (presenceInfo.ext) {
+            switch (presenceInfo.ext) {
+              case "Cloaking":
+                return "请勿打扰";
+              case "Online":
+                return "在线";
+              case "Leave":
+                return "离开";
+              case "Offline":
+                return "离线";
+              default:
+                return presenceInfo.ext;
+            }
           } else {
             return "在线";
           }
