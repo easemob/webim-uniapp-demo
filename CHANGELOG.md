@@ -1,7 +1,14 @@
 # 版本更新说明:
-## v3.2.2 @ 2020-8-25
-[IM SDK] 创建群组时增加被邀请人是否需要同意的参数
-[IM SDK] 修复头条小程序消息延迟
-[IM SDK] onError回调增加 error message
-[IM SDK] 修改附件消息重定向
-[IM SDK] 支持vue-ssr-renderer服务端渲染
+## v4.0.0 @ 2024-2-29
+### 新增功能
+[uniapp demo] 新增消息回复功能
+[uniapp demo] 新增消息撤回重新编辑功能
+[uniapp demo] 新增消息删除功能
+[uniapp demo] 新增群成员昵称修改功能
+[uniapp demo] 新增会话置顶功能
+[uniapp demo] 新增会话免打扰功能
+[uniapp demo] 新增用户在线状态变更功能
+
+### 优化
+[uniapp demo] 优化UI展示
+[uniapp demo] 优化demo逻辑处理
