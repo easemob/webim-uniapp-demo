@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { emoji } from "@/constant";
+import { emoji } from '@/constant';
 export default {
   data() {
     return {
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     handleClick(emoji) {
-      this.$emit("appendEmojiIcon", emoji);
+      this.$emit('appendEmojiIcon', emoji);
     },
   },
 };
@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .scroll-emoji-box {
-  height: 300px;
+  height: 200px;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -47,5 +47,4 @@ export default {
   line-height: 36px;
   box-sizing: border-box;
 }
-
 </style>

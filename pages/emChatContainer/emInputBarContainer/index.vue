@@ -11,13 +11,14 @@
       @onShowEditMessageContainer="onShowEditMessageContainer"
     />
     <view class="chat-input-bar">
-      <template v-if="!isShowEditMessageContainer">
+      <!-- <template v-if="!isShowEditMessageContainer">
         <image
           class="chat-audio-icon-container"
           @click="onShowAudioMessageContainer"
           src="/static/images/new_ui/inputbar/audio_click_icon.png"
         ></image>
-      </template>
+      </template> -->
+      <!-- 文本输入input -->
       <view class="chat-input-container">
         <input
           class="chat-input"
@@ -26,39 +27,69 @@
           confirm-type="send"
           type="text"
           :always-embed="true"
-          placeholder="请输入内容"
+          :adjust-position="false"
           @focus="onInputFocus"
           @blur="onInputBlur"
           @confirm="sendTextMessage"
           @input="onInput"
         />
       </view>
-      <template v-if="!isShowEditMessageContainer">
-        <image
-          class="chat-emoji-icon-container"
-          @click="onShowEmojiIconContainer"
-          src="/static/images/new_ui/inputbar/emoji_click_icon.png"
-        ></image>
-        <image
-          class="chat-emoji-icon-container"
-          v-if="msgContent"
-          src="/static/images/new_ui/inputbar/audio_send_icon.png"
-          @click="sendTextMessage"
-        ></image>
-        <image
-          v-else
-          class="chat-emoji-icon-container"
-          src="/static/images/new_ui/inputbar/more_click_icon.png"
-          @click="onShowMoreFuncContainer"
-        ></image>
-      </template>
-      <template v-else>
+      <template v-if="isShowEditMessageContainer">
         <image
           class="chat-emoji-icon-container"
           @click="actionModifyMessage"
           src="/static/images/new_ui/message/send_edit_msg_icon.png"
         ></image>
       </template>
+    </view>
+    <!-- 输入框底部功能栏 -->
+    <view class="chat-input-bottom-bar">
+      <!-- 语音 -->
+      <view class="input-bottom-bar-icon" @click="onShowAudioMessageContainer">
+        <image
+          src="/static/images/new_ui/inputbar/tofeipeng/icons/mic_stroke@2x.png"
+        ></image>
+      </view>
+      <!-- 图库 -->
+      <view class="input-bottom-bar-icon" @click="openPhotoAlbum('album')">
+        <image
+          src="/static/images/new_ui/inputbar/tofeipeng/icons/img@2x.png"
+        ></image>
+      </view>
+      <!-- 拍照 -->
+      <view class="input-bottom-bar-icon" @click="openPhotoAlbum('camera')">
+        <image
+          src="/static/images/new_ui/inputbar/tofeipeng/icons/camera@2x.png"
+        ></image>
+      </view>
+      <!-- 文件 -->
+      <!-- <view class="input-bottom-bar-icon">
+        <image
+          src="/static/images/new_ui/inputbar/tofeipeng/icons/folder@2x.png"
+        ></image>
+      </view> -->
+      <SendFileMessage
+        ref="fileComps"
+        @onCloseAllShowContainer="onCloseAllShowContainer"
+      >
+        <view class="input-bottom-bar-icon">
+          <image
+            src="/static/images/new_ui/inputbar/tofeipeng/icons/folder@2x.png"
+          ></image>
+        </view>
+      </SendFileMessage>
+      <!-- emoji -->
+      <view class="input-bottom-bar-icon" @click="onShowEmojiIconContainer">
+        <image
+          src="/static/images/new_ui/inputbar/tofeipeng/icons/face@2x.png"
+        ></image>
+      </view>
+      <!-- 更多 -->
+      <view class="input-bottom-bar-icon" @click="onShowMoreFuncContainer">
+        <image
+          src="/static/images/new_ui/inputbar/tofeipeng/icons/plus_in_circle@2x.png"
+        ></image>
+      </view>
     </view>
     <!-- 音频发送板块 -->
     <view v-if="isShowAudioMessageContainer" class="chat-audio-container">
@@ -76,8 +107,20 @@
     <view v-if="isShowMoreFuncContainer" class="chat-more-icon-container">
       <MoreFuncContainer @onCloseAllShowContainer="onCloseAllShowContainer" />
     </view>
+    <!-- 发送图片 -->
+    <SendImageMessage
+      ref="imageComps"
+      @onCloseAllShowContainer="onCloseAllShowContainer"
+    />
+    <!-- 软键盘弹起占位容器 -->
+    <view
+      class="softkeyword-placeholder"
+      :style="{ height: softkeyboardHeight + 'px' }"
+    ></view>
+    <!-- #ifdef H5 || APP-PLUS -->
+    <!-- 小程序的宿主一般自带底部安全区 -->
     <view class="chat-input-bar-bottom-placeholder"></view>
-    <!-- <u-safe-bottom></u-safe-bottom> -->
+    <!-- #endif -->
   </view>
 </template>
 
@@ -90,6 +133,8 @@ import EmojiPickerContainer from './emojiPickerContainer';
 import MoreFuncContainer from './moreFuncContainer';
 import ReplyMessageContainer from './replyMessageContainer';
 import EditMessageContainer from './editMessageContainer';
+import SendImageMessage from './inputMessages/sendImageMessage';
+import SendFileMessage from './inputMessages/sendFileMessage';
 import { MESSAGE_TYPE } from '../../../EaseIM/constant';
 const { sendDisplayMessages, sendCommandMessages, modifyDisplayMessages } =
   emMessages();
@@ -101,6 +146,8 @@ export default {
     MoreFuncContainer,
     ReplyMessageContainer,
     EditMessageContainer,
+    SendImageMessage,
+    SendFileMessage,
   },
   props: {
     checkedPopupMsgBody: {
@@ -112,6 +159,7 @@ export default {
     return {
       msgContent: '',
       cursorSpacing: 20,
+      softkeyboardHeight: 0,
       isShowAudioMessageContainer: false,
       isShowEmojiIconContainer: false,
       isShowMoreFuncContainer: false,
@@ -133,6 +181,10 @@ export default {
       .exec();
     // #endif
     this.getLocalInputingStatus();
+    //监听键盘高度变化
+    //监听键盘抬起事件
+    uni.onKeyboardHeightChange &&
+      uni.onKeyboardHeightChange(this.listenerKeyboardHeight);
   },
   computed: {
     chattingId() {
@@ -151,7 +203,14 @@ export default {
       //     this.msgContent = this.msgContent.slice(0, -1);
       //   });
       // #endif
-      //   this.onCloseAllShowContainer();
+      this.onCloseAllShowContainer();
+    },
+    listenerKeyboardHeight(e) {
+      if (e.height > 0) {
+        this.softkeyboardHeight = e.height;
+      } else {
+        this.softkeyboardHeight = 0;
+      }
     },
     onInputBlur() {
       this.onCloseAllShowContainer();
@@ -320,6 +379,17 @@ export default {
         this.msgContent = content;
       }
     },
+    openPhotoAlbum(type) {
+      if (type === 'camera') {
+        this.$refs.imageComps.openCamera();
+      } else if (type === 'album') {
+        this.$refs.imageComps.openPhotoAlbum();
+      }
+    },
+  },
+  beforeDestroy() {
+    uni.offKeyboardHeightChange &&
+      uni.offKeyboardHeightChange(this.listenerKeyboardHeight);
   },
 };
 </script>
@@ -339,6 +409,10 @@ export default {
   height: env(safe-area-inset-bottom);
   /* #endif */
 }
+.softkeyword-placeholder {
+  width: 100%;
+  background-color: white;
+}
 .chat-input-container {
   flex: 1;
   display: flex;
@@ -350,6 +424,25 @@ export default {
   /* #endif */
   background-color: white;
   border-radius: 10rpx;
+}
+.chat-input-bottom-bar {
+  width: 100%;
+  height: 100rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 50rpx;
+  box-sizing: border-box;
+  background-color: white;
+}
+.input-bottom-bar-icon {
+  width: 60rpx;
+  height: 60rpx;
+}
+.input-bottom-bar-icon image {
+  width: 100%;
+  height: 100%;
 }
 .chat-input {
   flex: 1;
@@ -382,7 +475,7 @@ export default {
 }
 .chat-emoji-picker-container {
   width: 100%;
-  height: 300px;
+  /* height: 300px; */
   background: #fff;
 }
 </style>

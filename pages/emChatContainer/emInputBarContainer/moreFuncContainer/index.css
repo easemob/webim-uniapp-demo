@@ -1,17 +1,18 @@
 .more_func_container {
   width: 100%;
-  height: 100%;
+  height: 200px;
   padding: 16px 0;
   background: #fff;
 
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content:space-around;
-  align-items:center
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 0 30px;
 }
 .more_func_item {
-  flex-basis: 25%;
+  /* flex-basis: 25%; */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

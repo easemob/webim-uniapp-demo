@@ -1,7 +1,7 @@
 <template>
   <view class="more_func_container">
     <!-- 照片 -->
-    <view class="more_func_item" @click="openPhotoAlbum('album')">
+    <!-- <view class="more_func_item" @click="openPhotoAlbum('album')">
       <view class="more_func_item_icon">
         <image
           class="more_func_item_icon_img"
@@ -9,9 +9,9 @@
         ></image>
       </view>
       <text>照片</text>
-    </view>
+    </view> -->
     <!-- 相机 -->
-    <view class="more_func_item" @click="openPhotoAlbum('camera')">
+    <!-- <view class="more_func_item" @click="openPhotoAlbum('camera')">
       <view class="more_func_item_icon">
         <image
           class="more_func_item_icon_common"
@@ -19,9 +19,9 @@
         ></image>
       </view>
       <text>相机</text>
-    </view>
+    </view> -->
     <!-- 文件 -->
-    <view class="more_func_item">
+    <!-- <view class="more_func_item">
       <SendFileMessage
         ref="fileComps"
         @onCloseAllShowContainer="onCloseAllShowContainer"
@@ -34,7 +34,7 @@
         </view>
       </SendFileMessage>
       <text>文件</text>
-    </view>
+    </view> -->
     <!-- 名片 -->
     <view class="more_func_item" @click="entrySelectUserCard">
       <view class="more_func_item_icon">

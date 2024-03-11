@@ -44,8 +44,10 @@ export default {
       // 选择文件后是否立即自动上传，true=选择后立即上传
       instantly: true,
       // 必传宽高且宽高应与slot宽高保持一致
-      width: '64px',
-      height: '62px',
+      //   width: '64px',
+      //   height: '62px',
+      width: '30px',
+      height: '27px',
       // 限制允许选择的格式，空串=不限制，默认为空
       formats: '',
       // 文件上传大小限制

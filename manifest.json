@@ -2,8 +2,8 @@
     "name" : "环信",
     "appid" : "__UNI__8EAE1E1",
     "description" : "",
-    "versionName" : "1.2.0",
-    "versionCode" : "100",
+    "versionName" : "4.0.0",
+    "versionCode" : 110,
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : true,
@@ -101,6 +101,7 @@
     "quickapp" : {},
     "mp-weixin" : {
         "appid" : "",
+        "libVersion" : "latest",
         "setting" : {
             "urlCheck" : false,
             "minified" : true
