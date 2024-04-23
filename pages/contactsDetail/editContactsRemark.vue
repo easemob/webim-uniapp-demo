@@ -70,7 +70,8 @@ export default {
   },
   onLoad(option) {
     this.contactsUserId = option.userId;
-    this.contactsRemark = option?.contactsRemark;
+    this.contactsRemark = option.contactsRemark === "暂无备注" ? "" : option.contactsRemark;
+
   },
   methods: {
     onArrowLeftBackClick() {
