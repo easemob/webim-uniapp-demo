@@ -2,6 +2,7 @@
   width: 100%;
   background: #f8f9f9;
 }
+
 .message_list_item {
   width: 100%;
   display: flex;
@@ -11,17 +12,23 @@
   justify-content: flex-start;
   align-items: flex-end;
 }
+
 .message_list_item_content {
   display: flex;
   flex-direction: column;
   max-width: 70%;
+  white-space: normal;
+  word-break: break-word;
 }
+
 .message_list_item_mine {
   flex-direction: row-reverse;
 }
+
 .message_list_item_avatar {
   margin: 0 10px;
 }
+
 .message_list_item_content_nickname {
   /* Nickname */
   height: 16px;
@@ -37,9 +44,11 @@
   /* Neutral Special/5 */
   color: #5270ad;
 }
+
 .message_list_item_content_nickname_mine {
   text-align: right;
 }
+
 .message_time {
   display: flex;
   flex-direction: row;
@@ -63,10 +72,13 @@
 /* 闪烁动画 */
 @keyframes blinkAnimation {
   50% {
-    background-color: #eff0f1; /* 闪烁颜色 */
+    background-color: #eff0f1;
+    /* 闪烁颜色 */
   }
 }
+
 /* 应用于元素的闪烁效果 */
 .quote_msg_avtive {
-  animation: blinkAnimation 1s; /* 动画持续时间 */
+  animation: blinkAnimation 1s;
+  /* 动画持续时间 */
 }
