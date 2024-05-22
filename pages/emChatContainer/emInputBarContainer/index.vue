@@ -21,6 +21,7 @@
       <!-- 文本输入input -->
       <view class="chat-input-container">
         <input
+          ref="input"
           class="chat-input"
           v-model="msgContent"
           :cursor-spacing="cursorSpacing"
@@ -101,7 +102,11 @@
     </view>
     <!-- Emoji Icon选择板块 -->
     <view v-if="isShowEmojiIconContainer" class="chat-emoji-picker-container">
-      <EmojiPickerContainer @appendEmojiIcon="appendEmojiIcon" />
+      <EmojiPickerContainer
+        @appendEmojiIcon="appendEmojiIcon"
+        @sendTextMessage="sendTextMessage"
+        @deleteEmojs="deleteEmojs"
+      />
     </view>
     <!-- 更多功能选择板块 -->
     <view v-if="isShowMoreFuncContainer" class="chat-more-icon-container">
@@ -125,21 +130,23 @@
 </template>
 
 <script>
-import { EMClient } from '@/EaseIM';
-import { CHAT_TYPE } from '@/EaseIM/constant';
-import { emMessages } from '@/EaseIM/emApis';
-import RecordAudioContainer from './recordAudioContainer';
-import EmojiPickerContainer from './emojiPickerContainer';
-import MoreFuncContainer from './moreFuncContainer';
-import ReplyMessageContainer from './replyMessageContainer';
-import EditMessageContainer from './editMessageContainer';
-import SendImageMessage from './inputMessages/sendImageMessage';
-import SendFileMessage from './inputMessages/sendFileMessage';
-import { MESSAGE_TYPE } from '../../../EaseIM/constant';
+import { EMClient } from "@/EaseIM";
+import { CHAT_TYPE } from "@/EaseIM/constant";
+import { emMessages } from "@/EaseIM/emApis";
+import RecordAudioContainer from "./recordAudioContainer";
+import EmojiPickerContainer from "./emojiPickerContainer";
+import MoreFuncContainer from "./moreFuncContainer";
+import ReplyMessageContainer from "./replyMessageContainer";
+import EditMessageContainer from "./editMessageContainer";
+import SendImageMessage from "./inputMessages/sendImageMessage";
+import SendFileMessage from "./inputMessages/sendFileMessage";
+import { MESSAGE_TYPE } from "../../../EaseIM/constant";
 const { sendDisplayMessages, sendCommandMessages, modifyDisplayMessages } =
   emMessages();
+const GraphemeSplitter = require("grapheme-splitter");
+
 export default {
-  name: 'chat-input-bar',
+  name: "chat-input-bar",
   components: {
     RecordAudioContainer,
     EmojiPickerContainer,
@@ -157,7 +164,7 @@ export default {
   },
   data() {
     return {
-      msgContent: '',
+      msgContent: "",
       cursorSpacing: 20,
       softkeyboardHeight: 0,
       isShowAudioMessageContainer: false,
@@ -172,7 +179,7 @@ export default {
     // #ifndef APP-NVUE
     const query = uni.createSelectorQuery().in(this);
     query
-      .select('.chat-input-bar-bottom-placeholder')
+      .select(".chat-input-bar-bottom-placeholder")
       .boundingClientRect((data) => {
         if (data && data.height) {
           this.cursorSpacing = data.height + 20;
@@ -228,14 +235,14 @@ export default {
     async sendTextMessage() {
       if (this.msgContent.match(/^\s*$/)) {
         uni.showToast({
-          title: '请输入内容',
-          icon: 'none',
+          title: "请输入内容",
+          icon: "none",
         });
         return;
       }
       let params = {
         // 消息类型。
-        type: 'txt',
+        type: "txt",
         // 消息内容。
         msg: this.msgContent,
         // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
@@ -254,26 +261,26 @@ export default {
         params.ext.msgQuote = {};
         params.ext.msgQuote =
           this.$refs.replyMessageContainerComps.extractMessageBodyValue();
-        console.log('>>>存在引用', params);
+        console.log(">>>存在引用", params);
       }
       try {
         const res = await sendDisplayMessages({ ...params });
-        console.log('>>>>>文本消息发送成功', res);
+        console.log(">>>>>文本消息发送成功", res);
       } catch (error) {
-        console.log('>>>>>文本消息发送失败', error);
+        console.log(">>>>>文本消息发送失败", error);
         if (error.type === 508) {
           uni.showToast({
-            title: '发送内容不合规',
-            icon: 'none',
+            title: "发送内容不合规",
+            icon: "none",
           });
         } else {
           uni.showToast({
-            title: '消息发送失败',
-            icon: 'none',
+            title: "消息发送失败",
+            icon: "none",
           });
         }
       } finally {
-        this.msgContent = '';
+        this.msgContent = "";
         this.onCloseAllShowContainer();
         this.isShowReplyMessageContainer &&
           (this.isShowReplyMessageContainer = false);
@@ -289,23 +296,23 @@ export default {
       };
       try {
         const res = await modifyDisplayMessages(editMessageContent);
-        console.log('>>>>>>消息修改成功', res);
+        console.log(">>>>>>消息修改成功", res);
       } catch (error) {
-        console.log('>>>>>>修改消息失败', error);
+        console.log(">>>>>>修改消息失败", error);
         if (error?.type === 50) {
           uni.showToast({
-            icon: 'none',
-            title: '该消息可编辑次数已达上限',
+            icon: "none",
+            title: "该消息可编辑次数已达上限",
           });
         } else {
           uni.showToast({
-            icon: 'none',
-            title: '消息编辑失败请稍后重试',
+            icon: "none",
+            title: "消息编辑失败请稍后重试",
           });
         }
       } finally {
         this.isShowEditMessageContainer = false;
-        this.msgContent = '';
+        this.msgContent = "";
       }
     },
     //获取当前键入中开启状态
@@ -319,7 +326,7 @@ export default {
       const params = {
         type: MESSAGE_TYPE.CMD,
         // 消息类型。
-        action: 'TypingBegin',
+        action: "TypingBegin",
         // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
         to: this.chattingId,
         // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
@@ -328,14 +335,14 @@ export default {
       try {
         await sendCommandMessages(params);
       } catch (error) {
-        console.log('>>>>>发送失败', error);
+        console.log(">>>>>发送失败", error);
       }
     },
     onShowAudioMessageContainer() {
       this.isShowAudioMessageContainer = !this.isShowAudioMessageContainer;
       this.isShowEmojiIconContainer && (this.isShowEmojiIconContainer = false);
       this.isShowMoreFuncContainer && (this.isShowMoreFuncContainer = false);
-      this.$emit('resetScrollHeight', 200);
+      this.$emit("resetScrollHeight", 200);
     },
     onShowEmojiIconContainer() {
       this.isShowEmojiIconContainer = !this.isShowEmojiIconContainer;
@@ -372,17 +379,26 @@ export default {
     appendEmojiIcon(emoji) {
       this.msgContent += emoji;
     },
+    deleteEmojs() {
+      var splitter = new GraphemeSplitter();
+      let graphemes = splitter.splitGraphemes(this.msgContent);
+      if (graphemes.length === 0) {
+        return; 
+      }
+      graphemes.pop();
+      this.msgContent = graphemes.join("");
+    },
     appendReEditTextMessage(content) {
-      if (this.msgContent !== '') {
+      if (this.msgContent !== "") {
         this.msgContent += content;
       } else {
         this.msgContent = content;
       }
     },
     openPhotoAlbum(type) {
-      if (type === 'camera') {
+      if (type === "camera") {
         this.$refs.imageComps.openCamera();
-      } else if (type === 'album') {
+      } else if (type === "album") {
         this.$refs.imageComps.openPhotoAlbum();
       }
     },
