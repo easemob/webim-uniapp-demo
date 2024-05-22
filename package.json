@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/easemob/webim-uniapp-demo#readme",
   "dependencies": {
-    "easemob-websdk": "latest"
+    "easemob-websdk": "latest",
+    "grapheme-splitter": "^1.0.4"
   }
 }
