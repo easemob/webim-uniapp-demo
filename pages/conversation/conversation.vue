@@ -19,7 +19,7 @@
       <view>
         <view class="search_container" v-if="isShowDefaultSearch">
           <view class="search_icon_box" @tap="openSearch">
-            <icon type="search" size="22"></icon>
+            <u-icon size="22" name="/static/images/new_ui/search_icon.png"></u-icon>
             <text class="search_text">搜索</text>
           </view>
         </view>
