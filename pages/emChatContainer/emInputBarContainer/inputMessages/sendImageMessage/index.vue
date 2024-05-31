@@ -184,7 +184,7 @@ export default {
           icon: 'none',
         });
       } finally {
-        this.$emit('onCloseAllShowContainer');
+        this.$emit('onCloseAllShowContainer', true);
       }
     },
   },

@@ -69,7 +69,7 @@ export default {
       }
     },
     onCloseAllShowContainer() {
-      this.$emit('onCloseAllShowContainer');
+      this.$emit('onCloseAllShowContainer', true);
     },
     entrySelectUserCard() {
       uni.navigateTo({

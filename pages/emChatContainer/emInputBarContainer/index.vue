@@ -92,36 +92,38 @@
         ></image>
       </view>
     </view>
-    <!-- 音频发送板块 -->
-    <view v-if="isShowAudioMessageContainer" class="chat-audio-container">
-      <RecordAudioContainer
-        @changeRecordAudioContainer="
-          () => (isShowAudioMessageContainer = false)
-        "
-      />
-    </view>
-    <!-- Emoji Icon选择板块 -->
-    <view v-if="isShowEmojiIconContainer" class="chat-emoji-picker-container">
-      <EmojiPickerContainer
-        @appendEmojiIcon="appendEmojiIcon"
-        @sendTextMessage="sendTextMessage"
-        @deleteEmojs="deleteEmojs"
-      />
-    </view>
-    <!-- 更多功能选择板块 -->
-    <view v-if="isShowMoreFuncContainer" class="chat-more-icon-container">
-      <MoreFuncContainer @onCloseAllShowContainer="onCloseAllShowContainer" />
-    </view>
-    <!-- 发送图片 -->
-    <SendImageMessage
-      ref="imageComps"
-      @onCloseAllShowContainer="onCloseAllShowContainer"
-    />
+
     <!-- 软键盘弹起占位容器 -->
     <view
       class="softkeyword-placeholder"
       :style="{ height: softkeyboardHeight + 'px' }"
-    ></view>
+    >
+      <!-- 音频发送板块 -->
+      <view v-if="isShowAudioMessageContainer" class="chat-audio-container">
+        <RecordAudioContainer
+          @changeRecordAudioContainer="
+            () => (isShowAudioMessageContainer = false)
+          "
+        />
+      </view>
+      <!-- Emoji Icon选择板块 -->
+      <view v-if="isShowEmojiIconContainer" class="chat-emoji-picker-container">
+        <EmojiPickerContainer
+          @appendEmojiIcon="appendEmojiIcon"
+          @sendTextMessage="sendTextMessage"
+          @deleteEmojs="deleteEmojs"
+        />
+      </view>
+      <!-- 更多功能选择板块 -->
+      <view v-if="isShowMoreFuncContainer" class="chat-more-icon-container">
+        <MoreFuncContainer @onCloseAllShowContainer="onCloseAllShowContainer" />
+      </view>
+      <!-- 发送图片 -->
+      <SendImageMessage
+        ref="imageComps"
+        @onCloseAllShowContainer="onCloseAllShowContainer"
+      />
+    </view>
     <!-- #ifdef H5 || APP-PLUS -->
     <!-- 小程序的宿主一般自带底部安全区 -->
     <view class="chat-input-bar-bottom-placeholder"></view>
@@ -130,23 +132,23 @@
 </template>
 
 <script>
-import { EMClient } from "@/EaseIM";
-import { CHAT_TYPE } from "@/EaseIM/constant";
-import { emMessages } from "@/EaseIM/emApis";
-import RecordAudioContainer from "./recordAudioContainer";
-import EmojiPickerContainer from "./emojiPickerContainer";
-import MoreFuncContainer from "./moreFuncContainer";
-import ReplyMessageContainer from "./replyMessageContainer";
-import EditMessageContainer from "./editMessageContainer";
-import SendImageMessage from "./inputMessages/sendImageMessage";
-import SendFileMessage from "./inputMessages/sendFileMessage";
-import { MESSAGE_TYPE } from "../../../EaseIM/constant";
+import { EMClient } from '@/EaseIM';
+import { CHAT_TYPE } from '@/EaseIM/constant';
+import { emMessages } from '@/EaseIM/emApis';
+import RecordAudioContainer from './recordAudioContainer';
+import EmojiPickerContainer from './emojiPickerContainer';
+import MoreFuncContainer from './moreFuncContainer';
+import ReplyMessageContainer from './replyMessageContainer';
+import EditMessageContainer from './editMessageContainer';
+import SendImageMessage from './inputMessages/sendImageMessage';
+import SendFileMessage from './inputMessages/sendFileMessage';
+import { MESSAGE_TYPE } from '../../../EaseIM/constant';
 const { sendDisplayMessages, sendCommandMessages, modifyDisplayMessages } =
   emMessages();
-const GraphemeSplitter = require("grapheme-splitter");
+const GraphemeSplitter = require('grapheme-splitter');
 
 export default {
-  name: "chat-input-bar",
+  name: 'chat-input-bar',
   components: {
     RecordAudioContainer,
     EmojiPickerContainer,
@@ -164,7 +166,7 @@ export default {
   },
   data() {
     return {
-      msgContent: "",
+      msgContent: '',
       cursorSpacing: 20,
       softkeyboardHeight: 0,
       isShowAudioMessageContainer: false,
@@ -179,7 +181,7 @@ export default {
     // #ifndef APP-NVUE
     const query = uni.createSelectorQuery().in(this);
     query
-      .select(".chat-input-bar-bottom-placeholder")
+      .select('.chat-input-bar-bottom-placeholder')
       .boundingClientRect((data) => {
         if (data && data.height) {
           this.cursorSpacing = data.height + 20;
@@ -220,7 +222,7 @@ export default {
       }
     },
     onInputBlur() {
-      this.onCloseAllShowContainer();
+      //   this.onCloseAllShowContainer();
     },
     onInput() {
       if (
@@ -235,14 +237,14 @@ export default {
     async sendTextMessage() {
       if (this.msgContent.match(/^\s*$/)) {
         uni.showToast({
-          title: "请输入内容",
-          icon: "none",
+          title: '请输入内容',
+          icon: 'none',
         });
         return;
       }
       let params = {
         // 消息类型。
-        type: "txt",
+        type: 'txt',
         // 消息内容。
         msg: this.msgContent,
         // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
@@ -261,27 +263,27 @@ export default {
         params.ext.msgQuote = {};
         params.ext.msgQuote =
           this.$refs.replyMessageContainerComps.extractMessageBodyValue();
-        console.log(">>>存在引用", params);
+        console.log('>>>存在引用', params);
       }
       try {
         const res = await sendDisplayMessages({ ...params });
-        console.log(">>>>>文本消息发送成功", res);
+        console.log('>>>>>文本消息发送成功', res);
       } catch (error) {
-        console.log(">>>>>文本消息发送失败", error);
+        console.log('>>>>>文本消息发送失败', error);
         if (error.type === 508) {
           uni.showToast({
-            title: "发送内容不合规",
-            icon: "none",
+            title: '发送内容不合规',
+            icon: 'none',
           });
         } else {
           uni.showToast({
-            title: "消息发送失败",
-            icon: "none",
+            title: '消息发送失败',
+            icon: 'none',
           });
         }
       } finally {
-        this.msgContent = "";
-        this.onCloseAllShowContainer();
+        this.msgContent = '';
+        this.onCloseAllShowContainer(true);
         this.isShowReplyMessageContainer &&
           (this.isShowReplyMessageContainer = false);
       }
@@ -296,23 +298,23 @@ export default {
       };
       try {
         const res = await modifyDisplayMessages(editMessageContent);
-        console.log(">>>>>>消息修改成功", res);
+        console.log('>>>>>>消息修改成功', res);
       } catch (error) {
-        console.log(">>>>>>修改消息失败", error);
+        console.log('>>>>>>修改消息失败', error);
         if (error?.type === 50) {
           uni.showToast({
-            icon: "none",
-            title: "该消息可编辑次数已达上限",
+            icon: 'none',
+            title: '该消息可编辑次数已达上限',
           });
         } else {
           uni.showToast({
-            icon: "none",
-            title: "消息编辑失败请稍后重试",
+            icon: 'none',
+            title: '消息编辑失败请稍后重试',
           });
         }
       } finally {
         this.isShowEditMessageContainer = false;
-        this.msgContent = "";
+        this.msgContent = '';
       }
     },
     //获取当前键入中开启状态
@@ -326,7 +328,7 @@ export default {
       const params = {
         type: MESSAGE_TYPE.CMD,
         // 消息类型。
-        action: "TypingBegin",
+        action: 'TypingBegin',
         // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
         to: this.chattingId,
         // 会话类型：单聊、群聊和聊天室分别为 `singleChat`、`groupChat` 和 `chatRoom`。
@@ -335,23 +337,39 @@ export default {
       try {
         await sendCommandMessages(params);
       } catch (error) {
-        console.log(">>>>>发送失败", error);
+        console.log('>>>>>发送失败', error);
       }
     },
     onShowAudioMessageContainer() {
       this.isShowAudioMessageContainer = !this.isShowAudioMessageContainer;
+      if (this.isShowAudioMessageContainer) {
+        this.softkeyboardHeight = 200;
+      } else {
+        this.softkeyboardHeight = 0;
+      }
       this.isShowEmojiIconContainer && (this.isShowEmojiIconContainer = false);
       this.isShowMoreFuncContainer && (this.isShowMoreFuncContainer = false);
-      this.$emit("resetScrollHeight", 200);
+      this.$emit('resetScrollHeight', 200);
     },
     onShowEmojiIconContainer() {
       this.isShowEmojiIconContainer = !this.isShowEmojiIconContainer;
+      //如果emoji表情框展开则给softkeyboardHeight一个撑开的高度
+      if (this.isShowEmojiIconContainer) {
+        this.softkeyboardHeight = 200;
+      } else {
+        this.softkeyboardHeight = 0;
+      }
       this.isShowAudioMessageContainer &&
         (this.isShowAudioMessageContainer = false);
       this.isShowMoreFuncContainer && (this.isShowMoreFuncContainer = false);
     },
     onShowMoreFuncContainer() {
       this.isShowMoreFuncContainer = !this.isShowMoreFuncContainer;
+      if (this.isShowMoreFuncContainer) {
+        this.softkeyboardHeight = 200;
+      } else {
+        this.softkeyboardHeight = 0;
+      }
       this.isShowAudioMessageContainer &&
         (this.isShowAudioMessageContainer = false);
       this.isShowEmojiIconContainer && (this.isShowEmojiIconContainer = false);
@@ -371,7 +389,11 @@ export default {
         (this.isShowReplyMessageContainer = false);
       this.onCloseAllShowContainer();
     },
-    onCloseAllShowContainer() {
+    onCloseAllShowContainer(isSended) {
+      //isSended 表示为发送消息后关闭所有弹出框，且关闭软键盘占位view
+      if (isSended && this.softkeyboardHeight > 0) {
+        this.softkeyboardHeight = 0;
+      }
       this.isShowAudioMessageContainer = false;
       this.isShowEmojiIconContainer = false;
       this.isShowMoreFuncContainer = false;
@@ -383,22 +405,22 @@ export default {
       var splitter = new GraphemeSplitter();
       let graphemes = splitter.splitGraphemes(this.msgContent);
       if (graphemes.length === 0) {
-        return; 
+        return;
       }
       graphemes.pop();
-      this.msgContent = graphemes.join("");
+      this.msgContent = graphemes.join('');
     },
     appendReEditTextMessage(content) {
-      if (this.msgContent !== "") {
+      if (this.msgContent !== '') {
         this.msgContent += content;
       } else {
         this.msgContent = content;
       }
     },
     openPhotoAlbum(type) {
-      if (type === "camera") {
+      if (type === 'camera') {
         this.$refs.imageComps.openCamera();
-      } else if (type === "album") {
+      } else if (type === 'album') {
         this.$refs.imageComps.openPhotoAlbum();
       }
     },
@@ -419,16 +441,19 @@ export default {
   background-color: #f8f8f8;
   padding: 10rpx 15rpx;
 }
+
 .chat-input-bar-bottom-placeholder {
   background-color: #f8f8f8;
   /* #ifndef APP-PLUS */
   height: env(safe-area-inset-bottom);
   /* #endif */
 }
+
 .softkeyword-placeholder {
   width: 100%;
   background-color: white;
 }
+
 .chat-input-container {
   flex: 1;
   display: flex;
@@ -441,6 +466,7 @@ export default {
   background-color: white;
   border-radius: 10rpx;
 }
+
 .chat-input-bottom-bar {
   width: 100%;
   height: 100rpx;
@@ -452,46 +478,53 @@ export default {
   box-sizing: border-box;
   background-color: white;
 }
+
 .input-bottom-bar-icon {
   width: 60rpx;
   height: 60rpx;
 }
+
 .input-bottom-bar-icon image {
   width: 100%;
   height: 100%;
 }
+
 .chat-input {
   flex: 1;
   font-size: 28rpx;
 }
+
 .chat-input-send {
   background-color: #007aff;
   margin: 10rpx 10rpx 10rpx 20rpx;
   border-radius: 10rpx;
   padding: 10rpx 30rpx;
 }
+
 .chat-input-send-text {
   color: white;
   font-size: 26rpx;
 }
+
 .chat-audio-icon-container,
 .chat-emoji-icon-container,
 .chat-cancel-icon-container {
   width: 30px;
   height: 30px;
 }
+
 .chat-audio-container {
   width: 100%;
-  height: 200px;
+  /* height: 200px; */
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
   background: #fff;
 }
+
 .chat-emoji-picker-container {
   width: 100%;
-  /* height: 300px; */
   background: #fff;
 }
 </style>

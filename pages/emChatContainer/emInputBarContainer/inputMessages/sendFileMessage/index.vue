@@ -101,7 +101,7 @@ export default {
         });
       } finally {
         uni.hideLoading();
-        this.$emit('onCloseAllShowContainer');
+        this.$emit('onCloseAllShowContainer', true);
       }
     },
     onUploadEnd(res) {
