@@ -19,7 +19,10 @@
       <view>
         <view class="search_container" v-if="isShowDefaultSearch">
           <view class="search_icon_box" @tap="openSearch">
-            <u-icon size="22" name="/static/images/new_ui/search_icon.png"></u-icon>
+            <u-icon
+              size="22"
+              name="/static/images/new_ui/search_icon.png"
+            ></u-icon>
             <text class="search_text">搜索</text>
           </view>
         </view>
@@ -429,13 +432,21 @@ export default {
         return this.$u.timeFrom(item?.time || item?.lastMessage?.time);
       };
     },
+    getMessageStatusCollection() {
+      return this.$store.getters.messageStatusCollection;
+    },
     //处理预览消息内容
     handleLastMsgContent() {
       return (msgBody) => {
         const { type, msg } = msgBody;
         let resultContent = '';
         //如果消息类型，在预设非展示文本类型中，就返回预设值
-        if (SESSION_MESSAGE_TYPE[type]) {
+        if (
+          this.getMessageStatusCollection[msgBody.id] &&
+          this.getMessageStatusCollection[msgBody.id] === 'recalled'
+        ) {
+          return '该消息已被撤回';
+        } else if (SESSION_MESSAGE_TYPE[type]) {
           resultContent = SESSION_MESSAGE_TYPE[type];
         } else if (type === MESSAGE_TYPE.CUSTOM) {
           //如果为自定义类型消息就匹配自定义消息对应的lastmsg文本
@@ -488,7 +499,7 @@ export default {
     this.setConversationListHeigth();
   },
   methods: {
-    handleDelete(conversationItem){
+    handleDelete(conversationItem) {
       uni.showModal({
         title: '确认删除？',
         confirmText: '删除',
