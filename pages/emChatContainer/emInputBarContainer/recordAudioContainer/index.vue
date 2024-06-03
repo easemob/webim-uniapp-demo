@@ -225,6 +225,7 @@ export default {
                   title: '录音时间太短',
                   icon: 'none',
                 });
+                this.$emit('changeRecordAudioContainer');
               } else {
                 const tempFilePath = window.URL.createObjectURL(blob);
                 resolve({ tempFilePath, duration });
@@ -244,6 +245,7 @@ export default {
                 title: '录音时间太短',
                 icon: 'none',
               });
+              this.$emit('changeRecordAudioContainer');
             } else {
               // 上传
               resolve({ tempFilePath: res.tempFilePath, duration });

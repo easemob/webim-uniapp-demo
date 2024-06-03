@@ -101,9 +101,7 @@
       <!-- 音频发送板块 -->
       <view v-if="isShowAudioMessageContainer" class="chat-audio-container">
         <RecordAudioContainer
-          @changeRecordAudioContainer="
-            () => (isShowAudioMessageContainer = false)
-          "
+          @changeRecordAudioContainer="changeRecordAudioContainer"
         />
       </view>
       <!-- Emoji Icon选择板块 -->
@@ -388,6 +386,12 @@ export default {
       this.isShowReplyMessageContainer &&
         (this.isShowReplyMessageContainer = false);
       this.onCloseAllShowContainer();
+    },
+    changeRecordAudioContainer() {
+      if (this.softkeyboardHeight > 0) {
+        this.softkeyboardHeight = 0;
+      }
+      this.isShowAudioMessageContainer = false;
     },
     onCloseAllShowContainer(isSended) {
       //isSended 表示为发送消息后关闭所有弹出框，且关闭软键盘占位view
