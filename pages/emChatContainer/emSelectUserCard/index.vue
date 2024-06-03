@@ -51,13 +51,7 @@
       <view class="content_box">
         <text class="send_target_title">发送给：</text>
         <view class="send_target_user_info">
-          <image
-            class="send_target_avatar"
-            :src="showFriendAvatar(chattingId)"
-          ></image>
-          <text class="send_target_nickname">{{
-            showFriendNickname({ userId: chattingId })
-          }}</text>
+          <text class="send_target_nickname">{{ sendTargetName }}</text>
         </view>
         <text class="wait_send_user_nickname"
           >[个人名片] {{ waitSendUserNickname || waitSendUserId || '' }}</text
@@ -76,7 +70,7 @@
 
 <script>
 import { emMessages } from '@/EaseIM/emApis';
-import { MESSAGE_TYPE } from '@/EaseIM/constant';
+import { MESSAGE_TYPE, CHAT_TYPE } from '@/EaseIM/constant';
 const { sendDisplayMessages } = emMessages();
 export default {
   data() {
@@ -106,6 +100,25 @@ export default {
     },
     friendUserInfoCollection() {
       return this.$store.getters.friendUserInfoCollection;
+    },
+    sendTargetName() {
+      const targetId = this.chattingId;
+      const targetChatType = this.chattingChatType;
+      if (targetChatType === CHAT_TYPE.SINGLE_CHAT) {
+        if (this.friendList.some((f) => f.userId === targetId)?.remark) {
+          return this.friendList.some((f) => f.userId === targetId).remark;
+        } else if (
+          this.friendUserInfoCollection[targetId] &&
+          this.friendUserInfoCollection[targetId]?.nickname
+        ) {
+          return this.friendUserInfoCollection[targetId].nickname;
+        } else {
+          return targetId;
+        }
+      }
+      if (targetChatType === CHAT_TYPE.GROUP_CHAT) {
+        return this.getGroupName(targetId);
+      }
     },
     //好友头像展示
     showFriendAvatar() {
@@ -137,9 +150,25 @@ export default {
         }
       };
     },
+    //群组名称
   },
   methods: {
     scrolltolower() {},
+    //群组名称
+    getGroupName(groupid) {
+      const joinedGroupList = this.$store.state.GroupStore.joinedGroupList;
+      let groupName = '';
+      if (joinedGroupList.length) {
+        joinedGroupList.forEach((item) => {
+          if (item.groupId == groupid) {
+            return (groupName = item.groupName);
+          }
+        });
+        return groupName;
+      } else {
+        return groupid;
+      }
+    },
     loginUserAvactar() {
       return (
         this.$store.state.LoginStore.loginUserProfiles?.avatarurl ||
