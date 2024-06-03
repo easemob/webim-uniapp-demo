@@ -335,7 +335,7 @@ export default {
       } catch (error) {
         console.log('>>>>>语音消息发送失败', error);
         uni.showToast({
-          title: `消息发送失败${error}`,
+          title: `消息发送失败${error.type}`,
           icon: 'none',
         });
       } finally {

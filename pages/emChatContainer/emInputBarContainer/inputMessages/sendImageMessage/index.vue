@@ -180,7 +180,7 @@ export default {
       } catch (error) {
         console.log('>>>>>图片消息发送失败', error);
         uni.showToast({
-          title: '消息发送失败',
+          title: `消息发送失败${error.type}`,
           icon: 'none',
         });
       } finally {

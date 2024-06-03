@@ -219,7 +219,7 @@ export default {
         }
       } catch (error) {
         uni.showToast({
-          title: '消息发送失败',
+          title: `消息发送失败${error.type}`,
           icon: 'none',
         });
       } finally {
