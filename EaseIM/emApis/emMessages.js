@@ -100,21 +100,9 @@ const emMessages = () => {
       to: to,
       chatType: chatType,
     });
-    const key = getEMKey(
-      EMClient.user,
-      messageBody.from || EMClient.user,
-      messageBody.to,
-      messageBody.chatType
-    );
     return new Promise((resolve, reject) => {
       EMClient.modifyMessage({ messageId: id, modifiedMessage: textMessage })
         .then((res) => {
-          console.log(res.message);
-          store.commit('MODIFY_MESSAGE_FROM_COLLECTION', {
-            key: key,
-            mid: res.message.id,
-            message: { ...res.message },
-          });
           resolve(res);
         })
         .catch((e) => {

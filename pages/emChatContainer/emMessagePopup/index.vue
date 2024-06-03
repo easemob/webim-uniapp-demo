@@ -27,8 +27,8 @@
           ></u-icon>
           <text class="message_more_func_item_title">回复</text>
         </view>
-        <!-- 编辑 -->
-        <view
+        <!-- 编辑(该功能由于使用z-pagging视图更新机制,在更新最新一条消息时存在缺陷因此暂时注释) -->
+        <!-- <view
           v-if="isSelf && msgBody.type === MESSAGE_TYPE.TEXT"
           class="message_more_func_item u-border-bottom"
           @click="editMessage"
@@ -39,7 +39,7 @@
             name="/static/images/new_ui/message/messagPopup/edit_msg_icon.png"
           ></u-icon>
           <text class="message_more_func_item_title">编辑</text>
-        </view>
+        </view> -->
         <!-- 删除 -->
         <view
           class="message_more_func_item u-border-bottom"

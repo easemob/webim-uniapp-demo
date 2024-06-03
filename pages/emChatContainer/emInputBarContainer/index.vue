@@ -292,10 +292,15 @@ export default {
         msg: this.msgContent,
         to: this.checkedPopupMsgBody.to,
         id: this.checkedPopupMsgBody.id,
-        chatType: CHAT_TYPE.SINGLE_CHAT,
+        chatType: this.checkedPopupMsgBody.chatType,
       };
       try {
         const res = await modifyDisplayMessages(editMessageContent);
+        this.$store.commit('MODIFY_MESSAGE_FROM_COLLECTION', {
+          key: editMessageContent.to,
+          mid: editMessageContent.id,
+          msg: editMessageContent.msg,
+        });
         console.log('>>>>>>消息修改成功', res);
       } catch (error) {
         console.log('>>>>>>修改消息失败', error);

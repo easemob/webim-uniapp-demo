@@ -1,6 +1,11 @@
 import { EMClient } from '../index';
 import store from '@/store';
-import { CHAT_TYPE, HANDLER_EVENT_NAME, MESSAGE_STATUS } from '../constant';
+import {
+  CHAT_TYPE,
+  HANDLER_EVENT_NAME,
+  MESSAGE_STATUS,
+  MESSAGE_TYPE,
+} from '../constant';
 import { getEMKey } from '@/EaseIM/utils';
 export const emMessagesListener = (callback, listenerEventName) => {
   console.log('消息监听已挂载');
@@ -126,11 +131,13 @@ export const emMessagesListener = (callback, listenerEventName) => {
         message.to,
         message.chatType
       );
-      store.commit('MODIFY_MESSAGE_FROM_COLLECTION', {
-        key,
-        mid: message.id,
-        message,
-      });
+      if (message.type === MESSAGE_TYPE.TEXT) {
+        store.commit('MODIFY_MESSAGE_FROM_COLLECTION', {
+          key,
+          mid: message.id,
+          msg: message.msg,
+        });
+      }
     },
   };
   EMClient.removeEventHandler(

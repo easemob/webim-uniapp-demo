@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import store from '../index';
 import { emMessages } from '@/EaseIM/emApis';
 import { MESSAGE_STATUS, MESSAGE_TYPE } from '@/EaseIM/constant';
 import ConversationStore from './conversation';
@@ -58,18 +59,20 @@ const MessageStore = {
       }
     },
     MODIFY_MESSAGE_FROM_COLLECTION(state, payload) {
-      const { key, mid, message } = payload;
+      //目前仅做了针对文本的修改调整
+      const { key, mid, msg } = payload;
       if (state.messageCollection[key]) {
-        const _index = state.messageCollection[key].findIndex(
-          (o) => o.id === mid
-        );
-        _index >= 0 &&
-          state.messageCollection[key].splice(_index, 1, { ...message });
-        console.log('>>>>>找到要修改修改后的消息', _index);
+        state.messageCollection[key].map((m) => {
+          if (m.id === mid) {
+            return { ...m, msg: msg };
+          }
+          return m;
+        });
+        //执行更新会话列表(如果修改的消息是会话的lastMsg因此需要进行更新会话列表。)
+        store.dispatch('updateConversationLastMsg', { conversationId: key });
         if (ConversationStore.state.chattingId === key) {
-          uni.$emit(EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_MODIFY, message);
+          uni.$emit(EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_MODIFY, {});
         }
-        // Object.assign(res, payload?.message);
       }
     },
     UPDATE_MESSAGE_FROM_SERVER(state, payload) {
