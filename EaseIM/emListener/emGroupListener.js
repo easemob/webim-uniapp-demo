@@ -127,8 +127,18 @@ export const emGroupListener = (callback, listenerEventName) => {
         // 转让群组。原群主和新群主会收到该回调。
         case 'changeOwner':
           //TODO 待处理store中的owner变更
+          /**
+           * changeOwner 仅有转让的人与被转让的新群主会收到该事件。
+           * 以下处理为临时处理，后续changeOwner将优化携带被移交的群主。
+           */
           msgBody.grayInformType = GRAY_INFORM_TYPE_GROUP.CHANGE_OWNER;
           addGrayInformMessage(msgBody);
+          if (from !== EMClient) {
+            store.commit('TRANSFER_GROUP_OWNER', {
+              groupId: groupId,
+              newOwner: EMClient.user,
+            });
+          }
           break;
         // 群组所有者和管理员拉用户进群时，无需用户确认时会触发该回调。被拉进群的用户会收到该回调。
         case 'directJoined':
