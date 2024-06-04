@@ -404,7 +404,7 @@ export default {
             }
             params.initial = initial;
             contactsObj[initial].push(params);
-            indexList.push(userId.substring(0, 1).toUpperCase());
+            indexList.push(initial);
           } else {
             const initial = '#';
             params.initial = initial;
@@ -415,21 +415,29 @@ export default {
             indexList.push('#');
           }
         });
-      if (type === 'search') {
-        this.searchFriendResultList = Object.values(contactsObj);
-      } else {
-        this.sortedContactsList = Object.values(contactsObj);
-      }
-      this.indexList = [...new Set(indexList)].sort((a, b) => {
-        // 如果a是"#"，则将其排在前面
+
+      // 对索引列表进行排序，并创建一个新的有序对象
+      const sortedIndexList = [...new Set(indexList)].sort((a, b) => {
         if (a === '#') return -1;
-        // 如果b是"#"，则将其排在前面
         if (b === '#') return 1;
-        // 否则，按照字母顺序排序
-        console.log('a b', b);
         return a.localeCompare(b);
       });
+
+      // 根据排序后的索引列表创建一个新的有序对象
+      let sortedContactsObj = {};
+      sortedIndexList.forEach((initial) => {
+        sortedContactsObj[initial] = contactsObj[initial];
+      });
+
+      if (type === 'search') {
+        this.searchFriendResultList = Object.values(sortedContactsObj);
+      } else {
+        this.sortedContactsList = Object.values(sortedContactsObj);
+      }
+
+      this.indexList = sortedIndexList;
     },
+
     onSelectIndex(value) {
       console.log('>>>>>>>', value);
     },
