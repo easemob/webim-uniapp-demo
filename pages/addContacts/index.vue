@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import { emContacts, emUserInfos, emGroups } from "@/EaseIM/emApis";
+import { emContacts, emUserInfos, emGroups } from '@/EaseIM/emApis';
 const { addContactFromServer } = emContacts();
 const { fetchOtherInfoFromServer } = emUserInfos();
 const { getGroupInfosFromServer, joinPublicGroup } = emGroups();
@@ -160,9 +160,9 @@ export default {
   data() {
     return {
       isOpenedSearch: false,
-      list: ["找人", "找群"],
+      list: ['找人', '找群'],
       current: 0,
-      searchKeyword: "",
+      searchKeyword: '',
       searchResult: [],
     };
   },
@@ -184,35 +184,37 @@ export default {
     },
     cancelSearch() {
       this.isOpenedSearch = false;
-      this.searchKeyword = "";
+      this.searchKeyword = '';
       this.searchResult = [];
     },
     checkoutSearchKeyword(type) {
-      if (type === "friend") {
-        if (this.searchKeyword == "") {
-          this.$refs.uToast.show({ message: "请输入要添加的用户！" });
+      if (type === 'friend') {
+        if (this.searchKeyword == '') {
+          this.$refs.uToast.show({ message: '请输入要添加的用户！' });
           return false;
         } else if (this.searchKeyword.toLowerCase() === this.loginUserId) {
-          this.$refs.uToast.show({ message: "不可添加自己为好友！" });
+          this.$refs.uToast.show({ message: '不可添加自己为好友！' });
           return false;
-        } else if (this.friendList.includes(this.searchKeyword)) {
+        } else if (
+          this.friendList.some((i) => i.userId === this.searchKeyword)
+        ) {
           this.$refs.uToast.show({
-            message: "已经是你的好友",
+            message: '已经是你的好友',
           });
           return false;
         } else {
           return true;
         }
       }
-      if (type === "group") {
-        if (this.searchKeyword == "") {
-          this.$refs.uToast.show({ message: "请输入要加入的群组ID！" });
+      if (type === 'group') {
+        if (this.searchKeyword == '') {
+          this.$refs.uToast.show({ message: '请输入要加入的群组ID！' });
           return false;
         } else if (
           this.groupList.some((item) => this.searchKeyword === item.groupid)
         ) {
           this.$refs.uToast.show({
-            message: "已加入了该群组",
+            message: '已加入了该群组',
           });
           return false;
         } else {
@@ -223,22 +225,31 @@ export default {
     async actionSearch() {
       //搜索好友
       if (this.current === 0) {
-        if (!this.checkoutSearchKeyword("friend")) return;
+        if (!this.checkoutSearchKeyword('friend')) return;
         const result = await fetchOtherInfoFromServer([this.searchKeyword]);
         const userInfo = result[this.searchKeyword];
         userInfo.userId = this.searchKeyword;
-        console.log(">>>>>>成功获取要添加的好友信息", userInfo);
+        console.log('>>>>>>成功获取要添加的好友信息', userInfo);
         this.searchResult = [userInfo];
       }
       //搜索群组
       if (this.current === 1) {
-        if (!this.checkoutSearchKeyword("group")) return;
+        if (!this.checkoutSearchKeyword('group')) return;
         try {
           const result = await getGroupInfosFromServer(this.searchKeyword);
-          console.log(">>>>>>>result", result);
+          console.log('>>>>>>>result', result);
           this.searchResult = result;
         } catch (error) {
-          console.log("error", error);
+          console.log('error', error);
+          if (
+            error?.data?.error_description &&
+            error?.data?.error_description.includes('group member permission')
+          ) {
+            this.$refs.uToast.show({
+              message: '该群为私有群，无法申请加入',
+            });
+            return;
+          }
           this.$refs.uToast.show({
             message: error.data.error_description,
           });
@@ -249,20 +260,20 @@ export default {
     addFriend() {
       const userId = this.searchResult[0].userId;
       if (!userId) {
-        this.$refs.uToast.show({ message: "请输入要添加的用户！" });
+        this.$refs.uToast.show({ message: '请输入要添加的用户！' });
         return false;
       }
       try {
-        addContactFromServer(userId, "加个好友吧！");
+        addContactFromServer(userId, '加个好友吧！');
         this.$refs.uToast.show({
-          message: "已发出好友申请",
+          message: '已发出好友申请',
         });
         this.searchResult[0] &&
-          this.$set(this.searchResult[0], "sendAddMsg", true);
+          this.$set(this.searchResult[0], 'sendAddMsg', true);
       } catch (error) {
         console.log(`添加好友失败，错误信息：${JSON.stringify(error)}`);
         this.$refs.uToast.show({
-          message: "好友添加失败",
+          message: '好友添加失败',
         });
       }
     },
@@ -270,38 +281,48 @@ export default {
     async applyJoinGroup() {
       const groupId = this.searchResult[0].id;
       if (!groupId) {
-        this.$refs.uToast.show({ message: "请输入要加入的群组ID！" });
+        this.$refs.uToast.show({ message: '请输入要加入的群组ID！' });
         return false;
       }
       try {
         await joinPublicGroup(groupId);
         this.$refs.uToast.show({
-          message: "已加入该群组",
+          message: '已加入该群组',
         });
         if (this.searchResult[0] && this.searchResult[0]?.membersonly) {
           this.$refs.uToast.show({
-            message: "已申请加入群组，等待审批！",
+            message: '已申请加入群组，等待审批！',
           });
           this.searchResult[0] &&
-            this.$set(this.searchResult[0], "sendAddMsg", true);
+            this.$set(this.searchResult[0], 'sendAddMsg', true);
         } else {
           this.searchResult[0] &&
-            this.$set(this.searchResult[0], "joined", true);
+            this.$set(this.searchResult[0], 'joined', true);
         }
       } catch (error) {
-        console.log(`加入群组失败，错误信息：${JSON.stringify(error)}`);
-        this.$refs.uToast.show({
-          message: "加入群组失败",
-        });
+        console.log('加入群组失败', error);
+        if (
+          error?.data?.error_description &&
+          error?.data?.error_description.includes('already in group')
+        ) {
+          uni.showToast({
+            title: '你已加入该群组',
+            icon: 'none',
+          });
+        } else {
+          this.$refs.uToast.show({
+            message: '加入群组失败',
+          });
+        }
       }
     },
     entryChatMessagePage() {
-      console.log(">>>>执行跳转进入聊天消息页");
+      console.log('>>>>执行跳转进入聊天消息页');
     },
   },
 };
 </script>
 
 <style scoped>
-@import "./index.css";
+@import './index.css';
 </style>
