@@ -205,14 +205,14 @@
                 v-if="!receiceItem.isHandled"
                 size="mini"
                 type="primary"
-                text="加入"
+                text="待处理"
                 @click="onAddGroup(receiceItem)"
               ></u-button>
               <u-button
                 v-if="receiceItem.added"
                 size="mini"
                 disabled
-                text="已加入"
+                text="已处理"
                 plain
               ></u-button>
             </view>
@@ -294,13 +294,18 @@ export default {
         await this.$store.dispatch('fetchJoinedGroupList', {
           isInit: true,
         });
-        this.$store.commit('UPDATE_RECEIVE_INVITE_LIST', item);
+        uni.showToast({
+          title: '加入群组成功',
+          icon: 'none',
+        });
       } catch (error) {
         console.log('error', error);
         uni.showToast({
           title: '加入群组失败',
           icon: 'none',
         });
+      } finally {
+        this.$store.commit('UPDATE_RECEIVE_INVITE_LIST', item);
       }
     },
   },
