@@ -64,7 +64,8 @@
         ></u-icon>
         <text class="setting_title" slot="title">通用</text>
       </u-cell>
-      <u-cell isLink @click="entryNoDistrubingSettingPage">
+      <!-- 消息通知该功能与实际原生端推送相关，但目前暂无uniApp集成环信推送相关功能因此暂时注释。 -->
+      <!-- <u-cell isLink @click="entryNoDistrubingSettingPage">
         <u-icon
           slot="icon"
           size="32"
@@ -72,7 +73,7 @@
           isLink
         ></u-icon>
         <text class="setting_title" slot="title">消息通知</text>
-      </u-cell>
+      </u-cell> -->
       <u-cell isLink @click="entryPrivacySettingPage">
         <u-icon
           slot="icon"
@@ -165,8 +166,8 @@
 </template>
 
 <script>
-import { EMClient } from "@/EaseIM";
-import { emConnect, emPresence } from "@/EaseIM/emApis";
+import { EMClient } from '@/EaseIM';
+import { emConnect, emPresence } from '@/EaseIM/emApis';
 const { closeEaseIM } = emConnect();
 const { publishPresence } = emPresence();
 export default {
@@ -175,38 +176,38 @@ export default {
       loginUserId: EMClient.user,
       isShowPresenceSettings: false,
       isShowPresenceCustomModal: false,
-      customPresence: "",
-      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
+      customPresence: '',
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
       presenceList: [
         {
-          name: "在线",
+          name: '在线',
           type: 0,
-          color: "#009EFF",
-          fontSize: "16px",
+          color: '#009EFF',
+          fontSize: '16px',
         },
         {
-          name: "离线",
+          name: '离线',
           type: 1,
-          color: "#009EFF",
-          fontSize: "16px",
+          color: '#009EFF',
+          fontSize: '16px',
         },
         {
-          name: "离开",
+          name: '离开',
           type: 2,
-          color: "#009EFF",
-          fontSize: "16px",
+          color: '#009EFF',
+          fontSize: '16px',
         },
         {
-          name: "请勿打扰",
+          name: '请勿打扰',
           type: 3,
-          color: "#009EFF",
-          fontSize: "16px",
+          color: '#009EFF',
+          fontSize: '16px',
         },
         {
-          name: "自定义",
+          name: '自定义',
           type: 4,
-          color: "#009EFF",
-          fontSize: "16px",
+          color: '#009EFF',
+          fontSize: '16px',
         },
       ],
     };
@@ -239,7 +240,7 @@ export default {
       if (this.loginUserProfiles.sign) {
         return this.loginUserProfiles.sign;
       } else {
-        return "无个性，不签名。";
+        return '无个性，不签名。';
       }
     },
     getEasemobUniAppSDKVersion() {
@@ -259,25 +260,25 @@ export default {
         if (isOnline) {
           if (presenceInfo.ext) {
             switch (presenceInfo.ext) {
-              case "Cloaking":
-                return "请勿打扰";
-              case "Online":
-                return "在线";
-              case "Leave":
-                return "离开";
-              case "Offline":
-                return "离线";
+              case 'Cloaking':
+                return '请勿打扰';
+              case 'Online':
+                return '在线';
+              case 'Leave':
+                return '离开';
+              case 'Offline':
+                return '离线';
               default:
                 return presenceInfo.ext;
             }
           } else {
-            return "在线";
+            return '在线';
           }
         } else {
-          return "离线";
+          return '离线';
         }
       }
-      return ""; // 如果没有找到用户的在线状态，默认返回 "滋滋"
+      return ''; // 如果没有找到用户的在线状态，默认返回 "滋滋"
     },
   },
   methods: {
@@ -287,15 +288,15 @@ export default {
         data: this.loginUserId,
         success: (res) => {
           uni.showToast({
-            title: "已复制",
-            icon: "none",
+            title: '已复制',
+            icon: 'none',
             duration: 1000,
           });
         },
         fail: () => {
           uni.showToast({
-            title: "复制失败",
-            icon: "none",
+            title: '复制失败',
+            icon: 'none',
             duration: 1000,
           });
         },
@@ -304,16 +305,16 @@ export default {
     //custom presence
     cancelSettingPresence() {
       this.isShowPresenceCustomModal = false;
-      this.customPresence = "";
+      this.customPresence = '';
     },
     confirmSettingPresence() {
       publishPresence(this.customPresence);
       this.isShowPresenceCustomModal = false;
-      this.customPresence = "";
+      this.customPresence = '';
     },
     entryProfilePage() {
       uni.navigateTo({
-        url: "../mine/myProfile",
+        url: '../mine/myProfile',
       });
     },
     // 点击设置presence
@@ -321,19 +322,19 @@ export default {
       if (e.type === 4) {
         this.isShowPresenceCustomModal = true;
       } else {
-        let presenceValue = "";
+        let presenceValue = '';
         switch (e.type) {
           case 0:
-            presenceValue = "Online";
+            presenceValue = 'Online';
             break;
           case 1:
-            presenceValue = "Offline";
+            presenceValue = 'Offline';
             break;
           case 2:
-            presenceValue = "Leave";
+            presenceValue = 'Leave';
             break;
           case 3:
-            presenceValue = "Cloaking";
+            presenceValue = 'Cloaking';
             break;
         }
         publishPresence(presenceValue);
@@ -342,50 +343,50 @@ export default {
     //跳转至通用设置
     entryGeneralSettingPage() {
       uni.navigateTo({
-        url: "../mine/generalSetting",
+        url: '../mine/generalSetting',
       });
     },
     //跳转至消息免打扰设置
     entryNoDistrubingSettingPage() {
       uni.navigateTo({
-        url: "../mine/noDisturbingSetting",
+        url: '../mine/noDisturbingSetting',
       });
     },
     //跳转至隐私设置
     entryPrivacySettingPage() {
       uni.navigateTo({
-        url: "../mine/privacySetting",
+        url: '../mine/privacySetting',
       });
     },
     entryAboutEasemobPage() {
       uni.navigateTo({
-        url: "../mine/aboutEasemob",
+        url: '../mine/aboutEasemob',
       });
     },
     //退出登录
     logoutEM: function () {
       uni.showModal({
-        title: "确认退出当前账号？",
+        title: '确认退出当前账号？',
         success: (res) => {
           if (res.confirm) {
             //关闭环信websocket连接。
             closeEaseIM();
             //reset vuex中缓存数据
-            this.$store.commit("RESET_STORE");
+            this.$store.commit('RESET_STORE');
             uni.redirectTo({
-              url: "../login/login",
+              url: '../login/login',
             });
             //清除本地缓存登录用户信息
-            uni.removeStorageSync("EM_LOGIN_INFOS");
+            uni.removeStorageSync('EM_LOGIN_INFOS');
           }
         },
       });
 
-      console.log("first");
+      console.log('first');
     },
   },
 };
 </script>
 <style>
-@import "./mine.css";
+@import './mine.css';
 </style>
