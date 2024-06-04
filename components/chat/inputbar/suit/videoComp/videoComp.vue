@@ -72,19 +72,21 @@ export default {
                 to: me.getSendToParam(),
                 roomType: false,
                 chatType: me.chatType,
-                success: function (argument) {
+                success: function (id, serverMsgId) {
 									disp.fire('em.chat.sendSuccess', id);
+                  msg.id = serverMsgId;
+                  msg.body.id = serverMsgId;
+                  let obj = {
+                    msg: msg,
+                    type: msgType.VIDEO,
+                  };
+                  me.saveSendMsg(obj);
 								}
               });
               if (me.isGroupChat()) {
                 msg.setGroup("groupchat");
               }
               WebIM.conn.send(msg.body);
-              let obj = {
-                msg: msg,
-                type: msgType.VIDEO,
-              };
-              me.saveSendMsg(obj);
             },
           });
         },

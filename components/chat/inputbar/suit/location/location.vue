@@ -65,7 +65,15 @@ export default {
                 addr: respData.address,
                 chatType: me.chatType,
 
-                success(id, serverMsgId) {}
+                success(id, serverMsgId) {
+                  msg.id = serverMsgId;
+                  msg.body.id = serverMsgId;
+                  let obj = {
+                    msg: msg,
+                    type: msgType.IMAGE
+                  }
+                  me.saveSendMsg(obj);
+                }
 
               });
 
@@ -74,11 +82,6 @@ export default {
               }
 
               WebIM.conn.send(msg.body);
-                let obj = {
-                  msg: msg,
-                  type: msgType.IMAGE
-                }
-              me.saveSendMsg(obj);
             }
 
           });

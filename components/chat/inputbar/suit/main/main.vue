@@ -151,6 +151,13 @@ export default {
           me.$parent.cancelEmoji()
           me.$parent.closeFunModal()
           disp.fire("em.chat.sendSuccess", id, me.userMessage);
+          msg.id = serverMsgId;
+          msg.body.id = serverMsgId;
+          let obj = {
+            msg: msg,
+            type: msgType.TEXT,
+          };
+          me.saveSendMsg(obj);
         },
         fail(id, serverMsgId) {
           console.log("失败了");
@@ -162,11 +169,6 @@ export default {
 		msg.setChatType("groupchat");
       }
         WebIM.conn.send(msg.body);
-        let obj = {
-          msg: msg,
-          type: msgType.TEXT,
-        };
-        this.saveSendMsg(obj);
       this.userMessage = "";
       this.inputMessage = "";
       uni.hideKeyboard();
