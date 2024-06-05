@@ -306,9 +306,9 @@ import {
   SESSION_MESSAGE_TYPE,
   CUSTOM_TYPE,
   CHAT_TYPE,
-} from '@/EaseIM/constant';
-import swipeDelete from '../../components/swipedelete/swipedelete';
-import { emConversation } from '@/EaseIM/emApis';
+} from "@/EaseIM/constant";
+import swipeDelete from "../../components/swipedelete/swipedelete";
+import { emConversation } from "@/EaseIM/emApis";
 const { sendChannelAck } = emConversation();
 const tabBarHeight = 50;
 const navBarHeight = 44;
@@ -319,36 +319,36 @@ export default {
       MESSAGE_TYPE,
       isShowDefaultSearch: true,
       searchResConversationList: [], //开启搜索时的会话列表
-      searchInputKeywords: '',
-      conversationListHeight: '100vh',
-      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
-      defaultGroupAvatar: '/static/images/new_ui/defaultGroupAvatar.png',
+      searchInputKeywords: "",
+      conversationListHeight: "100vh",
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
+      defaultGroupAvatar: "/static/images/new_ui/defaultGroupAvatar.png",
       longPressCheckedConversationItem: {},
       isShowMoreFunction: false,
       moreFunctionList: [
         {
-          name: '会话置顶',
+          name: "会话置顶",
           type: 1,
-          color: '#009EFF',
-          fontSize: '15',
+          color: "#009EFF",
+          fontSize: "15",
         },
         {
-          name: '会话免打扰',
+          name: "会话免打扰",
           type: 2,
-          color: '#009EFF',
-          fontSize: '15',
+          color: "#009EFF",
+          fontSize: "15",
         },
         {
-          name: '标记已读',
+          name: "标记已读",
           type: 3,
-          color: '#009EFF',
-          fontSize: '15',
+          color: "#009EFF",
+          fontSize: "15",
         },
         {
-          name: '删除会话',
+          name: "删除会话",
           type: 0,
-          color: '#FF002B',
-          fontSize: '15',
+          color: "#FF002B",
+          fontSize: "15",
         },
       ],
     };
@@ -403,11 +403,12 @@ export default {
       return (conversationItem) => {
         const { conversationId, conversationType } = conversationItem;
         if (conversationType === CHAT_TYPE.SINGLE_CHAT) {
-          if (
-            this.friendList.some((f) => f.userId === conversationId)?.remark
-          ) {
-            return this.friendList.some((f) => f.userId === conversationId)
-              .remark;
+          // 使用 find() 方法代替 some() 来获取备注名
+          const friend = this.friendList.find(
+            (f) => f.userId === conversationId
+          );
+          if (friend?.remark) {
+            return friend.remark;
           } else if (
             this.friendUserInfoCollection[conversationId] &&
             this.friendUserInfoCollection[conversationId]?.nickname
@@ -439,13 +440,13 @@ export default {
     handleLastMsgContent() {
       return (msgBody) => {
         const { type, msg } = msgBody;
-        let resultContent = '';
+        let resultContent = "";
         //如果消息类型，在预设非展示文本类型中，就返回预设值
         if (
           this.getMessageStatusCollection[msgBody.id] &&
-          this.getMessageStatusCollection[msgBody.id] === 'recalled'
+          this.getMessageStatusCollection[msgBody.id] === "recalled"
         ) {
-          return '该消息已被撤回';
+          return "该消息已被撤回";
         } else if (SESSION_MESSAGE_TYPE[type]) {
           resultContent = SESSION_MESSAGE_TYPE[type];
         } else if (type === MESSAGE_TYPE.CUSTOM) {
@@ -453,7 +454,7 @@ export default {
           if (msgBody.customEvent) {
             (CUSTOM_TYPE[msgBody.customEvent] &&
               (resultContent = CUSTOM_TYPE[msgBody.customEvent])) ||
-              '';
+              "";
           }
         } else {
           resultContent = msg;
@@ -484,16 +485,16 @@ export default {
       return (conversationId) => {
         const silentStatus =
           this.$store.getters.silentConversationMap[conversationId]?.type ===
-          'NONE';
+          "NONE";
         return silentStatus;
       };
     },
   },
   created() {
-    console.log('converstaion created');
-    this.$store.dispatch('fetchPinConversationList');
+    console.log("converstaion created");
+    this.$store.dispatch("fetchPinConversationList");
     if (!this.conversationList.length) {
-      this.$store.dispatch('fetchConversationList');
+      this.$store.dispatch("fetchConversationList");
     }
     uni.hideHomeButton && uni.hideHomeButton();
     this.setConversationListHeigth();
@@ -501,22 +502,22 @@ export default {
   methods: {
     handleDelete(conversationItem) {
       uni.showModal({
-        title: '确认删除？',
-        confirmText: '删除',
+        title: "确认删除？",
+        confirmText: "删除",
         success: async (res) => {
           if (res.confirm) {
-            this.$store.dispatch('deleteConversation', {
+            this.$store.dispatch("deleteConversation", {
               ...conversationItem,
             });
           }
         },
         fail: function (err) {
           uni.showToast({
-            title: '删除失败',
-            icon: 'none',
+            title: "删除失败",
+            icon: "none",
             duration: 2000,
           });
-          console.log('删除失败', err);
+          console.log("删除失败", err);
         },
       });
     },
@@ -527,7 +528,7 @@ export default {
           const statusBarHeight = res.statusBarHeight;
           //底部安全区高度
           const safeAreaBottom = res.safeAreaInsets.bottom;
-          console.log('safeAreaBottom', safeAreaBottom);
+          console.log("safeAreaBottom", safeAreaBottom);
           this.conversationListHeight =
             res.windowHeight -
             (tabBarHeight +
@@ -539,12 +540,12 @@ export default {
       });
     },
     scrolltolower() {
-      console.log('>>>>>>list触底');
+      console.log(">>>>>>list触底");
     },
     //群组名称
     getGroupName(groupid) {
       const joinedGroupList = this.$store.state.GroupStore.joinedGroupList;
-      let groupName = '';
+      let groupName = "";
       if (joinedGroupList.length) {
         joinedGroupList.forEach((item) => {
           if (item.groupId == groupid) {
@@ -562,7 +563,7 @@ export default {
     },
     //取消搜索模式
     cancelSearch() {
-      this.searchInputKeywords = '';
+      this.searchInputKeywords = "";
       this.searchResConversationList = [];
       this.isShowDefaultSearch = true;
     },
@@ -599,7 +600,7 @@ export default {
               }
             }
             if (conversationType === CHAT_TYPE.GROUP_CHAT) {
-              console.log('>>>>group chat lastMessage', lastMessage);
+              console.log(">>>>group chat lastMessage", lastMessage);
               return (
                 conversationId.indexOf(keyWord) > -1 ||
                 this.getGroupName(conversationId).indexOf(keyWord) > -1 ||
@@ -609,7 +610,7 @@ export default {
           }
         );
       }
-      console.log('>>>>>执行搜索', resConversationList);
+      console.log(">>>>>执行搜索", resConversationList);
       this.searchResConversationList = [...resConversationList];
     },
     //长按会话事件
@@ -618,7 +619,7 @@ export default {
         const silentStatus =
           this.$store.getters.silentConversationMap[
             conversationItem?.conversationId
-          ]?.type === 'NONE';
+          ]?.type === "NONE";
         this.longPressCheckedConversationItem = { ...conversationItem };
         this.isShowMoreFunction = true;
         //长按时选项文本调整
@@ -627,18 +628,18 @@ export default {
             case 1:
               {
                 if (conversationItem.isPinned) {
-                  item.name = '取消置顶';
+                  item.name = "取消置顶";
                 } else {
-                  item.name = '置顶';
+                  item.name = "置顶";
                 }
               }
               break;
             case 2:
               {
                 if (silentStatus) {
-                  item.name = '取消免打扰';
+                  item.name = "取消免打扰";
                 } else {
-                  item.name = '免打扰';
+                  item.name = "免打扰";
                 }
               }
               break;
@@ -647,9 +648,9 @@ export default {
                 conversationItem?.unReadCount > 0 ||
                 !conversationItem.isRead
               ) {
-                item.name = '标记已读';
+                item.name = "标记已读";
               } else {
-                item.name = '标记未读';
+                item.name = "标记未读";
               }
             }
             default:
@@ -684,27 +685,27 @@ export default {
     handlePinConversationItem() {
       const conversationItem = { ...this.longPressCheckedConversationItem };
       conversationItem.isPinned = !conversationItem.isPinned;
-      this.$store.dispatch('pinConversationItem', conversationItem);
+      this.$store.dispatch("pinConversationItem", conversationItem);
     },
     //删除会话
     deleteConversationItem: function () {
       uni.showModal({
-        title: '确认删除？',
-        confirmText: '删除',
+        title: "确认删除？",
+        confirmText: "删除",
         success: async (res) => {
           if (res.confirm) {
-            this.$store.dispatch('deleteConversation', {
+            this.$store.dispatch("deleteConversation", {
               ...this.longPressCheckedConversationItem,
             });
           }
         },
         fail: function (err) {
           uni.showToast({
-            title: '删除失败',
-            icon: 'none',
+            title: "删除失败",
+            icon: "none",
             duration: 2000,
           });
-          console.log('删除失败', err);
+          console.log("删除失败", err);
         },
       });
     },
@@ -714,21 +715,21 @@ export default {
         this.longPressCheckedConversationItem;
       const silentStatus =
         this.$store.getters.silentConversationMap[conversationId]?.type ===
-        'NONE';
+        "NONE";
       const params = {
         conversationId,
         type: conversationType,
       };
       if (silentStatus) {
-        this.$store.dispatch('setConversationSilentMode', {
+        this.$store.dispatch("setConversationSilentMode", {
           ...params,
         });
       } else {
         (params.options = {
           paramType: 0,
-          remindType: 'NONE',
+          remindType: "NONE",
         }),
-          this.$store.dispatch('setConversationSilentMode', {
+          this.$store.dispatch("setConversationSilentMode", {
             ...params,
           });
       }
@@ -742,12 +743,12 @@ export default {
     handleConversationUnRead() {
       const { unReadCount } = this.longPressCheckedConversationItem;
       if (unReadCount > 0 || !this.longPressCheckedConversationItem?.isRead) {
-        this.$store.dispatch('setConversationReadStatus', {
+        this.$store.dispatch("setConversationReadStatus", {
           conversationItem: this.longPressCheckedConversationItem,
           isRead: true,
         });
       } else {
-        this.$store.dispatch('setConversationReadStatus', {
+        this.$store.dispatch("setConversationReadStatus", {
           conversationItem: this.longPressCheckedConversationItem,
           isRead: false,
         });
@@ -756,14 +757,14 @@ export default {
     //进入系统通知页面
     entryInform() {
       uni.navigateTo({
-        url: '../notification/notification',
+        url: "../notification/notification",
       });
     },
     //进入聊天页面
     entryChatPage: async function (conversationItem) {
       const { conversationId, conversationType } = conversationItem;
       if (conversationItem.unReadCount > 0) {
-        this.$store.dispatch('sendConversatonReadedAck', {
+        this.$store.dispatch("sendConversatonReadedAck", {
           targetId: conversationId,
           chatType: conversationType,
         });
@@ -776,5 +777,5 @@ export default {
 };
 </script>
 <style>
-@import './conversation.css';
+@import "./conversation.css";
 </style>

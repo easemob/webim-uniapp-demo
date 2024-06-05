@@ -1,7 +1,8 @@
-import Vue from 'vue';
-import { GROUP_ROLE_TYPE_NAME } from '@/EaseIM/constant';
-import { emUserInfos, emGroups } from '@/EaseIM/emApis';
-import { convertGroupDetailsToGroupList } from '@/EaseIM/utils';
+import Vue from "vue";
+import _ from "lodash";
+import { GROUP_ROLE_TYPE_NAME } from "@/EaseIM/constant";
+import { emUserInfos, emGroups } from "@/EaseIM/emApis";
+import { convertGroupDetailsToGroupList } from "@/EaseIM/utils";
 const { fetchOtherInfoFromServer } = emUserInfos();
 const {
   getMultiGroupAttributesFromServer,
@@ -64,6 +65,7 @@ const GroupStore = {
       state.joinedGroupList.splice(_index, 1, newGroupDetails);
     },
     SET_GROUP_MEMBERS_PROFILE: (state, payload) => {
+      console.log("111",payload)
       const { groupId, groupMembersProfile } = payload;
       if (!state.groupMembersProfile[groupId]) {
         Vue.set(state.groupMembersProfile, groupId, {});
@@ -125,8 +127,8 @@ const GroupStore = {
         fetchJoinedGroupListFromServer(param.pageNum, param.pageSize)
           .then((joinedGroupList) => {
             const { total, entities } = joinedGroupList;
-            console.log('total, entities ', total, entities);
-            commit('SET_JOINEND_GROUP_LIST', {
+            console.log("total, entities ", total, entities);
+            commit("SET_JOINEND_GROUP_LIST", {
               isInit,
               groupList: [...entities],
               joinedGroupTotal: total,
@@ -134,13 +136,13 @@ const GroupStore = {
             resolve(joinedGroupList);
           })
           .catch((error) => {
-            console.log('>>>>>远端群组列表拉取失败', error);
+            console.log(">>>>>远端群组列表拉取失败", error);
             reject(error);
           });
       });
     },
     fetchGroupMembersProfile: async ({ commit }, params) => {
-      console.log('fetchGroupMembersProfile', params);
+      console.log("fetchGroupMembersProfile", params);
       const { groupId, memberList } = params;
       //获取对应用户属性
       const profileRes = await fetchOtherInfoFromServer(memberList);
@@ -148,14 +150,11 @@ const GroupStore = {
       const groupAttributesRes = await getMultiGroupAttributesFromServer({
         groupId,
         userIds: memberList,
-        keys: ['nickName'],
+        keys: ["nickName"],
       });
-      commit('SET_GROUP_MEMBERS_PROFILE', {
+      commit("SET_GROUP_MEMBERS_PROFILE", {
         groupId,
-        groupMembersProfile: Object.assign(
-          { ...groupAttributesRes },
-          { ...profileRes }
-        ),
+        groupMembersProfile: _.merge(groupAttributesRes, profileRes),
       });
     },
     deleteInGroupMembers: async ({ commit }, params) => {
@@ -183,7 +182,7 @@ const GroupStore = {
       return new Promise((resolve, reject) => {
         changeGroupOwner(groupId, newOwner)
           .then((res) => {
-            commit('TRANSFER_GROUP_OWNER', { groupId, newOwner });
+            commit("TRANSFER_GROUP_OWNER", { groupId, newOwner });
             resolve(res);
           })
           .catch((error) => {

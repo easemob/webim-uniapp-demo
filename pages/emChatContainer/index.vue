@@ -8,7 +8,7 @@
       :default-page-size="20"
       :safe-area-inset-bottom="true"
       @query="queryList"
-      use-page-scroll
+      :use-page-scroll="true"
     >
       <template #top>
         <em-chat-navbar :targetId="targetId" :chatType="chatType" />

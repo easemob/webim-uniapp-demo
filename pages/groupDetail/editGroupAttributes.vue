@@ -79,7 +79,21 @@ export default {
     },
     //保存设置的群内昵称属性
     async saveInGroupNickname() {
+      // 检查群昵称值是否为空
+      if (!this.groupNicknameValue.trim()) {
+        // 如果为空，显示提示并返回，不执行后续操作
+        uni.showToast({
+          title: "群昵称不能为空",
+          icon: "none",
+          duration: 2000,
+        });
+        return;
+      }
       try {
+        const groupId = this.groupId;
+        const groupMembersProfile = {
+          [EMClient.user]: { nickName: this.groupNicknameValue },
+        };
         await setSingleGroupAttributesFromServer({
           groupId: this.groupId,
           userId: EMClient.user,
@@ -92,6 +106,12 @@ export default {
           icon: "none",
           duration: 2000,
         });
+
+        this.$store.commit("SET_GROUP_MEMBERS_PROFILE", {
+          groupId,
+          groupMembersProfile: groupMembersProfile,
+        });
+
         setTimeout(() => {
           uni.navigateBack();
         }, 1000);

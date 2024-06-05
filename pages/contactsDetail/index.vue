@@ -130,7 +130,7 @@
           isLink
           :value="showContactsRemark"
         ></u-cell>
-        <u-cell title="清空聊天记录"></u-cell>
+        <!-- <u-cell title="清空聊天记录"></u-cell> -->
       </u-cell-group>
       <!-- more -->
       <u-action-sheet

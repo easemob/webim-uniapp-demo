@@ -37,7 +37,9 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
+    };
   },
   computed: {
     navbarLeftText() {

@@ -118,7 +118,7 @@
           @input="changeGroupSilentStatus"
         ></u-switch>
       </u-cell>
-      <u-cell title="清空聊天记录" @click="clearLocalHistroyMessages"></u-cell>
+      <!-- <u-cell title="清空聊天记录" @click="clearLocalHistroyMessages"></u-cell> -->
     </u-cell-group>
     <u-cell-group :border="false">
       <u-gap height="10" bgColor="#F1F2F3"></u-gap>
@@ -205,16 +205,13 @@ export default {
       isShowCofirmModal: false,
       modalShowContent: {
         [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.MEMBER]]: {
-          title: "确认退出群聊？",
-          content: "确认退出群组，同时删除该群组的聊天记录。",
+          title: "确认退出群聊？"
         },
         [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.ADMIN]]: {
-          title: "确认退出群聊？",
-          content: "确认退出群组，同时删除该群组的聊天记录。",
+          title: "确认退出群聊？"
         },
         [GROUP_ROLE_TYPE[GROUP_ROLE_TYPE_NAME.OWNER]]: {
-          title: "确认解散群聊？",
-          content: "确认解散群组，同时删除该群组的聊天记录。",
+          title: "确认解散群聊？"
         },
       },
     };
@@ -452,16 +449,16 @@ export default {
       }
     },
     //清空本地聊天记录
-    clearLocalHistroyMessages() {
-      this.$store.commit("DELETE_MESSAGE_FROM_COLLECTION", {
-        key: this.groupId,
-      });
-      uni.showToast({
-        title: "聊天记录已清空",
-        icon: "none",
-        duration: 1000,
-      });
-    },
+    // clearLocalHistroyMessages() {
+    //   this.$store.commit("DELETE_MESSAGE_FROM_COLLECTION", {
+    //     key: this.groupId,
+    //   });
+    //   uni.showToast({
+    //     title: "聊天记录已清空",
+    //     icon: "none",
+    //     duration: 1000,
+    //   });
+    // },
     //进入群内昵称编辑页面
     entryEditInGroupNickname() {
       uni.navigateTo({
