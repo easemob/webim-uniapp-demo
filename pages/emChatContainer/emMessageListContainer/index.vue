@@ -171,28 +171,32 @@ export default {
       }
     },
     messageItemNickName() {
-      if (this.isSelf(this.msgBody)) {
-        return this.loginUserProfiles?.nickname || EMClient.user;
-      }
+      // if (this.isSelf(this.msgBody)) {
+      //     return this.loginUserProfiles?.nickname || EMClient.user;
+      // }
       if (this.msgBody.chatType === CHAT_TYPE.SINGLE_CHAT) {
-        const userId = this.msgBody.from;
-        // 首先在this.friendList中查找userId对应的remark
-        const friendRemark = this.friendList.find(
-          (friend) => friend.userId === userId && friend.remark
-        );
-        if (friendRemark) {
-          return friendRemark.remark; // 如果找到了remark，返回remark
-        }
-        // 如果没有remark，再在this.friendUserInfoCollection中查找用户昵称
-        else if (
-          this.friendUserInfoCollection[userId] &&
-          this.friendUserInfoCollection[userId]?.nickname
-        ) {
-          return this.friendUserInfoCollection[userId].nickname; // 返回昵称
-        }
-        // 如果既没有remark也没有昵称，返回userId
-        else {
-          return userId;
+        if (this.isSelf(this.msgBody)) {
+          return this.loginUserProfiles?.nickname || EMClient.user;
+        } else {
+          const userId = this.msgBody.from;
+          // 首先在this.friendList中查找userId对应的remark
+          const friendRemark = this.friendList.find(
+            (friend) => friend.userId === userId && friend.remark
+          );
+          if (friendRemark) {
+            return friendRemark.remark; // 如果找到了remark，返回remark
+          }
+          // 如果没有remark，再在this.friendUserInfoCollection中查找用户昵称
+          else if (
+            this.friendUserInfoCollection[userId] &&
+            this.friendUserInfoCollection[userId]?.nickname
+          ) {
+            return this.friendUserInfoCollection[userId].nickname; // 返回昵称
+          }
+          // 如果既没有remark也没有昵称，返回userId
+          else {
+            return userId;
+          }
         }
       }
       if (this.msgBody.chatType === CHAT_TYPE.GROUP_CHAT) {
@@ -208,7 +212,10 @@ export default {
             userId
           );
         } else {
-          return userId;
+          return this.$store.dispatch("fetchGroupMembersProfile", {
+            groupId: groupId,
+            memberList: [userId],
+          });
         }
       }
     },
