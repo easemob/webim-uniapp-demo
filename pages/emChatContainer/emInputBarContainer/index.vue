@@ -69,7 +69,8 @@
           src="/static/images/new_ui/inputbar/tofeipeng/icons/folder@2x.png"
         ></image>
       </view> -->
-      <SendFileMessage
+      <!-- 发送附件暂时隐藏 -->
+      <!-- <SendFileMessage
         ref="fileComps"
         @onCloseAllShowContainer="onCloseAllShowContainer"
       >
@@ -78,7 +79,7 @@
             src="/static/images/new_ui/inputbar/tofeipeng/icons/folder@2x.png"
           ></image>
         </view>
-      </SendFileMessage>
+      </SendFileMessage> -->
       <!-- emoji -->
       <view class="input-bottom-bar-icon" @click="onShowEmojiIconContainer">
         <image
