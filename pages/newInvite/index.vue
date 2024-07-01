@@ -135,31 +135,36 @@
           :key="index"
           :border="false"
         >
-          <template v-if="receiceItem.chatType === CHAT_TYPE.SINGLE_CHAT">
-            <u-avatar
-              slot="icon"
-              shape="square"
-              size="40"
-              :src="'/static/images/new_ui/defaultAvatar.png'"
-              customStyle="margin: -3px 5px -3px 0"
-            ></u-avatar>
-            <view class="add_contacts_item_title" slot="title">
-              <u--text
-                class="conversation_item_title_text"
-                :lines="1"
-                text="联系人"
-                iconStyle="margin-left: 2px;"
-              >
-              </u--text>
-            </view>
+          <u-avatar
+            slot="icon"
+            shape="square"
+            size="40"
+            :src="getAvatarUrlSrc(receiceItem.chatType)"
+            customStyle="margin: -3px 5px -3px 0"
+          ></u-avatar>
+          <view class="add_contacts_item_title" slot="title">
             <u--text
-              slot="label"
-              size="14"
-              color="#75828a"
+              v-if="receiceItem.chatType === CHAT_TYPE.SINGLE_CHAT"
+              class="conversation_item_title_text"
               :lines="1"
-              :text="receiceItem.from + '：' + receiceItem.status"
-            ></u--text>
-            <view slot="value">
+              :text="
+                receiceItem.chatType === CHAT_TYPE.SINGLE_CHAT
+                  ? '联系人'
+                  : '群组'
+              "
+              iconStyle="margin-left: 2px;"
+            >
+            </u--text>
+          </view>
+          <u--text
+            slot="label"
+            size="14"
+            color="#75828a"
+            :lines="1"
+            :text="getLabelText(receiceItem)"
+          ></u--text>
+          <view slot="value">
+            <template v-if="receiceItem.chatType === CHAT_TYPE.SINGLE_CHAT">
               <u-button
                 v-if="!receiceItem.isHandled"
                 size="mini"
@@ -173,34 +178,9 @@
                 disabled
                 text="已添加"
                 plain
-              ></u-button>
-            </view>
-          </template>
-          <template v-if="receiceItem.chatType === CHAT_TYPE.GROUP_CHAT">
-            <u-avatar
-              slot="icon"
-              shape="square"
-              size="40"
-              :src="'/static/images/new_ui/defaultGroupAvatar.png'"
-              customStyle="margin: -3px 5px -3px 0"
-            ></u-avatar>
-            <view class="add_contacts_item_title" slot="title">
-              <u--text
-                class="conversation_item_title_text"
-                :lines="1"
-                text="群组"
-                iconStyle="margin-left: 2px;"
-              >
-              </u--text>
-            </view>
-            <u--text
-              slot="label"
-              size="14"
-              color="#75828a"
-              :lines="1"
-              :text="`${receiceItem.from}：邀请你加入群组【${receiceItem.name}】`"
-            ></u--text>
-            <view slot="value">
+              ></u-button
+            ></template>
+            <template v-else>
               <u-button
                 v-if="!receiceItem.isHandled"
                 size="mini"
@@ -215,8 +195,8 @@
                 text="已处理"
                 plain
               ></u-button>
-            </view>
-          </template>
+            </template>
+          </view>
         </u-cell>
       </u-cell-group>
     </template>
@@ -241,6 +221,24 @@ export default {
   computed: {
     receiveInviteList() {
       return this.$store.getters.getReceiveInviteList;
+    },
+    getAvatarUrlSrc() {
+      return (chatType) => {
+        if (chatType === CHAT_TYPE.SINGLE_CHAT) {
+          return '/static/images/new_ui/defaultAvatar.png';
+        } else if (chatType === CHAT_TYPE.GROUP_CHAT) {
+          return '/static/images/new_ui/defaultGroupAvatar.png';
+        }
+      };
+    },
+    getLabelText() {
+      return (receiceItem) => {
+        if (receiceItem.chatType === CHAT_TYPE.SINGLE_CHAT) {
+          return receiceItem.from + '：' + receiceItem.status;
+        } else if (receiceItem.chatType === CHAT_TYPE.GROUP_CHAT) {
+          return `${receiceItem.from}：邀请你加入群组【${receiceItem.name}】`;
+        }
+      };
     },
   },
   methods: {
