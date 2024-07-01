@@ -388,34 +388,32 @@ const ConversationStore = {
     },
     //会话未读总数
     calcAllUnReadNumFromConversation(state) {
+      // 计算置顶会话的未读数
       const pinConversationListUnReadNum = state.pinConversationList.reduce(
-        (a, c) => {
-          if (
-            state.silentConversationMap[c.conversationId] &&
-            state.silentConversationMap[c.conversationId]?.type !== 'NONE' &&
-            c.unReadCount
-          ) {
-            return a + c.unReadCount;
-          } else {
-            return a;
+        (total, conversation) => {
+          const silentInfo =
+            state.silentConversationMap[conversation.conversationId];
+          if (silentInfo?.type !== 'NONE' && conversation.unReadCount > 0) {
+            return total + conversation.unReadCount;
           }
+          return total;
         },
         0
       );
+
+      // 计算普通会话的未读数
       const conversationListUnReadNum = state.conversationList.reduce(
-        (a, c) => {
-          if (
-            state.silentConversationMap[c.conversationId] &&
-            state.silentConversationMap[c.conversationId]?.type !== 'NONE' &&
-            c.unReadCount
-          ) {
-            return a + c.unReadCount;
-          } else {
-            return a;
+        (total, conversation) => {
+          const silentInfo =
+            state.silentConversationMap[conversation.conversationId];
+          if (silentInfo?.type !== 'NONE' && conversation.unReadCount > 0) {
+            return total + conversation.unReadCount;
           }
+          return total;
         },
         0
       );
+      // 返回总未读数
       return pinConversationListUnReadNum + conversationListUnReadNum;
     },
     //聊天中用户ID
