@@ -1,4 +1,4 @@
-import websdk from "../newSDK/Easemob-chat-4.8.0";
+import websdk from "../newSDK/Easemob-chat-4.8.1";
 import config from "./WebIMConfig";
 console.group = console.group || {};
 console.groupEnd = console.groupEnd || {};
@@ -185,6 +185,7 @@ WebIM.conn = new WebIM.connection({
   appKey: WebIM.config.appkey,
   url: WebIM.config.xmppURL,
   apiUrl: WebIM.config.apiURL,
+  enableReportLogs: true
 });
 
 module.exports = {
