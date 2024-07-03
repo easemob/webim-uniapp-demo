@@ -45,10 +45,13 @@ export default {
     navbarLeftText() {
       return this.blockUserList.length > 0
         ? `黑名单（${this.blockUserList.length}）`
-        : '黑名单';
+        : "黑名单";
     },
     blockUserList() {
       return this.$store.getters.blockUserList;
+    },
+    friendList() {
+      return this.$store.state.ContactsStore.friendList;
     },
     friendUserInfoCollection() {
       return this.$store.getters.friendUserInfoCollection;
@@ -67,13 +70,32 @@ export default {
       };
     },
     //好友昵称展示
+    // showFriendNickname() {
+    //   return (hxId) => {
+    //     if (
+    //       this.friendUserInfoCollection[hxId] &&
+    //       this.friendUserInfoCollection[hxId]?.nickname
+    //     ) {
+    //       return this.friendUserInfoCollection[hxId].nickname;
+    //     } else {
+    //       return hxId;
+    //     }
+    //   };
+    // },
     showFriendNickname() {
       return (hxId) => {
-        if (
-          this.friendUserInfoCollection[hxId] &&
-          this.friendUserInfoCollection[hxId]?.nickname
-        ) {
-          return this.friendUserInfoCollection[hxId].nickname;
+        const friend = this.friendList.find((friend) => friend.userId === hxId);
+        if (friend) {
+          if (friend.remark) {
+            return friend.remark;
+          } else if (
+            this.friendUserInfoCollection[hxId] &&
+            this.friendUserInfoCollection[hxId].nickname
+          ) {
+            return this.friendUserInfoCollection[hxId].nickname;
+          } else {
+            return hxId;
+          }
         } else {
           return hxId;
         }
