@@ -22,9 +22,9 @@
 
 <script>
 /* EaseIM */
-import { EMClient } from '@/EaseIM';
-import { MESSAGE_TYPE } from '@/EaseIM/constant';
-import { emMessages } from '@/EaseIM/emApis';
+import { EMClient } from "@/EaseIM";
+import { MESSAGE_TYPE } from "@/EaseIM/constant";
+import { emMessages } from "@/EaseIM/emApis";
 const { sendDisplayMessages } = emMessages();
 const apiUrl = EMClient.apiUrl;
 const orgName = EMClient.orgName;
@@ -36,7 +36,7 @@ export default {
     return {
       option: {
         url: uploadTargetUrl,
-        name: 'file',
+        name: "file",
         header: {
           Authorization: `Bearer ${token}`,
         },
@@ -46,10 +46,10 @@ export default {
       // 必传宽高且宽高应与slot宽高保持一致
       //   width: '64px',
       //   height: '62px',
-      width: '30px',
-      height: '27px',
+      width: "30px",
+      height: "27px",
       // 限制允许选择的格式，空串=不限制，默认为空
-      formats: '',
+      formats: "",
       // 文件上传大小限制
       size: 10,
       // 是否打印日志
@@ -67,7 +67,7 @@ export default {
   methods: {
     //发送附件消息
     async sendFileMessage(payload) {
-      console.log('>>>>>sendFileMessage payload', payload);
+      console.log(">>>>>sendFileMessage payload", payload);
       const { dataObj, filename, file_length } = payload;
       let params = {
         // 消息类型。
@@ -78,9 +78,9 @@ export default {
         to: this.chattingId,
         body: {
           // 文件 URL。
-          url: dataObj.uri + '/' + dataObj.entities[0].uuid,
+          url: dataObj.uri + "/" + dataObj.entities[0].uuid,
           // 文件类型。
-          type: 'filetype',
+          type: "filetype",
           // 文件名称。
           filename: filename,
           // 文件大小。
@@ -89,19 +89,26 @@ export default {
         ext: {},
       };
       // 发送消息。
-      console.log('>>>>>要发送的消息params', params);
+      console.log(">>>>>要发送的消息params", params);
       try {
         await sendDisplayMessages(params);
-        console.log('>>>>>文件发送成功');
+        console.log(">>>>>文件发送成功");
       } catch (error) {
-        console.log('>>>>>文件消息发送失败', error);
-        uni.showToast({
-          title: `消息发送失败${error.type}`,
-          icon: 'none',
-        });
+        console.log(">>>>>文件消息发送失败", error);
+        if (error.type === 508) {
+          uni.showToast({
+            title: "发送内容不合规",
+            icon: "none",
+          });
+        } else {
+          uni.showToast({
+            title: `消息发送失败${error.type}`,
+            icon: "none",
+          });
+        }
       } finally {
         uni.hideLoading();
-        this.$emit('onCloseAllShowContainer', true);
+        this.$emit("onCloseAllShowContainer", true);
       }
     },
     onUploadEnd(res) {
@@ -116,7 +123,7 @@ export default {
     },
     //onProgress
     onProgress(evt) {
-      uni.showLoading({ title: '文件上传中，请稍后' });
+      uni.showLoading({ title: "文件上传中，请稍后" });
     },
   },
 };

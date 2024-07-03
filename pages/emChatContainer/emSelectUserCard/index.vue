@@ -54,7 +54,7 @@
           <text class="send_target_nickname">{{ sendTargetName }}</text>
         </view>
         <text class="wait_send_user_nickname"
-          >[个人名片] {{ waitSendUserNickname || waitSendUserId || '' }}</text
+          >[个人名片] {{ waitSendUserNickname || waitSendUserId || "" }}</text
         >
         <u-input
           class="leave_message_input"
@@ -69,21 +69,21 @@
 </template>
 
 <script>
-import { emMessages } from '@/EaseIM/emApis';
-import { MESSAGE_TYPE, CHAT_TYPE } from '@/EaseIM/constant';
+import { emMessages } from "@/EaseIM/emApis";
+import { MESSAGE_TYPE, CHAT_TYPE } from "@/EaseIM/constant";
 const { sendDisplayMessages } = emMessages();
 export default {
   data() {
     return {
       sendTargetInfo: {
-        userId: '',
-        chatType: '',
+        userId: "",
+        chatType: "",
       },
       isShowWaitSendModal: false,
-      waitSendUserId: '',
-      waitSendUserNickname: '',
-      leaveMessageInput: '',
-      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
+      waitSendUserId: "",
+      waitSendUserNickname: "",
+      leaveMessageInput: "",
+      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
     };
   },
 
@@ -157,7 +157,7 @@ export default {
     //群组名称
     getGroupName(groupid) {
       const joinedGroupList = this.$store.state.GroupStore.joinedGroupList;
-      let groupName = '';
+      let groupName = "";
       if (joinedGroupList.length) {
         joinedGroupList.forEach((item) => {
           if (item.groupId == groupid) {
@@ -176,7 +176,7 @@ export default {
       );
     },
     openWaitSendModal(userId) {
-      console.log('>>>>>>>111', userId);
+      console.log(">>>>>>>111", userId);
       this.isShowWaitSendModal = true;
       this.$nextTick(() => {
         this.waitSendUserId = userId;
@@ -192,11 +192,11 @@ export default {
     },
     closeWaitSendModal() {
       this.isShowWaitSendModal = false;
-      this.waitSendUserId = '';
-      this.waitSendUserNickname = '';
+      this.waitSendUserId = "";
+      this.waitSendUserNickname = "";
     },
     async sendUserCardMessage() {
-      const customEvent = 'userCard';
+      const customEvent = "userCard";
       if (!this.chattingId) return;
       const friendInfo = this.getWaitSendUserInfo(this.waitSendUserId);
       const customExtParams = {
@@ -220,7 +220,7 @@ export default {
       } catch (error) {
         uni.showToast({
           title: `消息发送失败${error.type}`,
-          icon: 'none',
+          icon: "none",
         });
       } finally {
         this.isShowWaitSendModal = false;
@@ -230,7 +230,7 @@ export default {
     async sendLeaveTextMessage() {
       const params = {
         // 消息类型。
-        type: 'txt',
+        type: "txt",
         // 消息内容。
         msg: this.leaveMessageInput,
         // 消息接收方：单聊为对方用户 ID，群聊和聊天室分别为群组 ID 和聊天室 ID。
@@ -240,15 +240,22 @@ export default {
       };
       try {
         const res = await sendDisplayMessages({ ...params });
-        console.log('>>>>>留言消息发送成功', res);
+        console.log(">>>>>留言消息发送成功", res);
       } catch (error) {
-        console.log('>>>>>留言消息发送失败', error);
-        uni.showToast({
-          title: '消息发送失败',
-          icon: 'none',
-        });
+        console.log(">>>>>留言消息发送失败", error);
+        if (error.type === 508) {
+          uni.showToast({
+            title: "发送内容不合规",
+            icon: "none",
+          });
+        } else {
+          uni.showToast({
+            title: `消息发送失败${error.type}`,
+            icon: "none",
+          });
+        }
       } finally {
-        this.leaveMessageInput = '';
+        this.leaveMessageInput = "";
         uni.hideKeyboard && uni.hideKeyboard();
       }
     },
