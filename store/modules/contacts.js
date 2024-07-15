@@ -2,6 +2,7 @@ import { emContacts, emUserInfos, emPresence } from '@/EaseIM/emApis';
 import Vue from 'vue';
 import { handlePresence } from '@/EaseIM/utils';
 import { EMClient } from '@/EaseIM';
+import _ from 'lodash';
 const { fetchContactsListFromServer, getBlocklistFromServer } = emContacts();
 const { fetchOtherInfoFromServer } = emUserInfos();
 const { subscribePresence, unsubscribePresence } = emPresence();
@@ -35,9 +36,12 @@ const ContactsStore = {
         }
       }
       // 去重
-      newFriendList = [...new Set(newFriendList)];
+      const uniqueArray = _.uniqBy(
+        _.reverse(newFriendList),
+        'userId'
+      ).reverse();
       // 更新 state
-      Vue.set(state, 'friendList', newFriendList);
+      Vue.set(state, 'friendList', uniqueArray);
     },
     DELETE_FRIEND_ITEM: (state, friendId) => {
       state.friendList.map((item, idnex) => {
