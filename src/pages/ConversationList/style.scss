@@ -1,0 +1,23 @@
+.conversation-list-wrap {
+  position: relative;
+  padding: 20rpx;
+  padding-bottom: 130rpx;
+}
+
+.input-wrap input {
+  border: 2rpx solid #ccc;
+}
+
+.conversation-empty {
+  text-align: center;
+  margin-top: 200rpx;
+}
+
+.conversation-item-wrap {
+  margin-bottom: 10rpx;
+  border-radius: 10rpx;
+}
+
+.conversation-item-wrap-selected {
+  background: #f3f3f3;
+}

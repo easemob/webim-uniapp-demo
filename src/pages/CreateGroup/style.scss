@@ -1,0 +1,43 @@
+.create-group-wrap {
+  padding-bottom: 130rpx;
+}
+
+.content {
+  padding: 20rpx;
+}
+
+.label {
+  font-size: 30rpx;
+}
+
+.uni-list-cell {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-item-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  margin: 0 30rpx;
+  max-width: 400rpx;
+}
+
+.switch {
+  margin: 30rpx 0;
+}
+
+.create-btn {
+  position: fixed;
+  bottom: 30rpx;
+  width: 90%;
+  left: 0;
+  margin-left: 5%;
+  background: #479ff8;
+  text-align: center;
+  color: #fff;
+}

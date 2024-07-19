@@ -1,0 +1,64 @@
+.login-wrap {
+  width: 100%;
+  padding: 0 40rpx;
+  box-sizing: border-box;
+}
+
+.login-header {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  margin-top: 40rpx;
+}
+
+.login-title {
+  width: 100%;
+  text-align: center;
+  font-family: Noto Sans SC;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #009eff;
+}
+
+.login-form-warp {
+  margin-top: 40rpx;
+}
+
+.item-wrap {
+  display: flex;
+  margin-bottom: 10rpx;
+}
+
+.item-wrap input {
+  width: 100%;
+  border: 2rpx solid #ccc;
+  border-radius: 8rpx;
+  outline: none;
+  height: 80rpx;
+  padding: 0 0 0 28rpx;
+}
+
+.send-code {
+  font-size: 24rpx;
+  flex-shrink: 0;
+  display: flex;
+  width: 220rpx;
+  align-items: center;
+  justify-content: center;
+  margin-left: 20rpx;
+}
+
+.private-wrap {
+  display: flex;
+  align-items: center;
+  margin: 20rpx 0;
+}
+
+.server-config {
+  margin-top: 20rpx;
+  text-align: center;
+}
+
+.label {
+  display: flex;
+}

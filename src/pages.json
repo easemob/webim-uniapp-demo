@@ -1,0 +1,141 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/Login/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp"
+			}
+		},
+		{
+			"path": "pages/VideoPreview/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp"
+			}
+		},
+		{
+			"path": "pages/ConversationList/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp"
+			}
+		},
+		{
+			"path": "pages/ContactList/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp"
+			}
+		},
+		{
+			"path": "pages/ContactNotices/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp"
+			}
+		},
+		{
+			"path": "pages/GroupNotices/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp"
+			}
+		},
+		{
+			"path": "pages/User/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp"
+			}
+		},
+		{
+			"path": "pages/Chat/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
+		},
+		{
+			"path": "pages/CreateGroup/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
+		},
+		{
+			"path": "pages/GroupDetail/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
+		},
+		{
+			"path": "pages/InviteList/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
+		},
+		{
+			"path": "pages/Setting/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
+		},
+		{
+			"path": "pages/GroupMemberList/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
+		},
+		{
+			"path": "pages/ServerConfig/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
+		}
+	],
+	"tabBar": {
+		"backgroundColor": "#F6F8FA",
+		"color": "#999999",
+		"selectedColor": "#00a4fd",
+		"height": "60px",
+		"list": [
+			{
+				"text": "消息",
+				"iconPath": "static/images/conversation.png",
+				"selectedIconPath": "static/images/conversation_active.png",
+				"pagePath": "pages/ConversationList/index"
+			},
+			{
+				"text": "通讯录",
+				"iconPath": "static/images/contacts.png",
+				"selectedIconPath": "static/images/contacts_active.png",
+				"pagePath": "pages/ContactList/index"
+			},
+			{
+				"text": "个人中心",
+				"iconPath": "static/images/mine.png",
+				"selectedIconPath": "static/images/mine_active.png",
+				"pagePath": "pages/User/index"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

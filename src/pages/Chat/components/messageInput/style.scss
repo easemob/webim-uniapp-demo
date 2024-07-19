@@ -1,0 +1,39 @@
+.message-input-wrap {
+  display: flex;
+  padding: 20rpx;
+  align-items: center;
+}
+
+.send-input,
+.send-audio {
+  height: auto;
+  background: #fff;
+  font-size: 24rpx;
+  border-radius: 20rpx;
+  padding: 14rpx 20rpx 14rpx 20rpx;
+  max-height: 200rpx;
+  width: 100%;
+  margin: 0 10rpx;
+}
+
+.send-audio {
+  padding: 10rpx;
+}
+
+.send-input input {
+  height: 50rpx;
+}
+
+
+.icon-wrap {
+  width: 60rpx;
+  height: 60rpx;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.icon {
+  width: 60rpx;
+  height: 60rpx;
+  cursor: pointer;
+}

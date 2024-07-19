@@ -1,0 +1,31 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+page {
+  height: 100%;
+}
+
+.input-wrap {
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.input-wrap input {
+  border: 2rpx solid #ccc;
+  border-radius: 8rpx;
+  outline: none;
+  height: 80rpx;
+  padding: 0 0 0 28rpx;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  /* 禁止换行 */
+  overflow: hidden;
+  /* 超出部分隐藏 */
+  text-overflow: ellipsis;
+  /* 使用省略号替代超出部分 */
+}

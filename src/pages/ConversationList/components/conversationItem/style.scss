@@ -1,0 +1,63 @@
+.conversation-item-wrap {
+  display: flex;
+  border-bottom: 2rpx solid #f7ecec;
+  padding: 10rpx;
+  align-items: center;
+}
+
+.content-wrap {
+  display: flex;
+  flex: 1;
+}
+
+.avatar-wrap {
+  position: relative;
+}
+
+.unread-count {
+  position: absolute;
+  display: inline-block;
+  width: fit-content;
+  padding: 0 5rpx;
+  height: 30rpx;
+  min-width: 30rpx;
+  font-size: 20rpx;
+  text-align: center;
+  line-height: 30rpx;
+  border-radius: 15rpx;
+  font-size: 24rpx;
+  background: red;
+  color: #fff;
+  right: -5px;
+}
+
+.user-info-wrap {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-left: 20rpx;
+}
+
+.user-nick-name {
+  font-size: 32rpx;
+  width: 240rpx;
+  flex: 1;
+}
+
+.msg-wrap{
+  display: flex;
+}
+
+.last-msg {
+  flex: 1;
+  width: 0;
+  font-size: 28rpx;
+  color: gray;
+}
+
+.time {
+  flex-shrink: 0;
+  margin-left: 30rpx;
+  color: #999;
+  font-size: 28rpx;
+}
