@@ -1,6 +1,6 @@
 # webim-uniapp-demo
 
-# 介绍
+## 介绍
 
 demo 包含以下功能
 
@@ -17,9 +17,9 @@ demo 包含以下功能
 - 单人聊天
 - 群组聊天
 - 消息免打扰
-- 文本、图片、语音、附件、个人名片收发。
+- 文本、图片、语音、个人名片收发。
 
-# 在本地跑起来
+## 在本地跑起来
 
 拉取代码，在 HBuliderX 工具点击运行至想要的平台中即可运行起来。
 
@@ -28,11 +28,11 @@ demo 包含以下功能
 npm install or yarn install
 ```
 
-# 项目结构核心目录说明
+## 项目结构核心目录说明
 
 ```shell
 |- components 自定义组件目录
-    |-swipedelete 测滑删除组件 
+    |-swipedelete 测滑删除组件
 |-static/images demo中用到的图片
 |-constant 相关常量
     |-emoji 表情
@@ -101,8 +101,13 @@ npm install or yarn install
 |-app.css 一些全局样式
 ```
 
-# 常见问题
+## 项目中所依赖的三方库目录：
 
-- 如何从短信验证码方式登录切换为用户 id+密码登陆？
-  > 答：在 pages>login>loginState>usePwdLogin 此配置项改为 false 即可。
-
+- `uview-ui`2.x
+  > 依赖部分 ui 组件快捷实现部分 ui 效果。
+- `z-paging`
+  > 使用其滚动模式实现聊天页面滚动。
+- `grapheme-splitter`
+  > 用于切分 UniCode 编码的 emoji 表情字符串。
+- `lodash`
+  > 使用其内部提供的方法，用以快捷实现 js 部分逻辑。
