@@ -105,35 +105,35 @@ npm install or yarn install
 
 ### 登录页面
 
-![login.png](./demo/prview-images/login.png)
+<img src="./demo/prview-images/login.png" alt="login" width="200" height="400" />
 
 ### 会话页面
 
-![conversation.png](./demo/prview-images/conversation.png)
+<img src="./demo/prview-images/conversation.png" alt="conversation" width="200" height="400" />
 
 ### 联系人页面
 
-![contacts.png](./demo/prview-images/contacts.png)
+<img src="./demo/prview-images/contacts.png" alt="contacts" width="200" height="400" />
 
 ### 我的页面
 
-![mine.png](./demo/prview-images/mine.png)
+<img src="./demo/prview-images/mine.png" alt="mine" width="200" height="400" />
 
 ### 消息页面
 
-![sendMessage.png](./demo/prview-images/sendMessage.png)
+<img src="./demo/prview-images/sendMessage.png" alt="sendMessage" width="200" height="400" />
 
 ### 在线状态订阅
 
-![presence.jpg](./demo/prview-images/presence.jpg)
+<img src="./demo/prview-images/presence.jpg" alt="presence" width="200" height="400" />
 
 ### 群组列表
 
-![groupList.jpg](./demo/prview-images/groupList.jpg)
+<img src="./demo/prview-images/groupList.jpg" alt="groupList" width="200" height="400" />
 
 ### 群组详情
 
-![groupDetails.jpg](./demo/prview-images/groupDetails.jpg)
+<img src="./demo/prview-images/groupDetails.jpg" alt="groupDetails" width="200" height="400" />
 
 ## 项目中所依赖的三方库目录：
 
