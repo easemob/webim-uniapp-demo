@@ -1,4 +1,4 @@
-# webim-uniapp-demo
+# webim-uniapp-demo-vue2
 
 ## 介绍
 
@@ -101,6 +101,40 @@ npm install or yarn install
 |-app.css 一些全局样式
 ```
 
+## demo 部分页面效果展示
+
+### 登录页面
+
+![login.png](./demo/prview-images/login.png)
+
+### 会话页面
+
+![conversation.png](./demo/prview-images/conversation.png)
+
+### 联系人页面
+
+![contacts.png](./demo/prview-images/contacts.png)
+
+### 我的页面
+
+![mine.png](./demo/prview-images/mine.png)
+
+### 消息页面
+
+![sendMessage.png](./demo/prview-images/sendMessage.png)
+
+### 在线状态订阅
+
+![presence.jpg](./demo/prview-images/presence.jpg)
+
+### 群组列表
+
+![groupList.jpg](./demo/prview-images/groupList.jpg)
+
+### 群组详情
+
+![groupDetails.jpg](./demo/prview-images/groupDetails.jpg)
+
 ## 项目中所依赖的三方库目录：
 
 - `uview-ui`2.x
@@ -111,3 +145,10 @@ npm install or yarn install
   > 用于切分 UniCode 编码的 emoji 表情字符串。
 - `lodash`
   > 使用其内部提供的方法，用以快捷实现 js 部分逻辑。
+
+## 已测试平台
+
+- App-Android
+- App-iOS
+- Web-H5
+- 微信小程序
