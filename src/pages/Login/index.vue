@@ -39,7 +39,7 @@
         <button
           size="mini"
           type="primary"
-          class="send-code"
+          class="send-code easeim-btn"
           @tap="getCode"
           :disabled="counter !== 60"
         >
@@ -56,7 +56,7 @@
         </label>
       </checkbox-group>
     </view>
-    <button type="primary" @tap="loginIM">{{ $t("login") }}</button>
+    <button class="easeim-btn" type="primary" @tap="loginIM">{{ $t("login") }}</button>
 
     <view
       v-if="times > 5 || IS_USE_CUSTOM_SERVER"
