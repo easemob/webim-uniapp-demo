@@ -45,11 +45,9 @@
           />
         </template>
         <!-- 附件消息 -->
-
         <template v-if="msgBody.type === MESSAGE_TYPE.FILE">
           <file-msg-item :msgBody="msgBody" />
         </template>
-
         <!-- 个人名片 -->
         <template
           v-if="
@@ -62,6 +60,12 @@
             :msgBody="msgBody"
           />
         </template>
+        <!-- 位置消息 -->
+        <template v-if="msgBody.type === MESSAGE_TYPE.LOCATION">
+          <!-- 如已经配置mainifest.json 中有关Maps的key等信息配置可以解开location msg 组件注释 -->
+          <text>位置消息</text>
+          <!-- <location-msg-item :msgBody="msgBody" /> -->
+        </template>
         <msg-quote-container
           v-if="msgBody.ext && msgBody.ext.msgQuote"
           :msgQuoteContent="msgBody.ext.msgQuote"
@@ -73,14 +77,15 @@
 </template>
 
 <script>
-import { MESSAGE_TYPE, CUSTOM_EVENT_NAME, CHAT_TYPE } from "@/EaseIM/constant";
-import TextMsgItem from "./messagesItem/textMsgItem";
-import ImageMsgItem from "./messagesItem/imageMsgItem";
-import AudioMsgItem from "./messagesItem/audioMsgItem";
-import FileMsgItem from "./messagesItem/fileMsgItem";
-import UserCardMsgItem from "./messagesItem/userCardItem";
-import MsgQuoteContainer from "./msgQuoteContainer";
-import { EMClient } from "@/EaseIM";
+import { MESSAGE_TYPE, CUSTOM_EVENT_NAME, CHAT_TYPE } from '@/EaseIM/constant';
+import TextMsgItem from './messagesItem/textMsgItem';
+import ImageMsgItem from './messagesItem/imageMsgItem';
+import AudioMsgItem from './messagesItem/audioMsgItem';
+import FileMsgItem from './messagesItem/fileMsgItem';
+import UserCardMsgItem from './messagesItem/userCardItem';
+import LocationMsgItem from './messagesItem/locationMsgItem';
+import MsgQuoteContainer from './msgQuoteContainer';
+import { EMClient } from '@/EaseIM';
 export default {
   components: {
     TextMsgItem,
@@ -88,6 +93,7 @@ export default {
     AudioMsgItem,
     FileMsgItem,
     UserCardMsgItem,
+    LocationMsgItem,
     MsgQuoteContainer,
   },
   props: {
@@ -102,7 +108,7 @@ export default {
     },
     quoteMsgId: {
       type: String,
-      default: "",
+      default: '',
     },
   },
 
@@ -110,8 +116,8 @@ export default {
     return {
       MESSAGE_TYPE,
       CUSTOM_EVENT_NAME,
-      playAudioMid: "",
-      defaultAvatar: "/static/images/new_ui/defaultAvatar.png",
+      playAudioMid: '',
+      defaultAvatar: '/static/images/new_ui/defaultAvatar.png',
     };
   },
   computed: {
@@ -204,7 +210,7 @@ export default {
 
         const userId = this.msgBody.from;
         const groupMemberData = this.groupMembersProfileData[groupId];
-        console.log("groupMemberData", groupMemberData);
+        console.log('groupMemberData', groupMemberData);
         if (groupMemberData) {
           return (
             groupMemberData[userId]?.nickName ||
@@ -212,7 +218,7 @@ export default {
             userId
           );
         } else {
-          return this.$store.dispatch("fetchGroupMembersProfile", {
+          return this.$store.dispatch('fetchGroupMembersProfile', {
             groupId: groupId,
             memberList: [userId],
           });
@@ -223,14 +229,14 @@ export default {
   methods: {
     onClickPlayAudio(mid) {
       this.playAudioMid = mid;
-      console.log("mid", mid);
-      console.log("++++++++");
+      console.log('mid', mid);
+      console.log('++++++++');
     },
     callMessagePopup() {
-      this.$emit("alertMessagePopup", this.msgBody);
+      this.$emit('alertMessagePopup', this.msgBody);
     },
     callScrollToQuoteMsg(msgQuote) {
-      this.$emit("scrollToQuoteMessge", msgQuote);
+      this.$emit('scrollToQuoteMessge', msgQuote);
     },
     //前往联系人详情页面
     entryContactsDetailPage(type) {
@@ -254,5 +260,5 @@ export default {
 </script>
 
 <style scoped>
-@import "./index.css";
+@import './index.css';
 </style>

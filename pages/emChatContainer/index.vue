@@ -65,14 +65,14 @@
 </template>
 
 <script>
-import EmChatNavbar from "./emChatNavbar";
-import EmMessageListContainer from "./emMessageListContainer";
-import EmInputBarContainer from "./emInputBarContainer";
-import EmGrayMessageContainer from "./emGrayMessageContainer";
-import EmMessagePopup from "./emMessagePopup";
-import { CHAT_TYPE, MESSAGE_STATUS } from "@/EaseIM/constant";
-import { EVENT_BUS_NAME } from "@/constant";
-import { MESSAGE_TYPE } from "../../EaseIM/constant";
+import EmChatNavbar from './emChatNavbar';
+import EmMessageListContainer from './emMessageListContainer';
+import EmInputBarContainer from './emInputBarContainer';
+import EmGrayMessageContainer from './emGrayMessageContainer';
+import EmMessagePopup from './emMessagePopup';
+import { CHAT_TYPE, MESSAGE_STATUS } from '@/EaseIM/constant';
+import { EVENT_BUS_NAME } from '@/constant';
+import { MESSAGE_TYPE } from '../../EaseIM/constant';
 export default {
   components: {
     EmChatNavbar,
@@ -85,13 +85,13 @@ export default {
     return {
       MESSAGE_STATUS,
       MESSAGE_TYPE,
-      targetId: "",
-      chatType: "",
+      targetId: '',
+      chatType: '',
       //v-model绑定的这个变量不要在分页请求结束中自己赋值！！！
       dataList: [],
       isLoadingLocalMsgList: false,
       checkedPopupMsgBody: {}, //当msg popup弹起时选中的消息体
-      quoteMsgId: "",
+      quoteMsgId: '',
     };
   },
 
@@ -99,7 +99,7 @@ export default {
     console.log(option);
     this.targetId = option.targetId;
     this.chatType = option.chatType;
-    this.$store.commit("SET_CHATING_USER_INFO", {
+    this.$store.commit('SET_CHATING_USER_INFO', {
       targetId: this.targetId,
       chatType: this.chatType,
     });
@@ -185,15 +185,15 @@ export default {
   },
   watch: {
     messageList() {
-      console.log(">>>>监听到消息列表变化");
-      this.$store.dispatch("updateConversationLastMsg", {
+      console.log('>>>>监听到消息列表变化');
+      this.$store.dispatch('updateConversationLastMsg', {
         conversationId: this.targetId,
       });
     },
   },
   methods: {
     getGroupName(groupid) {
-      let groupName = "";
+      let groupName = '';
       if (this.joinedGroupList.length) {
         this.joinedGroupList.forEach((item) => {
           if (item.groupid === groupid) {
@@ -201,7 +201,7 @@ export default {
             return (groupName = item.groupname);
           }
         });
-        console.log("groupName", groupName);
+        console.log('groupName', groupName);
         return groupName;
       } else {
         return groupid;
@@ -221,7 +221,7 @@ export default {
           friendInfo?.nickname || targetId;
           break;
         case CHAT_TYPE.GROUP_CHAT:
-          console.log(">>>>>>> Group");
+          console.log('>>>>>>> Group');
           this.getGroupName(targetId);
           break;
         default:
@@ -242,7 +242,7 @@ export default {
               this.$refs.paging.scrollToBottom();
             }, 500);
           } catch (error) {
-            console.log("漫游加载失败", error);
+            console.log('漫游加载失败', error);
             this.$refs.paging.complete(false);
           }
         } else {
@@ -254,7 +254,7 @@ export default {
             this.$refs.paging.scrollToBottom();
           }, 500);
 
-          console.log(">>>>加载本地已有历史记录。");
+          console.log('>>>>加载本地已有历史记录。');
         }
       }
       if (from === 2) {
@@ -262,12 +262,12 @@ export default {
       }
       /* 触顶加载更多消息时获取数据 */
       if (from === 3) {
-        console.log(">>>>触顶加载更多");
+        console.log('>>>>触顶加载更多');
         try {
           const messages = await this.getMoreHistoryMessages();
           this.$refs.paging.complete([...messages]);
         } catch (error) {
-          console.log("漫游加载失败", error);
+          console.log('漫游加载失败', error);
           this.$refs.paging.complete(false);
         }
       }
@@ -279,7 +279,7 @@ export default {
       };
       return new Promise((resolve, reject) => {
         this.$store
-          .dispatch("fetchHistroyMessageListFromServer", params)
+          .dispatch('fetchHistroyMessageListFromServer', params)
           .then((res) => {
             resolve(res.messages);
           })
@@ -291,7 +291,7 @@ export default {
     },
     //执行新增消息
     appentNewMessage(data) {
-      console.log(">>>>>新消息添加", data);
+      console.log('>>>>>新消息添加', data);
       const { msgBody } = data;
       this.$refs.paging.addChatRecordData({
         ...msgBody,
@@ -324,14 +324,14 @@ export default {
         } else {
           this.isLoadingLocalMsgList = false;
           uni.showToast({
-            title: "真的没有更多了",
-            icon: "none",
+            title: '真的没有更多了',
+            icon: 'none',
             duration: 2000,
           });
           return;
         }
       } catch (error) {
-        console.log("漫游加载失败", error);
+        console.log('漫游加载失败', error);
         this.$refs.paging.complete(false);
       }
     },
@@ -364,7 +364,7 @@ export default {
         const dom = uni
           .createSelectorQuery()
           .in(this)
-          .select("#mid" + msgID);
+          .select('#mid' + msgID);
         dom
           .boundingClientRect((data) => {
             if (data) {
@@ -373,8 +373,8 @@ export default {
               this.setQuoteMessageId(msgID);
             } else {
               uni.showToast({
-                icon: "none",
-                title: "没有回复的消息",
+                icon: 'none',
+                title: '没有回复的消息',
               });
             }
           })
@@ -386,13 +386,13 @@ export default {
       this.quoteMsgId = quoteMsgId;
       //引起子组件增加闪烁样式后，延时半秒自定清空设置的引用消息id
       setTimeout(() => {
-        this.quoteMsgId = "";
+        this.quoteMsgId = '';
       }, 500);
     },
   },
   onUnload() {
     //置空正在沟通中的用户信息
-    this.$store.commit("SET_CHATING_USER_INFO", {});
+    this.$store.commit('SET_CHATING_USER_INFO', {});
     uni.$off(
       EVENT_BUS_NAME.EASEIM_MESSAGE_COLLECTION_UPDATE,
       this.appentNewMessage
@@ -410,5 +410,5 @@ export default {
 </script>
 
 <style scoped>
-@import "./index.css";
+@import './index.css';
 </style>

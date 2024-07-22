@@ -25,7 +25,9 @@
         "modules" : {
             "VideoPlayer" : {},
             "Record" : {},
-            "Camera" : {}
+            "Camera" : {},
+            "Geolocation" : {},
+            "Maps" : {}
         },
         "distribute" : {
             "android" : {
@@ -55,10 +57,19 @@
                 "abiFilters" : [ "armeabi-v7a", "x86" ]
             },
             "ios" : {
-                "dSYMs" : false
+                "dSYMs" : false,
+                "privacyDescription" : {
+                    "NSLocationWhenInUseUsageDescription" : ""
+                }
             },
             "sdkConfigs" : {
-                "ad" : {}
+                "ad" : {},
+                "geolocation" : {
+                    "system" : {
+                        "__platform__" : [ "ios", "android" ]
+                    }
+                },
+                "maps" : {}
             },
             "icons" : {
                 "ios" : {

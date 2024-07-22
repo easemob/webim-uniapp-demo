@@ -27,7 +27,7 @@ export const HANDLER_EVENT_NAME = {
   CONTACTS_EVENT: 'contactsEvent',
   GROUP_EVENT: 'groupEvent',
   ERROR_EVENT: 'errorEvent',
-  PRESENCE_EVENT:'presenceEvent'
+  PRESENCE_EVENT: 'presenceEvent',
 };
 
 export const CONNECT_CALLBACK_TYPE = {
@@ -48,7 +48,7 @@ export const MESSAGE_STATUS = {
 export const MESSAGE_TYPE = {
   IMAGE: 'img',
   TEXT: 'txt',
-  LOCATION: 'location',
+  LOCATION: 'loc',
   VIDEO: 'video',
   AUDIO: 'audio',
   EMOJI: 'emoji',

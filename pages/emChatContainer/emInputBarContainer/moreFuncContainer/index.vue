@@ -49,14 +49,16 @@
       ref="imageComps"
       @onCloseAllShowContainer="onCloseAllShowContainer"
     />
+    <!-- <SendLocalMessage @onCloseAllShowContainer="onCloseAllShowContainer" /> -->
   </view>
 </template>
 
 <script>
 import SendImageMessage from '../inputMessages/sendImageMessage';
 import SendFileMessage from '../inputMessages/sendFileMessage';
+import SendLocalMessage from '../inputMessages/sendLocalMessage';
 export default {
-  components: { SendImageMessage, SendFileMessage },
+  components: { SendImageMessage, SendFileMessage, SendLocalMessage },
   data() {
     return {};
   },
