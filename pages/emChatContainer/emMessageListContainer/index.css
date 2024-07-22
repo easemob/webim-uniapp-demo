@@ -1,0 +1,84 @@
+.message_container {
+  width: 100%;
+  background: #f8f9f9;
+}
+
+.message_list_item {
+  width: 100%;
+  display: flex;
+  /* padding: 0 10px; */
+  box-sizing: border-box;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.message_list_item_content {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.message_list_item_mine {
+  flex-direction: row-reverse;
+}
+
+.message_list_item_avatar {
+  margin: 0 10px;
+}
+
+.message_list_item_content_nickname {
+  /* Nickname */
+  height: 16px;
+
+  /* 简体中文/标签/小 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  /* identical to box height, or 133% */
+
+  /* Neutral Special/5 */
+  color: #5270ad;
+}
+
+.message_list_item_content_nickname_mine {
+  text-align: right;
+}
+
+.message_time {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 16px;
+  /* Alphabet/Body/Small */
+  font-family: 'SF Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  /* identical to box height, or 133% */
+  /* Neutral/7 */
+  color: #acb4b9;
+  margin: 10px 0 5px 0;
+}
+
+/* 引用消息闪烁 */
+/* 闪烁动画 */
+@keyframes blinkAnimation {
+  50% {
+    background-color: #eff0f1;
+    /* 闪烁颜色 */
+  }
+}
+
+/* 应用于元素的闪烁效果 */
+.quote_msg_avtive {
+  animation: blinkAnimation 1s;
+  /* 动画持续时间 */
+}

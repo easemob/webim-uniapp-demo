@@ -1,0 +1,38 @@
+.default_search_container {
+  width: 100%;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+}
+.search_container {
+  width: 95%;
+  height: 72rpx;
+  border-radius: 4px;
+  background: #eff0f1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.search_text {
+  /* Input */
+  margin-left: 4px;
+  width: 32px;
+  height: 22px;
+
+  /* 简体中文/文本/大 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height, or 138% */
+
+  /* Neutral/6 */
+  color: #919ba1;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}

@@ -1,0 +1,81 @@
+.contacts_detail_container_header {
+  margin: 50rpx 0;
+  width: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+}
+.u-nav-slot {
+  display:  flex;
+  align-items: center;
+  justify-content: space-between;
+  border-width: 0.5px;
+  border-radius: 100px;
+  border-color: #ccc;
+  padding: 3px 7px;
+  opacity: 0.8;
+}
+.contacts_detail_container_header_avatar {
+  margin: 20rpx 0;
+}
+.contacts_detail_container_header_description {
+  width: 80%;
+  margin: 5rpx;
+}
+.contacts_detail_container_header_function_panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.contacts_detail_container_header_function_panel_item {
+  width: 114px;
+  height: 62px;
+  padding: 8px, 40.5px, 8px, 40.5px;
+  border-radius: 8px;
+  background-color: #f1f2f3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  /* justify-content: space-around; */
+}
+.function_pannel_item_text {
+  /* Label */
+
+  height: 14px;
+
+  /* 简体中文/文本/超小 */
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 14px;
+  /* identical to box height, or 127% */
+  text-align: center;
+
+  /* Primary/5 */
+  color: #009eff;
+
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}
+::v-deep .u-action-sheet__item-wrap {
+  padding-top: 10px;
+}
+::v-deep .u-action-sheet__cancel-text {
+  font-family: 'PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  /* identical to box height, or 138% */
+  text-align: center;
+
+  /* Primary/5 */
+  color: #009eff;
+}

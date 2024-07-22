@@ -1,0 +1,18 @@
+page {
+  background-color: #fafafa;
+  height: 100%;
+}
+.click_more_history_box {
+  /* Mth DD, HH:MM */
+  /* Alphabet/Body/Small */
+  font-family: 'SF Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  /* identical to box height, or 133% */
+  text-align: center;
+
+  /* Neutral/7 */
+  color: #acb4b9;
+}
