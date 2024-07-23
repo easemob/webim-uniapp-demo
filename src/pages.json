@@ -104,6 +104,15 @@
 					"softinputMode": "adjustResize"
 				}
 			}
+		},
+		{
+			"path": "pages/GroupList/index",
+			"style": {
+				"navigationBarTitleText": "Easemob Uniapp",
+				"app-plus": {
+					"softinputMode": "adjustResize"
+				}
+			}
 		}
 	],
 	"tabBar": {

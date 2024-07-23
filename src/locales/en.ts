@@ -137,4 +137,5 @@ export default {
   group: "the group",
   wxConfigTip: "Setting successful, please reopen the mini program",
   inviteToGroup: "invited you to join the group",
+  myGroup: "My Groups"
 };
