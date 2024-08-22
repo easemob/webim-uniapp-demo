@@ -3,7 +3,7 @@
     <!-- 消息列表 -->
     <view class="msgs-wrap">
       <!-- 遮照层,点击关闭Toolbar -->
-      <view v-if="isShowToolbar" class="mask" @tap="closeToolbar"></view>
+      <view v-if="isShowMask" class="mask" @tap="closeToolbar"></view>
 
       <MessageList
         v-if="msgs"
@@ -16,14 +16,24 @@
     <!-- 输入框 -->
     <view class="chat-input-wrap" @tap="closeToolbar">
       <MessageInput
+        ref="msgInputRef"
         @onMessageSend="onMessageSend"
-        @onShowToolbar="isShowToolbar = true"
+        @onShowToolbar="
+          isShowToolbar = true;
+          isShowEmojiPicker = false;
+        "
+        @onShowEmojiPicker="
+          isShowEmojiPicker = true;
+          isShowToolbar = false;
+        "
       />
     </view>
     <!-- input toolbar -->
     <view v-if="isShowToolbar" class="chat-input-toolbar-wrap">
       <MessageInputToolbar />
     </view>
+    <!-- emoji picker -->
+    <EmojiPicker v-if="isShowEmojiPicker" @onEmojiPick="onEmojiPick" />
   </view>
 </template>
 
@@ -36,14 +46,17 @@ import { useGroupStore } from "@/store/group";
 import MessageList from "./components/message/messageList.vue";
 import MessageInput from "./components/messageInput/index.vue";
 import MessageInputToolbar from "./components/messageInputToolBar/index.vue";
+import EmojiPicker from "./components/messageInputToolBar/emojiPicker.vue";
 import { onMounted, computed, onUnmounted, provide } from "vue";
 import type { EasemobChat } from "easemob-websdk/Easemob-chat";
 import { onLoad } from "@dcloudio/uni-app";
 import type { InputToolbarEvent } from "@/types/index";
 
 const msgListRef = ref(null);
+const msgInputRef = ref(null);
 const conversationId = ref("");
 const isShowToolbar = ref(false);
+const isShowEmojiPicker = ref(false);
 const conversationType = ref<EasemobChat.ConversationItem["conversationType"]>(
   "" as EasemobChat.ConversationItem["conversationType"]
 );
@@ -58,6 +71,10 @@ const msgs = computed(() => {
     ?.messages;
 });
 
+const isShowMask = computed(() => {
+  return isShowToolbar.value || isShowEmojiPicker.value;
+});
+
 const onMessageSend = () => {
   //@ts-ignore
   msgListRef?.value?.toBottomMsg();
@@ -67,6 +84,14 @@ const closeToolbar = () => {
   if (isShowToolbar.value === true) {
     isShowToolbar.value = false;
   }
+  if (isShowEmojiPicker.value === true) {
+    isShowEmojiPicker.value = false;
+  }
+};
+
+const onEmojiPick = (alt: string) => {
+  //@ts-ignore
+  msgInputRef?.value.insertEmoji(alt);
 };
 
 onMounted(() => {
