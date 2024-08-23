@@ -186,13 +186,6 @@ export function formatTextMessage(txt: string): string {
   return rnTxt;
 }
 
-export function formatHtmlString(str: string): string {
-  return str?.replace(/[\u00A0-\u9999<>]/gim, (i) =>
-    //@ts-ignore
-    "".concat("&#", i.charCodeAt(0), ";")
-  );
-}
-
 export const renderTxt = (txt: string | undefined | null) => {
   if (txt === undefined || txt === null) {
     return [];

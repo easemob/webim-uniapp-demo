@@ -35,7 +35,7 @@ import { useConnStore } from "@/store/conn";
 import { useConversationStore } from "@/store/conversation";
 import { useMessageStore } from "@/store/message";
 import { useAppUserStore } from "@/store/appUser";
-import { formatTextMessage, formatHtmlString } from "@/utils/index";
+import { formatTextMessage } from "@/utils/index";
 import AudioMessageSender from "../messageInputToolBar/audioSender.vue";
 import PlusIcon from "@/static/images/inputbar/tofeipeng/icons/plus_in_circle@2x.png";
 import AudioIcon from "@/static/images/inputbar/audio_click_icon.png";
@@ -74,7 +74,7 @@ const showEmojiPicker = () => {
 };
 
 const handleSendMessage = async () => {
-  let textMessage = formatHtmlString(formatTextMessage(text.value));
+  let textMessage = formatTextMessage(text.value);
   const msg = SDK.message.create({
     to: convStore.currConversation!.conversationId,
     chatType: convStore.currConversation!.conversationType,
