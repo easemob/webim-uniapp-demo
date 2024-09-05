@@ -186,20 +186,16 @@ msgStorage.saveMsg = function (sendableMsg, type, receiveMsg) {
   save();
 
   function save() {
-    uni.setStorage({
-      key: sessionKey,
-      data: curChatMsg,
-
-      success() {
-        sessionMsgMap[sessionKey] = null
-        if (type == msgType.AUDIO || type == msgType.VIDEO) {
-          disp.fire('em.chat.audio.fileLoaded');
-        }
-        me.fire("newChatMsg", renderableMsg, type, curChatMsg, sessionKey);
-        
+    try {
+      uni.setStorageSync(sessionKey, curChatMsg);
+      sessionMsgMap[sessionKey] = null;
+      if (type == msgType.AUDIO || type == msgType.VIDEO) {
+        disp.fire("em.chat.audio.fileLoaded");
       }
-
-    });
+      me.fire("newChatMsg", renderableMsg, type, curChatMsg, sessionKey);
+    } catch (error) {
+      console.log("saveMsgError", error);
+    }
   }
 };
 
