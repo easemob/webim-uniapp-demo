@@ -1,0 +1,117 @@
+{
+	"name": "EMPushUniPlugin",
+	"id": "EMPushUniPlugin",
+	"version": "1.0.0",
+	"description": "环信UNIAPP推送插件",
+	"_dp_type": "nativeplugin",
+	"_dp_nativeplugin": {
+		"android": {
+			"hooksClass": "com.hyphenate.push.PushHookProxy",
+			"plugins": [{
+				"type": "module",
+				"name": "EMPushUniPlugin",
+				"class": "com.hyphenate.push.PushModule"
+			}],
+			"integrateType": "aar",
+			"dependencies": [
+				"com.huawei.hms:push:6.12.0.300",
+				"com.meizu.flyme.internet:push-internal:4.3.0",
+				"commons-codec:commons-codec:1.6",
+				"androidx.appcompat:appcompat:1.3.0",
+				"com.google.android.material:material:1.3.0",
+				"com.google.code.gson:gson:2.9.1"
+			],
+			"minSdkVersion": "21",
+			"compleOptions": {
+				"sourceCompatibility": "1.8",
+				"targetCompatibility": "1.8"
+			},
+			"abis": [
+				"armeabi-v7a", "x86"
+			],
+			"permissions": [
+				"android.permission.INTERNET",
+				"android.permission.ACCESS_NETWORK_STATE",
+				"android.permission.POST_NOTIFICATIONS",
+				"android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+				"android.permission.WRITE_EXTERNAL_STORAGE",
+				"android.permission.READ_EXTERNAL_STORAGE",
+				"${applicationId}.permission.MIPUSH_RECEIVE",
+				"${applicationId}.push.permission.MESSAGE",
+				"${applicationId}.permission.C2D_MESSAGE",
+				"com.huawei.android.launcher.permission.CHANGE_BADGE",
+				"com.vivo.notification.permission.BADGE_ICON",
+				"com.hihonor.android.launcher.permission.CHANGE_BADGE"
+			],
+			"parameters": {
+				"hihonor_app_id": {
+					"des": "荣耀推送 appId",
+					"key": "com.hihonor.push.app_id"
+				},
+				"oppo_app_key": {
+					"des": "OPPO推送 app_key",
+					"key": "OPPO_APP_KEY",
+					"value": "push_${oppo_app_key}"
+				},
+				"oppo_app_secret": {
+					"des": "OPPO推送 app_secret",
+					"key": "OPPO_APP_SECRET",
+					"value": "push_${oppo_app_secret}"
+				},
+				"com.vivo.push.app_id": {
+					"des": "VIVO推送 app_id",
+					"key": "com.vivo.push.app_id"
+				},
+				"com.vivo.push.api_key": {
+					"des": "VIVO推送 api_key",
+					"key": "com.vivo.push.api_key"
+				},
+				"xiaomi_app_id": {
+					"des": "XIAOMI推送 app_id",
+					"key": "XIAO_MI_APP_ID",
+					"value": "push_${xiaomi_app_id}"
+				},
+				"xiaomi_app_key": {
+					"des": "XIAOMI推送 app_key",
+					"key": "XIAO_MI_APP_KEY",
+					"value": "push_${xiaomi_app_key}"
+
+				},
+				"meizu_app_id": {
+					"des": "MEIZU推送 app_id",
+					"key": "MEI_ZU_APP_ID",
+					"value": "push_${meizu_app_id}"
+				},
+				"meizu_app_key": {
+					"des": "MEIZU推送 app_key",
+					"key": "MEI_ZU_APP_KEY",
+					"value": "push_${meizu_app_key}"
+				}
+			}
+
+		},
+		"ios": {
+			"plugins": [{
+				"type": "module",
+				"name": "EMPushUniPlugin",
+				"class": "EMPushModule"
+			}],
+			"hooksClass": "EMPushPluginProxy",
+			"integrateType": "framework",
+			"deploymentTarget": "11.0",
+			"frameworks": [
+				"CFNetwork.framework",
+				"Foundation.framework",
+				"UIKit.framework"
+			],
+			"resources": [
+
+			],
+			"capabilities": {
+				"entitlements": {
+					"aps-environment": "development"
+				}
+			}
+		}
+	}
+}

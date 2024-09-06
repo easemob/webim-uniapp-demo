@@ -4,7 +4,7 @@ const SERVER_CONFIG_STORE = "serverConfig";
 const serverConfig = uni.getStorageSync(SERVER_CONFIG_STORE) || {};
 
 const IS_USE_CUSTOM_SERVER = serverConfig.isUseCustomServer || false; // 是否使用自定义服务器
-const APPKEY = serverConfig.appkey || "easemob#easeim"; // 环信appkey
+const APPKEY = serverConfig.appkey || "Your appkey"; // 环信appkey
 const API_URL = serverConfig.restUrl || "https://a1.easemob.com"; // 环信api地址
 const URL = serverConfig.url || "wss://im-api-wechat.easemob.com/websocket"; // 环信websocket地址
 
@@ -14,7 +14,7 @@ const GET_GROUP_MEMBERS_PAGESIZE = 100; // 获取群组成员列表的每页数�
 
 const GroupEventFromIds: Array<string> = [];
 
-// Demo内部上传头像地址 (仅支持官方 easemob#easeim appkey使用)
+// Demo内部上传头像地址 (仅支持官方appkey使用)
 const getInsideUploadUrl = (userId: string) => {
   return `https://a1-appserver.easemob.com/inside/app/user/${userId}/avatar/upload`;
 };

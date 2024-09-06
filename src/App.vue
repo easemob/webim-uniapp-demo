@@ -5,6 +5,28 @@ import { CHAT_STORE } from "@/const/index";
 // 引入conn文件，初始化IM，不可删除
 import conn from "./initIM";
 
+// #ifdef APP-PLUS
+const EMPushUniPlugin = uni.requireNativePlugin("EMPushUniPlugin");
+
+// 注册推送插件
+conn.usePlugin(
+  {
+    //@ts-ignore
+    emPush: EMPushUniPlugin,
+    config: {
+      MICertificateName: "XXXXX", // 小米推送证书名称
+      OPPOCertificateName: "XXXXX", // oppo推送证书名称
+      HMSCertificateName: "XXXXX", // 华为推送证书名称
+      VIVOCertificateName: "XXXXX", // vivo推送证书名称
+      HONORCertificateName: "XXXXX", // 荣耀推送证书名称
+      MEIZUCertificateName: "XXXXX", // 魅族推送证书名称
+      APNsCertificateName: "XXXXX" // APNs推送证书名称
+    }
+  },
+  "push" // 为固定名称
+);
+// #endif
+
 const autoLogin = async () => {
   try {
     let res = await uni.getStorage({
@@ -32,6 +54,10 @@ const autoLogin = async () => {
 
 onLaunch(() => {
   console.log("App Launch");
+  // #ifdef APP-PLUS
+  // 初始化推送插件
+  EMPushUniPlugin.initPushModule();
+  // #endif
   autoLogin();
 });
 

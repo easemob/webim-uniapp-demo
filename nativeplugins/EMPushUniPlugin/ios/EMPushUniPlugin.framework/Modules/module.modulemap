@@ -1,0 +1,6 @@
+framework module EMPushUniPlugin {
+  umbrella header "EMPushUniPlugin.h"
+
+  export *
+  module * { export * }
+}
