@@ -47,7 +47,7 @@
       </view>
       <view class="menu-item">
         <view>{{ $t("about") }}</view>
-        <view class="item-info">Easemob UniApp SDK v4.8.1</view>
+        <view class="item-info">Easemob UniApp SDK v4.9.1</view>
       </view>
       <view class="menu-item menu-item-logout" @tap="logout">
         {{ $t("logout") }}

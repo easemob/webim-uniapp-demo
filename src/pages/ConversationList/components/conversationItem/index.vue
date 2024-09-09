@@ -13,9 +13,24 @@
       <view class="user-info-wrap">
         <view class="user-nick-name ellipsis">{{ conversationInfo.name }}</view>
         <view class="msg-wrap">
-          <view class="last-msg ellipsis">{{
-            formatLastMessage(conversation)
-          }}</view>
+          <view
+            class="last-msg ellipsis"
+            v-if="conversation.lastMessage?.type === 'txt'"
+          >
+            <span
+              v-for="(item, idx) in renderTxt(conversation.lastMessage.msg)"
+              :key="idx"
+            >
+              <span v-if="item.type === 'text'"> {{ item.value }}</span>
+              <!-- emoji -->
+              <!-- <image v-else class="msg-emoji" :src="item.value" /> -->
+              <!-- emoji alt -->
+              <span v-else> {{ item.alt }}</span>
+            </span>
+          </view>
+          <view v-else class="last-msg ellipsis">
+            {{ formatLastMessage(conversation) }}
+          </view>
         </view>
       </view>
       <view class="time">{{
@@ -35,7 +50,7 @@ import { useConversationStore } from "@/store/conversation";
 import { useGroupStore } from "@/store/group";
 import { useAppUserStore } from "@/store/appUser";
 import { computed } from "vue";
-
+import { renderTxt } from "@/utils/index";
 const { t } = useI18n();
 
 interface Props {

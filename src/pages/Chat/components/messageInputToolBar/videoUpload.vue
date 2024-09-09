@@ -42,7 +42,6 @@ const chooseVideo = () => {
   uni.chooseVideo({
     sourceType: ["camera", "album"],
     success: function (res) {
-      console.log(res, "resresresres");
       sendVideoMessage(res);
     }
   });
@@ -57,7 +56,6 @@ const sendVideoMessage = (res: any) => {
   }
   uni.showLoading();
   const token = conn.token;
-  console.log(token, "  token");
   const requestParams = {
     url: uploadUrl,
     filePath: tempFilePath,

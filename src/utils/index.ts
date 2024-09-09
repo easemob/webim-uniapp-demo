@@ -1,4 +1,5 @@
 import i18n from "@/locales/index";
+import { emojiAltMap, emoji } from "@/const/emoji";
 export const formatDate = function (date: Date, fmt: string = "") {
   const o = {
     "M+": date.getMonth() + 1, //月份
@@ -125,7 +126,7 @@ export const isiOS = () => {
 };
 
 export const isWechat = () => {
- return navigator?.userAgent?.toLowerCase().indexOf("micromessenger") !== -1;
+  return navigator?.userAgent?.toLowerCase().indexOf("micromessenger") !== -1;
 };
 
 type CallbackFunction = (...args: any[]) => void;
@@ -157,3 +158,71 @@ export function throttle(
     }
   };
 }
+
+// 格式化文本消息， 将输入框文本消息中的表情符号转换为对应的emoji,进行发送
+export function formatTextMessage(txt: string): string {
+  if (txt === undefined) {
+    return "";
+  }
+  let rnTxt = "";
+  let match = null;
+  const regex = /(\[.*?\])/g;
+  let start = 0;
+  let index = 0;
+  while ((match = regex.exec(txt))) {
+    index = match.index;
+    if (index > start) {
+      rnTxt += txt.substring(start, index);
+    }
+    if (match[1] in emojiAltMap) {
+      //@ts-ignore
+      rnTxt += emojiAltMap[match[1]];
+    } else {
+      rnTxt += match[1];
+    }
+    start = index + match[1].length;
+  }
+  rnTxt += txt.substring(start, txt.length);
+  return rnTxt;
+}
+
+export const renderTxt = (txt: string | undefined | null) => {
+  if (txt === undefined || txt === null) {
+    return [];
+  }
+  let rnTxt: any[] = [];
+  let match;
+  const regex =
+    /(U\+1F600|U\+1F604|U\+1F609|U\+1F62E|U\+1F92A|U\+1F60E|U\+1F971|U\+1F974|U\+263A|U\+1F641|U\+1F62D|U\+1F610|U\+1F607|U\+1F62C|U\+1F913|U\+1F633|U\+1F973|U\+1F620|U\+1F644|U\+1F910|U\+1F97A|U\+1F928|U\+1F62B|U\+1F637|U\+1F912|U\+1F631|U\+1F618|U\+1F60D|U\+1F922|U\+1F47F|U\+1F92C|U\+1F621|U\+1F44D|U\+1F44E|U\+1F44F|U\+1F64C|U\+1F91D|U\+1F64F|U\+2764|U\+1F494|U\+1F495|U\+1F4A9|U\+1F48B|U\+2600|U\+1F31C|U\+1F308|U\+2B50|U\+1F31F|U\+1F389|U\+1F490|U\+1F382|U\+1F381|😀|😄|😉|😮|🤪|😎|🥱|🥴|☺|🙁|😭|😐|😇|😬|🤓|😳|🥳|😠|🙄|🤐|🥺|🤨|😫|😷|🤒|😱|😘|😍|🤢|👿|🤬|😡|👍|👎|👏|🙌|🤝|🙏|❤️|💔|💕|💩|💋|☀️|🌜|🌈|⭐|🌟|🎉|💐|🎂|🎁)/g;
+  let start = 0;
+  let index = 0;
+  while ((match = regex.exec(txt))) {
+    index = match.index;
+    if (index > start) {
+      rnTxt.push({
+        type: "text",
+        value: txt.substring(start, index)
+      });
+    }
+    if (match[1] in emoji.map) {
+      const v = emoji.map[match[1] as keyof typeof emoji.map];
+      rnTxt.push({
+        type: "emoji",
+        value: v.url,
+        alt: v.alt
+      });
+    } else {
+      rnTxt.push({
+        type: "text",
+        value: match[1]
+      });
+    }
+    start = index + match[1].length;
+  }
+
+  rnTxt.push({
+    type: "text",
+    value: txt.substring(start, txt.length)
+  });
+  return rnTxt;
+};

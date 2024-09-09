@@ -18,6 +18,11 @@
         :placeholder="$t('sendMessagePlaceholder')"
       />
     </view>
+
+    <view class="icon-wrap">
+      <image class="icon" @tap.stop="showEmojiPicker" :src="EmojiIcon"></image>
+    </view>
+
     <view class="icon-wrap">
       <image class="icon" @tap.stop="showToolbar" :src="PlusIcon"></image>
     </view>
@@ -30,12 +35,18 @@ import { useConnStore } from "@/store/conn";
 import { useConversationStore } from "@/store/conversation";
 import { useMessageStore } from "@/store/message";
 import { useAppUserStore } from "@/store/appUser";
+import { formatTextMessage } from "@/utils/index";
 import AudioMessageSender from "../messageInputToolBar/audioSender.vue";
 import PlusIcon from "@/static/images/inputbar/tofeipeng/icons/plus_in_circle@2x.png";
 import AudioIcon from "@/static/images/inputbar/audio_click_icon.png";
 import Keyboard from "@/static/images/inputbar/keyboard.png";
+import EmojiIcon from "@/static/images/inputbar/emoji_click_icon.png";
 
-const emits = defineEmits(["onMessageSend", "onShowToolbar"]);
+const emits = defineEmits([
+  "onMessageSend",
+  "onShowToolbar",
+  "onShowEmojiPicker"
+]);
 
 const convStore = useConversationStore();
 
@@ -58,12 +69,19 @@ const showToolbar = () => {
   emits("onShowToolbar");
 };
 
+const showEmojiPicker = () => {
+  // Set isSendAudio to false when showing emoji picker
+  isSendAudio.value = false;
+  emits("onShowEmojiPicker");
+};
+
 const handleSendMessage = async () => {
+  let textMessage = formatTextMessage(text.value);
   const msg = SDK.message.create({
     to: convStore.currConversation!.conversationId,
     chatType: convStore.currConversation!.conversationType,
     type: "txt",
-    msg: text.value,
+    msg: textMessage,
     ext: {
       ease_chat_uikit_user_info: {
         avatarURL: getSelfUserInfo().avatar,
@@ -84,6 +102,12 @@ const handleSendMessage = async () => {
     });
   }
 };
+
+defineExpose({
+  insertEmoji(emoji: string) {
+    text.value += emoji;
+  }
+});
 </script>
 <style lang="scss" scoped>
 @import url("./style.scss");

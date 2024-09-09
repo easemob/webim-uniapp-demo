@@ -12,11 +12,12 @@
 <script setup lang="ts">
 import ImageUpload from "./imageUpload.vue";
 import VideoUpload from "./videoUpload.vue";
+
 const emits = defineEmits(["onMessageSend"]);
 </script>
 <style lang="scss" scoped>
 .message-input-toolbar {
-  background:#f3f3f3;
+  background: #f3f3f3;
 }
 
 .swiper-item {
