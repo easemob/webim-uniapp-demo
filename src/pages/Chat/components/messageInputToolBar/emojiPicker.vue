@@ -17,8 +17,6 @@ import { ref } from "vue";
 import { emojiList } from "@/const/emoji";
 const emojis = ref(emojiList);
 
-console.log(emojiList, 'emojiList')
-
 const emits = defineEmits(["onEmojiPick"]);
 
 const selectEmoji = (alt: string) => {
@@ -33,9 +31,17 @@ const selectEmoji = (alt: string) => {
   padding: 0 10rpx;
 }
 
+
 .emoji {
   width: 46rpx;
   height: 46rpx;
   margin: 10rpx;
+
+  transition: transform 0.1s ease-in-out;
+
+  &:active {
+    transform: scale(0.8);
+  }
 }
+
 </style>

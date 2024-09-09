@@ -22,7 +22,10 @@
               :key="idx"
             >
               <span v-if="item.type === 'text'"> {{ item.value }}</span>
-              <image v-else class="msg-emoji" :src="item.value" />
+              <!-- emoji -->
+              <!-- <image v-else class="msg-emoji" :src="item.value" /> -->
+              <!-- emoji alt -->
+              <span v-else> {{ item.alt }}</span>
             </span>
           </view>
           <view v-else class="last-msg ellipsis">

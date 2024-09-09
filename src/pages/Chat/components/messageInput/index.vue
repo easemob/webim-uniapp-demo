@@ -70,6 +70,8 @@ const showToolbar = () => {
 };
 
 const showEmojiPicker = () => {
+  // Set isSendAudio to false when showing emoji picker
+  isSendAudio.value = false;
   emits("onShowEmojiPicker");
 };
 

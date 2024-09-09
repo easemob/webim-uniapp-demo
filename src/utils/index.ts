@@ -208,7 +208,8 @@ export const renderTxt = (txt: string | undefined | null) => {
       const v = emoji.map[match[1] as keyof typeof emoji.map];
       rnTxt.push({
         type: "emoji",
-        value: v.url
+        value: v.url,
+        alt: v.alt
       });
     } else {
       rnTxt.push({
