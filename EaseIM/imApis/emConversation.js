@@ -15,6 +15,18 @@ const emConversation = () => {
         });
     });
   };
+  const fetchConversationlistFromServer = (pageSize = 50, cursor = '') => {
+    return new Promise((resolve, reject) => {
+      EMClient.getServerConversations({ pageSize, cursor })
+        .then((res) => {
+          console.log('>>>>会话列表数据获取成功');
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  };
   //从服务端删除会话
   const removeConversationFromServer = (
     channel,
@@ -46,6 +58,7 @@ const emConversation = () => {
   };
   return {
     fetchConversationFromServer,
+    fetchConversationlistFromServer,
     removeConversationFromServer,
     sendChannelAck,
   };

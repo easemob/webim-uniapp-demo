@@ -83,10 +83,10 @@
           >
             <!-- 消息列表 -->
             <view class="list_box">
-              <view class="list_left" :data-username="item.channel_id">
+              <view class="list_left" :data-username="item.conversationId">
                 <view class="list_pic">
-                  <view class="em-msgNum" v-if="item.unread_num">
-                    {{ item.unread_num > 99 ? '99+' : item.unread_num }}</view
+                  <view class="em-msgNum" v-if="item.unReadCount">
+                    {{ item.unReadCount > 99 ? '99+' : item.unReadCount }}</view
                   >
 
                   <image :src="showConversationAvatar(item)"></image>
@@ -228,15 +228,25 @@ const unReadNoticeNum = computed(() => {
 const conversationStore = useConversationStore();
 const {
   fetchConversationFromServer,
+  fetchConversationlistFromServer,
   removeConversationFromServer,
   sendChannelAck,
 } = emConversation();
 const fetchConversationList = async () => {
-  const res = await fetchConversationFromServer();
-  if (res?.data?.channel_infos) {
-    conversationStore.setConversationList(
-      Object.assign([], res.data.channel_infos)
-    );
+  try {
+    const resData = await fetchConversationlistFromServer();
+    console.log('>>>>>执行获取会话列表数据', resData);
+    if (resData?.data?.conversations?.length) {
+      conversationStore.setConversationList(
+        Object.assign([], resData.data.conversations)
+      );
+    }
+  } catch (error) {
+    console.log('获取会话列表失败', error);
+    uni.showToast({
+      title: '获取会话列表失败',
+      icon: 'none',
+    });
   }
 };
 //会话列表数据
@@ -272,9 +282,10 @@ const friendUserInfoMap = computed(() => {
 //会话列表头像
 const showConversationAvatar = computed(() => {
   return (item) => {
-    switch (item.chatType) {
+    const { conversationId, conversationType } = item;
+    switch (conversationType) {
       case CHAT_TYPE.SINGLE_CHAT:
-        const friendInfo = friendUserInfoMap.value.get(item.channel_id) || {};
+        const friendInfo = friendUserInfoMap.value.get(conversationId) || {};
         return friendInfo.avatarurl ?? conversationState.defaultAvatar;
       case CHAT_TYPE.GROUP_CHAT:
         return conversationState.defaultGroupAvatar;
@@ -286,12 +297,13 @@ const showConversationAvatar = computed(() => {
 //会话列表名称
 const showConversationName = computed(() => {
   return (item) => {
-    switch (item.chatType) {
+    const { conversationId, conversationType } = item;
+    switch (conversationType) {
       case CHAT_TYPE.SINGLE_CHAT:
-        const friendInfo = friendUserInfoMap.value.get(item.channel_id);
-        return friendInfo?.nickname || item.channel_id;
+        const friendInfo = friendUserInfoMap.value.get(conversationId);
+        return friendInfo?.nickname || conversationId;
       case CHAT_TYPE.GROUP_CHAT:
-        return getGroupName(item.channel_id);
+        return getGroupName(conversationId);
       default:
         return null;
     }
@@ -305,15 +317,15 @@ const handleTime = computed(() => {
 });
 //删除会话
 const deleteConversation = async (eventItem) => {
-  const { channel_id, chatType } = eventItem;
+  const { conversationId, conversationType } = eventItem;
   try {
     const res = await uni.showModal({
       title: '确认删除？',
       confirmText: '删除',
     });
     if (res.confirm) {
-      await removeConversationFromServer(channel_id, chatType);
-      conversationStore.deleteConversation(channel_id);
+      await removeConversationFromServer(conversationId, conversationType);
+      conversationStore.deleteConversation(conversationId);
     }
   } catch (error) {
     uni.showToast({
@@ -337,32 +349,35 @@ const actionSearch = () => {
   let resConversationList = [];
   if (keyWord) {
     resConversationList = conversationStore.conversationList.filter((item) => {
-      if (item.chatType === CHAT_TYPE.SINGLE_CHAT || item.chatType === 'chat') {
+      if (
+        item.conversationType === CHAT_TYPE.SINGLE_CHAT ||
+        item.conversationType === 'chat'
+      ) {
         if (
-          friendUserInfoMap.value.has(item.channel_id) &&
-          friendUserInfoMap.value.get(item.channel_id)?.nickname
+          friendUserInfoMap.value.has(item.conversationId) &&
+          friendUserInfoMap.value.get(item.conversationId)?.nickname
         ) {
           return (
             item.lastMessage.msg?.indexOf(keyWord) > -1 ||
-            item.channel_id?.indexOf(keyWord) > -1 ||
+            item.conversationId?.indexOf(keyWord) > -1 ||
             friendUserInfoMap.value
-              .get(item.channel_id)
+              .get(item.conversationId)
               .nickname?.indexOf(keyWord) > -1
           );
         } else {
           return (
             item.lastMessage.msg?.indexOf(keyWord) > -1 ||
-            item.channel_id?.indexOf(keyWord) > -1
+            item.conversationId?.indexOf(keyWord) > -1
           );
         }
       }
       if (
-        item.chatType === CHAT_TYPE.GROUP_CHAT ||
-        item.chatType === 'groupchat'
+        item.conversationType === CHAT_TYPE.GROUP_CHAT ||
+        item.conversationType === 'groupchat'
       ) {
         return (
-          item.channel_id.indexOf(keyWord) > -1 ||
-          getGroupName(item.channel_id).indexOf(keyWord) > -1 ||
+          item.conversationId.indexOf(keyWord) > -1 ||
+          getGroupName(item.conversationId).indexOf(keyWord) > -1 ||
           item.lastMessage.msg.indexOf(keyWord) > -1
         );
       }
@@ -420,11 +435,11 @@ const entryInform = () => {
 const entryemChat = (params) => {
   console.log('params', params);
   //发送channelack 清除服务端该会话未读数，并且清除本地未读红点
-  sendChannelAck(params.channel_id, params.chatType);
-  conversationStore.clearConversationUnReadNum(params.channel_id);
-  conversationStore.setChattingUserId(params.channel_id);
+  sendChannelAck(params.conversationId, params.conversationType);
+  conversationStore.clearConversationUnReadNum(params.conversationId);
+  conversationStore.setChattingUserId(params.conversationId);
   uni.navigateTo({
-    url: `../emChatContainer/index?targetId=${params.channel_id}&chatType=${params.chatType}`,
+    url: `../emChatContainer/index?targetId=${params.conversationId}&chatType=${params.conversationType}`,
   });
 };
 onLoad(() => {
