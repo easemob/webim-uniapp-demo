@@ -14,22 +14,22 @@ const emContacts = () => {
   };
   const removeContactFromServer = (contactId) => {
     if (contactId) {
-      EMClient.deleteContact(contactId);
+      return EMClient.deleteContact(contactId);
     }
   };
   const addContact = (contactId, applyMsg) => {
     if (contactId) {
-      EMClient.addContact(contactId, applyMsg);
+      return EMClient.addContact(contactId, applyMsg);
     }
   };
   const acceptContactInvite = (contactId) => {
     if (contactId) {
-      EMClient.acceptContactInvite(contactId);
+      return EMClient.acceptContactInvite(contactId);
     }
   };
   const declineContactInvite = (contactId) => {
     if (contactId) {
-      EMClient.declineContactInvite(contactId);
+      return EMClient.declineContactInvite(contactId);
     }
   };
   return {

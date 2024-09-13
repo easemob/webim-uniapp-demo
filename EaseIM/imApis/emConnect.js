@@ -2,28 +2,16 @@ import { EMClient } from '../index';
 const emConnect = () => {
   const loginWithPassword = (hxUserId, hxPassword) => {
     if (!hxUserId || !hxPassword) throw Error('empty params');
-    return new Promise((resolve, reject) => {
-      EMClient.open({
-        user: hxUserId,
-        pwd: hxPassword,
-      })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((err) => reject(err));
+    return EMClient.open({
+      user: hxUserId,
+      pwd: hxPassword,
     });
   };
   const loginWithAccessToken = (hxUserId, hxAccessToken) => {
     if (!hxUserId || !hxAccessToken) throw Error('empty params');
-    return new Promise((resolve, reject) => {
-      EMClient.open({
-        user: hxUserId,
-        accessToken: hxAccessToken,
-      })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((err) => reject(err));
+    return EMClient.open({
+      user: hxUserId,
+      accessToken: hxAccessToken,
     });
   };
   const closeEaseIM = () => {
