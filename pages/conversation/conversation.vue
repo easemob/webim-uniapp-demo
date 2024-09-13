@@ -243,10 +243,6 @@ const fetchConversationList = async () => {
     }
   } catch (error) {
     console.log('获取会话列表失败', error);
-    uni.showToast({
-      title: '获取会话列表失败',
-      icon: 'none',
-    });
   }
 };
 //会话列表数据
