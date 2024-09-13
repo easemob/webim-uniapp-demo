@@ -5,6 +5,7 @@ EMClient = new EaseSDK.connection({
   appKey: EM_APP_KEY,
   apiUrl: EM_API_URL,
   url: EM_WEB_SOCKET_URL,
+  enableReportLogs: true, // 开启日志上报
 });
 uni.EMClient = EMClient;
 export { EaseSDK, EMClient };
