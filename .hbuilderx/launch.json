@@ -23,7 +23,7 @@
             "type" : "uni-app:app-ios"
         },
         {
-            "playground" : "custom",
+            "playground" : "standard",
             "type" : "uni-app:app-android"
         },
         {

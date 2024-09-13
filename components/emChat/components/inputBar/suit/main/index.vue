@@ -14,7 +14,7 @@
         class="input_text"
         type="text"
         cursor-spacing="65"
-        confirm-type="none"
+        confirm-type="send"
         v-model.trim="inputContent"
         @focus="inputFocus"
         @confirm="sendTextMessage"

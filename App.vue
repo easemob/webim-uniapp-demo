@@ -54,9 +54,14 @@ export default {
       uni.redirectTo({
         url: '../home/index?myName=' + finalLoginUserId,
       });
+      uni.showToast({
+        title: 'IM 连接成功',
+        icon: 'none',
+        duration: 2000,
+      });
     };
     //IM断开连接
-    const { actionEMReconnect } = emHandleReconnect();
+    // const { actionEMReconnect } = emHandleReconnect();
     const onDisconnect = () => {
       //断开回调触发后，如果业务登录状态为true则说明异常断开需要重新登录
       if (!loginStore.loginStatus) {
@@ -68,10 +73,12 @@ export default {
         uni.redirectTo({
           url: '../login/login',
         });
-        closeEaseIM();
       } else {
-        //执行通过token进行重新登录
-        actionEMReconnect();
+        uni.showToast({
+          title: 'IM 连接已断开',
+          icon: 'none',
+          duration: 2000,
+        });
       }
     };
     //IM重连中
