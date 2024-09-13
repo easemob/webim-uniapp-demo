@@ -15,18 +15,8 @@ const emConversation = () => {
         });
     });
   };
-  const fetchConversationlistFromServer = (pageSize = 50, cursor = '') => {
-    return new Promise((resolve, reject) => {
-      EMClient.getServerConversations({ pageSize, cursor })
-        .then((res) => {
-          console.log('>>>>会话列表数据获取成功');
-          resolve(res);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  };
+  const fetchConversationlistFromServer = (pageSize = 50, cursor = '') =>
+    EMClient.getServerConversations({ pageSize, cursor });
   //从服务端删除会话
   const removeConversationFromServer = (
     channel,
@@ -34,16 +24,7 @@ const emConversation = () => {
     deleteRoam = false
   ) => {
     if (!channel) return;
-    return new Promise((resolve, reject) => {
-      EMClient.deleteConversation({ channel, chatType, deleteRoam })
-        .then((res) => {
-          console.log('>>>>会话删除成功');
-          resolve(res);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+    return EMClient.deleteConversation({ channel, chatType, deleteRoam });
   };
   //发送会话已读回执
   const sendChannelAck = (targetId, chatType = CHAT_TYPE.SINGLE_CHAT) => {
@@ -54,7 +35,7 @@ const emConversation = () => {
       to: targetId, // 接收消息对象的用户 ID。
     };
     const msg = EaseSDK.message.create(option);
-    EMClient.send(msg);
+    return EMClient.send(msg);
   };
   return {
     fetchConversationFromServer,

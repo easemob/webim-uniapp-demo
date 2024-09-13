@@ -227,7 +227,6 @@ const unReadNoticeNum = computed(() => {
 /* 会话列表 */
 const conversationStore = useConversationStore();
 const {
-  fetchConversationFromServer,
   fetchConversationlistFromServer,
   removeConversationFromServer,
   sendChannelAck,
