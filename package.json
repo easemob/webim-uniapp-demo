@@ -55,7 +55,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-4000720240327002",
     "@dcloudio/uni-mp-xhs": "3.0.0-4000720240327002",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4000720240327002",
-    "easemob-websdk": "^4.9.1",
+    "easemob-websdk": "^4.9.2",
     "pinia": "2.0.32",
     "vue": "3.2.47",
     "vue-i18n": "^9.1.9"
