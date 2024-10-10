@@ -63,6 +63,8 @@ onLaunch(() => {
 
 onShow(() => {
   console.log("App Show");
+  // sdk 内部处理从后台返回应用时的重连
+  conn.onShow();
 });
 
 onHide(() => {
