@@ -41,37 +41,47 @@ export const useMessageStore = defineStore("message", () => {
     conversation: EasemobChat.ConversationItem,
     cursor?: string
   ) => {
-    const dt = await getChatConn().getHistoryMessages({
-      targetId: conversation.conversationId,
-      chatType: conversation.conversationType,
-      pageSize: 50,
-      cursor: cursor || ""
-    });
-    // 更新本地消息映射
-    dt.messages.forEach((msg) => {
-      //@ts-ignore
-      messageMap.value.set(msg.id, msg);
-    });
-
-    if (conversationMessagesMap.value.has(conversation.conversationId)) {
-      const info = conversationMessagesMap.value.get(
-        conversation.conversationId
-      );
-      if (info) {
+    try {
+      const dt = await getChatConn().getHistoryMessages({
+        targetId: conversation.conversationId,
+        chatType: conversation.conversationType,
+        pageSize: 50,
+        cursor: cursor || ""
+      });
+      // 更新本地消息映射
+      dt.messages.forEach((msg) => {
         //@ts-ignore
-        info.messages.unshift(...dt.messages.reverse());
-        info.cursor = dt.cursor || "";
-        info.isLast = dt.isLast;
-      }
-      return;
-    }
+        messageMap.value.set(msg.id, msg);
+      });
 
-    conversationMessagesMap.value.set(conversation.conversationId, {
-      //@ts-ignore
-      messages: dt.messages.reverse(),
-      cursor: dt.cursor || "",
-      isLast: dt.isLast
-    });
+      if (conversationMessagesMap.value.has(conversation.conversationId)) {
+        const info = conversationMessagesMap.value.get(
+          conversation.conversationId
+        );
+        if (info) {
+          //@ts-ignore
+          info.messages.unshift(...dt.messages.reverse());
+          info.cursor = dt.cursor || "";
+          info.isLast = dt.isLast;
+        }
+        return;
+      }
+
+      conversationMessagesMap.value.set(conversation.conversationId, {
+        //@ts-ignore
+        messages: dt.messages.reverse(),
+        cursor: dt.cursor || "",
+        isLast: dt.isLast
+      });
+    } catch (error) {
+      console.warn("获取历史漫游失败,请检查是否开通漫游消息！");
+      conversationMessagesMap.value.set(conversation.conversationId, {
+        //@ts-ignore
+        messages: [],
+        cursor: "",
+        isLast: true
+      });
+    }
   };
 
   /** 插入新消息 */
