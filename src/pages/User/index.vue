@@ -123,20 +123,20 @@ const copy = () => {
 const toContactNotices = () => {
   contactStore.clearContactNoticeUnReadCount();
   uni.navigateTo({
-    url: `../../pages/ContactNotices/index`
+    url: `/pages/ContactNotices/index`
   });
 };
 
 const toGroupNotices = () => {
   groupStore.clearGroupNoticeUnReadCount();
   uni.navigateTo({
-    url: `../../pages/GroupNotices/index`
+    url: `/pages/GroupNotices/index`
   });
 };
 
 const toSetting = () => {
   uni.navigateTo({
-    url: `../../pages/Setting/index`
+    url: `/pages/Setting/index`
   });
 };
 

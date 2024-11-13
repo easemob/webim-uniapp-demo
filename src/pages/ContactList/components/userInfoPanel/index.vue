@@ -117,7 +117,7 @@ const switchChange = async (e: any) => {
 
 const goChat = () => {
   uni.navigateTo({
-    url: `../../pages/Chat/index?type=singleChat&id=${contactStore.viewedUserInfo.userId}`
+    url: `/pages/Chat/index?type=singleChat&id=${contactStore.viewedUserInfo.userId}`
   });
   resetViewedUserInfo();
 };

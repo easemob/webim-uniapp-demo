@@ -68,7 +68,7 @@ const onImgLoad = (e: any) => {
 
 const toVideoPreview = () => {
   uni.navigateTo({
-    url: `../../pages/VideoPreview/index?url=${props.msg.url}`
+    url: `/pages/VideoPreview/index?url=${props.msg.url}`
   });
 };
 </script>

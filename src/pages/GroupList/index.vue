@@ -64,7 +64,7 @@ const onSearchCancel = () => {
 
 const toCreateGroup = () => {
   uni.navigateTo({
-    url: `../../pages/CreateGroup/index`
+    url: `/pages/CreateGroup/index`
   });
 };
 

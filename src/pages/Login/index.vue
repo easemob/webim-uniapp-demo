@@ -317,7 +317,7 @@ const checkboxChange = (e: any) => {
 
 const toServerConfig = () => {
   uni.navigateTo({
-    url: "../ServerConfig/index"
+    url: "/ServerConfig/index"
   });
 };
 </script>

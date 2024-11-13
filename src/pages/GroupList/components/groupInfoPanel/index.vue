@@ -73,14 +73,14 @@ const resetViewedGroupInfo = () => {
 
 const goChat = () => {
   uni.navigateTo({
-    url: `../../pages/Chat/index?type=groupChat&id=${groupStore.viewedGroupInfo.groupId}`
+    url: `/pages/Chat/index?type=groupChat&id=${groupStore.viewedGroupInfo.groupId}`
   });
   resetViewedGroupInfo();
 };
 
 const goGroupDetail = () => {
   uni.navigateTo({
-    url: `../../pages/GroupDetail/index?id=${groupStore.viewedGroupInfo.groupId}`
+    url: `/pages/GroupDetail/index?id=${groupStore.viewedGroupInfo.groupId}`
   });
 };
 

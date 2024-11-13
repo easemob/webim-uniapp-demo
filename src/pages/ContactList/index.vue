@@ -84,7 +84,7 @@ const onSearchCancel = () => {
 
 const toGroupList = () => {
   uni.navigateTo({
-    url: `../../pages/GroupList/index`
+    url: `/pages/GroupList/index`
   });
 };
 
