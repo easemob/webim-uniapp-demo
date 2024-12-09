@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "easemob-websdk": "^4.9.1"
+    "easemob-websdk": "^4.11.0"
   }
 }
